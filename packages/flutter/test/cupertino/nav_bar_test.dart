@@ -2337,6 +2337,121 @@ void main() {
     },
   );
 
+  testWidgets(
+    'Large title and bottom snap up when partially scrolled over halfway up in always mode',
+    (WidgetTester tester) async {
+      final ScrollController scrollController = ScrollController();
+      addTearDown(scrollController.dispose);
+      const double largeTitleHeight = 52.0;
+      const double bottomHeight = 100.0;
+
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CustomScrollView(
+            controller: scrollController,
+            slivers: const <Widget>[
+              CupertinoSliverNavigationBar(
+                largeTitle: Text('Large title'),
+                middle: Text('middle'),
+                alwaysShowMiddle: false,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(bottomHeight),
+                  child: Placeholder(),
+                ),
+                bottomMode: NavigationBarBottomMode.always,
+              ),
+              SliverFillRemaining(child: SizedBox(height: 1000.0)),
+            ],
+          ),
+        ),
+      );
+
+      final RenderAnimatedOpacity? renderOpacity =
+          tester
+              .element(find.text('middle'))
+              .findAncestorRenderObjectOfType<RenderAnimatedOpacity>();
+      final Finder bottomFinder = find.byType(Placeholder);
+
+      expect(renderOpacity?.opacity.value, 0.0);
+      expect(scrollController.position.pixels, 0.0);
+
+      // Scroll to just past the halfway point of the large title.
+      final TestGesture scrollGesture1 = await tester.startGesture(
+        tester.getCenter(find.byType(Scrollable)),
+      );
+      await scrollGesture1.moveBy(const Offset(0.0, -(largeTitleHeight / 2) - 1));
+      await scrollGesture1.up();
+      await tester.pumpAndSettle();
+
+      // Expect the large title to snap up to the persistent nav bar.
+      expect(scrollController.position.pixels, largeTitleHeight);
+      expect(renderOpacity?.opacity.value, 1.0);
+
+      // Scroll to just past the halfway point of the bottom widget.
+      final TestGesture scrollGesture2 = await tester.startGesture(
+        tester.getCenter(find.byType(Scrollable)),
+      );
+      await scrollGesture2.moveBy(const Offset(0.0, -(bottomHeight / 2) - 1));
+      await scrollGesture2.up();
+      await tester.pumpAndSettle();
+
+      // The bottom widget is still fully extended.
+      expect(scrollController.position.pixels, largeTitleHeight + (bottomHeight / 2) + 1);
+      expect(
+        tester.getBottomLeft(bottomFinder).dy - tester.getTopLeft(bottomFinder).dy,
+        bottomHeight,
+      );
+      expect(renderOpacity?.opacity.value, 1.0);
+    },
+  );
+
+  testWidgets(
+    'Large title and bottom snap down when partially scrolled halfway up or less in always mode',
+    (WidgetTester tester) async {
+      final ScrollController scrollController = ScrollController();
+      addTearDown(scrollController.dispose);
+      const double largeTitleHeight = 52.0;
+
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CustomScrollView(
+            controller: scrollController,
+            slivers: const <Widget>[
+              CupertinoSliverNavigationBar(
+                largeTitle: Text('Large title'),
+                middle: Text('middle'),
+                alwaysShowMiddle: false,
+                bottom: PreferredSize(preferredSize: Size.fromHeight(100.0), child: Placeholder()),
+                bottomMode: NavigationBarBottomMode.always,
+              ),
+              SliverFillRemaining(child: SizedBox(height: 1000.0)),
+            ],
+          ),
+        ),
+      );
+
+      final RenderAnimatedOpacity? renderOpacity =
+          tester
+              .element(find.text('middle'))
+              .findAncestorRenderObjectOfType<RenderAnimatedOpacity>();
+
+      expect(renderOpacity?.opacity.value, 0.0);
+      expect(scrollController.offset, 0.0);
+
+      // Scroll to the halfway point of the large title.
+      final TestGesture scrollGesture1 = await tester.startGesture(
+        tester.getCenter(find.byType(Scrollable)),
+      );
+      await scrollGesture1.moveBy(const Offset(0.0, -largeTitleHeight / 2));
+      await scrollGesture1.up();
+      await tester.pumpAndSettle();
+
+      // Expect the large title and bottom to snap back to their extended height.
+      expect(scrollController.position.pixels, 0.0);
+      expect(renderOpacity?.opacity.value, 0.0);
+    },
+  );
+
   testWidgets('CupertinoNavigationBar with bottom widget', (WidgetTester tester) async {
     const double persistentHeight = 44.0;
     const double bottomHeight = 10.0;

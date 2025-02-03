@@ -185,7 +185,6 @@ Future<void> _runCmake(
     throwToolExit('Unable to generate build files');
   }
   final Duration elapsedDuration = sw.elapsed;
-  globals.flutterUsage.sendTiming('build', 'cmake-linux', elapsedDuration);
   globals.analytics.send(
     Event.timing(
       workflow: 'build',
@@ -216,7 +215,6 @@ Future<void> _runBuild(Directory buildDir) async {
     throwToolExit('Build process failed');
   }
   final Duration elapsedDuration = sw.elapsed;
-  globals.flutterUsage.sendTiming('build', 'linux-ninja', elapsedDuration);
   globals.analytics.send(
     Event.timing(
       workflow: 'build',

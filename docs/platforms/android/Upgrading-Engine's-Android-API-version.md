@@ -38,27 +38,8 @@ Modify the following files as described:
 * `shell/platform/android/test_runner/build.gradle`: Bump `compileSdkVersion XX` to the latest version.
 * `shell/platform/android/AndroidManifest.xml`: Bump `android:targetSdkVersion=XX` to the latest version.
 * `testing/android/native_activity/native_activity.gni`: Bump the reference to `build-tools/XX` in `android_buildtools` to the latest **build-tools** version and the reference to `android-XX` in `android_jar` to the latest version.
-* `testing/scenario_app/android/app/build.gradle`: Upgrade `buildToolsVersion` to the latest **build-tools** version and the `compileSdkVersion` and `targetSdkVersion` to the latest version.
-* In all other android projects in `testing`: Upgrade the `compileSdkVersion` and `targetSdkVersion` in `android/app/build.gradle`.
 
 This list may become outdated, so be sure to change any references to the old SDK version to the latest version in `build.gradle` files across the repo.
-
-### Update our `android_virtual_device` dependency
-
-1. Locate the desired Android Virtual Device (AVD) from https://chrome-infra-packages.appspot.com/p/chromium/tools/android/avd/linux-amd64/. You should look at the most recently updated AVD and verify that
-  it has the desired `generic_android<API#>.textpb` for the API version that you are modifying the engine to support. Then, determine its build_id number by clicking on the AVD instance you would like to use and looking for the build_id tag.
-2. In each of the engine builders (at the time of writing: `ci/builders/standalone/linux_android_emulator_skia.json` & `ci/builders/standalone/linux_android_emulator.json`), find the `android_virtual_device` and `avd_cipd_version` dependency entries and update them to the versions you desire, e.g.
-
-```json
-{
-    "dependency": "android_virtual_device",
-    "version": "android_<API#>_google_apis_x64.textpb"
-},
-{
-    "dependency": "avd_cipd_version",
-    "version": "build_id:<build_id>"
-}
-```
 
 ## Next Steps: Update the Framework, Examples and Samples
 

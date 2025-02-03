@@ -2312,6 +2312,10 @@ abstract class WidgetController {
   /// If `scrollable` is `null`, a [Finder] that looks for a [Scrollable] is
   /// used instead.
   ///
+  /// If `continuous` is `true`, the gesture will be reused to simulate the effect
+  /// of actual finger scrolling, which is useful when used alongside listeners
+  /// like [GestureDetector.onTap]. The default is `false`.
+  ///
   /// Throws a [StateError] if `finder` is not found after `maxScrolls` scrolls.
   ///
   /// This is different from [ensureVisible] in that this allows looking for
@@ -2328,6 +2332,7 @@ abstract class WidgetController {
     finders.FinderBase<Element>? scrollable,
     int maxScrolls = 50,
     Duration duration = const Duration(milliseconds: 50),
+    bool continuous = false,
   }) {
     assert(maxScrolls > 0);
     scrollable ??= finders.find.byType(Scrollable);
@@ -2349,6 +2354,7 @@ abstract class WidgetController {
         moveStep,
         maxIteration: maxScrolls,
         duration: duration,
+        continuous: continuous,
       );
     });
   }
@@ -2370,13 +2376,21 @@ abstract class WidgetController {
     Offset moveStep, {
     int maxIteration = 50,
     Duration duration = const Duration(milliseconds: 50),
+    bool continuous = false,
   }) {
     return TestAsyncUtils.guard<void>(() async {
+      TestGesture? gesture;
       while (maxIteration > 0 && finder.evaluate().isEmpty) {
-        await drag(view, moveStep);
+        if (continuous) {
+          gesture ??= await startGesture(getCenter(view, warnIfMissed: true));
+          await gesture.moveBy(moveStep);
+        } else {
+          await drag(view, moveStep);
+        }
         await pump(duration);
         maxIteration -= 1;
       }
+      await gesture?.up();
       await Scrollable.ensureVisible(element(finder));
     });
   }

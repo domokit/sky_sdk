@@ -45,7 +45,7 @@ std::shared_ptr<OverlayLayer> SurfacePool::GetLayer(
         jni_facade->FlutterViewCreateOverlaySurface();
 
     FML_CHECK(java_metadata->window);
-    android_surface->SetNativeWindow(java_metadata->window);
+    android_surface->SetNativeWindow(java_metadata->window, jni_facade);
 
     std::unique_ptr<Surface> surface =
         android_surface->CreateGPUSurface(gr_context);

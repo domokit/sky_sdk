@@ -20,8 +20,6 @@ namespace testing {
 
 using ClipRRectLayerTest = LayerTest;
 
-using ClipOp = DlCanvas::ClipOp;
-
 #ifndef NDEBUG
 TEST_F(ClipRRectLayerTest, ClipNoneBehaviorDies) {
   const DlRoundRect layer_rrect = DlRoundRect();
@@ -428,7 +426,7 @@ TEST_F(ClipRRectLayerTest, OpacityInheritancePainting) {
       expected_builder.Translate(offset.x, offset.y);
       /* ClipRectLayer::Paint() */ {
         expected_builder.Save();
-        expected_builder.ClipRoundRect(clip_rrect, ClipOp::kIntersect, true);
+        expected_builder.ClipRoundRect(clip_rrect, DlClipOp::kIntersect, true);
         /* child layer1 paint */ {
           expected_builder.DrawPath(path1, DlPaint().setAlpha(opacity_alpha));
         }
@@ -478,7 +476,7 @@ TEST_F(ClipRRectLayerTest, OpacityInheritanceSaveLayerPainting) {
       expected_builder.Translate(offset.x, offset.y);
       /* ClipRectLayer::Paint() */ {
         expected_builder.Save();
-        expected_builder.ClipRoundRect(clip_rrect, ClipOp::kIntersect, true);
+        expected_builder.ClipRoundRect(clip_rrect, DlClipOp::kIntersect, true);
         expected_builder.SaveLayer(children_bounds,
                                    &DlPaint().setAlpha(opacity_alpha));
         /* child layer1 paint */ {

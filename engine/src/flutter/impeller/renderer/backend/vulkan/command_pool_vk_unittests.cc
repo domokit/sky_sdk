@@ -162,5 +162,71 @@ TEST(CommandPoolRecyclerVKTest, CommandBuffersAreRecycled) {
   context->Shutdown();
 }
 
+TEST(CommandPoolRecyclerVKTest, ExtraCommandBufferAllocationsTriggerTrim) {
+  auto const context = MockVulkanContextBuilder().Build();
+
+  {
+    // Fetch a pool (which will be created).
+    auto const recycler = context->GetCommandPoolRecycler();
+    auto pool = recycler->Get();
+
+    // Allocate a large number of command buffers
+    for (auto i = 0; i < 64; i++) {
+      auto buffer = pool->CreateCommandBuffer();
+      pool->CollectCommandBuffer(std::move(buffer));
+    }
+
+    // This normally is called at the end of a frame.
+    recycler->Dispose();
+  }
+
+  // Wait for the pool to be reclaimed.
+  for (auto i = 0u; i < 2u; i++) {
+    auto waiter = fml::AutoResetWaitableEvent();
+    auto rattle = DeathRattle([&waiter]() { waiter.Signal(); });
+    {
+      UniqueResourceVKT<DeathRattle> resource(context->GetResourceManager(),
+                                              std::move(rattle));
+    }
+    waiter.Wait();
+  }
+
+  // Command pool is reset but does not release resources.
+  auto called = GetMockVulkanFunctions(context->GetDevice());
+  EXPECT_EQ(std::count(called->begin(), called->end(), "vkResetCommandPool"),
+            1u);
+
+  // Create the pool a second time, but dont use any command buffers.
+  {
+    // Fetch a pool (which will be created).
+    auto const recycler = context->GetCommandPoolRecycler();
+    auto pool = recycler->Get();
+
+    // This normally is called at the end of a frame.
+    recycler->Dispose();
+  }
+
+  // Wait for the pool to be reclaimed.
+  for (auto i = 0u; i < 2u; i++) {
+    auto waiter = fml::AutoResetWaitableEvent();
+    auto rattle = DeathRattle([&waiter]() { waiter.Signal(); });
+    {
+      UniqueResourceVKT<DeathRattle> resource(context->GetResourceManager(),
+                                              std::move(rattle));
+    }
+    waiter.Wait();
+  }
+
+  // Verify that the cmd pool was trimmed.
+
+  // Now check that we only ever created one pool and one command buffer.
+  called = GetMockVulkanFunctions(context->GetDevice());
+  EXPECT_EQ(std::count(called->begin(), called->end(),
+                       "vkResetCommandPoolReleaseResources"),
+            1u);
+
+  context->Shutdown();
+}
+
 }  // namespace testing
 }  // namespace impeller

@@ -3,6 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# Want to test this script?
+# $ cd dev/tools
+# $ dart test test/update_engine_version_test.dart
 
 # ---------------------------------- NOTE ---------------------------------- #
 #
@@ -14,18 +17,18 @@
 
 set -e
 
-# Allow overriding the intended engine version via FLUTTER_ENGINE_VERSION.
+# Allow overriding the intended engine version via FLUTTER_PREBUILT_ENGINE_VERSION.
 #
 # This is for systems, such as Github Actions, where we know ahead of time the
 # base-ref we want to use (to download the engine binaries and avoid trying
-# to compute one below).
+# to compute one below), or for the Dart HH bot, which wants to try the current
+# Flutter framework/engine with a different Dart SDK.
 #
 # This environment variable is EXPERIMENTAL. If you are not on the Flutter infra
-# team, this code path might be removed at anytime and cease functioning. Please
-# file an issue if you have workflow needs.
-if [ -n "${FLUTTER_ENGINE_VERSION}" ]; then
-  ENGINE_VERSION="${FLUTTER_ENGINE_VERSION}"
-  echo "[Unstable] Override: Setting engine SHA to $ENGINE_VERSION" 1>&2
+# or Dart infra teams, this code path might be removed at anytime and cease
+# functioning. Please file an issue if you have workflow needs.
+if [ -n "${FLUTTER_PREBUILT_ENGINE_VERSION}" ]; then
+  ENGINE_VERSION="${FLUTTER_PREBUILT_ENGINE_VERSION}"
 fi
 
 FLUTTER_ROOT="$(dirname "$(dirname "$(dirname "${BASH_SOURCE[0]}")")")"

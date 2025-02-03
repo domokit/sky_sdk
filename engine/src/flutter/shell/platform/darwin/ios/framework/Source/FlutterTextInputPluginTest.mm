@@ -530,6 +530,19 @@ FLUTTER_ASSERT_ARC
   XCTAssertEqual(substring.length, 0ul);
 }
 
+- (void)testTextInRangeAcceptsNSNotFoundLocationGracefully {
+  NSDictionary* config = self.mutableTemplateCopy;
+  [self setClientId:123 configuration:config];
+  NSArray<FlutterTextInputView*>* inputFields = self.installedInputViews;
+  FlutterTextInputView* inputView = inputFields[0];
+
+  [inputView insertText:@"text"];
+  UITextRange* range = [FlutterTextRange rangeWithNSRange:NSMakeRange(NSNotFound, 0)];
+
+  NSString* substring = [inputView textInRange:range];
+  XCTAssertNil(substring);
+}
+
 - (void)testStandardEditActions {
   NSDictionary* config = self.mutableTemplateCopy;
   [self setClientId:123 configuration:config];

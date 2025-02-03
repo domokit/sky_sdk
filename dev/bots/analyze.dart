@@ -1742,7 +1742,7 @@ class Hash256 {
 // We have a policy of not checking in binaries into this repository.
 // If you are adding/changing template images, use the flutter_template_images
 // package and a .img.tmpl placeholder instead.
-// If you have other binaries to add, please consult Hixie for advice.
+// If you have other binaries to add, please consult johnmccutchan for advice.
 final Set<Hash256> _legacyBinaries = <Hash256>{
   // DEFAULT ICON IMAGES
 
@@ -2099,7 +2099,7 @@ Future<void> verifyNoBinaries(String workingDirectory, {Set<Hash256>? legacyBina
   // We have a policy of not checking in binaries into this repository.
   // If you are adding/changing template images, use the flutter_template_images
   // package and a .img.tmpl placeholder instead.
-  // If you have other binaries to add, please consult Hixie for advice.
+  // If you have other binaries to add, please consult johnmccutchan for advice.
   assert(
     _legacyBinaries
             .expand<int>((Hash256 hash) => <int>[hash.a, hash.b, hash.c, hash.d])

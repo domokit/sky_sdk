@@ -12,7 +12,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show isCanvasKit;
+import 'package:flutter/foundation.dart' show isSkwasm;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,7 +20,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../impeller_test_helpers.dart';
 
 // TODO(yjbanov): on the web text rendered with perspective produces flaky goldens: https://github.com/flutter/flutter/issues/110785
-final bool skipPerspectiveTextGoldens = isBrowser && !isCanvasKit;
+final bool skipPerspectiveTextGoldens = isBrowser && isSkwasm;
 
 // A number of the hit tests below say "warnIfMissed: false". This is because
 // the way the CupertinoPicker works, the hits don't actually reach the labels,

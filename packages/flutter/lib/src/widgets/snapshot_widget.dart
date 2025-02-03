@@ -99,11 +99,8 @@ class SnapshotController extends ChangeNotifier {
 ///   defaults to [SnapshotMode.normal] which will throw an exception if a
 ///   platform view is encountered.
 ///
-/// * The snapshotting functionality of this widget is not supported on the HTML
-///   backend of Flutter for the Web. Setting [SnapshotController.allowSnapshotting] to true
-///   may cause an error to be thrown. On the CanvasKit backend of Flutter, the
-///   performance of using this widget may regress performance due to the fact
-///   that both the UI and engine share a single thread.
+/// * On the CanvasKit backend of Flutter, the performance of using this widget may regress
+///   performance due to the fact that both the UI and engine share a single thread.
 class SnapshotWidget extends SingleChildRenderObjectWidget {
   /// Create a new [SnapshotWidget].
   ///

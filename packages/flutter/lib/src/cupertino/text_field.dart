@@ -1191,7 +1191,7 @@ class _CupertinoTextFieldState extends State<CupertinoTextField>
       return false;
     }
 
-    if (cause == SelectionChangedCause.scribble) {
+    if (cause == SelectionChangedCause.stylusHandwriting) {
       return true;
     }
 

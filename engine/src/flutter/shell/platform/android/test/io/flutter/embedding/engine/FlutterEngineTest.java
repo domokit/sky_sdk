@@ -234,7 +234,6 @@ public class FlutterEngineTest {
             platformViewsController,
             /*dartVmArgs=*/ new String[] {},
             /*automaticallyRegisterPlugins=*/ false);
-    verify(platformViewsController, times(1)).onAttachedToJNI();
 
     engine.destroy();
     verify(platformViewsController, times(1)).onDetachedFromJNI();

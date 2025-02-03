@@ -225,7 +225,7 @@ class Path {
 
     FillType fill = FillType::kNonZero;
     Convexity convexity = Convexity::kUnknown;
-    bool single_countour = true;
+    bool single_contour = true;
     std::optional<Rect> bounds;
     std::vector<Point> points;
     std::vector<ComponentType> components;

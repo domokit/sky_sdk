@@ -74,8 +74,7 @@ TEST_F(BackdropFilterLayerTest, EmptyFilter) {
   /* (ClipRect)parent::Paint */ {
     expected_builder.Save();
     {
-      expected_builder.ClipRect(child_bounds, DlCanvas::ClipOp::kIntersect,
-                                false);
+      expected_builder.ClipRect(child_bounds, DlClipOp::kIntersect, false);
       /* (BackdropFilter)layer::Paint */ {
         expected_builder.Save();
         {
@@ -120,8 +119,7 @@ TEST_F(BackdropFilterLayerTest, SimpleFilter) {
   /* (ClipRect)parent::Paint */ {
     expected_builder.Save();
     {
-      expected_builder.ClipRect(child_bounds, DlCanvas::ClipOp::kIntersect,
-                                false);
+      expected_builder.ClipRect(child_bounds, DlClipOp::kIntersect, false);
       /* (BackdropFilter)layer::Paint */ {
         expected_builder.Save();
         {
@@ -169,8 +167,7 @@ TEST_F(BackdropFilterLayerTest, NonSrcOverBlend) {
   /* (ClipRect)parent::Paint */ {
     expected_builder.Save();
     {
-      expected_builder.ClipRect(child_bounds, DlCanvas::ClipOp::kIntersect,
-                                false);
+      expected_builder.ClipRect(child_bounds, DlClipOp::kIntersect, false);
       /* (BackdropFilter)layer::Paint */ {
         expected_builder.Save();
         {
@@ -229,8 +226,7 @@ TEST_F(BackdropFilterLayerTest, MultipleChildren) {
   /* (ClipRect)parent::Paint */ {
     expected_builder.Save();
     {
-      expected_builder.ClipRect(children_bounds, DlCanvas::ClipOp::kIntersect,
-                                false);
+      expected_builder.ClipRect(children_bounds, DlClipOp::kIntersect, false);
       /* (BackdropFilter)layer::Paint */ {
         expected_builder.Save();
         {
@@ -297,8 +293,7 @@ TEST_F(BackdropFilterLayerTest, Nested) {
   /* (ClipRect)parent::Paint */ {
     expected_builder.Save();
     {
-      expected_builder.ClipRect(children_bounds, DlCanvas::ClipOp::kIntersect,
-                                false);
+      expected_builder.ClipRect(children_bounds, DlClipOp::kIntersect, false);
       /* (BackdropFilter)layer1::Paint */ {
         expected_builder.Save();
         {
@@ -390,7 +385,7 @@ TEST_F(BackdropFilterLayerTest, OpacityInheritance) {
   /* ClipRectLayer::Paint */ {
     expected_builder.Save();
     {
-      expected_builder.ClipRect(clip_rect, DlCanvas::ClipOp::kIntersect, false);
+      expected_builder.ClipRect(clip_rect, DlClipOp::kIntersect, false);
       /* OpacityLayer::Paint */ {
         // NOP - it hands opacity down to BackdropFilterLayer
         /* BackdropFilterLayer::Paint */ {

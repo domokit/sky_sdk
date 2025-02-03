@@ -1767,6 +1767,7 @@ void main() {
   testWidgets('Slider.label info should not write to semantic node', (WidgetTester tester) async {
     final SemanticsTester semantics = SemanticsTester(tester);
 
+    const String label = 'Bingo';
     await tester.pumpWidget(
       MaterialApp(
         home: Directionality(
@@ -1778,7 +1779,7 @@ void main() {
               divisions: 10,
               semanticFormatterCallback: (double value) => value.round().toString(),
               onChanged: (double v) {},
-              label: 'Bingo',
+              label: label,
             ),
           ),
         ),
@@ -1818,6 +1819,7 @@ void main() {
                           increasedValue: '60',
                           decreasedValue: '20',
                           textDirection: TextDirection.ltr,
+                          label: label,
                         ),
                       ],
                     ),

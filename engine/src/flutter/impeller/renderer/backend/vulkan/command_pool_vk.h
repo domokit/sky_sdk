@@ -130,9 +130,12 @@ class CommandPoolRecyclerVK final
 
   /// @brief      Returns a command pool to be reset on a background thread.
   ///
-  /// @param[in]  pool The pool to recycler.
+  /// @param[in]  pool The pool to recycle.
+  /// @param[in]  should_trim whether to trim command pool memory before
+  ///             reseting.
   void Reclaim(vk::UniqueCommandPool&& pool,
-               std::vector<vk::UniqueCommandBuffer>&& buffers);
+               std::vector<vk::UniqueCommandBuffer>&& buffers,
+               bool should_trim = false);
 
   /// @brief      Clears all recycled command pools to let them be reclaimed.
   void Dispose();

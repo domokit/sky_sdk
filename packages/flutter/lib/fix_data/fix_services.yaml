@@ -84,4 +84,18 @@ transforms:
         kind: 'fragment'
         value: 'arguments[0]'
 
+  # Changes made in https://github.com/flutter/flutter/pull/161518
+  - title: "Migrate 'SelectionChangedCause.scribble' to 'SelectionChangedCause.stylusHandwriting'"
+    date: 2025-01-13
+    element:
+      uris: [ 'services.dart' ]
+      constant: 'scribble'
+      inEnum: 'SelectionChangedCause'
+    changes:
+      - kind: 'replacedBy'
+        newElement:
+          uris: [ 'services.dart' ]
+          constant: 'stylusHandwriting'
+          inEnum: 'SelectionChangedCause'
+
 # Before adding a new fix: read instructions at the top of this file.

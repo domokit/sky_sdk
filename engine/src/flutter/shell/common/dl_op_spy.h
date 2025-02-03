@@ -62,7 +62,7 @@ class DlOpSpy final : public virtual DlOpReceiver,
                DlScalar start_degrees,
                DlScalar sweep_degrees,
                bool use_center) override;
-  void drawPoints(PointMode mode,
+  void drawPoints(DlPointMode mode,
                   uint32_t count,
                   const DlPoint points[]) override;
   void drawVertices(const std::shared_ptr<DlVertices>& vertices,
@@ -77,7 +77,7 @@ class DlOpSpy final : public virtual DlOpReceiver,
       const DlRect& dst,
       DlImageSampling sampling,
       bool render_with_attributes,
-      SrcRectConstraint constraint = SrcRectConstraint::kFast) override;
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) override;
   void drawImageNine(const sk_sp<DlImage> image,
                      const DlIRect& center,
                      const DlRect& dst,

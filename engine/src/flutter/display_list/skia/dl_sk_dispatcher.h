@@ -51,12 +51,12 @@ class DlSkCanvasDispatcher : public virtual DlOpReceiver,
   // clang-format on
   void transformReset() override;
 
-  void clipRect(const DlRect& rect, ClipOp clip_op, bool is_aa) override;
-  void clipOval(const DlRect& bounds, ClipOp clip_op, bool is_aa) override;
+  void clipRect(const DlRect& rect, DlClipOp clip_op, bool is_aa) override;
+  void clipOval(const DlRect& bounds, DlClipOp clip_op, bool is_aa) override;
   void clipRoundRect(const DlRoundRect& rrect,
-                     ClipOp clip_op,
+                     DlClipOp clip_op,
                      bool is_aa) override;
-  void clipPath(const DlPath& path, ClipOp clip_op, bool is_aa) override;
+  void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override;
 
   void drawPaint() override;
   void drawColor(DlColor color, DlBlendMode mode) override;
@@ -76,7 +76,9 @@ class DlSkCanvasDispatcher : public virtual DlOpReceiver,
                DlScalar start,
                DlScalar sweep,
                bool useCenter) override;
-  void drawPoints(PointMode mode, uint32_t count, const DlPoint pts[]) override;
+  void drawPoints(DlPointMode mode,
+                  uint32_t count,
+                  const DlPoint pts[]) override;
   void drawVertices(const std::shared_ptr<DlVertices>& vertices,
                     DlBlendMode mode) override;
   void drawImage(const sk_sp<DlImage> image,
@@ -88,7 +90,7 @@ class DlSkCanvasDispatcher : public virtual DlOpReceiver,
                      const DlRect& dst,
                      DlImageSampling sampling,
                      bool render_with_attributes,
-                     SrcRectConstraint constraint) override;
+                     DlSrcRectConstraint constraint) override;
   void drawImageNine(const sk_sp<DlImage> image,
                      const DlIRect& center,
                      const DlRect& dst,

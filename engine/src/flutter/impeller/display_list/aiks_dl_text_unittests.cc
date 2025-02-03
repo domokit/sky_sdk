@@ -152,17 +152,27 @@ TEST_P(AiksTest, CanRenderTextFrameWithHalfScaling) {
 }
 
 TEST_P(AiksTest, CanRenderTextFrameWithFractionScaling) {
-  DisplayListBuilder builder;
+  Scalar fine_scale = 0.f;
+  auto callback = [&]() -> sk_sp<DisplayList> {
+    if (AiksTest::ImGuiBegin("Controls", nullptr,
+                             ImGuiWindowFlags_AlwaysAutoResize)) {
+      ImGui::SliderFloat("Fine Scale", &fine_scale, -1, 1);
+      ImGui::End();
+    }
 
-  DlPaint paint;
-  paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
-  builder.DrawPaint(paint);
-  builder.Scale(2.625, 2.625);
+    DisplayListBuilder builder;
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
+    builder.DrawPaint(paint);
+    Scalar scale = 2.625 + fine_scale;
+    builder.Scale(scale, scale);
+    RenderTextInCanvasSkia(GetContext(), builder,
+                           "the quick brown fox jumped over the lazy dog!.?",
+                           "Roboto-Regular.ttf");
+    return builder.Build();
+  };
 
-  ASSERT_TRUE(RenderTextInCanvasSkia(
-      GetContext(), builder, "the quick brown fox jumped over the lazy dog!.?",
-      "Roboto-Regular.ttf"));
-  ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
+  ASSERT_TRUE(OpenPlaygroundHere(callback));
 }
 
 TEST_P(AiksTest, TextFrameSubpixelAlignment) {
@@ -501,7 +511,7 @@ TEST_P(AiksTest, DifferenceClipsMustRenderIdenticallyAcrossBackends) {
   builder.DrawRect(frame, paint);
 
   builder.Save();
-  builder.ClipRect(frame, DlCanvas::ClipOp::kIntersect);
+  builder.ClipRect(frame, DlClipOp::kIntersect);
 
   DlMatrix rect_xform = {
       0.8241262, 0.56640625, 0.0, 0.0, -0.56640625, 0.8241262, 0.0, 0.0,
@@ -517,7 +527,7 @@ TEST_P(AiksTest, DifferenceClipsMustRenderIdenticallyAcrossBackends) {
   builder.DrawRoundRect(rrect, paint);
 
   builder.Save();
-  builder.ClipRect(rect, DlCanvas::ClipOp::kIntersect);
+  builder.ClipRect(rect, DlClipOp::kIntersect);
   builder.Restore();
 
   builder.Restore();

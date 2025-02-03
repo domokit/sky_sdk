@@ -73,7 +73,7 @@ base class Texture extends NativeFieldWrapperClass1 {
     return _bytesPerTexel();
   }
 
-  int GetBaseMipLevelSizeInBytes() {
+  int getBaseMipLevelSizeInBytes() {
     return bytesPerTexel * width * height;
   }
 
@@ -86,21 +86,23 @@ base class Texture extends NativeFieldWrapperClass1 {
   /// level, otherwise an exception will be thrown. The size of the base mip
   /// level is always `width * height * bytesPerPixel`.
   ///
-  /// Returns [true] if the write was successful, or [false] if the write
-  /// failed due to an internal error.
-  bool overwrite(ByteData sourceBytes) {
+  /// Throws an exception if the write failed due to an internal error.
+  void overwrite(ByteData sourceBytes) {
     if (storageMode != StorageMode.hostVisible) {
       throw Exception(
         'Texture.overwrite can only be used with Textures that are host visible',
       );
     }
-    int baseMipSize = GetBaseMipLevelSizeInBytes();
+    int baseMipSize = getBaseMipLevelSizeInBytes();
     if (sourceBytes.lengthInBytes != baseMipSize) {
       throw Exception(
         'The length of sourceBytes (bytes: ${sourceBytes.lengthInBytes}) must exactly match the size of the base mip level (bytes: ${baseMipSize})',
       );
     }
-    return _overwrite(sourceBytes);
+    bool success = _overwrite(sourceBytes);
+    if (!success) {
+      throw Exception("Texture overwrite failed");
+    }
   }
 
   ui.Image asImage() {

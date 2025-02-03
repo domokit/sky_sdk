@@ -761,6 +761,38 @@ void main() {
     expect(navToolBar.middleSpacing, 40);
   });
 
+  testWidgets('AppBar uses AppBarTheme.leadingWidth', (WidgetTester tester) async {
+    const double kLeadingWidth = 80;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(appBarTheme: const AppBarTheme(leadingWidth: kLeadingWidth)),
+        home: Scaffold(appBar: AppBar(leading: const Icon(Icons.chevron_left))),
+      ),
+    );
+
+    final NavigationToolbar navToolBar = tester.widget(find.byType(NavigationToolbar));
+    final BoxConstraints leadingConstraints = (navToolBar.leading! as ConstrainedBox).constraints;
+    expect(leadingConstraints.maxWidth, kLeadingWidth);
+    expect(leadingConstraints.minWidth, kLeadingWidth);
+  });
+
+  testWidgets('AppBar.leadingWidth takes priority over AppBarTheme.leadingWidth', (
+    WidgetTester tester,
+  ) async {
+    const double kLeadingWidth = 80;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(appBarTheme: const AppBarTheme(leadingWidth: kLeadingWidth)),
+        home: Scaffold(appBar: AppBar(leading: const Icon(Icons.chevron_left), leadingWidth: 40)),
+      ),
+    );
+
+    final NavigationToolbar navToolBar = tester.widget(find.byType(NavigationToolbar));
+    final BoxConstraints leadingConstraints = (navToolBar.leading! as ConstrainedBox).constraints;
+    expect(leadingConstraints.maxWidth, 40);
+    expect(leadingConstraints.minWidth, 40);
+  });
+
   testWidgets('SliverAppBar uses AppBarTheme.titleSpacing', (WidgetTester tester) async {
     const double kTitleSpacing = 10;
     await tester.pumpWidget(
@@ -789,6 +821,42 @@ void main() {
 
     final NavigationToolbar navToolbar = tester.widget(find.byType(NavigationToolbar));
     expect(navToolbar.middleSpacing, 40);
+  });
+
+  testWidgets('SliverAppBar uses AppBarTheme.leadingWidth', (WidgetTester tester) async {
+    const double kLeadingWidth = 80;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(appBarTheme: const AppBarTheme(leadingWidth: kLeadingWidth)),
+        home: const CustomScrollView(
+          slivers: <Widget>[SliverAppBar(leading: Icon(Icons.chevron_left))],
+        ),
+      ),
+    );
+
+    final NavigationToolbar navToolBar = tester.widget(find.byType(NavigationToolbar));
+    final BoxConstraints leadingConstraints = (navToolBar.leading! as ConstrainedBox).constraints;
+    expect(leadingConstraints.maxWidth, kLeadingWidth);
+    expect(leadingConstraints.minWidth, kLeadingWidth);
+  });
+
+  testWidgets('SliverAppBar.leadingWidth takes priority over AppBarTheme.leadingWidth ', (
+    WidgetTester tester,
+  ) async {
+    const double kLeadingWidth = 80;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(appBarTheme: const AppBarTheme(leadingWidth: kLeadingWidth)),
+        home: const CustomScrollView(
+          slivers: <Widget>[SliverAppBar(leading: Icon(Icons.chevron_left), leadingWidth: 40)],
+        ),
+      ),
+    );
+
+    final NavigationToolbar navToolBar = tester.widget(find.byType(NavigationToolbar));
+    final BoxConstraints leadingConstraints = (navToolBar.leading! as ConstrainedBox).constraints;
+    expect(leadingConstraints.maxWidth, 40);
+    expect(leadingConstraints.minWidth, 40);
   });
 
   testWidgets('SliverAppBar.medium uses AppBarTheme properties', (WidgetTester tester) async {
@@ -1100,6 +1168,7 @@ void main() {
       iconTheme: IconThemeData(color: Color(0xff000004)),
       centerTitle: true,
       titleSpacing: 40.0,
+      leadingWidth: 96,
       toolbarHeight: 96,
       toolbarTextStyle: TextStyle(color: Color(0xff000005)),
       titleTextStyle: TextStyle(color: Color(0xff000006)),
@@ -1125,6 +1194,7 @@ void main() {
         'iconTheme: IconThemeData#00000(color: ${const Color(0xff000004)})',
         'centerTitle: true',
         'titleSpacing: 40.0',
+        'leadingWidth: 96.0',
         'toolbarHeight: 96.0',
         'toolbarTextStyle: TextStyle(inherit: true, color: ${const Color(0xff000005)})',
         'titleTextStyle: TextStyle(inherit: true, color: ${const Color(0xff000006)})',

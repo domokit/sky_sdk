@@ -458,6 +458,7 @@ class _DragHandle extends StatelessWidget {
       child: Semantics(
         label: MaterialLocalizations.of(context).modalBarrierDismissLabel,
         container: true,
+        button: true,
         onTap: onSemanticsTap,
         child: SizedBox(
           width: math.max(handleSize.width, kMinInteractiveDimension),

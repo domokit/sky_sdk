@@ -244,7 +244,7 @@ class AndroidPlugin extends PluginPlatform implements NativeOrDartPlugin {
 /// The [name] of the plugin is required. Additionally, either:
 /// - [defaultPackage], or
 /// - an implementation consisting of:
-///   - the [pluginClass] (with optional [classPrefix]) that will be the entry
+///   - the [classPrefix] (with optional [pluginClass]) that will be the entry
 ///     point to the plugin's native code, and/or
 ///   - the [dartPluginClass] with optional [dartFileName] that will be
 ///     the entry point for the plugin's Dart code

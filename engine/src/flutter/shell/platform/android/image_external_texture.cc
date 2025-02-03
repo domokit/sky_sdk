@@ -38,12 +38,12 @@ void ImageExternalTexture::Paint(PaintContext& context,
   }
   if (dl_image_) {
     context.canvas->DrawImageRect(
-        dl_image_,                                     // image
-        SkRect::Make(dl_image_->bounds()),             // source rect
-        bounds,                                        // destination rect
-        sampling,                                      // sampling
-        context.paint,                                 // paint
-        flutter::DlCanvas::SrcRectConstraint::kStrict  // enforce edges
+        dl_image_,                             // image
+        SkRect::Make(dl_image_->bounds()),     // source rect
+        bounds,                                // destination rect
+        sampling,                              // sampling
+        context.paint,                         // paint
+        flutter::DlSrcRectConstraint::kStrict  // enforce edges
     );
   } else {
     FML_LOG(INFO) << "No DlImage available for ImageExternalTexture to paint.";

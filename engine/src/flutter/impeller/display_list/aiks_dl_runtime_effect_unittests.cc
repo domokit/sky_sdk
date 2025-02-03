@@ -53,7 +53,7 @@ TEST_P(AiksTest, CanRenderClippedRuntimeEffects) {
   builder.Save();
   builder.ClipRoundRect(
       DlRoundRect::MakeRectXY(DlRect::MakeXYWH(0, 0, 400, 400), 10.0, 10.0),
-      DlCanvas::ClipOp::kIntersect);
+      DlClipOp::kIntersect);
   builder.DrawRect(DlRect::MakeXYWH(0, 0, 400, 400), paint);
   builder.Restore();
 

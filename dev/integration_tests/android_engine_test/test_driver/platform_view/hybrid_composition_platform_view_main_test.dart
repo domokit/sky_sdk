@@ -44,10 +44,27 @@ void main() async {
   });
 
   test('should screenshot and match a blue -> orange gradient', () async {
-    await expectLater(
-      nativeDriver.screenshot(),
-      matchesGoldenFile('$goldenPrefix.blue_orange_gradient_portrait.png'),
-    );
+    // TODO(matanlurey): Determining if this is a failure (the screen is always black on CI)
+    // or timing dependent (if we would have waited X more seconds it would have rendered).
+    // See:
+    // - Vulkan: https://github.com/flutter/flutter/issues/162362
+    // - OpenGLES: https://github.com/flutter/flutter/issues/162363
+    int retriesLeft = 2;
+    do {
+      try {
+        await expectLater(
+          nativeDriver.screenshot(),
+          matchesGoldenFile('$goldenPrefix.blue_orange_gradient_portrait.png'),
+        );
+        break;
+      } on TestFailure catch (e) {
+        if (retriesLeft == 0) {
+          rethrow;
+        }
+        print('Caught: $e. Retrying...');
+        retriesLeft--;
+      }
+    } while (retriesLeft > 0);
   }, timeout: Timeout.none);
 
   test('should rotate landscape and screenshot the gradient', () async {

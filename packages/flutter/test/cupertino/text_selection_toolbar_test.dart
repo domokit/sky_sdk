@@ -109,50 +109,45 @@ void main() {
     );
   }
 
-  testWidgets(
-    'chevrons point to the correct side',
-    (WidgetTester tester) async {
-      // Add enough TestBoxes to need 3 pages.
-      final List<Widget> children = List<Widget>.generate(15, (int i) => const TestBox());
-      await tester.pumpWidget(
-        CupertinoApp(
-          home: Center(
-            child: CupertinoTextSelectionToolbar(
-              anchorAbove: const Offset(50.0, 100.0),
-              anchorBelow: const Offset(50.0, 200.0),
-              children: children,
-            ),
+  testWidgets('chevrons point to the correct side', (WidgetTester tester) async {
+    // Add enough TestBoxes to need 3 pages.
+    final List<Widget> children = List<Widget>.generate(15, (int i) => const TestBox());
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Center(
+          child: CupertinoTextSelectionToolbar(
+            anchorAbove: const Offset(50.0, 100.0),
+            anchorBelow: const Offset(50.0, 200.0),
+            children: children,
           ),
         ),
-      );
+      ),
+    );
 
-      expect(findOverflowBackButton(), findsNothing);
-      expect(findOverflowNextButton(), findsOneWidget);
+    expect(findOverflowBackButton(), findsNothing);
+    expect(findOverflowNextButton(), findsOneWidget);
 
-      expect(findOverflowNextButton(), overflowNextPaintPattern());
+    expect(findOverflowNextButton(), overflowNextPaintPattern());
 
-      // Tap the overflow next button to show the next page of children.
-      await tester.tapAt(tester.getCenter(findOverflowNextButton()));
-      await tester.pumpAndSettle();
+    // Tap the overflow next button to show the next page of children.
+    await tester.tapAt(tester.getCenter(findOverflowNextButton()));
+    await tester.pumpAndSettle();
 
-      expect(findOverflowBackButton(), findsOneWidget);
-      expect(findOverflowNextButton(), findsOneWidget);
+    expect(findOverflowBackButton(), findsOneWidget);
+    expect(findOverflowNextButton(), findsOneWidget);
 
-      expect(findOverflowBackButton(), overflowBackPaintPattern());
-      expect(findOverflowNextButton(), overflowNextPaintPattern());
+    expect(findOverflowBackButton(), overflowBackPaintPattern());
+    expect(findOverflowNextButton(), overflowNextPaintPattern());
 
-      // Tap the overflow next button to show the last page of children.
-      await tester.tapAt(tester.getCenter(findOverflowNextButton()));
-      await tester.pumpAndSettle();
+    // Tap the overflow next button to show the last page of children.
+    await tester.tapAt(tester.getCenter(findOverflowNextButton()));
+    await tester.pumpAndSettle();
 
-      expect(findOverflowBackButton(), findsOneWidget);
-      expect(findOverflowNextButton(), findsNothing);
+    expect(findOverflowBackButton(), findsOneWidget);
+    expect(findOverflowNextButton(), findsNothing);
 
-      expect(findOverflowBackButton(), overflowBackPaintPattern());
-    },
-    // Path.combine is not implemented in the HTML backend https://github.com/flutter/flutter/issues/44572
-    skip: kIsWeb,
-  );
+    expect(findOverflowBackButton(), overflowBackPaintPattern());
+  });
 
   testWidgets('paginates children if they overflow', (WidgetTester tester) async {
     late StateSetter setState;

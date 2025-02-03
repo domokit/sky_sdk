@@ -252,7 +252,7 @@ void RenderPassGLES::ResetGLState(const ProcTableGLES& gl) {
 
       auto status = gl.CheckFramebufferStatus(GL_FRAMEBUFFER);
       if (status != GL_FRAMEBUFFER_COMPLETE) {
-        VALIDATION_LOG << "Could not create a complete frambuffer: "
+        VALIDATION_LOG << "Could not create a complete framebuffer: "
                        << DebugToFramebufferError(status);
         return false;
       }

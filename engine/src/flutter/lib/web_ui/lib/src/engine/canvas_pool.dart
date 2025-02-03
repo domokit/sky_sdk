@@ -911,7 +911,7 @@ class ContextStateHandle {
     strokeCap ??= ui.StrokeCap.butt;
     if (strokeCap != _currentStrokeCap) {
       _currentStrokeCap = strokeCap;
-      context.lineCap = stringForStrokeCap(strokeCap)!;
+      context.lineCap = strokeCap.name;
     }
   }
 
@@ -928,7 +928,7 @@ class ContextStateHandle {
     strokeJoin ??= ui.StrokeJoin.miter;
     if (strokeJoin != _currentStrokeJoin) {
       _currentStrokeJoin = strokeJoin;
-      context.lineJoin = stringForStrokeJoin(strokeJoin);
+      context.lineJoin = strokeJoin.name;
     }
   }
 

@@ -118,11 +118,11 @@ void main() {
       final TestGesture gesture = await tester.startGesture(tester.getCenter(find.text('test')));
       final MaterialInkController material = Material.of(tester.element(find.text('test')));
       await tester.pump(const Duration(milliseconds: 200));
-      expect(material, paintsExactlyCountTimes(#drawRect, (kIsWeb && isSkiaWeb ? 1 : 2)));
+      expect(material, paintsExactlyCountTimes(#drawRect, (kIsWeb ? 1 : 2)));
       await gesture.up();
       await tester.pumpAndSettle();
     }
-  }, skip: kIsWeb && !isSkiaWeb); // https://github.com/flutter/flutter/issues/99933
+  });
 
   // Regression test for https://github.com/flutter/flutter/issues/136441.
   testWidgets('PageView item can dispose when widget with NoSplash.splashFactory is tapped', (

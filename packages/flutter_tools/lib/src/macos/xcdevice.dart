@@ -26,7 +26,6 @@ import '../ios/ios_deploy.dart';
 import '../ios/iproxy.dart';
 import '../ios/mac.dart';
 import '../ios/xcode_debug.dart';
-import '../reporting/reporting.dart';
 import 'xcode.dart';
 
 class XCDeviceEventNotification {
@@ -520,7 +519,6 @@ class XCDevice {
           final String? errorMessage = _parseErrorMessage(errorProperties);
           if (errorMessage != null) {
             if (errorMessage.contains('not paired')) {
-              UsageEvent('device', 'ios-trust-failure', flutterUsage: globals.flutterUsage).send();
               _analytics.send(
                 Event.appleUsageEvent(workflow: 'device', parameter: 'ios-trust-failure'),
               );

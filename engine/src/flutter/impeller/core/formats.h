@@ -352,13 +352,13 @@ enum class IndexType {
 enum class PrimitiveType : uint8_t {
   /// Draws a triangle for each separate set of three vertices.
   ///
-  /// Vertices [A, B, C, D, E, F] will produce triages
+  /// Vertices [A, B, C, D, E, F] will produce triangles
   /// [ABC, DEF].
   kTriangle,
 
   /// Draws a triangle for every adjacent three vertices.
   ///
-  /// Vertices [A, B, C, D, E, F] will produce triages
+  /// Vertices [A, B, C, D, E, F] will produce triangles
   /// [ABC, BCD, CDE, DEF].
   kTriangleStrip,
 

@@ -45,6 +45,8 @@ source_set("display_list") {
     "dl_storage.cc",
     "dl_storage.h",
     "dl_tile_mode.h",
+    "dl_types.cc",
+    "dl_types.h",
     "dl_vertices.cc",
     "dl_vertices.h",
     "effects/color_filters/dl_blend_color_filter.cc",

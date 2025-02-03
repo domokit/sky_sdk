@@ -66,24 +66,21 @@ void DisplayListBuilder::RestoreToCount(uint32_t count) {
   builder_.RestoreToCount(count);
 }
 
-void DisplayListBuilder::ClipRect(const Rect& rect,
-                                  flutter::DlCanvas::ClipOp op) {
+void DisplayListBuilder::ClipRect(const Rect& rect, flutter::DlClipOp op) {
   builder_.ClipRect(rect, op);
 }
 
-void DisplayListBuilder::ClipOval(const Rect& rect,
-                                  flutter::DlCanvas::ClipOp op) {
+void DisplayListBuilder::ClipOval(const Rect& rect, flutter::DlClipOp op) {
   builder_.ClipOval(rect, op);
 }
 
 void DisplayListBuilder::ClipRoundedRect(const Rect& rect,
                                          const RoundingRadii& radii,
-                                         flutter::DlCanvas::ClipOp op) {
+                                         flutter::DlClipOp op) {
   builder_.ClipRoundRect(RoundRect::MakeRectRadii(rect, radii), op);
 }
 
-void DisplayListBuilder::ClipPath(const Path& path,
-                                  flutter::DlCanvas::ClipOp op) {
+void DisplayListBuilder::ClipPath(const Path& path, flutter::DlClipOp op) {
   builder_.ClipPath(flutter::DlPath(path.GetPath()), op);
 }
 

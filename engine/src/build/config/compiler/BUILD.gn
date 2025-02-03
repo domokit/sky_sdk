@@ -933,6 +933,14 @@ config("no_optimize") {
       cflags += [ "-fomit-frame-pointer" ]
     }
     ldflags = common_optimize_on_ldflags
+  } else if (is_wasm) {
+    # On WASM we don't want to fully deoptimize the debug build because the
+    # compiled binary will have some functions with too many local variables
+    # and Chrome will reject it.
+    cflags = [
+      "-O1",
+    ]
+    ldflags = common_optimize_on_ldflags
   } else {
     cflags = [ "-O0" ]
   }

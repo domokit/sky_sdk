@@ -149,12 +149,13 @@ class ComplexityCalculatorHelper
       const DlRect& dst,
       DlImageSampling sampling,
       bool render_with_attributes,
-      SrcRectConstraint constraint = SrcRectConstraint::kFast) override {
+      DlSrcRectConstraint constraint = DlSrcRectConstraint::kFast) override {
     if (IsComplex()) {
       return;
     }
     ImageRect(image->dimensions(), image->isTextureBacked(),
-              render_with_attributes, constraint == SrcRectConstraint::kStrict);
+              render_with_attributes,
+              constraint == DlSrcRectConstraint::kStrict);
   }
 
   void drawAtlas(const sk_sp<DlImage> atlas,

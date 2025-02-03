@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -85,20 +84,15 @@ void main() {
     expect(paragraph.getMaxIntrinsicHeight(double.infinity), 10);
   });
 
-  test(
-    'strutStyle affects intrinsics',
-    () {
-      final RenderParagraph paragraph = RenderParagraph(
-        const TextSpan(style: TextStyle(fontSize: 10), text: 'Hello World'),
-        textDirection: TextDirection.ltr,
-      );
+  test('strutStyle affects intrinsics', () {
+    final RenderParagraph paragraph = RenderParagraph(
+      const TextSpan(style: TextStyle(fontSize: 10), text: 'Hello World'),
+      textDirection: TextDirection.ltr,
+    );
 
-      expect(paragraph.getMaxIntrinsicHeight(double.infinity), 10);
+    expect(paragraph.getMaxIntrinsicHeight(double.infinity), 10);
 
-      paragraph.strutStyle = const StrutStyle(fontSize: 100, forceStrutHeight: true);
-      expect(paragraph.getMaxIntrinsicHeight(double.infinity), 100);
-    },
-    // [intended] strut support for HTML renderer https://github.com/flutter/flutter/issues/32243.
-    skip: kIsWeb && !isSkiaWeb,
-  );
+    paragraph.strutStyle = const StrutStyle(fontSize: 100, forceStrutHeight: true);
+    expect(paragraph.getMaxIntrinsicHeight(double.infinity), 100);
+  });
 }

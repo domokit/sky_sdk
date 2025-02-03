@@ -826,7 +826,7 @@ TEST_P(AiksTest, CanRenderClippedBackdropFilter) {
 
   // Draw a clipped SaveLayer, where the clip coverage and SaveLayer size are
   // the same.
-  builder.ClipRoundRect(clip_rrect, DlCanvas::ClipOp::kIntersect);
+  builder.ClipRoundRect(clip_rrect, DlClipOp::kIntersect);
 
   DlPaint save_paint;
   auto backdrop_filter = DlImageFilter::MakeColorFilter(
@@ -854,7 +854,7 @@ TEST_P(AiksTest, CanDrawPerspectiveTransformWithClips) {
         paint.setColor(DlColor::kGreen());
         builder.DrawPaint(paint);
         builder.ClipRect(DlRect::MakeLTRB(-180, -180, 180, 180),
-                         DlCanvas::ClipOp::kDifference);
+                         DlClipOp::kDifference);
 
         paint.setColor(DlColor::kBlack());
         builder.DrawPaint(paint);
@@ -1590,6 +1590,34 @@ TEST_P(AiksTest, NoDimplesInRRectPath) {
     return builder.Build();
   };
   ASSERT_TRUE(OpenPlaygroundHere(callback));
+}
+
+TEST_P(AiksTest, BackdropFilterOverUnclosedClip) {
+  DisplayListBuilder builder;
+
+  builder.DrawPaint(DlPaint().setColor(DlColor::kWhite()));
+  builder.Save();
+  {
+    builder.ClipRect(DlRect::MakeLTRB(100, 100, 800, 800));
+
+    builder.Save();
+    {
+      builder.ClipRect(DlRect::MakeLTRB(600, 600, 800, 800));
+      builder.DrawPaint(DlPaint().setColor(DlColor::kRed()));
+      builder.DrawPaint(DlPaint().setColor(DlColor::kBlue().withAlphaF(0.5)));
+      builder.ClipRect(DlRect::MakeLTRB(700, 700, 750, 800));
+      builder.DrawPaint(DlPaint().setColor(DlColor::kRed().withAlphaF(0.5)));
+    }
+    builder.Restore();
+
+    auto image_filter = DlImageFilter::MakeBlur(10, 10, DlTileMode::kDecal);
+    builder.SaveLayer(std::nullopt, nullptr, image_filter.get());
+  }
+  builder.Restore();
+  builder.DrawCircle(SkPoint{100, 100}, 100,
+                     DlPaint().setColor(DlColor::kAqua()));
+
+  ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
 
 }  // namespace testing

@@ -27,8 +27,7 @@ final class FakePubWithPrimedDeps implements Pub {
         'name': rootPackageName,
         'kind': 'root',
         'dependencies': <String>[...dependencies.keys, ...devDependencies]..sort(),
-        'directDependencies': <String>[...?dependencies[rootPackageName], ...devDependencies]
-          ..sort(),
+        'directDependencies': <String>[...?dependencies[rootPackageName]]..sort(),
         'devDependencies': <String>[...devDependencies],
       },
     ];

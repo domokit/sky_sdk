@@ -56,7 +56,7 @@ class DisplayListGLComplexityCalculator
                  DlScalar start_degrees,
                  DlScalar sweep_degrees,
                  bool use_center) override;
-    void drawPoints(DlCanvas::PointMode mode,
+    void drawPoints(DlPointMode mode,
                     uint32_t count,
                     const DlPoint points[]) override;
     void drawVertices(const std::shared_ptr<DlVertices>& vertices,

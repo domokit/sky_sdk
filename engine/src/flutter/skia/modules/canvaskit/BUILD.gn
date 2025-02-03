@@ -62,7 +62,7 @@ canvaskit_wasm_lib("canvaskit") {
   ldflags = []
   if (is_debug) {
     ldflags += [
-      "-O0",
+      "-O1",
       "-sASSERTIONS=1",
       "-sGL_ASSERTIONS=1",
       "-g3",
@@ -110,13 +110,13 @@ canvaskit_wasm_lib("canvaskit") {
     "--bind",
     "--no-entry",
     "--pre-js",
+    rebase_path("$_skia_root/modules/canvaskit/util.js"),
+    "--pre-js",
     rebase_path("$_skia_root/modules/canvaskit/preamble.js"),
     "--pre-js",
     rebase_path("$_skia_root/modules/canvaskit/color.js"),
     "--pre-js",
     rebase_path("$_skia_root/modules/canvaskit/memory.js"),
-    "--pre-js",
-    rebase_path("$_skia_root/modules/canvaskit/util.js"),
     "--pre-js",
     rebase_path("$_skia_root/modules/canvaskit/interface.js"),
   ]
@@ -164,7 +164,7 @@ canvaskit_wasm_lib("canvaskit") {
     "-sEXPORT_NAME=CanvasKitInit",
     "-sEXPORTED_FUNCTIONS=[_malloc,_free]",
     "-sEXPORTED_RUNTIME_METHODS=HEAP8,HEAPU8,HEAP16,HEAPU16,HEAP32,HEAPF32,HEAPU32,HEAPF64",
-    "-sINCOMING_MODULE_JS_API=onRuntimeInitialized",
+    "-sINCOMING_MODULE_JS_API=[instantiateWasm,onRuntimeInitialized,noExitRuntime]",
     "-sFORCE_FILESYSTEM=0",
     "-sFILESYSTEM=0",
     "-sMODULARIZE",

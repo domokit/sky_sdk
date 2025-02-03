@@ -32,7 +32,7 @@ std::shared_ptr<DlColorSource> CreateCheckerboardShader(SkColor c1,
 void DrawCheckerboard(DlCanvas* canvas, const SkRect& rect) {
   // Draw a checkerboard
   canvas->Save();
-  canvas->ClipRect(rect, DlCanvas::ClipOp::kIntersect, false);
+  canvas->ClipRect(rect, DlClipOp::kIntersect, false);
 
   // Secure random number generation isn't needed here.
   // NOLINTBEGIN(clang-analyzer-security.insecureAPI.rand)

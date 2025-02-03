@@ -10,6 +10,7 @@ import 'deferred_components_config.dart';
 const String _kDefaultHtml = '''
 <html>
     <head>
+        <meta charset='utf-8'>
         <title>Hello, World</title>
     </head>
     <body>

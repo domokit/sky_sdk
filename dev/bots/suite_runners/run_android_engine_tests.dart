@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:file/local.dart';
 import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
 import 'package:path/path.dart' as path;
@@ -32,28 +33,78 @@ import '../utils.dart';
 /// to determine flakiness in the *same* state, or want better debugging, see
 /// `dev/integration_tests/android_engine_test/README.md`.
 Future<void> runAndroidEngineTests({required ImpellerBackend impellerBackend}) async {
-  print('Running Flutter Driver Android tests...');
+  print('Running Flutter Driver Android tests (backend=$impellerBackend)');
 
   final String androidEngineTestPath = path.join('dev', 'integration_tests', 'android_engine_test');
   final List<FileSystemEntity> mains = Glob('$androidEngineTestPath/lib/**_main.dart').listSync();
-  for (final FileSystemEntity file in mains) {
-    await runCommand(
-      'flutter',
-      <String>[
-        'drive',
-        path.relative(file.path, from: androidEngineTestPath),
-        // There are no reason to enable development flags for this test.
-        // Disable them to work around flakiness issues, and in general just
-        // make less things start up unnecessarily.
-        '--no-dds',
-        '--no-enable-dart-profiling',
-        '--test-arguments=test',
-        '--test-arguments=--reporter=expanded',
-      ],
-      workingDirectory: androidEngineTestPath,
-      environment: <String, String>{'ANDROID_ENGINE_TEST_GOLDEN_VARIANT': impellerBackend.name},
+
+  final File androidManifestXml = const LocalFileSystem().file(
+    path.join(androidEngineTestPath, 'android', 'app', 'src', 'main', 'AndroidManifest.xml'),
+  );
+  final String androidManifestContents = androidManifestXml.readAsStringSync();
+
+  try {
+    // Replace whatever the current backend is with the specified backend.
+    final RegExp impellerBackendMetadata = RegExp(_impellerBackendMetadata(value: '.*'));
+    androidManifestXml.writeAsStringSync(
+      androidManifestContents.replaceFirst(
+        impellerBackendMetadata,
+        _impellerBackendMetadata(value: impellerBackend.name),
+      ),
     );
+
+    // Stdout will produce: "Using the Impeller rendering backend (.*)"
+    // TODO(matanlurey): Enable once `flutter drive` retains error logs.
+    // final RegExp impellerStdoutPattern = RegExp('Using the Imepller rendering backend (.*)');
+
+    for (final FileSystemEntity file in mains) {
+      final CommandResult result = await runCommand(
+        'flutter',
+        <String>[
+          'drive',
+          path.relative(file.path, from: androidEngineTestPath),
+          // There are no reason to enable development flags for this test.
+          // Disable them to work around flakiness issues, and in general just
+          // make less things start up unnecessarily.
+          '--no-dds',
+          '--no-enable-dart-profiling',
+          '--test-arguments=test',
+          '--test-arguments=--reporter=expanded',
+        ],
+        workingDirectory: androidEngineTestPath,
+        environment: <String, String>{'ANDROID_ENGINE_TEST_GOLDEN_VARIANT': impellerBackend.name},
+      );
+      final String? stdout = result.flattenedStdout;
+      if (stdout == null) {
+        foundError(<String>['No stdout produced.']);
+        continue;
+      }
+
+      // TODO(matanlurey): Enable once `flutter drive` retains error logs.
+      // https://github.com/flutter/flutter/issues/162087.
+      //
+      // final Match? stdoutMatch = impellerStdoutPattern.firstMatch(stdout);
+      // if (stdoutMatch == null) {
+      //   foundError(<String>['Could not find pattern ${impellerStdoutPattern.pattern}.', stdout]);
+      //   continue;
+      // }
+
+      // final String reportedBackend = stdoutMatch.group(1)!.toLowerCase();
+      // if (reportedBackend != impellerBackend.name) {
+      //   foundError(<String>[
+      //     'Reported Imepller backend was $reportedBackend, expected ${impellerBackend.name}',
+      //   ]);
+      //   continue;
+      // }
+    }
+  } finally {
+    // Restore original contents.
+    androidManifestXml.writeAsStringSync(androidManifestContents);
   }
+}
+
+String _impellerBackendMetadata({required String value}) {
+  return '<meta-data android:name="io.flutter.embedding.android.ImpellerBackend" android:value="$value" />';
 }
 
 enum ImpellerBackend { vulkan, opengles }

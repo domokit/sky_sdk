@@ -274,14 +274,14 @@ constexpr FillType ToImpellerType(ImpellerFillType type) {
   return FillType::kNonZero;
 }
 
-constexpr flutter::DlCanvas::ClipOp ToImpellerType(ImpellerClipOperation op) {
+constexpr flutter::DlClipOp ToImpellerType(ImpellerClipOperation op) {
   switch (op) {
     case kImpellerClipOperationDifference:
-      return flutter::DlCanvas::ClipOp::kDifference;
+      return flutter::DlClipOp::kDifference;
     case kImpellerClipOperationIntersect:
-      return flutter::DlCanvas::ClipOp::kIntersect;
+      return flutter::DlClipOp::kIntersect;
   }
-  return flutter::DlCanvas::ClipOp::kDifference;
+  return flutter::DlClipOp::kDifference;
 }
 
 constexpr Color ToImpellerType(const ImpellerColor& color) {

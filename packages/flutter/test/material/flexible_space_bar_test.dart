@@ -7,7 +7,6 @@
 @Tags(<String>['reduced-test-set'])
 library;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -490,7 +489,7 @@ void main() {
     expect(semantics, hasSemantics(expectedSemantics, ignoreTransform: true));
 
     semantics.dispose();
-  }, skip: kIsWeb && !isCanvasKit); // https://github.com/flutter/flutter/issues/99933
+  });
 
   testWidgets('Material2 - Collapsed FlexibleSpaceBar has correct semantics', (
     WidgetTester tester,

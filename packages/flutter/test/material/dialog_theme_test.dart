@@ -428,10 +428,7 @@ void main() {
       find.descendant(of: find.byType(Dialog), matching: find.byType(Material)),
     );
     expect(bottomLeft.dx, 480.0);
-    if (!kIsWeb || isSkiaWeb) {
-      // https://github.com/flutter/flutter/issues/99933
-      expect(bottomLeft.dy, 124.0);
-    }
+    expect(bottomLeft.dy, 124.0);
   });
 
   testWidgets('Material2 - Dialog alignment takes priority over theme', (

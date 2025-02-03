@@ -74,7 +74,8 @@ bool AndroidSurfaceGLImpeller::ResourceContextClearCurrent() {
 
 // |AndroidSurface|
 bool AndroidSurfaceGLImpeller::SetNativeWindow(
-    fml::RefPtr<AndroidNativeWindow> window) {
+    fml::RefPtr<AndroidNativeWindow> window,
+    const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade) {
   native_window_ = std::move(window);
   return RecreateOnscreenSurfaceAndMakeOnscreenContextCurrent();
 }

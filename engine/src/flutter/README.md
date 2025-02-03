@@ -16,7 +16,7 @@ Framework](https://github.com/flutter/flutter), which provides a modern,
 reactive framework, and a rich set of platform, layout and foundation widgets.
 
 If you want to run/contribute to Flutter Web engine, more tooling can be
-found at [felt](https://github.com/flutter/engine/tree/main/lib/web_ui#using-felt).
+found at [felt](lib/web_ui/README.md#using-felt).
 This is a tool written to make web engine development experience easy.
 
 If you are new to Flutter, then you will find more general information

@@ -205,18 +205,18 @@ extern std::ostream& operator<<(std::ostream& os, const DlPath& path) {
             << ")";
 }
 
-std::ostream& operator<<(std::ostream& os, const DlCanvas::ClipOp& op) {
+std::ostream& operator<<(std::ostream& os, const flutter::DlClipOp& op) {
   switch (op) {
-    case DlCanvas::ClipOp::kDifference: return os << "ClipOp::kDifference";
-    case DlCanvas::ClipOp::kIntersect:  return os << "ClipOp::kIntersect";
+    case flutter::DlClipOp::kDifference: return os << "ClipOp::kDifference";
+    case flutter::DlClipOp::kIntersect:  return os << "ClipOp::kIntersect";
   }
 }
 
-std::ostream& operator<<(std::ostream& os, const DlCanvas::SrcRectConstraint& constraint) {
+std::ostream& operator<<(std::ostream& os, const flutter::DlSrcRectConstraint& constraint) {
   switch (constraint) {
-    case DlCanvas::SrcRectConstraint::kFast:
+    case flutter::DlSrcRectConstraint::kFast:
       return os << "SrcRectConstraint::kFast";
-    case DlCanvas::SrcRectConstraint::kStrict:
+    case flutter::DlSrcRectConstraint::kStrict:
       return os << "SrcRectConstraint::kStrict";
   }
 }
@@ -254,11 +254,11 @@ std::ostream& operator<<(std::ostream& os, const DlBlurStyle& style) {
   }
 }
 
-std::ostream& operator<<(std::ostream& os, const DlCanvas::PointMode& mode) {
+std::ostream& operator<<(std::ostream& os, const flutter::DlPointMode& mode) {
   switch (mode) {
-    case DlCanvas::PointMode::kPoints:  return os << "PointMode::kPoints";
-    case DlCanvas::PointMode::kLines:   return os << "PointMode::kLines";
-    case DlCanvas::PointMode::kPolygon: return os << "PointMode::kPolygon";
+    case flutter::DlPointMode::kPoints:  return os << "PointMode::kPoints";
+    case flutter::DlPointMode::kLines:   return os << "PointMode::kLines";
+    case flutter::DlPointMode::kPolygon: return os << "PointMode::kPolygon";
   }
 }
 
@@ -759,7 +759,7 @@ void DisplayListStreamDispatcher::transformReset() {
   startl() << "transformReset();" << std::endl;
 }
 
-void DisplayListStreamDispatcher::clipRect(const DlRect& rect, ClipOp clip_op,
+void DisplayListStreamDispatcher::clipRect(const DlRect& rect, DlClipOp clip_op,
                                            bool is_aa) {
   startl() << "clipRect("
            << rect << ", "
@@ -767,7 +767,7 @@ void DisplayListStreamDispatcher::clipRect(const DlRect& rect, ClipOp clip_op,
            << "isaa: " << is_aa
            << ");" << std::endl;
 }
-void DisplayListStreamDispatcher::clipOval(const DlRect& bounds, ClipOp clip_op,
+void DisplayListStreamDispatcher::clipOval(const DlRect& bounds, DlClipOp clip_op,
                                            bool is_aa) {
   startl() << "clipOval("
            << bounds << ", "
@@ -776,7 +776,7 @@ void DisplayListStreamDispatcher::clipOval(const DlRect& bounds, ClipOp clip_op,
            << ");" << std::endl;
 }
 void DisplayListStreamDispatcher::clipRoundRect(const DlRoundRect& rrect,
-                                                ClipOp clip_op,
+                                                DlClipOp clip_op,
                                                 bool is_aa) {
   startl() << "clipRRect("
            << rrect << ", "
@@ -784,7 +784,7 @@ void DisplayListStreamDispatcher::clipRoundRect(const DlRoundRect& rrect,
            << "isaa: " << is_aa
            << ");" << std::endl;
 }
-void DisplayListStreamDispatcher::clipPath(const DlPath& path, ClipOp clip_op,
+void DisplayListStreamDispatcher::clipPath(const DlPath& path, DlClipOp clip_op,
                                            bool is_aa) {
   startl() << "clipPath("
            << path << ", "
@@ -849,7 +849,7 @@ void DisplayListStreamDispatcher::drawArc(const DlRect& oval_bounds,
            << "use_center: " << use_center
            << ");" << std::endl;
 }
-void DisplayListStreamDispatcher::drawPoints(PointMode mode,
+void DisplayListStreamDispatcher::drawPoints(DlPointMode mode,
                                              uint32_t count,
                                              const DlPoint points[]) {
   startl() << "drawPoints(" << mode << ", ";
@@ -882,7 +882,7 @@ void DisplayListStreamDispatcher::drawImageRect(const sk_sp<DlImage> image,
                                                 const DlRect& dst,
                                                 DlImageSampling sampling,
                                                 bool render_with_attributes,
-                                                SrcRectConstraint constraint) {
+                                                DlSrcRectConstraint constraint) {
   startl() << "drawImageRect(" << image.get() << "," << std::endl;
   startl() << "              src: " << src << "," << std::endl;
   startl() << "              dst: " << dst << "," << std::endl;

@@ -9,7 +9,6 @@ library;
 
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -929,7 +928,7 @@ void main() {
 
     // The width of the SegmentedButton must be less than the width of the parent widget.
     expect(segmentedButtonWidth, lessThan(screenWidth));
-  }, skip: kIsWeb && !isCanvasKit); // https://github.com/flutter/flutter/issues/145527
+  });
 
   testWidgets('SegmentedButton.styleFrom overlayColor overrides default overlay color', (
     WidgetTester tester,
@@ -1120,7 +1119,7 @@ void main() {
         p2: const Offset(166.8000030517578, tapTargetSize - 4.0),
       ),
     );
-  }, skip: kIsWeb && !isSkiaWeb); // https://github.com/flutter/flutter/issues/99933
+  });
 
   testWidgets('SegmentedButton vertical aligned children', (WidgetTester tester) async {
     await tester.pumpWidget(

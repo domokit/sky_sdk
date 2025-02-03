@@ -1528,9 +1528,9 @@ dev_dependencies:
   // Tests whether using a deprecated webRenderer toggles a warningText.
   Future<void> testWebRendererDeprecationMessage(WebRendererMode webRenderer) async {
     testUsingContext(
-      'Using --web-renderer=${webRenderer.name} triggers a warningText.',
+      'Using the "${webRenderer.name}" renderer triggers a warningText.',
       () async {
-        // Run the command so it parses --web-renderer, but ignore all errors.
+        // Run the command so it parses the renderer, but ignore all errors.
         // We only care about the logger.
         try {
           final FakeFlutterTestRunner testRunner = FakeFlutterTestRunner(0);

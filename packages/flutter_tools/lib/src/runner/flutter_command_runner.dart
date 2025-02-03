@@ -440,7 +440,6 @@ class FlutterCommandRunner extends CommandRunner<void> {
         }
 
         if ((topLevelResults[FlutterGlobalOptions.kSuppressAnalyticsFlag] as bool?) ?? false) {
-          globals.flutterUsage.suppressAnalytics = true;
           globals.analytics.suppressTelemetry();
         }
 
@@ -459,7 +458,6 @@ class FlutterCommandRunner extends CommandRunner<void> {
         }
 
         if ((topLevelResults[FlutterGlobalOptions.kVersionFlag] as bool?) ?? false) {
-          globals.flutterUsage.sendCommand(FlutterGlobalOptions.kVersionFlag);
           globals.analytics.send(
             Event.flutterCommandResult(
               commandPath: 'version',

@@ -46,12 +46,11 @@ extern std::ostream& operator<<(std::ostream& os,
                                 const flutter::DlPaint& paint);
 extern std::ostream& operator<<(std::ostream& os,
                                 const flutter::DlBlendMode& mode);
+extern std::ostream& operator<<(std::ostream& os, const flutter::DlClipOp& op);
 extern std::ostream& operator<<(std::ostream& os,
-                                const flutter::DlCanvas::ClipOp& op);
+                                const flutter::DlPointMode& op);
 extern std::ostream& operator<<(std::ostream& os,
-                                const flutter::DlCanvas::PointMode& op);
-extern std::ostream& operator<<(std::ostream& os,
-                                const flutter::DlCanvas::SrcRectConstraint& op);
+                                const flutter::DlSrcRectConstraint& op);
 extern std::ostream& operator<<(std::ostream& os,
                                 const flutter::DlStrokeCap& cap);
 extern std::ostream& operator<<(std::ostream& os,
@@ -131,12 +130,12 @@ class DisplayListStreamDispatcher final : public DlOpReceiver {
   // clang-format on
   void transformReset() override;
 
-  void clipRect(const DlRect& rect, ClipOp clip_op, bool is_aa) override;
-  void clipOval(const DlRect& bounds, ClipOp clip_op, bool is_aa) override;
+  void clipRect(const DlRect& rect, DlClipOp clip_op, bool is_aa) override;
+  void clipOval(const DlRect& bounds, DlClipOp clip_op, bool is_aa) override;
   void clipRoundRect(const DlRoundRect& rrect,
-                     ClipOp clip_op,
+                     DlClipOp clip_op,
                      bool is_aa) override;
-  void clipPath(const DlPath& path, ClipOp clip_op, bool is_aa) override;
+  void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override;
 
   void drawColor(DlColor color, DlBlendMode mode) override;
   void drawPaint() override;
@@ -156,7 +155,7 @@ class DisplayListStreamDispatcher final : public DlOpReceiver {
                DlScalar start_degrees,
                DlScalar sweep_degrees,
                bool use_center) override;
-  void drawPoints(PointMode mode,
+  void drawPoints(DlPointMode mode,
                   uint32_t count,
                   const DlPoint points[]) override;
   void drawVertices(const std::shared_ptr<DlVertices>& vertices,
@@ -170,7 +169,7 @@ class DisplayListStreamDispatcher final : public DlOpReceiver {
                      const DlRect& dst,
                      DlImageSampling sampling,
                      bool render_with_attributes,
-                     SrcRectConstraint constraint) override;
+                     DlSrcRectConstraint constraint) override;
   void drawImageNine(const sk_sp<DlImage> image,
                      const DlIRect& center,
                      const DlRect& dst,
@@ -351,50 +350,44 @@ class DisplayListGeneralReceiver : public DlOpReceiver {
     RecordByType(DisplayListOpType::kTransformReset);
   }
 
-  void clipRect(const DlRect& rect,
-                DlCanvas::ClipOp clip_op,
-                bool is_aa) override {
+  void clipRect(const DlRect& rect, DlClipOp clip_op, bool is_aa) override {
     switch (clip_op) {
-      case DlCanvas::ClipOp::kIntersect:
+      case DlClipOp::kIntersect:
         RecordByType(DisplayListOpType::kClipIntersectRect);
         break;
-      case DlCanvas::ClipOp::kDifference:
+      case DlClipOp::kDifference:
         RecordByType(DisplayListOpType::kClipDifferenceRect);
         break;
     }
   }
-  void clipOval(const DlRect& bounds,
-                DlCanvas::ClipOp clip_op,
-                bool is_aa) override {
+  void clipOval(const DlRect& bounds, DlClipOp clip_op, bool is_aa) override {
     switch (clip_op) {
-      case DlCanvas::ClipOp::kIntersect:
+      case DlClipOp::kIntersect:
         RecordByType(DisplayListOpType::kClipIntersectOval);
         break;
-      case DlCanvas::ClipOp::kDifference:
+      case DlClipOp::kDifference:
         RecordByType(DisplayListOpType::kClipDifferenceOval);
         break;
     }
   }
   void clipRoundRect(const DlRoundRect& rrect,
-                     DlCanvas::ClipOp clip_op,
+                     DlClipOp clip_op,
                      bool is_aa) override {
     switch (clip_op) {
-      case DlCanvas::ClipOp::kIntersect:
+      case DlClipOp::kIntersect:
         RecordByType(DisplayListOpType::kClipIntersectRoundRect);
         break;
-      case DlCanvas::ClipOp::kDifference:
+      case DlClipOp::kDifference:
         RecordByType(DisplayListOpType::kClipDifferenceRoundRect);
         break;
     }
   }
-  void clipPath(const DlPath& path,
-                DlCanvas::ClipOp clip_op,
-                bool is_aa) override {
+  void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override {
     switch (clip_op) {
-      case DlCanvas::ClipOp::kIntersect:
+      case DlClipOp::kIntersect:
         RecordByType(DisplayListOpType::kClipIntersectPath);
         break;
-      case DlCanvas::ClipOp::kDifference:
+      case DlClipOp::kDifference:
         RecordByType(DisplayListOpType::kClipDifferencePath);
         break;
     }
@@ -451,17 +444,17 @@ class DisplayListGeneralReceiver : public DlOpReceiver {
                bool use_center) override {
     RecordByType(DisplayListOpType::kDrawArc);
   }
-  void drawPoints(DlCanvas::PointMode mode,
+  void drawPoints(DlPointMode mode,
                   uint32_t count,
                   const DlPoint points[]) override {
     switch (mode) {
-      case DlCanvas::PointMode::kPoints:
+      case DlPointMode::kPoints:
         RecordByType(DisplayListOpType::kDrawPoints);
         break;
-      case DlCanvas::PointMode::kLines:
+      case DlPointMode::kLines:
         RecordByType(DisplayListOpType::kDrawLines);
         break;
-      case DlCanvas::PointMode::kPolygon:
+      case DlPointMode::kPolygon:
         RecordByType(DisplayListOpType::kDrawPolygon);
         break;
     }
@@ -485,7 +478,7 @@ class DisplayListGeneralReceiver : public DlOpReceiver {
                      const DlRect& dst,
                      DlImageSampling sampling,
                      bool render_with_attributes,
-                     SrcRectConstraint constraint) override {
+                     DlSrcRectConstraint constraint) override {
     RecordByType(DisplayListOpType::kDrawImageRect);
   }
   void drawImageNine(const sk_sp<DlImage> image,

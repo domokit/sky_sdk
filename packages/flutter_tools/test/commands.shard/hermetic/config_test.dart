@@ -228,71 +228,38 @@ void main() {
     );
 
     testUsingContext(
-      'no-analytics flag flips usage flag and sends event',
+      'analytics flag enables/disables analytics',
       () async {
         final ConfigCommand configCommand = ConfigCommand();
         final CommandRunner<void> commandRunner = createTestCommandRunner(configCommand);
 
-        expect(testUsage.enabled, true);
+        expect(fakeAnalytics.telemetryEnabled, true);
+
         await commandRunner.run(<String>['config', '--no-analytics']);
-
-        expect(testUsage.enabled, false);
-
-        // Verify that we flushed the analytics queue.
-        expect(testUsage.ensureAnalyticsSentCalls, 1);
-
-        // Verify that we only send the analytics disable event, and no other
-        // info.
-        expect(
-          testUsage.events,
-          equals(<TestUsageEvent>[const TestUsageEvent('analytics', 'enabled', label: 'false')]),
-        );
-        expect(testUsage.commands, isEmpty);
-        expect(testUsage.timings, isEmpty);
-        expect(fakeAnalytics.sentEvents, isEmpty);
-      },
-      overrides: <Type, Generator>{Usage: () => testUsage},
-    );
-
-    testUsingContext(
-      'analytics flag flips usage flag and sends event',
-      () async {
-        final ConfigCommand configCommand = ConfigCommand();
-        final CommandRunner<void> commandRunner = createTestCommandRunner(configCommand);
+        expect(fakeAnalytics.telemetryEnabled, false);
 
         await commandRunner.run(<String>['config', '--analytics']);
-
-        expect(testUsage.enabled, true);
-
-        // Verify that we only send the analytics enable event, and no other
-        // info.
-        expect(
-          testUsage.events,
-          equals(<TestUsageEvent>[const TestUsageEvent('analytics', 'enabled', label: 'true')]),
-        );
-        expect(testUsage.commands, isEmpty);
-        expect(testUsage.timings, isEmpty);
-        expect(fakeAnalytics.sentEvents, isEmpty);
+        expect(fakeAnalytics.telemetryEnabled, true);
       },
-      overrides: <Type, Generator>{Usage: () => testUsage},
+      overrides: <Type, Generator>{Analytics: () => fakeAnalytics},
     );
 
     testUsingContext('analytics reported with help usages', () async {
       final ConfigCommand configCommand = ConfigCommand();
       createTestCommandRunner(configCommand);
 
-      testUsage.suppressAnalytics = true;
+      await fakeAnalytics.setTelemetry(false);
       expect(
         configCommand.usage,
         containsIgnoringWhitespace('Analytics reporting is currently disabled'),
       );
 
-      testUsage.suppressAnalytics = false;
+      await fakeAnalytics.setTelemetry(true);
       expect(
         configCommand.usage,
         containsIgnoringWhitespace('Analytics reporting is currently enabled'),
       );
-    }, overrides: <Type, Generator>{Usage: () => testUsage});
+    }, overrides: <Type, Generator>{Analytics: () => fakeAnalytics});
   });
 }
 
