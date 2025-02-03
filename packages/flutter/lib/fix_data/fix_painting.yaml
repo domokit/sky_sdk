@@ -137,7 +137,7 @@ transforms:
       - kind: 'rename'
         newName: 'a'
 
-  - title: "Rename from 'red' to 'r'"
+  - title: "Replace 'red' with 'r'"
     date: 2024-09-10
     element:
       uris: [ 'painting.dart' ]
@@ -145,9 +145,9 @@ transforms:
       inClass: 'Color'
     changes:
       - kind: 'rename'
-        newName: 'r'
+        newName: 'r * 255.0).round() & 0xff'
 
-  - title: "Rename from 'green' to 'g'"
+  - title: "Replace 'green' with 'g'"
     date: 2024-09-10
     element:
       uris: [ 'painting.dart' ]
@@ -155,9 +155,9 @@ transforms:
       inClass: 'Color'
     changes:
       - kind: 'rename'
-        newName: 'g'
+        newName: 'g * 255.0).round() & 0xff'
 
-  - title: "Rename from 'blue' to 'b'"
+  - title: "Replace 'blue' with 'b'"
     date: 2024-09-10
     element:
       uris: [ 'painting.dart' ]
@@ -165,7 +165,7 @@ transforms:
       inClass: 'Color'
     changes:
       - kind: 'rename'
-        newName: 'b'
+        newName: 'b * 255.0).round() & 0xff'
 
   - title: "Replace 'value' with 'toARGB32()'"
     date: 2025-02-03

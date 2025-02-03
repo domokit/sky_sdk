@@ -23,8 +23,8 @@ void main() {
   print(color.a);
   print(color.toARGB32());
   print(color.a);
-  print(color.r);
-  print(color.b);
-  print(color.g);
+  print(color.r * 255.0).round() & 0xff);
+  print(color.b * 255.0).round() & 0xff);
+  print(color.g * 255.0).round() & 0xff);
   color = color.withValues(alpha: 0.55);
 }
