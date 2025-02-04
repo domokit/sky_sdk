@@ -420,6 +420,7 @@ class EditableTextTapOutsideIntent extends Intent {
 /// A common requirement is to unfocus text fields when the user taps outside of
 /// it. For UX reasons, it's often desirable to only unfocus when the user taps
 /// outside of the text field, but not when they scroll.
+///
 /// To achieve this, you can override the default behavior of
 /// [EditableTextTapOutsideIntent] and [EditableTextTapUpOutsideIntent] to check
 /// the difference in distance between the pointer down and pointer up events
