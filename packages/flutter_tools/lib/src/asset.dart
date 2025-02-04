@@ -350,6 +350,12 @@ class ManifestAssetBundle implements AssetBundle {
       final Package? package = packageConfig[packageName];
       if (package == null) {
         // This can happen with eg. `flutter run --no-pub`.
+        //
+        // We usually expect the package config to be up to date with the
+        // current pubspec.yaml - but because we can force pub get to not be run
+        // with `flutter run --no-pub` we can end up with a new dependency in
+        // pubspec.yaml that is not yet discovered by pub and placed in the
+        // package config.
         throwToolExit('Could not locate package:$packageName. Try running `flutter pub get`.');
       }
       final Dependency dependency = transitiveDependencies[packageName]!;
