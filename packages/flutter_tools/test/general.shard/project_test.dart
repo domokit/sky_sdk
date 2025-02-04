@@ -28,6 +28,7 @@ import 'package:test/fake.dart';
 import '../src/common.dart';
 import '../src/context.dart';
 import '../src/fakes.dart';
+import '../src/package_config.dart';
 import '../src/throwing_pub.dart';
 
 void main() {
@@ -1705,30 +1706,12 @@ plugins {
   });
 }
 
-void writePackageConfigFile(Directory directory, String mainLibName) {
-  directory.childDirectory('.dart_tool').childFile('package_config.json')
-    ..createSync(recursive: true)
-    ..writeAsStringSync('''
-{
-  "configVersion" : 2,
-  "packages": [
-    {
-      "name": "$mainLibName",
-      "rootUri": "../",
-      "packageUri": "lib/",
-      "languageVersion": "3.7"
-    }
-  ]
-}
-''');
-}
-
 Future<FlutterProject> someProject({
   String? androidManifestOverride,
   bool includePubspec = true,
 }) async {
   final Directory directory = globals.fs.directory('some_project');
-  writePackageConfigFile(directory, 'hello');
+  writePackageConfigFile(mainLibName: 'hello');
   if (includePubspec) {
     directory.childFile('pubspec.yaml')
       ..createSync(recursive: true)
@@ -1783,7 +1766,7 @@ flutter:
 
 Future<FlutterProject> aModuleProject() async {
   final Directory directory = globals.fs.directory('module_project');
-  writePackageConfigFile(directory, 'my_module');
+  writePackageConfigFile(mainLibName: 'my_module', directory: directory);
   directory.childFile('pubspec.yaml').writeAsStringSync('''
 name: my_module
 flutter:
@@ -1834,27 +1817,16 @@ void _testInMemory(
     testFileSystem,
   );
   // Set up enough of the packages to satisfy the templating code.
-  final File packagesFile = testFileSystem
-      .directory(Cache.flutterRoot)
-      .childDirectory('packages')
-      .childDirectory('flutter_tools')
-      .childDirectory('.dart_tool')
-      .childFile('package_config.json');
   final Directory dummyTemplateImagesDirectory = testFileSystem.directory(Cache.flutterRoot).parent;
   dummyTemplateImagesDirectory.createSync(recursive: true);
-  packagesFile.createSync(recursive: true);
-  packagesFile.writeAsStringSync(
-    json.encode(<String, Object>{
-      'configVersion': 2,
-      'packages': <Object>[
-        <String, Object>{
-          'name': 'flutter_template_images',
-          'rootUri': dummyTemplateImagesDirectory.uri.toString(),
-          'packageUri': 'lib/',
-          'languageVersion': '2.6',
-        },
-      ],
-    }),
+  writePackageConfigFile(
+    directory: testFileSystem
+        .directory(Cache.flutterRoot)
+        .childDirectory('packages')
+        .childDirectory('flutter_tools'),
+    packages: <String, String>{
+      'flutter_template_images': dummyTemplateImagesDirectory.uri.toString(),
+    },
   );
 
   testUsingContext(

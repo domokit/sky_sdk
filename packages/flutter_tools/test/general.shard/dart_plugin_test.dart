@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/dart/package_map.dart';
@@ -22,6 +20,7 @@ import 'package:yaml/yaml.dart';
 import '../src/common.dart';
 import '../src/context.dart';
 import '../src/fakes.dart';
+import '../src/package_config.dart';
 import '../src/throwing_pub.dart';
 
 void main() {
@@ -47,10 +46,7 @@ void main() {
             ..flutterPluginsFile = directory.childFile('.flutter-plugins')
             ..flutterPluginsDependenciesFile = directory.childFile('.flutter-plugins-dependencies')
             ..dartPluginRegistrant = directory.childFile('dart_plugin_registrant.dart');
-      flutterProject.directory
-          .childDirectory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: flutterProject.directory);
     });
 
     group('resolvePlatformImplementation', () {
@@ -1455,23 +1451,6 @@ void main() {
   });
 }
 
-void addToPackageConfig(FlutterProject project, String name, Directory packageDir) {
-  final File packageConfigFile = project.directory
-      .childDirectory('.dart_tool')
-      .childFile('package_config.json');
-
-  final Map<String, Object?> packageConfig =
-      jsonDecode(packageConfigFile.readAsStringSync()) as Map<String, Object?>;
-
-  (packageConfig['packages']! as List<Object?>).add(<String, Object?>{
-    'name': name,
-    'rootUri': packageDir.uri.toString(),
-    'packageUri': 'lib/',
-  });
-
-  packageConfigFile.writeAsStringSync(jsonEncode(packageConfig));
-}
-
 void createFakeDartPlugins(
   FakeFlutterProject flutterProject,
   FakeFlutterManifest flutterManifest,
@@ -1479,21 +1458,18 @@ void createFakeDartPlugins(
   Map<String, String> plugins,
 ) {
   final Directory fakePubCache = fs.systemTempDirectory.childDirectory('cache');
+  writePackageConfigFile(
+    directory: flutterProject.directory,
+    mainLibName: flutterProject.manifest.appName,
+    packages: <String, String>{
+      for (final String name in plugins.keys)
+        name: fakePubCache.childDirectory(name).uri.toString(),
+    },
+  );
 
-  flutterProject.directory.childDirectory('.dart_tool').childFile('package_config.json')
-    ..deleteSync(recursive: true)
-    ..createSync(recursive: true)
-    ..writeAsStringSync('''
-{
-  "packages": [],
-  "configVersion": 2
-}
-''');
-  addToPackageConfig(flutterProject, flutterProject.manifest.appName, flutterProject.directory);
   for (final MapEntry<String, String> entry in plugins.entries) {
     final String name = fs.path.basename(entry.key);
     final Directory pluginDirectory = fakePubCache.childDirectory(name);
-    addToPackageConfig(flutterProject, name, pluginDirectory);
     pluginDirectory.childFile('pubspec.yaml')
       ..createSync(recursive: true)
       ..writeAsStringSync(entry.value);

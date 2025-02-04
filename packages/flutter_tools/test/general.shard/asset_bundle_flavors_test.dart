@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/asset.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
@@ -14,6 +12,7 @@ import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/project.dart';
 
 import '../src/common.dart';
+import '../src/package_config.dart';
 
 void main() {
   Future<ManifestAssetBundle> buildBundleWithFlavor(
@@ -52,19 +51,7 @@ void main() {
       final BufferLogger logger = BufferLogger.test();
       final FakePlatform platform = FakePlatform();
 
-      final File packageConfig = fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json');
-
-      packageConfig.createSync(recursive: true);
-      packageConfig.writeAsStringSync(
-        json.encode(<String, dynamic>{
-          'packages': <dynamic>[
-            <String, dynamic>{'name': 'example', 'rootUri': '../', 'packageUri': 'lib/'},
-          ],
-          'configVersion': 2,
-        }),
-      );
+      writePackageConfigFile(directory: fileSystem.currentDirectory, mainLibName: 'example');
 
       fileSystem
           .file(fileSystem.path.join('assets', 'common', 'image.png'))
@@ -141,10 +128,8 @@ flutter:
       );
       final BufferLogger logger = BufferLogger.test();
       final FakePlatform platform = FakePlatform();
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: fileSystem.currentDirectory, mainLibName: 'example');
+
       fileSystem.file(fileSystem.path.join('assets', 'unflavored.png')).createSync(recursive: true);
       fileSystem
           .file(fileSystem.path.join('assets', 'vanillaOrange.png'))
@@ -186,10 +171,7 @@ flutter:
       );
       final BufferLogger logger = BufferLogger.test();
       final FakePlatform platform = FakePlatform();
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: fileSystem.currentDirectory, mainLibName: 'example');
       fileSystem.file(fileSystem.path.join('vanilla', 'vanilla.png')).createSync(recursive: true);
       fileSystem
           .file(fileSystem.path.join('vanilla', 'flavorless.png'))
@@ -229,10 +211,7 @@ flutter:
       );
       final BufferLogger logger = BufferLogger.test();
       final FakePlatform platform = FakePlatform();
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: fileSystem.currentDirectory, mainLibName: 'example');
       fileSystem.file('orange.png').createSync(recursive: true);
       fileSystem.file('pubspec.yaml')
         ..createSync()
@@ -270,10 +249,7 @@ flutter:
       );
       final BufferLogger logger = BufferLogger.test();
       final FakePlatform platform = FakePlatform();
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: fileSystem.currentDirectory, mainLibName: 'example');
       fileSystem
           .file(fileSystem.path.join('vanilla', 'actually-strawberry.png'))
           .createSync(recursive: true);

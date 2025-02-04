@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
@@ -37,40 +36,9 @@ import '../../src/context.dart';
 import '../../src/fake_devices.dart';
 import '../../src/fake_vm_services.dart';
 import '../../src/logging_logger.dart';
+import '../../src/package_config.dart';
 import '../../src/test_flutter_command_runner.dart';
 
-final String _flutterToolsPackageConfigContents = json.encode(<String, Object>{
-  'configVersion': 2,
-  'packages': <Map<String, Object>>[
-    <String, String>{
-      'name': 'ffi',
-      'rootUri': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dev/ffi-2.1.2',
-      'packageUri': 'lib/',
-      'languageVersion': '3.3',
-    },
-    <String, String>{
-      'name': 'test',
-      'rootUri': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dev/test-1.24.9',
-      'packageUri': 'lib/',
-      'languageVersion': '3.0',
-    },
-    <String, String>{
-      'name': 'test_api',
-      'rootUri': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dev/test_api-0.6.1',
-      'packageUri': 'lib/',
-      'languageVersion': '3.0',
-    },
-    <String, String>{
-      'name': 'test_core',
-      'rootUri': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dev/test_core-0.5.9',
-      'packageUri': 'lib/',
-      'languageVersion': '3.0',
-    },
-  ],
-  'generated': '2021-02-24T07:55:20.084834Z',
-  'generator': 'pub',
-  'generatorVersion': '2.13.0-68.0.dev',
-});
 const String _pubspecContents = '''
 name: my_app
 dev_dependencies:
@@ -78,32 +46,6 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter''';
-final String _packageConfigContents = json.encode(<String, Object>{
-  'configVersion': 2,
-  'packages': <Map<String, Object>>[
-    <String, String>{
-      'name': 'my_app',
-      'rootUri': '../',
-      'packageUri': 'lib/',
-      'languageVersion': '2.12',
-    },
-    <String, String>{
-      'name': 'test_api',
-      'rootUri': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dartlang.org/test_api-0.2.19',
-      'packageUri': 'lib/',
-      'languageVersion': '2.12',
-    },
-    <String, String>{
-      'name': 'integration_test',
-      'rootUri': 'file:///path/to/flutter/packages/integration_test',
-      'packageUri': 'lib/',
-      'languageVersion': '2.12',
-    },
-  ],
-  'generated': '2021-02-24T07:55:20.084834Z',
-  'generator': 'pub',
-  'generatorVersion': '2.13.0-68.0.dev',
-});
 
 void main() {
   Cache.disableLocking();
@@ -118,20 +60,28 @@ void main() {
     final Directory package = fs.directory('package');
     package.childFile('pubspec.yaml').createSync(recursive: true);
     package.childFile('pubspec.yaml').writeAsStringSync(_pubspecContents);
-    (package.childDirectory('.dart_tool').childFile('package_config.json')
-      ..createSync(recursive: true)).writeAsStringSync(_packageConfigContents);
+    writePackageConfigFile(
+      directory: package,
+      packages: <String, String>{
+        'test_api': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dartlang.org/test_api-0.2.19',
+        'integration_test': 'file:///path/to/flutter/packages/integration_test',
+      },
+    );
     package.childDirectory('test').childFile('some_test.dart').createSync(recursive: true);
     package
         .childDirectory('integration_test')
         .childFile('some_integration_test.dart')
         .createSync(recursive: true);
 
-    final File flutterToolsPackageConfigFile = fs
-        .directory(fs.path.join(getFlutterRoot(), 'packages', 'flutter_tools'))
-        .childDirectory('.dart_tool')
-        .childFile('package_config.json');
-    flutterToolsPackageConfigFile.createSync(recursive: true);
-    flutterToolsPackageConfigFile.writeAsStringSync(_flutterToolsPackageConfigContents);
+    writePackageConfigFile(
+      directory: fs.directory(fs.path.join(getFlutterRoot(), 'packages', 'flutter_tools')),
+      packages: <String, String>{
+        'ffi': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dev/ffi-2.1.2',
+        'test': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dev/test-1.24.9',
+        'test_api': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dev/test_api-0.6.1',
+        'test_core': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dev/test_core-0.5.9',
+      },
+    );
 
     fs.currentDirectory = package.path;
 
@@ -168,26 +118,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
     ''');
-      fs
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .writeAsStringSync(
-            json.encode(<String, Object>{
-              'configVersion': 2,
-              'packages': <Map<String, Object>>[
-                <String, String>{
-                  'name': 'test_api',
-                  'rootUri':
-                      'file:///path/to/pubcache/.pub-cache/hosted/pub.dartlang.org/test_api-0.2.19',
-                  'packageUri': 'lib/',
-                  'languageVersion': '2.12',
-                },
-              ],
-              'generated': '2021-02-24T07:55:20.084834Z',
-              'generator': 'pub',
-              'generatorVersion': '2.13.0-68.0.dev',
-            }),
-          );
+      writePackageConfigFile(
+        directory: fs.currentDirectory,
+        packages: <String, String>{
+          'test_api': 'file:///path/to/pubcache/.pub-cache/hosted/pub.dartlang.org/test_api-0.2.19',
+        },
+      );
+
       final FakePackageTest fakePackageTest = FakePackageTest();
       final TestCommand testCommand = TestCommand(testWrapper: fakePackageTest);
       final CommandRunner<void> commandRunner = createTestCommandRunner(testCommand);

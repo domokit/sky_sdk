@@ -17,6 +17,7 @@ import 'package:unified_analytics/unified_analytics.dart';
 
 import '../../src/context.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 import '../../src/test_flutter_command_runner.dart';
 
 const String minimalV2EmbeddingManifest = r'''
@@ -332,9 +333,8 @@ flutter:
 }
 
 class FakePub extends Fake implements Pub {
-  FakePub(this.fileSystem);
+  FakePub();
 
-  final FileSystem fileSystem;
   List<String>? expectedArguments;
 
   @override
@@ -348,14 +348,7 @@ class FakePub extends Fake implements Pub {
     PubOutputMode outputMode = PubOutputMode.all,
   }) async {
     if (project != null) {
-      fileSystem
-          .directory(project.directory)
-          .childDirectory('.dart_tool')
-          .childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync(
-          '{"configVersion":2,"packages":[{"name":"my_app", "rootUri": "../", "packageUri": "lib/"}]}',
-        );
+      writePackageConfigFile(directory: project.directory);
     }
   }
 }

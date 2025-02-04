@@ -16,6 +16,7 @@ import 'package:standard_message_codec/standard_message_codec.dart';
 
 import '../src/common.dart';
 import '../src/context.dart';
+import '../src/package_config.dart';
 
 void main() {
   String fixPath(String path) {
@@ -73,32 +74,6 @@ dependencies:
 ${dependencies.entries.map((MapEntry<String, String> d) => '  ${d.key}: {path: ${d.value}}').join('\n')}
 $assetsSection
 ''');
-  }
-
-  void writePackageConfigFile(Map<String, String> packages) {
-    globals.fs.directory('.dart_tool').childFile('package_config.json')
-      ..createSync(recursive: true)
-      ..writeAsStringSync(
-        json.encode(<String, dynamic>{
-          'packages': <dynamic>[
-            <String, dynamic>{
-              'name': 'test',
-              'rootUri': '../',
-              'packageUri': 'lib/',
-              'languageVersion': '3.2',
-            },
-            ...packages.entries.map((MapEntry<String, String> entry) {
-              return <String, dynamic>{
-                'name': entry.key,
-                'rootUri': '../${entry.value}',
-                'packageUri': 'lib/',
-                'languageVersion': '3.2',
-              };
-            }),
-          ],
-          'configVersion': 2,
-        }),
-      );
   }
 
   Map<Object, Object> assetManifestBinToJson(Map<Object, Object> manifest) {
@@ -168,8 +143,8 @@ $assetsSection
     testUsingContext(
       'No assets are bundled when the package has no assets',
       () async {
-        writePubspecFile('pubspec.yaml', 'test');
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePubspecFile('pubspec.yaml', 'my_app');
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
         writePubspecFile('p/p/pubspec.yaml', 'test_package');
 
         final AssetBundle bundle = AssetBundleFactory.instance.createBundle();
@@ -199,8 +174,8 @@ $assetsSection
     testUsingContext(
       'No assets are bundled when the package has an asset that is not listed',
       () async {
-        writePubspecFile('pubspec.yaml', 'test');
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePubspecFile('pubspec.yaml', 'my_app');
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
         writePubspecFile('p/p/pubspec.yaml', 'test_package');
 
         final List<String> assets = <String>['a/foo'];
@@ -236,10 +211,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
         final List<String> assets = <String>['a/foo'];
         writePubspecFile('p/p/pubspec.yaml', 'test_package', assets: assets);
@@ -265,8 +240,8 @@ $assetsSection
       "listed in the app's pubspec",
       () async {
         final List<String> assetEntries = <String>['packages/test_package/a/foo'];
-        writePubspecFile('pubspec.yaml', 'test', assets: assetEntries);
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePubspecFile('pubspec.yaml', 'my_app', assets: assetEntries);
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
         writePubspecFile('p/p/pubspec.yaml', 'test_package');
 
         final List<String> assets = <String>['a/foo'];
@@ -291,10 +266,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
         writePubspecFile('p/p/pubspec.yaml', 'test_package', assets: <String>['a/foo', 'a/bar']);
 
         final List<String> assets = <String>['a/foo', 'a/2x/foo', 'a/bar'];
@@ -322,8 +297,8 @@ $assetsSection
       'One asset and its variant are bundled when the package '
       'has an asset and a variant, and the app lists the asset in its pubspec',
       () async {
-        writePubspecFile('pubspec.yaml', 'test', assets: <String>['packages/test_package/a/foo']);
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePubspecFile('pubspec.yaml', 'my_app', assets: <String>['packages/test_package/a/foo']);
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
         writePubspecFile('p/p/pubspec.yaml', 'test_package');
 
         final List<String> assets = <String>['a/foo', 'a/2x/foo'];
@@ -350,10 +325,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
         final List<String> assets = <String>['a/foo', 'a/bar'];
         writePubspecFile('p/p/pubspec.yaml', 'test_package', assets: assets);
@@ -385,11 +360,11 @@ $assetsSection
         ];
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           assets: assetEntries,
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
         final List<String> assets = <String>['a/foo', 'a/bar'];
         writePubspecFile('p/p/pubspec.yaml', 'test_package');
@@ -417,10 +392,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'});
         writePubspecFile('p/p/pubspec.yaml', 'test_package', assets: <String>['a/foo']);
         writePubspecFile('p2/p/pubspec.yaml', 'test_package2', assets: <String>['a/foo']);
 
@@ -459,11 +434,11 @@ $assetsSection
         ];
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           assets: assetEntries,
           dependencies: <String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'});
         writePubspecFile('p/p/pubspec.yaml', 'test_package');
         writePubspecFile('p2/p/pubspec.yaml', 'test_package2');
 
@@ -499,10 +474,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/', 'test_package2': 'p2/p/'});
         writePubspecFile(
           'p/p/pubspec.yaml',
           'test_package',
@@ -533,10 +508,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
         writePubspecFile(
           'p/p/pubspec.yaml',
           'test_package',
@@ -571,10 +546,10 @@ $assetsSection
     () async {
       writePubspecFile(
         'pubspec.yaml',
-        'test',
+        'my_app',
         dependencies: <String, String>{'test_package': 'p/p/'},
       );
-      writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+      writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
       final List<String> assets = <String>['a/foo', 'a/foo [x]'];
       writePubspecFile('p/p/pubspec.yaml', 'test_package', assets: assets);
@@ -602,10 +577,10 @@ $assetsSection
     () async {
       writePubspecFile(
         'pubspec.yaml',
-        'test',
+        'my_app',
         dependencies: <String, String>{'test_package': 'p/p/'},
       );
-      writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+      writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
       final List<String> assets = <String>['a/foo', 'a/foo [x]'];
       writePubspecFile('p/p/pubspec.yaml', 'test_package', assets: assets);
@@ -634,10 +609,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
         final List<String> assetsOnDisk = <String>['a/foo', 'a/bar'];
         final List<String> assetsOnManifest = <String>['a/'];
@@ -667,10 +642,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
         final List<String> assetsOnDisk = <String>['a/foo', 'abc/bar'];
         final List<String> assetOnManifest = <String>['a/foo', 'abc/'];
@@ -700,10 +675,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
         final List<String> assetsOnDisk = <String>['a/foo', 'a/b/foo', 'a/bar'];
         final List<String> assetOnManifest = <String>[
@@ -737,10 +712,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
         final List<String> assetsOnDisk = <String>['a/foo', 'a/2x/foo'];
         final List<String> assetOnManifest = <String>['a/'];
@@ -767,10 +742,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
         final List<String> assetsOnDisk = <String>['a/foo', 'a/2x/foo'];
         final List<String> assetOnManifest = <String>[];
@@ -795,10 +770,10 @@ $assetsSection
       () async {
         writePubspecFile(
           'pubspec.yaml',
-          'test',
+          'my_app',
           dependencies: <String, String>{'test_package': 'p/p/'},
         );
-        writePackageConfigFile(<String, String>{'test_package': 'p/p/'});
+        writePackageConfigFile(packages:<String, String>{'test_package': 'p/p/'});
 
         final List<String> assetOnManifest = <String>['c/'];
 

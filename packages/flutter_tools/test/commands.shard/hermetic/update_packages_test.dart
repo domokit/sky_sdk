@@ -14,6 +14,7 @@ import 'package:test/fake.dart';
 import 'package:yaml/yaml.dart';
 
 import '../../src/context.dart';
+import '../../src/package_config.dart';
 import '../../src/test_flutter_command_runner.dart';
 
 // An example pubspec.yaml from flutter, not necessary for it to be up to date.
@@ -405,9 +406,7 @@ packages:
 sdks:
   dart: ">=2.14.0 <3.0.0"
 ''');
-    fileSystem.currentDirectory.childDirectory('.dart_tool').childFile('package_config.json')
-      ..createSync(recursive: true)
-      ..writeAsStringSync('{"configVersion":2,"packages":[]}');
+    writePackageConfigFile(directory: project.directory);
   }
 
   @override
