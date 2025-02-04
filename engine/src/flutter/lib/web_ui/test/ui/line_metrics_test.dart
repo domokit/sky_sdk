@@ -8,7 +8,6 @@ import 'package:ui/ui.dart' as ui;
 import 'package:ui/ui_web/src/ui_web/testing.dart';
 
 import '../common/test_initialization.dart';
-import 'utils.dart';
 
 void main() {
   internalBootstrapBrowserTest(() => testMain);
@@ -26,7 +25,7 @@ Future<void> testMain() async {
     expect(paragraph.getLineMetricsAt(0), isNull);
     expect(paragraph.numberOfLines, 0);
     expect(paragraph.getLineNumberAt(0), isNull);
-  }, skip: isHtml); // https://github.com/flutter/flutter/issues/144412
+  });
 
   test('Basic line related metrics', () {
     const double fontSize = 10;
@@ -136,7 +135,7 @@ Future<void> testMain() async {
       case final List<ui.LineMetrics> metrics:
         expect(metrics, hasLength(1));
     }
-  }, skip: isHtml); // The rounding hack doesn't apply to the html renderer
+  });
 
   test('overrides with flutter test font when debugEmulateFlutterTesterEnvironment is enabled', () {
     final ui.ParagraphBuilder builder = ui.ParagraphBuilder(ui.ParagraphStyle());

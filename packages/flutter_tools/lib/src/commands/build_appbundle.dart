@@ -14,7 +14,6 @@ import '../build_info.dart';
 import '../cache.dart';
 import '../globals.dart' as globals;
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../runner/flutter_command.dart' show FlutterCommandResult;
 import 'build.dart';
 
@@ -91,27 +90,6 @@ class BuildAppBundleCommand extends BuildSubCommand {
       "This command can build debug and release versions of an app bundle for your application. 'debug' builds support "
       "debugging and a quick development cycle. 'release' builds don't support debugging and are "
       'suitable for deploying to app stores. \n app bundle improves your app size';
-
-  @override
-  Future<CustomDimensions> get usageValues async {
-    String buildMode;
-
-    if (boolArg('release')) {
-      buildMode = 'release';
-    } else if (boolArg('debug')) {
-      buildMode = 'debug';
-    } else if (boolArg('profile')) {
-      buildMode = 'profile';
-    } else {
-      // The build defaults to release.
-      buildMode = 'release';
-    }
-
-    return CustomDimensions(
-      commandBuildAppBundleTargetPlatform: stringsArg('target-platform').join(','),
-      commandBuildAppBundleBuildMode: buildMode,
-    );
-  }
 
   @override
   Future<Event> unifiedAnalyticsUsageValues(String commandPath) async {

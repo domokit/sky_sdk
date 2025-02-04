@@ -996,6 +996,7 @@ class _NavigationBarDestinationSemantics extends StatelessWidget {
         return Semantics(
           selected: destinationInfo.selectedAnimation.isForwardOrCompleted,
           container: true,
+          button: true,
           child: child,
         );
       },

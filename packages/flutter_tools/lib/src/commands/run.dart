@@ -20,7 +20,6 @@ import '../features.dart';
 import '../globals.dart' as globals;
 import '../ios/devices.dart';
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../resident_runner.dart';
 import '../run_cold.dart';
 import '../run_hot.dart';
@@ -530,24 +529,6 @@ class RunCommand extends RunCommandBase {
       return '$command/all';
     }
     return '$command/${getNameForTargetPlatform(await devices![0].targetPlatform)}';
-  }
-
-  @override
-  Future<CustomDimensions> get usageValues async {
-    final AnalyticsUsageValuesRecord record = await _sharedAnalyticsUsageValues;
-
-    return CustomDimensions(
-      commandRunIsEmulator: record.runIsEmulator,
-      commandRunTargetName: record.runTargetName,
-      commandRunTargetOsVersion: record.runTargetOsVersion,
-      commandRunModeName: record.runModeName,
-      commandRunProjectModule: record.runProjectModule,
-      commandRunProjectHostLanguage: record.runProjectHostLanguage,
-      commandRunAndroidEmbeddingVersion: record.runAndroidEmbeddingVersion,
-      commandRunEnableImpeller: record.runEnableImpeller,
-      commandRunIOSInterfaceType: record.runIOSInterfaceType,
-      commandRunIsTest: record.runIsTest,
-    );
   }
 
   @override

@@ -11,7 +11,6 @@ import '../build_info.dart';
 import '../cache.dart';
 import '../globals.dart' as globals;
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../runner/flutter_command.dart' show FlutterCommandResult;
 import 'build.dart';
 
@@ -114,15 +113,6 @@ class BuildApkCommand extends BuildSubCommand {
       "it's recommended to use app bundles or split the APK to reduce the APK size. Learn more at:\n\n"
       ' * https://developer.android.com/guide/app-bundle\n'
       ' * https://developer.android.com/studio/build/configure-apk-splits#configure-abi-split';
-
-  @override
-  Future<CustomDimensions> get usageValues async {
-    return CustomDimensions(
-      commandBuildApkTargetPlatform: _targetArchs.join(','),
-      commandBuildApkBuildMode: _buildMode.cliName,
-      commandBuildApkSplitPerAbi: boolArg('split-per-abi'),
-    );
-  }
 
   @override
   Future<Event> unifiedAnalyticsUsageValues(String commandPath) async {

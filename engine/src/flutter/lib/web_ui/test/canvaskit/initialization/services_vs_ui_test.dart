@@ -15,7 +15,6 @@ void main() {
 void testMain() {
   test('services are initalized separately from UI', () async {
     final JsFlutterConfiguration? config = await bootstrapAndExtractConfig();
-    expect(scheduleFrameCallback, isNull);
 
     expect(findGlassPane(), isNull);
     expect(RawKeyboard.instance, isNull);
@@ -24,7 +23,6 @@ void testMain() {
 
     // After initializing services the UI should remain intact.
     await initializeEngineServices(jsConfiguration: config);
-    expect(scheduleFrameCallback, isNotNull);
     expect(windowFlutterCanvasKit, isNotNull);
 
     expect(findGlassPane(), isNull);

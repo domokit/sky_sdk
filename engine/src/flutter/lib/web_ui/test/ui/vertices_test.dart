@@ -61,7 +61,7 @@ void testMain() {
 
     await drawPictureUsingCurrentRenderer(recorder.endRecording());
     await matchGoldenFile('ui_vertices_antialiased.png', region: region);
-  }, skip: isHtml); // https://github.com/flutter/flutter/issues/127454
+  });
 }
 
 ui.Vertices _testVertices() {

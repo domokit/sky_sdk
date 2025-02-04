@@ -7,6 +7,7 @@ import 'dart:js_interop';
 
 import 'package:test/test.dart';
 import 'package:ui/src/engine.dart' as engine;
+import 'package:ui/src/engine/frame_service.dart';
 import 'package:ui/src/engine/initialization.dart';
 import 'package:ui/ui.dart' as ui;
 import 'package:ui/ui_web/src/ui_web.dart' as ui_web;
@@ -41,7 +42,7 @@ void setUpUnitTests({
       engine.EngineFlutterDisplay.instance.debugOverrideDevicePixelRatio(devicePixelRatio);
       engine.EnginePlatformDispatcher.instance.implicitView?.debugPhysicalSizeOverride =
           const ui.Size(800 * devicePixelRatio, 600 * devicePixelRatio);
-      engine.scheduleFrameCallback = () {};
+      FrameService.debugOverrideFrameService(FakeFrameService());
     }
 
     setUpRenderingForTests();
@@ -89,4 +90,9 @@ void _disableImplicitView() {
       implicitView.viewId,
     );
   }
+}
+
+class FakeFrameService extends FrameService {
+  @override
+  void scheduleFrame() {}
 }

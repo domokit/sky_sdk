@@ -101,31 +101,14 @@ final int _kUnblockedUserActions =
     SemanticsAction.didGainAccessibilityFocus.index |
     SemanticsAction.didLoseAccessibilityFocus.index;
 
-/// Function signature for checks in [DebugSemanticsRoleChecks.kChecks].
-///
-/// The check is run against any `node` that is sent to the platform.
-///
-/// To access the flags and properties, one should call the
-/// [SemanticsNode.getSemanticsData].
-@visibleForTesting
-typedef DebugSemanticsRoleCheck = FlutterError? Function(SemanticsNode node);
-
 /// A static class to conduct semantics role checks.
-///
-/// When adding a new [SemanticsRole], one must also add a corresponding check
-/// to [kChecks].
-@visibleForTesting
-sealed class DebugSemanticsRoleChecks {
-  /// A map to map each [SemanticsRole] to its check.
-  static const Map<SemanticsRole, DebugSemanticsRoleCheck> kChecks =
-      <SemanticsRole, DebugSemanticsRoleCheck>{
-        SemanticsRole.none: _noCheckRequired,
-        SemanticsRole.tab: _semanticsTab,
-        SemanticsRole.tabBar: _semanticsTabBar,
-        SemanticsRole.tabPanel: _noCheckRequired,
-      };
-
-  static FlutterError? _checkSemanticsData(SemanticsNode node) => kChecks[node.role]!(node);
+sealed class _DebugSemanticsRoleChecks {
+  static FlutterError? _checkSemanticsData(SemanticsNode node) => switch (node.role) {
+    SemanticsRole.none => _noCheckRequired,
+    SemanticsRole.tab => _semanticsTab,
+    SemanticsRole.tabBar => _semanticsTabBar,
+    SemanticsRole.tabPanel => _noCheckRequired,
+  }(node);
 
   static FlutterError? _noCheckRequired(SemanticsNode node) => null;
 
@@ -3060,7 +3043,7 @@ class SemanticsNode with DiagnosticableTreeMixin {
     assert(_dirty);
     final SemanticsData data = getSemanticsData();
     assert(() {
-      final FlutterError? error = DebugSemanticsRoleChecks._checkSemanticsData(this);
+      final FlutterError? error = _DebugSemanticsRoleChecks._checkSemanticsData(this);
       if (error != null) {
         throw error;
       }

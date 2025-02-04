@@ -366,6 +366,22 @@ int32_t CalculateMaxY(const impeller::testing::Screenshot* img) {
   }
   return max_y;
 }
+
+int32_t CalculateSpaceBetweenUI(const impeller::testing::Screenshot* img) {
+  const uint32_t* ptr = reinterpret_cast<const uint32_t*>(img->GetBytes());
+  ptr += img->GetWidth() * static_cast<int32_t>(img->GetHeight() / 2.0);
+  std::vector<size_t> boundaries;
+  uint32_t value = *ptr++;
+  for (size_t i = 1; i < img->GetWidth(); ++i) {
+    if (((*ptr & 0x00ffffff) != 0) != ((value & 0x00ffffff) != 0)) {
+      boundaries.push_back(i);
+    }
+    value = *ptr++;
+  }
+
+  assert(boundaries.size() == 6);
+  return boundaries[4] - boundaries[3];
+}
 }  // namespace
 
 TEST_P(DlGoldenTest, BaselineHE) {
@@ -398,6 +414,43 @@ TEST_P(DlGoldenTest, BaselineHE) {
   int32_t right_max_y = CalculateMaxY(right.get());
   int32_t y_diff = std::abs(left_max_y - right_max_y);
   EXPECT_TRUE(y_diff <= 2) << "y diff: " << y_diff;
+}
+
+TEST_P(DlGoldenTest, MaintainsSpace) {
+  SetWindowSize(impeller::ISize(1024, 200));
+  impeller::Scalar font_size = 300;
+  auto callback = [&](const char* text,
+                      impeller::Scalar scale) -> sk_sp<DisplayList> {
+    DisplayListBuilder builder;
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0, 0, 0));
+    builder.DrawPaint(paint);
+    builder.Scale(scale, scale);
+    RenderTextInCanvasSkia(&builder, text, "Roboto-Regular.ttf",
+                           DlPoint::MakeXY(10, 300),
+                           TextRenderOptions{
+                               .font_size = font_size,
+                           });
+    return builder.Build();
+  };
+
+  std::optional<int32_t> last_space;
+  for (int i = 0; i <= 100; ++i) {
+    Scalar scale = 0.440 + i / 1000.0;
+    std::unique_ptr<impeller::testing::Screenshot> right =
+        MakeScreenshot(callback("ui", scale));
+    if (!right) {
+      GTEST_SKIP() << "making screenshots not supported.";
+    }
+
+    int32_t space = CalculateSpaceBetweenUI(right.get());
+    if (last_space.has_value()) {
+      int32_t diff = abs(space - *last_space);
+      EXPECT_TRUE(diff <= 1)
+          << "i:" << i << " space:" << space << " last_space:" << *last_space;
+    }
+    last_space = space;
+  }
 }
 }  // namespace testing
 }  // namespace flutter

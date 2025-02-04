@@ -16,8 +16,8 @@ import 'package:flutter_tools/src/commands/build_aar.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/project.dart';
-import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:test/fake.dart';
+import 'package:unified_analytics/testing.dart';
 import 'package:unified_analytics/unified_analytics.dart';
 
 import '../../src/android_common.dart';
@@ -44,10 +44,13 @@ void main() {
 
   group('Usage', () {
     late Directory tempDir;
-    late TestUsage testUsage;
+    late FakeAnalytics analytics;
 
     setUp(() {
-      testUsage = TestUsage();
+      analytics = getInitializedFakeAnalyticsInstance(
+        fs: MemoryFileSystem.test(),
+        fakeFlutterVersion: FakeFlutterVersion(),
+      );
       tempDir = globals.fs.systemTempDirectory.createTempSync('flutter_tools_packages_test.');
     });
 
@@ -63,10 +66,23 @@ void main() {
           arguments: <String>['--no-pub', '--template=module'],
         );
 
-        final BuildAarCommand command = await runCommandIn(projectPath);
-        expect((await command.usageValues).commandBuildAarProjectType, 'module');
+        await runCommandIn(projectPath);
+        expect(
+          analytics.sentEvents,
+          contains(
+            Event.commandUsageValues(
+              workflow: 'aar',
+              buildAarProjectType: 'module',
+              buildAarTargetPlatform: 'android-arm,android-arm64,android-x64',
+              commandHasTerminal: false,
+            ),
+          ),
+        );
       },
-      overrides: <Type, Generator>{AndroidBuilder: () => FakeAndroidBuilder()},
+      overrides: <Type, Generator>{
+        AndroidBuilder: () => FakeAndroidBuilder(),
+        Analytics: () => analytics,
+      },
     );
 
     testUsingContext(
@@ -77,13 +93,23 @@ void main() {
           arguments: <String>['--no-pub', '--template=module'],
         );
 
-        final BuildAarCommand command = await runCommandIn(
-          projectPath,
-          arguments: <String>['--target-platform=android-arm'],
+        await runCommandIn(projectPath, arguments: <String>['--target-platform=android-arm']);
+        expect(
+          analytics.sentEvents,
+          contains(
+            Event.commandUsageValues(
+              workflow: 'aar',
+              buildAarProjectType: 'module',
+              buildAarTargetPlatform: 'android-arm',
+              commandHasTerminal: false,
+            ),
+          ),
         );
-        expect((await command.usageValues).commandBuildAarTargetPlatform, 'android-arm');
       },
-      overrides: <Type, Generator>{AndroidBuilder: () => FakeAndroidBuilder()},
+      overrides: <Type, Generator>{
+        AndroidBuilder: () => FakeAndroidBuilder(),
+        Analytics: () => analytics,
+      },
     );
 
     testUsingContext(
@@ -96,14 +122,17 @@ void main() {
 
         await runCommandIn(projectPath, arguments: <String>['--target-platform=android-arm']);
 
-        expect(
-          testUsage.events,
-          contains(const TestUsageEvent('tool-command-result', 'aar', label: 'success')),
+        final Iterable<Event> successEvent = analytics.sentEvents.where(
+          (Event e) =>
+              e.eventName == DashEvent.flutterCommandResult &&
+              e.eventData['commandPath'] == 'create' &&
+              e.eventData['result'] == 'success',
         );
+        expect(successEvent, isNotEmpty, reason: 'Tool should send create success event');
       },
       overrides: <Type, Generator>{
         AndroidBuilder: () => FakeAndroidBuilder(),
-        Usage: () => testUsage,
+        Analytics: () => analytics,
       },
     );
   });

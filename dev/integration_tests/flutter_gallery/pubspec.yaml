@@ -7,7 +7,7 @@ dependencies:
   flutter:
     sdk: flutter
   collection: 1.19.1
-  intl: 0.19.0
+  intl: 0.20.2
   string_scanner: 1.4.1
   url_launcher: 6.3.1
   cupertino_icons: 1.0.8
@@ -272,4 +272,4 @@ flutter:
       - asset: packages/flutter_gallery_assets/fonts/merriweather/Merriweather-Regular.ttf
       - asset: packages/flutter_gallery_assets/fonts/merriweather/Merriweather-Light.ttf
 
-# PUBSPEC CHECKSUM: cd5c
+# PUBSPEC CHECKSUM: 1656

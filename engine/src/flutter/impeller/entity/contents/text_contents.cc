@@ -183,7 +183,6 @@ void TextContents::ComputeVertexData(
       Point screen_glyph_position =
           (screen_offset + unrounded_glyph_position + subpixel_adjustment)
               .Floor();
-
       for (const Point& point : unit_points) {
         Point position;
         if (is_translation_scale) {

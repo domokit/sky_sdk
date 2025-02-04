@@ -11,9 +11,9 @@ import 'package:flutter_tools/src/commands/packages.dart';
 import 'package:flutter_tools/src/dart/pub.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/project.dart';
-import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:flutter_tools/src/runner/flutter_command.dart';
 import 'package:test/fake.dart';
+import 'package:unified_analytics/unified_analytics.dart';
 
 import '../../src/context.dart';
 import '../../src/fakes.dart';
@@ -85,11 +85,13 @@ void main() {
       await commandRunner.run(<String>['get']);
 
       expect(
-        await command.usageValues,
-        const CustomDimensions(
-          commandPackagesNumberPlugins: 0,
-          commandPackagesProjectModule: false,
-          commandPackagesAndroidEmbeddingVersion: 'v2',
+        await command.unifiedAnalyticsUsageValues('pub'),
+        Event.commandUsageValues(
+          workflow: 'pub',
+          commandHasTerminal: false,
+          packagesNumberPlugins: 0,
+          packagesProjectModule: false,
+          packagesAndroidEmbeddingVersion: 'v2',
         ),
       );
     },
@@ -119,11 +121,13 @@ void main() {
       await commandRunner.run(<String>['get']);
 
       expect(
-        await command.usageValues,
-        const CustomDimensions(
-          commandPackagesNumberPlugins: 0,
-          commandPackagesProjectModule: false,
-          commandPackagesAndroidEmbeddingVersion: 'v2',
+        await command.unifiedAnalyticsUsageValues('pub'),
+        Event.commandUsageValues(
+          workflow: 'pub',
+          commandHasTerminal: false,
+          packagesNumberPlugins: 0,
+          packagesProjectModule: false,
+          packagesAndroidEmbeddingVersion: 'v2',
         ),
       );
     },
@@ -242,11 +246,13 @@ void main() {
       await commandRunner.run(<String>['get']);
 
       expect(
-        await command.usageValues,
-        const CustomDimensions(
-          commandPackagesNumberPlugins: 0,
-          commandPackagesProjectModule: false,
-          commandPackagesAndroidEmbeddingVersion: 'v2',
+        await command.unifiedAnalyticsUsageValues('pub'),
+        Event.commandUsageValues(
+          workflow: 'pub',
+          commandHasTerminal: false,
+          packagesNumberPlugins: 0,
+          packagesProjectModule: false,
+          packagesAndroidEmbeddingVersion: 'v2',
         ),
       );
     },

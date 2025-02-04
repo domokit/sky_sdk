@@ -20,7 +20,7 @@ dependencies:
   flutter_localized_locales: 2.0.5
   flutter_staggered_grid_view: 0.7.0
   google_fonts: 6.2.1
-  intl: 0.19.0
+  intl: 0.20.2
   meta: 1.16.0
   provider: 6.1.2
   rally_assets: 3.0.1
@@ -311,4 +311,4 @@ flutter:
       fonts:
         - asset: packages/flutter_gallery_assets/fonts/GalleryIcons.ttf
 
-# PUBSPEC CHECKSUM: 8191
+# PUBSPEC CHECKSUM: a58b

@@ -8,7 +8,7 @@ dependencies:
   analyzer: 6.11.0
   args: 2.6.0
   crypto: 3.0.6
-  intl: 0.19.0
+  intl: 0.20.2
   file: 7.0.1
   flutter_devicelab:
     path: ../devicelab
@@ -77,4 +77,4 @@ dependencies:
 dev_dependencies:
   test_api: 0.7.4
 
-# PUBSPEC CHECKSUM: fb9d
+# PUBSPEC CHECKSUM: 5997

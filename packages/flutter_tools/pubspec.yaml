@@ -23,7 +23,7 @@ dependencies:
   flutter_template_images: 5.0.0
   html: 0.15.5
   http: 1.3.0
-  intl: 0.19.0
+  intl: 0.20.2
   meta: 1.16.0
   multicast_dns: 0.3.2+8
   mustache_template: 2.0.0
@@ -122,4 +122,4 @@ dartdoc:
   # Exclude this package from the hosted API docs.
   nodoc: true
 
-# PUBSPEC CHECKSUM: 169c
+# PUBSPEC CHECKSUM: 5596
