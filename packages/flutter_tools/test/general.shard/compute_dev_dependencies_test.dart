@@ -35,6 +35,9 @@ void main() {
     fileSystem = MemoryFileSystem.test();
   });
 
+  /// Manifest the packages in [graph] as pubspec.yaml files on [fileSystem].
+  ///
+  /// Each pubspec is stored in `<packagename>/pubspec.yaml`.
   void writePackages(List<Package> graph) {
     final Map<String, Object?> packageConfigMap = <String, Object?>{'configVersion': 2};
     for (final Package package in graph) {
