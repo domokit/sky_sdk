@@ -35,10 +35,11 @@ void main() {
     fileSystem = MemoryFileSystem.test();
   });
 
-  /// Manifest the packages in [graph] as pubspec.yaml files on [fileSystem].
+  /// Write  pubspec.yaml files on [fileSystem] for each of the packages in
+  /// [graph].
   ///
   /// Each pubspec is stored in `<packagename>/pubspec.yaml`.
-  void writePackages(List<Package> graph) {
+  void writePubspecs(List<Package> graph) {
     final Map<String, Object?> packageConfigMap = <String, Object?>{'configVersion': 2};
     for (final Package package in graph) {
       fileSystem.file(fileSystem.path.join(package.name, 'pubspec.yaml'))
@@ -66,16 +67,17 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
     List<Package> graph,
     List<String> exclusiveDevDependencies,
   ) async {
-    writePackages(graph);
+    writePubspecs(graph);
     final FlutterProject project = FlutterProject.fromDirectoryTest(fileSystem.directory('my_app'));
 
     final PackageConfig packageConfig = await loadPackageConfig(project.packageConfig);
 
+    final BufferLogger logger = BufferLogger.test();
     final Map<String, Dependency> dependencies = computeTransitiveDependencies(
       project,
       packageConfig,
       fileSystem,
-      FakeLogger(),
+      logger,
     );
     expect(dependencies.keys, graph.map((Package p) => p.name).toSet());
     for (final Package p in graph) {
@@ -84,6 +86,11 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
         exclusiveDevDependencies.contains(p.name),
       );
     }
+    expect(logger.errorText, isEmpty);
+    expect(logger.eventText, isEmpty);
+    expect(logger.statusText, isEmpty);
+    expect(logger.traceText, isEmpty);
+    expect(logger.warningText, isEmpty);
   }
 
   test('no dev dependencies at all', () async {
