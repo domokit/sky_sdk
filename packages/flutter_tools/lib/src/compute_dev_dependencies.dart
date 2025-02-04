@@ -174,7 +174,7 @@ class Dependency {
   });
 
   /// The names of the direct, non-dev dependencies.
-  List<String> dependencies;
+  final List<String> dependencies;
 
   /// True if this dependency is in the transitive closure of the main app's
   /// `dev_dependencies`, and **not** in the transitive closure of the regular
