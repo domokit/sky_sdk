@@ -12003,7 +12003,7 @@ void main() {
     );
     await tester.pump();
     await tester.tap(find.byKey(key), warnIfMissed: false);
-    await tester.pumpAndSettle();
+    await tester.pump();
     expect(myIntentWasCalled, isTrue);
     expect(focusNode.hasFocus, true);
   });
