@@ -354,7 +354,7 @@ static void fl_engine_post_task(FlutterTask task,
                                 void* user_data) {
   FlEngine* self = static_cast<FlEngine*>(user_data);
 
-  fl_task_runner_post_task(self->task_runner, task, target_time_nanos);
+  fl_task_runner_post_flutter_task(self->task_runner, task, target_time_nanos);
 }
 
 // Called when a platform message is received from the engine.
@@ -613,7 +613,6 @@ gboolean fl_engine_start(FlEngine* self, GError** error) {
   FlutterCustomTaskRunners custom_task_runners = {};
   custom_task_runners.struct_size = sizeof(FlutterCustomTaskRunners);
   custom_task_runners.platform_task_runner = &platform_task_runner;
-  custom_task_runners.render_task_runner = &platform_task_runner;
 
   g_autoptr(GPtrArray) command_line_args =
       g_ptr_array_new_with_free_func(g_free);

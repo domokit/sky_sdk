@@ -539,6 +539,10 @@ static void realize_cb(FlView* self) {
   fl_renderer_add_renderable(FL_RENDERER(self->renderer), self->view_id,
                              FL_RENDERABLE(self));
 
+  // Flutter engine will need to make the context current from raster thread
+  // during initialization.
+  fl_renderer_clear_current(FL_RENDERER(self->renderer));
+
   if (!fl_engine_start(self->engine, &error)) {
     g_warning("Failed to start Flutter engine: %s", error->message);
     return;

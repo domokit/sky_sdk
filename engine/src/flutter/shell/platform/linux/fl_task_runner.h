@@ -25,7 +25,7 @@ G_DECLARE_FINAL_TYPE(FlTaskRunner, fl_task_runner, FL, TASK_RUNNER, GObject);
 FlTaskRunner* fl_task_runner_new(FlEngine* engine);
 
 /**
- * fl_task_runner_post_task:
+ * fl_task_runner_post_flutter_task:
  * @task_runner: an #FlTaskRunner.
  * @task: Flutter task being scheduled
  * @target_time_nanos: absolute time in nanoseconds
@@ -33,9 +33,21 @@ FlTaskRunner* fl_task_runner_new(FlEngine* engine);
  * Posts a Flutter task to be executed on main thread. This function is thread
  * safe and may be called from any thread.
  */
-void fl_task_runner_post_task(FlTaskRunner* task_runner,
-                              FlutterTask task,
-                              uint64_t target_time_nanos);
+void fl_task_runner_post_flutter_task(FlTaskRunner* task_runner,
+                                      FlutterTask task,
+                                      uint64_t target_time_nanos);
+
+/**
+ * fl_task_runner_post_callback:
+ * @task_runner: an #FlTaskRunner.
+ * @callback: callback to be scheduled
+ * @data: data to be passed to the callback
+ *
+ * Schedules arbitrary callback to be executed on main thread.
+ */
+void fl_task_runner_post_callback(FlTaskRunner* task_runner,
+                                  void (*callback)(gpointer data),
+                                  gpointer data);
 
 /**
  * fl_task_runner_block_main_thread:
