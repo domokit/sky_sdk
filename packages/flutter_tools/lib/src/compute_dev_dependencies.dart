@@ -36,6 +36,10 @@ Map<String, Dependency> computeTransitiveDependencies(
     project.manifest.toYaml(),
     project.manifest.dependencies.toList(),
     project.directory.uri,
+
+    // While building the dependency graph we mark everything as
+    // isExclusiveDevDependency. Afterwards we traverse the non-dev-dependency
+    // part of the graph removing the marker.
     isExclusiveDevDependency: true,
   );
 
