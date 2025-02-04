@@ -597,6 +597,7 @@ gboolean fl_engine_start(FlEngine* self, GError** error) {
   FlutterCustomTaskRunners custom_task_runners = {};
   custom_task_runners.struct_size = sizeof(FlutterCustomTaskRunners);
   custom_task_runners.platform_task_runner = &platform_task_runner;
+  custom_task_runners.merged_ui_thread = 1;
 
   g_autoptr(GPtrArray) command_line_args =
       g_ptr_array_new_with_free_func(g_free);
@@ -1243,6 +1244,7 @@ FlTaskRunner* fl_engine_get_task_runner(FlEngine* self) {
 void fl_engine_execute_task(FlEngine* self, FlutterTask* task) {
   g_return_if_fail(FL_IS_ENGINE(self));
   self->embedder_api.RunTask(self->engine, task);
+  self->embedder_api.FlushMicrotaskQueue(self->engine);
 }
 
 G_MODULE_EXPORT FlTextureRegistrar* fl_engine_get_texture_registrar(

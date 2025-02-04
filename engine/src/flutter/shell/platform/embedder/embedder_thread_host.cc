@@ -140,14 +140,18 @@ EmbedderThreadHost::CreateEmbedderManagedThreadHost(
     return nullptr;
   }
 
+  int merged_ui_thread = SAFE_ACCESS(custom_task_runners, merged_ui_thread, 0);
+
   auto thread_host_config = ThreadHost::ThreadHostConfig(config_setter);
 
   // The UI and IO threads are always created by the engine and the embedder has
   // no opportunity to specify task runners for the same.
   //
   // If/when more task runners are exposed, this mask will need to be updated.
-  thread_host_config.SetUIConfig(MakeThreadConfig(
-      ThreadHost::Type::kUi, fml::Thread::ThreadPriority::kDisplay));
+  if (!merged_ui_thread) {
+    thread_host_config.SetUIConfig(MakeThreadConfig(
+        ThreadHost::Type::kUi, fml::Thread::ThreadPriority::kDisplay));
+  }
   thread_host_config.SetIOConfig(MakeThreadConfig(
       ThreadHost::Type::kIo, fml::Thread::ThreadPriority::kBackground));
 
@@ -197,12 +201,16 @@ EmbedderThreadHost::CreateEmbedderManagedThreadHost(
                                       render_task_runner_pair.second)
                                 : thread_host.raster_thread->GetTaskRunner();
 
+  auto ui_task_runner = merged_ui_thread
+                            ? platform_task_runner
+                            : thread_host.ui_thread->GetTaskRunner();
+
   flutter::TaskRunners task_runners(
       kFlutterThreadName,
-      platform_task_runner,                    // platform
-      render_task_runner,                      // raster
-      thread_host.ui_thread->GetTaskRunner(),  // ui (always engine managed)
-      thread_host.io_thread->GetTaskRunner()   // io (always engine managed)
+      platform_task_runner,  // platform
+      render_task_runner,    // raster
+      ui_task_runner,
+      thread_host.io_thread->GetTaskRunner()  // io (always engine managed)
   );
 
   if (!task_runners.IsValid()) {
