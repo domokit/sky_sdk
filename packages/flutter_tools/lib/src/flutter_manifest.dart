@@ -60,6 +60,11 @@ class FlutterManifest {
     }
   }
 
+  /// Parses pubspec.yaml from [yamlDocument].
+  ///
+  /// This would usually be the result of a call to `loadYaml()` on the text
+  /// from a pubspec.yaml file.
+  ///
   /// Returns null on missing or invalid manifest.
   static FlutterManifest? createFromYaml(Object? yamlDocument, Logger logger) {
     if (yamlDocument != null && !_validate(yamlDocument, logger)) {
