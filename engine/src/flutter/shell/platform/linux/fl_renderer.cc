@@ -73,6 +73,11 @@ typedef struct {
 
   // Framebuffers to render keyed by view ID.
   GHashTable* framebuffers_by_view_id;
+
+  // Mutex and condition used when block the raster thread until a task
+  // is completed on platform thread.
+  GMutex mutex;
+  GCond cond;
 } FlRendererPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE(FlRenderer, fl_renderer, G_TYPE_OBJECT)
@@ -313,10 +318,32 @@ static void fl_renderer_dispose(GObject* object) {
   g_clear_pointer(&priv->framebuffers_by_view_id, g_hash_table_unref);
 
   G_OBJECT_CLASS(fl_renderer_parent_class)->dispose(object);
+
+  g_mutex_clear(&priv->mutex);
+  g_cond_clear(&priv->cond);
+}
+
+static gboolean fl_renderer_schedule_on_main_thread(
+    FlRenderer* self,
+    void (*callback)(gpointer data),
+    gpointer callback_data) {
+  FlRendererPrivate* priv = reinterpret_cast<FlRendererPrivate*>(
+      fl_renderer_get_instance_private(self));
+  g_autoptr(FlEngine) engine = FL_ENGINE(g_weak_ref_get(&priv->engine));
+
+  if (engine == nullptr) {
+    return FALSE;
+  }
+
+  FlTaskRunner* task_runner = fl_engine_get_task_runner(engine);
+  fl_task_runner_post_callback(task_runner, callback, callback_data);
+  return TRUE;
 }
 
 static void fl_renderer_class_init(FlRendererClass* klass) {
   G_OBJECT_CLASS(klass)->dispose = fl_renderer_dispose;
+  FL_RENDERER_CLASS(klass)->schedule_on_main_thread =
+      fl_renderer_schedule_on_main_thread;
 }
 
 static void fl_renderer_init(FlRenderer* self) {
@@ -327,6 +354,8 @@ static void fl_renderer_init(FlRenderer* self) {
   priv->framebuffers_by_view_id = g_hash_table_new_full(
       g_direct_hash, g_direct_equal, nullptr,
       reinterpret_cast<GDestroyNotify>(g_ptr_array_unref));
+  g_mutex_init(&priv->mutex);
+  g_cond_init(&priv->cond);
 }
 
 void fl_renderer_set_engine(FlRenderer* self, FlEngine* engine) {
@@ -386,6 +415,53 @@ guint32 fl_renderer_get_fbo(FlRenderer* self) {
 
   // There is only one frame buffer object - always return that.
   return 0;
+}
+
+struct _FlRendererCallBlockingTrampolineData {
+  FlRenderer* renderer;
+  gboolean* finished;
+  void (*callback)(gpointer data);
+  gpointer data;
+};
+
+static void fl_renderer_call_blocking_trampoline(gpointer user_data) {
+  auto* data = static_cast<_FlRendererCallBlockingTrampolineData*>(user_data);
+  data->callback(data->data);
+  FlRendererPrivate* priv = reinterpret_cast<FlRendererPrivate*>(
+      fl_renderer_get_instance_private(data->renderer));
+  g_autoptr(GMutexLocker) locker = g_mutex_locker_new(&priv->mutex);
+  *data->finished = TRUE;
+  g_cond_signal(&priv->cond);
+}
+
+// Executes the given function on the main thread and blocks until it completes.
+static void fl_renderer_call_blocking(FlRenderer* self,
+                                      void (*callback)(gpointer data),
+                                      gpointer callback_data) {
+  gboolean finished = FALSE;
+  _FlRendererCallBlockingTrampolineData trampoline_data = {
+      self,
+      &finished,
+      callback,
+      callback_data,
+  };
+
+  gboolean scheduled = FL_RENDERER_GET_CLASS(self)->schedule_on_main_thread(
+      self, fl_renderer_call_blocking_trampoline, &trampoline_data);
+
+  // Don't block if the task was not sucessfully scheduled.
+  if (!scheduled) {
+    return;
+  }
+
+  // Wait for the task to complete.
+  FlRendererPrivate* priv = reinterpret_cast<FlRendererPrivate*>(
+      fl_renderer_get_instance_private(self));
+
+  g_autoptr(GMutexLocker) locker = g_mutex_locker_new(&priv->mutex);
+  while (!finished) {
+    g_cond_wait(&priv->cond, &priv->mutex);
+  }
 }
 
 gboolean fl_renderer_create_backing_store(
@@ -450,10 +526,11 @@ void fl_renderer_wait_for_frame(FlRenderer* self,
   }
 }
 
-gboolean fl_renderer_present_layers(FlRenderer* self,
-                                    FlutterViewId view_id,
-                                    const FlutterLayer** layers,
-                                    size_t layers_count) {
+static gboolean fl_renderer_present_layers_on_main_thread(
+    FlRenderer* self,
+    FlutterViewId view_id,
+    const FlutterLayer** layers,
+    size_t layers_count) {
   FlRendererPrivate* priv = reinterpret_cast<FlRendererPrivate*>(
       fl_renderer_get_instance_private(self));
 
@@ -562,6 +639,41 @@ gboolean fl_renderer_present_layers(FlRenderer* self,
   fl_renderable_redraw(renderable);
 
   return TRUE;
+}
+
+struct _FlRendererPresentLayersData {
+  FlRenderer* self;
+  FlutterViewId view_id;
+  const FlutterLayer** layers;
+  size_t layers_count;
+  gboolean* res;
+};
+
+static void fl_renderer_present_layers_trampoline(gpointer trampoline_data) {
+  _FlRendererPresentLayersData* data =
+      reinterpret_cast<_FlRendererPresentLayersData*>(trampoline_data);
+  fl_renderer_make_current(data->self);
+  *data->res = fl_renderer_present_layers_on_main_thread(
+      data->self, data->view_id, data->layers, data->layers_count);
+  fl_renderer_clear_current(data->self);
+}
+
+gboolean fl_renderer_present_layers(FlRenderer* self,
+                                    FlutterViewId view_id,
+                                    const FlutterLayer** layers,
+                                    size_t layers_count) {
+  gboolean res = FALSE;
+  _FlRendererPresentLayersData data = {
+      .self = self,
+      .view_id = view_id,
+      .layers = layers,
+      .layers_count = layers_count,
+      .res = &res,
+  };
+  fl_renderer_clear_current(self);
+  fl_renderer_call_blocking(self, fl_renderer_present_layers_trampoline, &data);
+  fl_renderer_make_current(self);
+  return res;
 }
 
 void fl_renderer_setup(FlRenderer* self) {

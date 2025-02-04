@@ -29,6 +29,15 @@ static void fl_mock_renderer_make_current(FlRenderer* renderer) {}
 // Implements FlRenderer::make_resource_current.
 static void fl_mock_renderer_make_resource_current(FlRenderer* renderer) {}
 
+// Implements FlRenderer::schedule_on_main_thread.
+static gboolean fl_mock_renderer_schedule_on_main_thread(
+    FlRenderer* renderer,
+    void (*callback)(gpointer data),
+    gpointer data) {
+  callback(data);
+  return TRUE;
+}
+
 // Implements FlRenderer::clear_current.
 static void fl_mock_renderer_clear_current(FlRenderer* renderer) {}
 
@@ -37,6 +46,8 @@ static void fl_mock_renderer_class_init(FlMockRendererClass* klass) {
   FL_RENDERER_CLASS(klass)->make_resource_current =
       fl_mock_renderer_make_resource_current;
   FL_RENDERER_CLASS(klass)->clear_current = fl_mock_renderer_clear_current;
+  FL_RENDERER_CLASS(klass)->schedule_on_main_thread =
+      fl_mock_renderer_schedule_on_main_thread;
 }
 
 static void fl_mock_renderer_init(FlMockRenderer* self) {}
