@@ -92,25 +92,23 @@ class _EditableTextTapUpOutsideIntentExampleState
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Actions(
-            actions: <Type, Action<Intent>>{
-              EditableTextTapOutsideIntent: CallbackAction<EditableTextTapOutsideIntent>(
-                onInvoke: _handlePointerDown,
-              ),
-              EditableTextTapUpOutsideIntent: CallbackAction<EditableTextTapUpOutsideIntent>(
-                onInvoke: _handlePointerUp,
-              ),
-            },
-            child: ListView(
-              children: <Widget>[
-                TextField(focusNode: FocusNode()),
-                ...List<Widget>.generate(50, (int index) => Text('Item $index')),
-              ],
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            EditableTextTapOutsideIntent: CallbackAction<EditableTextTapOutsideIntent>(
+              onInvoke: _handlePointerDown,
             ),
+            EditableTextTapUpOutsideIntent: CallbackAction<EditableTextTapUpOutsideIntent>(
+              onInvoke: _handlePointerUp,
+            ),
+          },
+          child: ListView(
+            children: <Widget>[
+              TextField(focusNode: FocusNode()),
+              ...List<Widget>.generate(50, (int index) => Text('Item $index')),
+            ],
           ),
         ),
       ),
