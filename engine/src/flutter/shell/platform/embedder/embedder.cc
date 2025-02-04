@@ -2545,16 +2545,6 @@ FlutterEngineResult FlutterEngineRemoveView(FLUTTER_API_SYMBOL(FlutterEngine)
 }
 
 FLUTTER_EXPORT
-FlutterEngineResult FlutterEngineFlushMicrotaskQueue(FLUTTER_API_SYMBOL(FlutterEngine) engine) {
-  auto embedder_engine = reinterpret_cast<flutter::EmbedderEngine*>(engine);
-  if (!embedder_engine->IsValid()) {
-    return LOG_EMBEDDER_ERROR(kInvalidArguments, "Engine handle was invalid.");
-  }
-  embedder_engine->GetShell().FlushMicrotaskQueue();
-  return kSuccess;
-}
-
-FLUTTER_EXPORT
 FlutterEngineResult FlutterEngineDeinitialize(FLUTTER_API_SYMBOL(FlutterEngine)
                                                   engine) {
   if (engine == nullptr) {
@@ -3647,7 +3637,6 @@ FlutterEngineResult FlutterEngineGetProcAddresses(
   SET_PROC(SetNextFrameCallback, FlutterEngineSetNextFrameCallback);
   SET_PROC(AddView, FlutterEngineAddView);
   SET_PROC(RemoveView, FlutterEngineRemoveView);
-  SET_PROC(FlushMicrotaskQueue, FlutterEngineFlushMicrotaskQueue);
 #undef SET_PROC
 
   return kSuccess;

@@ -3432,8 +3432,6 @@ typedef FlutterEngineResult (*FlutterEngineAddViewFnPtr)(
 typedef FlutterEngineResult (*FlutterEngineRemoveViewFnPtr)(
     FLUTTER_API_SYMBOL(FlutterEngine) engine,
     const FlutterRemoveViewInfo* info);
-typedef FlutterEngineResult (*FlutterEngineFlushMicrotaskQueuePtr)(
-    FLUTTER_API_SYMBOL(FlutterEngine) engine);
 
 /// Function-pointer-based versions of the APIs above.
 typedef struct {
@@ -3482,7 +3480,6 @@ typedef struct {
   FlutterEngineSetNextFrameCallbackFnPtr SetNextFrameCallback;
   FlutterEngineAddViewFnPtr AddView;
   FlutterEngineRemoveViewFnPtr RemoveView;
-  FlutterEngineFlushMicrotaskQueuePtr FlushMicrotaskQueue;
 } FlutterEngineProcTable;
 
 //------------------------------------------------------------------------------
