@@ -16,10 +16,10 @@ import 'package:flutter_tools/src/dart/pub.dart';
 import 'package:flutter_tools/src/features.dart';
 
 import '../../../src/context.dart'; // legacy
-import '../../../src/fake_pub_deps.dart';
 import '../../../src/fakes.dart';
 import '../../../src/test_build_system.dart';
-import '../../../src/test_flutter_command_runner.dart'; // legacy
+import '../../../src/test_flutter_command_runner.dart';
+import '../../../src/throwing_pub.dart'; // legacy
 
 void main() {
   // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
@@ -92,7 +92,7 @@ void main() {
         ProcessManager: () => processManager,
         BuildSystem: () => buildSystem,
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
 
@@ -123,7 +123,7 @@ void main() {
         ProcessManager: () => processManager,
         BuildSystem: () => buildSystem,
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
 
@@ -157,7 +157,7 @@ void main() {
         ProcessManager: () => processManager,
         BuildSystem: () => buildSystem,
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
 
@@ -187,7 +187,7 @@ void main() {
         ProcessManager: () => processManager,
         BuildSystem: () => buildSystem,
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
 
@@ -223,7 +223,7 @@ void main() {
         ProcessManager: () => processManager,
         BuildSystem: () => buildSystem,
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
   });

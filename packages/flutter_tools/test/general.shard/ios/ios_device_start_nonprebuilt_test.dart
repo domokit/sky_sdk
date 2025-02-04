@@ -36,8 +36,8 @@ import '../../src/common.dart';
 import '../../src/context.dart' hide FakeXcodeProjectInterpreter;
 import '../../src/fake_devices.dart';
 import '../../src/fake_process_manager.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
+import '../../src/throwing_pub.dart';
 
 List<String> _xattrArgs(FlutterProject flutterProject) {
   return <String>['xattr', '-r', '-d', 'com.apple.FinderInfo', flutterProject.directory.path];
@@ -69,13 +69,6 @@ const List<String> kRunReleaseArgs = <String>[
   'FLUTTER_SUPPRESS_ANALYTICS=true',
   'COMPILER_INDEX_STORE_ENABLE=NO',
 ];
-
-// TODO(matanlurey): XCode builds call processPodsIfNeeded -> refreshPluginsList
-// ... which in turn requires that `dart pub deps --json` is called in order to
-// label which plugins are dependency plugins.
-//
-// Ideally processPodsIfNeeded should rely on the command (removing this call).
-final Pub fakePubBecauseRefreshPluginsList = FakePubWithPrimedDeps();
 
 const String kConcurrentBuildErrorMessage = '''
 "/Developer/Xcode/DerivedData/foo/XCBuildData/build.db":
@@ -173,7 +166,7 @@ void main() {
       },
       overrides: <Type, Generator>{
         ProcessManager: () => processManager,
-        Pub: () => fakePubBecauseRefreshPluginsList,
+        Pub: () => const ThrowingPub(),
         FileSystem: () => fileSystem,
         Logger: () => logger,
         OperatingSystemUtils: () => os,
@@ -295,7 +288,7 @@ void main() {
       },
       overrides: <Type, Generator>{
         ProcessManager: () => processManager,
-        Pub: () => fakePubBecauseRefreshPluginsList,
+        Pub: () => const ThrowingPub(),
         FileSystem: () => fileSystem,
         Logger: () => logger,
         OperatingSystemUtils: () => os,
@@ -404,7 +397,7 @@ void main() {
         FileSystem: () => fileSystem,
         Logger: () => logger,
         OperatingSystemUtils: () => FakeOperatingSystemUtils(hostPlatform: HostPlatform.darwin_x64),
-        Pub: () => fakePubBecauseRefreshPluginsList,
+        Pub: () => const ThrowingPub(),
         Platform: () => macPlatform,
         XcodeProjectInterpreter: () => fakeXcodeProjectInterpreter,
         Xcode: () => xcode,
@@ -493,7 +486,7 @@ void main() {
         OperatingSystemUtils:
             () => FakeOperatingSystemUtils(hostPlatform: HostPlatform.darwin_arm64),
         Platform: () => macPlatform,
-        Pub: () => fakePubBecauseRefreshPluginsList,
+        Pub: () => const ThrowingPub(),
         XcodeProjectInterpreter: () => fakeXcodeProjectInterpreter,
         Xcode: () => xcode,
       },
@@ -559,7 +552,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           ProcessManager: () => FakeProcessManager.any(),
-          Pub: () => fakePubBecauseRefreshPluginsList,
+          Pub: () => const ThrowingPub(),
           FileSystem: () => fileSystem,
           Logger: () => logger,
           OperatingSystemUtils: () => os,
@@ -605,7 +598,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           ProcessManager: () => FakeProcessManager.any(),
-          Pub: () => fakePubBecauseRefreshPluginsList,
+          Pub: () => const ThrowingPub(),
           FileSystem: () => fileSystem,
           Logger: () => logger,
           OperatingSystemUtils: () => os,
@@ -651,7 +644,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           ProcessManager: () => FakeProcessManager.any(),
-          Pub: () => fakePubBecauseRefreshPluginsList,
+          Pub: () => const ThrowingPub(),
           FileSystem: () => fileSystem,
           Logger: () => logger,
           OperatingSystemUtils: () => os,
@@ -700,7 +693,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           ProcessManager: () => FakeProcessManager.any(),
-          Pub: () => fakePubBecauseRefreshPluginsList,
+          Pub: () => const ThrowingPub(),
           FileSystem: () => fileSystem,
           Logger: () => logger,
           OperatingSystemUtils: () => os,
@@ -780,7 +773,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           ProcessManager: () => FakeProcessManager.any(),
-          Pub: () => fakePubBecauseRefreshPluginsList,
+          Pub: () => const ThrowingPub(),
           FileSystem: () => fileSystem,
           Logger: () => logger,
           OperatingSystemUtils: () => os,
@@ -875,7 +868,7 @@ void main() {
           },
           overrides: <Type, Generator>{
             ProcessManager: () => FakeProcessManager.any(),
-            Pub: () => fakePubBecauseRefreshPluginsList,
+            Pub: () => const ThrowingPub(),
             FileSystem: () => fileSystem,
             Logger: () => logger,
             OperatingSystemUtils: () => os,
@@ -971,7 +964,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           ProcessManager: () => FakeProcessManager.any(),
-          Pub: () => fakePubBecauseRefreshPluginsList,
+          Pub: () => const ThrowingPub(),
           FileSystem: () => fileSystem,
           Logger: () => logger,
           OperatingSystemUtils: () => os,
@@ -1026,7 +1019,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           ProcessManager: () => FakeProcessManager.any(),
-          Pub: () => fakePubBecauseRefreshPluginsList,
+          Pub: () => const ThrowingPub(),
           FileSystem: () => fileSystem,
           Logger: () => logger,
           Platform: () => macPlatform,
@@ -1080,7 +1073,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           ProcessManager: () => FakeProcessManager.any(),
-          Pub: () => fakePubBecauseRefreshPluginsList,
+          Pub: () => const ThrowingPub(),
           FileSystem: () => fileSystem,
           Logger: () => logger,
           OperatingSystemUtils: () => os,

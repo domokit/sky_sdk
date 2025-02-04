@@ -16,7 +16,6 @@ import 'package:flutter_tools/src/runner/flutter_command.dart';
 import 'package:test/fake.dart';
 
 import '../../src/context.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
 import '../../src/test_flutter_command_runner.dart';
 
@@ -352,10 +351,5 @@ class FakePub extends Fake implements Pub {
           '{"configVersion":2,"packages":[{"name":"my_app", "rootUri": "../", "packageUri": "lib/"}]}',
         );
     }
-  }
-
-  @override
-  Future<Map<String, Object?>> deps(FlutterProject project) {
-    return FakePubWithPrimedDeps().deps(project);
   }
 }

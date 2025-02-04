@@ -19,7 +19,7 @@ import 'package:yaml/yaml.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
-import '../../src/fake_pub_deps.dart';
+import '../../src/throwing_pub.dart';
 
 void main() {
   group('processPodsIfNeeded', () {
@@ -113,7 +113,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -136,7 +136,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -158,7 +158,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -179,7 +179,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -204,7 +204,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -259,7 +259,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
             Logger: () => logger,
           },
@@ -285,7 +285,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -308,7 +308,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -330,7 +330,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -351,7 +351,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -376,7 +376,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
           },
         );
@@ -433,7 +433,7 @@ void main() {
           overrides: <Type, Generator>{
             FileSystem: () => fs,
             ProcessManager: FakeProcessManager.empty,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
             CocoaPods: () => cocoaPods,
             Logger: () => logger,
           },

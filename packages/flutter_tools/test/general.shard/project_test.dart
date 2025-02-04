@@ -27,8 +27,8 @@ import 'package:test/fake.dart';
 
 import '../src/common.dart';
 import '../src/context.dart';
-import '../src/fake_pub_deps.dart';
 import '../src/fakes.dart';
+import '../src/throwing_pub.dart';
 
 void main() {
   // TODO(zanderso): remove once FlutterProject is fully refactored.
@@ -1880,7 +1880,7 @@ void _testInMemory(
       // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
       // See https://github.com/flutter/flutter/issues/160257 for details.
       FeatureFlags: () => TestFeatureFlags(isExplicitPackageDependenciesEnabled: true),
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 }

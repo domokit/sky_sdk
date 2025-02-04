@@ -35,10 +35,10 @@ import 'package:vm_service/vm_service.dart' as vm_service;
 
 import '../src/common.dart';
 import '../src/context.dart';
-import '../src/fake_pub_deps.dart';
 import '../src/fake_vm_services.dart';
 import '../src/fakes.dart';
 import '../src/testbed.dart';
+import '../src/throwing_pub.dart';
 import 'resident_runner_helpers.dart';
 
 FakeAnalytics get fakeAnalytics => globals.analytics as FakeAnalytics;
@@ -1131,7 +1131,7 @@ flutter:
       },
       overrides: <Type, Generator>{
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     ),
   );
@@ -1220,7 +1220,7 @@ flutter:
       },
       overrides: <Type, Generator>{
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     ),
   );

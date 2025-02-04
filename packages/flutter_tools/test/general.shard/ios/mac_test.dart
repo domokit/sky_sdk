@@ -27,8 +27,8 @@ import 'package:yaml/yaml.dart';
 import '../../src/common.dart';
 import '../../src/context.dart';
 import '../../src/fake_process_manager.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
+import '../../src/throwing_pub.dart';
 
 void main() {
   late BufferLogger logger;
@@ -687,7 +687,7 @@ duplicate symbol '_$s29plugin_1_name23PluginNamePluginC9setDouble3key5valueySS_S
       overrides: <Type, Generator>{
         ProcessManager: () => FakeProcessManager.any(),
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
   });

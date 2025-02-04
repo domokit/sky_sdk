@@ -21,8 +21,8 @@ import 'package:yaml/yaml.dart';
 
 import '../src/common.dart';
 import '../src/context.dart';
-import '../src/fake_pub_deps.dart';
 import '../src/fakes.dart';
+import '../src/throwing_pub.dart';
 
 void main() {
   // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
@@ -1272,7 +1272,7 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1319,7 +1319,7 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1365,7 +1365,7 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1396,7 +1396,7 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1448,7 +1448,7 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
     });

@@ -23,10 +23,10 @@ import 'package:flutter_tools/src/web/compile.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
 import '../../src/test_build_system.dart';
 import '../../src/test_flutter_command_runner.dart';
+import '../../src/throwing_pub.dart';
 
 void main() {
   late FileSystem fileSystem;
@@ -501,7 +501,7 @@ void main() {
         ProcessManager: () => processManager,
         Logger: () => logger,
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
   }
