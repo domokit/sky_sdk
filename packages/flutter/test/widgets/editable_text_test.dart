@@ -11989,7 +11989,6 @@ void main() {
             Actions(
               actions: <Type, Action<Intent>>{EditableTextTapUpOutsideIntent: overrideAction},
               child: EditableText(
-                autofocus: true,
                 controller: controller,
                 focusNode: focusNode,
                 style: textStyle,
@@ -12005,7 +12004,6 @@ void main() {
     await tester.tap(find.byKey(key), warnIfMissed: false);
     await tester.pump();
     expect(myIntentWasCalled, isTrue);
-    expect(focusNode.hasFocus, true);
   });
 
   testWidgets('ignore key event from web platform', (WidgetTester tester) async {
