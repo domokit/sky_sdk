@@ -575,8 +575,6 @@ class SegmentedButtonState<T> extends State<SegmentedButton<T>> {
               ? TextButton.icon(
                 style: segmentStyle,
                 statesController: controller,
-                onPressed:
-                    (_enabled && segment.enabled) ? () => _handleOnPressed(segment.value) : null,
                 onHover: (bool hovering) {
                   setState(() {
                     _hovering = hovering;
@@ -587,6 +585,8 @@ class SegmentedButtonState<T> extends State<SegmentedButton<T>> {
                     _focused = focused;
                   });
                 },
+                onPressed:
+                    (_enabled && segment.enabled) ? () => _handleOnPressed(segment.value) : null,
                 icon: icon,
                 label: label,
               )
