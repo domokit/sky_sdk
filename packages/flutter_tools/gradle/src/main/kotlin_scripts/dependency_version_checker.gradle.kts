@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import com.android.build.api.dsl.ApplicationExtension
 import org.gradle.api.JavaVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 
@@ -39,6 +40,7 @@ class DependencyVersionChecker {
         private const val JAVA_NAME: String = "Java"
         private const val AGP_NAME: String = "Android Gradle Plugin"
         private const val KGP_NAME: String = "Kotlin"
+        private const val SDK_NAME: String = "Android SDK"
 
         // String constant that defines the name of the Gradle extra property that we set when
         // detecting that the project is using versions outside of Flutter's support range.
@@ -48,12 +50,11 @@ class DependencyVersionChecker {
         // The following messages represent best effort guesses at where a Flutter developer should
         // look to upgrade a dependency that is below the corresponding threshold. Developers can
         // change some of these locations, so they are not guaranteed to be accurate.
-        private fun getPotentialGradleFix(projectDirectory: String): String {
-            return "Your project's gradle version is typically " +
+        private fun getPotentialGradleFix(projectDirectory: String): String =
+            "Your project's gradle version is typically " +
                 "defined in the gradle wrapper file. By default, this can be found at " +
                 "$projectDirectory/gradle/wrapper/gradle-wrapper.properties. \n" +
                 "For more information, see https://docs.gradle.org/current/userguide/gradle_wrapper.html.\n"
-        }
 
         // The potential java fix does not make use of the project directory,
         // so it left as a constant.
@@ -63,8 +64,8 @@ class DependencyVersionChecker {
                 "chooses which version of Java to use, see the --jdk-dir section of the " +
                 "output of `flutter config -h`.\n"
 
-        private fun getPotentialAGPFix(projectDirectory: String): String {
-            return "Your project's AGP version is typically " +
+        private fun getPotentialAGPFix(projectDirectory: String): String =
+            "Your project's AGP version is typically " +
                 "defined in the plugins block of the `settings.gradle` file " +
                 "($projectDirectory/settings.gradle), by a plugin with the id of " +
                 "com.android.application. \nIf you don't see a plugins block, your project " +
@@ -72,17 +73,20 @@ class DependencyVersionChecker {
                 "likely defined in the top-level build.gradle file " +
                 "($projectDirectory/build.gradle) by the following line in the dependencies" +
                 " block of the buildscript: \"classpath 'com.android.tools.build:gradle:<version>'\".\n"
-        }
 
-        private fun getPotentialKGPFix(projectDirectory: String): String {
-            return "Your project's KGP version is typically " +
+        private fun getPotentialKGPFix(projectDirectory: String): String =
+            "Your project's KGP version is typically " +
                 "defined in the plugins block of the `settings.gradle` file " +
                 "($projectDirectory/settings.gradle), by a plugin with the id of " +
                 "org.jetbrains.kotlin.android. \nIf you don't see a plugins block, your project " +
                 "was likely created with an older template version, in which case it is most " +
                 "likely defined in the top-level build.gradle file " +
                 "($projectDirectory/build.gradle) by the ext.kotlin_version property.\n"
-        }
+
+        private fun getPotentialSDKFix(projectDirectory: String): String =
+            "Your project's Android SDK version is typically " +
+                "defined in the android block of the `build.gradle` file " +
+                "($projectDirectory/app/build.gradle)."
 
         // The following versions define our support policy for Gradle, Java, AGP, and KGP.
         // Before updating any "error" version, ensure that you have updated the corresponding
@@ -100,6 +104,8 @@ class DependencyVersionChecker {
         val warnKGPVersion: Version = Version(1, 8, 10)
         val errorKGPVersion: Version = Version(1, 7, 0)
 
+        val warnSDKVersion: Version = Version(20, 0, 0)
+
         /**
          * Checks if the project's Android build time dependencies are each within the respective
          * version range that we support. When we can't find a version for a given dependency
@@ -112,13 +118,21 @@ class DependencyVersionChecker {
 
             checkGradleVersion(getGradleVersion(project), project)
             checkJavaVersion(getJavaVersion(), project)
+
+            project.afterEvaluate {
+                val sdkVersion = getSDKVersion(project)
+                if (sdkVersion != null) {
+                    checkSDKVersion(sdkVersion, project)
+                }
+            }
+
             agpVersion = getAGPVersion(project)
             if (agpVersion != null) {
                 checkAGPVersion(agpVersion, project)
             } else {
                 project.logger.error(
                     "Warning: unable to detect project AGP version. Skipping " +
-                        "version checking. \nThis may be because you have applied AGP after the Flutter Gradle Plugin."
+                        "version checking. \nThis may be because you have applied AGP after the Flutter Gradle Plugin.",
                 )
             }
 
@@ -139,9 +153,7 @@ class DependencyVersionChecker {
         }
 
         // https://docs.gradle.org/current/kotlin-dsl/gradle/org.gradle.api/-java-version/index.html#-1790786897%2FFunctions%2F-1793262594
-        fun getJavaVersion(): JavaVersion {
-            return JavaVersion.current()
-        }
+        fun getJavaVersion(): JavaVersion = JavaVersion.current()
 
         // This approach is taken from AGP's own version checking plugin:
         // https://android.googlesource.com/platform/tools/base/+/1839aa23b8dc562005e2f0f0cc8e8b4c5caa37d0/build-system/gradle-core/src/main/java/com/android/build/gradle/internal/utils/agpVersionChecker.kt#58.
@@ -152,10 +164,12 @@ class DependencyVersionChecker {
             try {
                 agpVersion =
                     Version.fromString(
-                        project.plugins.getPlugin(agpPluginName)::class.java.classLoader.loadClass(
-                            com.android.Version::class.java.name
-                        ).fields.find { it.name == agpVersionFieldName }!!
-                            .get(null) as String
+                        project.plugins.getPlugin(agpPluginName)::class.java.classLoader
+                            .loadClass(
+                                com.android.Version::class.java.name,
+                            ).fields
+                            .find { it.name == agpVersionFieldName }!!
+                            .get(null) as String,
                     )
             } catch (ignored: ClassNotFoundException) {
                 // Use deprecated Version class as it exists in older AGP (com.android.Version) does
@@ -163,10 +177,12 @@ class DependencyVersionChecker {
                 @Suppress("deprecation")
                 agpVersion =
                     Version.fromString(
-                        project.plugins.getPlugin(agpPluginName)::class.java.classLoader.loadClass(
-                            com.android.builder.model.Version::class.java.name
-                        ).fields.find { it.name == agpVersionFieldName }!!
-                            .get(null) as String
+                        project.plugins.getPlugin(agpPluginName)::class.java.classLoader
+                            .loadClass(
+                                com.android.builder.model.Version::class.java.name,
+                            ).fields
+                            .find { it.name == agpVersionFieldName }!!
+                            .get(null) as String,
                     )
             }
             return agpVersion
@@ -182,7 +198,8 @@ class DependencyVersionChecker {
                 return Version.fromString(project.properties.get(kotlinVersionProperty) as String)
             }
             val kotlinPlugin =
-                project.getPlugins()
+                project
+                    .getPlugins()
                     .findPlugin(KotlinAndroidPluginWrapper::class.java)
             val versionfield =
                 kotlinPlugin?.javaClass?.kotlin?.members?.first {
@@ -196,35 +213,52 @@ class DependencyVersionChecker {
             }
         }
 
+        fun getSDKVersion(project: Project): Version? {
+            val androidExtensionName = "android"
+            val androidExtension =
+                project.extensions.findByName(androidExtensionName) as? ApplicationExtension
+
+            if (androidExtension == null) {
+                project.logger.error("Android extension not found.")
+                return null
+            }
+
+            val minSdk = androidExtension.defaultConfig.minSdk
+            if (minSdk == null) {
+                project.logger.error("Android SDK version not found.")
+                return null
+            }
+
+            return Version(minSdk, 0, 0)
+        }
+
         private fun getErrorMessage(
             dependencyName: String,
             versionString: String,
             errorVersion: String,
-            potentialFix: String
-        ): String {
-            return "Error: Your project's $dependencyName version ($versionString) is lower " +
+            potentialFix: String,
+        ): String =
+            "Error: Your project's $dependencyName version ($versionString) is lower " +
                 "than Flutter's minimum supported version of $errorVersion. Please upgrade " +
                 "your $dependencyName version. \nAlternatively, use the flag " +
                 "\"--android-skip-build-dependency-validation\" to bypass this check.\n\n" +
                 "Potential fix: $potentialFix"
-        }
 
         private fun getWarnMessage(
             dependencyName: String,
             versionString: String,
             warnVersion: String,
-            potentialFix: String
-        ): String {
-            return "Warning: Flutter support for your project's $dependencyName version " +
+            potentialFix: String,
+        ): String =
+            "Warning: Flutter support for your project's $dependencyName version " +
                 "($versionString) will soon be dropped. Please upgrade your $dependencyName " +
                 "version to a version of at least $warnVersion soon." +
                 "\nAlternatively, use the flag \"--android-skip-build-dependency-validation\"" +
                 " to bypass this check.\n\nPotential fix: $potentialFix"
-        }
 
         fun checkGradleVersion(
             version: Version,
-            project: Project
+            project: Project,
         ) {
             if (version < errorGradleVersion) {
                 val errorMessage: String =
@@ -232,7 +266,7 @@ class DependencyVersionChecker {
                         GRADLE_NAME,
                         version.toString(),
                         errorGradleVersion.toString(),
-                        getPotentialGradleFix(project.getRootDir().getPath())
+                        getPotentialGradleFix(project.getRootDir().getPath()),
                     )
                 project.extra.set(OUT_OF_SUPPORT_RANGE_PROPERTY, true)
                 throw DependencyValidationException(errorMessage)
@@ -242,7 +276,7 @@ class DependencyVersionChecker {
                         GRADLE_NAME,
                         version.toString(),
                         warnGradleVersion.toString(),
-                        getPotentialGradleFix(project.getRootDir().getPath())
+                        getPotentialGradleFix(project.getRootDir().getPath()),
                     )
                 project.logger.error(warnMessage)
             }
@@ -250,7 +284,7 @@ class DependencyVersionChecker {
 
         fun checkJavaVersion(
             version: JavaVersion,
-            project: Project
+            project: Project,
         ) {
             if (version < errorJavaVersion) {
                 val errorMessage: String =
@@ -258,7 +292,7 @@ class DependencyVersionChecker {
                         JAVA_NAME,
                         version.toString(),
                         errorJavaVersion.toString(),
-                        POTENTIAL_JAVA_FIX
+                        POTENTIAL_JAVA_FIX,
                     )
                 project.extra.set(OUT_OF_SUPPORT_RANGE_PROPERTY, true)
                 throw DependencyValidationException(errorMessage)
@@ -268,7 +302,7 @@ class DependencyVersionChecker {
                         JAVA_NAME,
                         version.toString(),
                         warnJavaVersion.toString(),
-                        POTENTIAL_JAVA_FIX
+                        POTENTIAL_JAVA_FIX,
                     )
                 project.logger.error(warnMessage)
             }
@@ -276,7 +310,7 @@ class DependencyVersionChecker {
 
         fun checkAGPVersion(
             version: Version,
-            project: Project
+            project: Project,
         ) {
             if (version < errorAGPVersion) {
                 val errorMessage: String =
@@ -284,7 +318,7 @@ class DependencyVersionChecker {
                         AGP_NAME,
                         version.toString(),
                         errorAGPVersion.toString(),
-                        getPotentialAGPFix(project.getRootDir().getPath())
+                        getPotentialAGPFix(project.getRootDir().getPath()),
                     )
                 project.extra.set(OUT_OF_SUPPORT_RANGE_PROPERTY, true)
                 throw DependencyValidationException(errorMessage)
@@ -294,7 +328,7 @@ class DependencyVersionChecker {
                         AGP_NAME,
                         version.toString(),
                         warnAGPVersion.toString(),
-                        getPotentialAGPFix(project.getRootDir().getPath())
+                        getPotentialAGPFix(project.getRootDir().getPath()),
                     )
                 project.logger.error(warnMessage)
             }
@@ -302,7 +336,7 @@ class DependencyVersionChecker {
 
         fun checkKGPVersion(
             version: Version,
-            project: Project
+            project: Project,
         ) {
             if (version < errorKGPVersion) {
                 val errorMessage: String =
@@ -310,7 +344,7 @@ class DependencyVersionChecker {
                         KGP_NAME,
                         version.toString(),
                         errorKGPVersion.toString(),
-                        getPotentialKGPFix(project.getRootDir().getPath())
+                        getPotentialKGPFix(project.getRootDir().getPath()),
                     )
                 project.extra.set(OUT_OF_SUPPORT_RANGE_PROPERTY, true)
                 throw DependencyValidationException(errorMessage)
@@ -320,7 +354,23 @@ class DependencyVersionChecker {
                         KGP_NAME,
                         version.toString(),
                         warnKGPVersion.toString(),
-                        getPotentialKGPFix(project.getRootDir().getPath())
+                        getPotentialKGPFix(project.getRootDir().getPath()),
+                    )
+                project.logger.error(warnMessage)
+            }
+        }
+
+        fun checkSDKVersion(
+            version: Version,
+            project: Project,
+        ) {
+            if (version < warnSDKVersion) {
+                val warnMessage: String =
+                    getWarnMessage(
+                        SDK_NAME,
+                        version.toString(),
+                        warnSDKVersion.toString(),
+                        getPotentialSDKFix(project.getRootDir().getPath()),
                     )
                 project.logger.error(warnMessage)
             }
@@ -332,7 +382,11 @@ class DependencyVersionChecker {
 // perform easy comparisons. All versions will have a major, minor, and patch value. These values
 // default to 0 when they are not provided or are otherwise unparseable.
 // For example the version strings "8.2", "8.2.2hfd", and "8.2.0" would parse to the same version.
-class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<Version> {
+class Version(
+    val major: Int,
+    val minor: Int,
+    val patch: Int,
+) : Comparable<Version> {
     companion object {
         fun fromString(version: String): Version {
             val asList: List<String> = version.split(".")
@@ -340,7 +394,7 @@ class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<Versi
             return Version(
                 major = convertedToNumbers.getOrElse(0, { 0 }),
                 minor = convertedToNumbers.getOrElse(1, { 0 }),
-                patch = convertedToNumbers.getOrElse(2, { 0 })
+                patch = convertedToNumbers.getOrElse(2, { 0 }),
             )
         }
     }
@@ -358,13 +412,14 @@ class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<Versi
         return 0
     }
 
-    override fun toString(): String {
-        return major.toString() + "." + minor.toString() + "." + patch.toString()
-    }
+    override fun toString(): String = major.toString() + "." + minor.toString() + "." + patch.toString()
 }
 
 // Custom error for when the dependency_version_checker.kts script finds a dependency out of
 // the defined support range.
-class DependencyValidationException(message: String? = null, cause: Throwable? = null) : Exception(message, cause) {
+class DependencyValidationException(
+    message: String? = null,
+    cause: Throwable? = null,
+) : Exception(message, cause) {
     constructor(cause: Throwable) : this(null, cause)
 }
