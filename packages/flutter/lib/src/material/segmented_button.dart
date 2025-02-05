@@ -446,7 +446,8 @@ class SegmentedButtonState<T> extends State<SegmentedButton<T>> {
   bool get _enabled => widget.onSelectionChanged != null;
   bool _hovering = false;
   bool _focused = false;
-  bool get _selected => widget.selected.contains(widget.segments.first.value);
+  bool get _selected =>
+      widget.segments.any((ButtonSegment<T> segment) => widget.selected.contains(segment.value));
 
   Set<WidgetState> get _states => <WidgetState>{
     if (!_enabled) WidgetState.disabled,

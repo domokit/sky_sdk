@@ -1235,10 +1235,15 @@ void main() {
               segments: const <ButtonSegment<int>>[
                 ButtonSegment<int>(value: 0, label: Text('Add'), icon: Icon(Icons.add)),
                 ButtonSegment<int>(value: 1, label: Text('Subtract'), icon: Icon(Icons.remove)),
+                ButtonSegment<int>(
+                  value: 2,
+                  label: Text('Multiply'),
+                  icon: Icon(Icons.multiple_stop),
+                ),
               ],
               showSelectedIcon: false,
               onSelectionChanged: enabled ? (Set<int> selected) {} : null,
-              selected: const <int>{0},
+              selected: const <int>{1},
             ),
           ),
         ),
@@ -1309,10 +1314,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SegmentedButton<int>), paints..rrect(color: selectedColor));
-
-    // Finish gesture to release resources.
-    await gesture.up();
-    await tester.pumpAndSettle();
   });
 }
 
