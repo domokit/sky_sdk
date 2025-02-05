@@ -288,6 +288,13 @@ class Color {
   /// If [colorSpace] is provided, and is different than the current color
   /// space, the component values are updated before transforming them to the
   /// provided [ColorSpace].
+  ///
+  /// Example:
+  /// ```dart
+  /// import 'dart:ui';
+  /// /// Create a color with 50% opacity.
+  /// Color makeTransparent(Color color) => color.withValues(alpha: 0.5);
+  /// ```
   Color withValues({
     double? alpha,
     double? red,

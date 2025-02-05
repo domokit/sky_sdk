@@ -18,6 +18,25 @@ namespace impeller::android {
 class SurfaceControl;
 class HardwareBuffer;
 
+/// @brief A wrapper class that indicates whether a SurfaceTransaction was
+/// created by the flutter engine or was borrowed from Java for platform
+/// interop.
+struct WrappedSurfaceTransaction {
+  ASurfaceTransaction* tx = nullptr;
+
+  /// Whether this SurfaceTransaction was created by the engine or imported from
+  /// Java.
+  bool owned = true;
+
+  constexpr bool operator==(const WrappedSurfaceTransaction& other) const {
+    return other.tx == tx;
+  }
+
+  constexpr bool operator!=(const WrappedSurfaceTransaction& other) const {
+    return !(*this == other);
+  }
+};
+
 //------------------------------------------------------------------------------
 /// @brief      A wrapper for ASurfaceTransaction.
 ///             https://developer.android.com/ndk/reference/group/native-activity#asurfacetransaction
@@ -47,6 +66,8 @@ class SurfaceTransaction {
   SurfaceTransaction(const SurfaceTransaction&) = delete;
 
   SurfaceTransaction& operator=(const SurfaceTransaction&) = delete;
+
+  explicit SurfaceTransaction(ASurfaceTransaction* transaction);
 
   bool IsValid() const;
 
@@ -119,18 +140,20 @@ class SurfaceTransaction {
 
  private:
   struct UniqueASurfaceTransactionTraits {
-    static ASurfaceTransaction* InvalidValue() { return nullptr; }
+    static WrappedSurfaceTransaction InvalidValue() { return {}; }
 
-    static bool IsValid(ASurfaceTransaction* value) {
-      return value != InvalidValue();
+    static bool IsValid(const WrappedSurfaceTransaction& value) {
+      return value.tx != nullptr;
     }
 
-    static void Free(ASurfaceTransaction* value) {
-      GetProcTable().ASurfaceTransaction_delete(value);
+    static void Free(const WrappedSurfaceTransaction& value) {
+      if (value.owned && value.tx) {
+        GetProcTable().ASurfaceTransaction_delete(value.tx);
+      }
     }
   };
 
-  fml::UniqueObject<ASurfaceTransaction*, UniqueASurfaceTransactionTraits>
+  fml::UniqueObject<WrappedSurfaceTransaction, UniqueASurfaceTransactionTraits>
       transaction_;
 };
 

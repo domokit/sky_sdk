@@ -3431,17 +3431,14 @@ String get _canvasKitBaseUrl => configuration.canvasKitBaseUrl;
 
 @visibleForTesting
 List<String> getCanvasKitJsFileNames(CanvasKitVariant variant) {
-  switch (variant) {
-    case CanvasKitVariant.auto:
-      return <String>[
-        if (_enableCanvasKitChromiumInAutoMode) _kChromiumCanvasKitJsFileName,
-        _kFullCanvasKitJsFileName,
-      ];
-    case CanvasKitVariant.full:
-      return <String>[_kFullCanvasKitJsFileName];
-    case CanvasKitVariant.chromium:
-      return <String>[_kChromiumCanvasKitJsFileName];
-  }
+  return switch (variant) {
+    CanvasKitVariant.auto => <String>[
+      if (_enableCanvasKitChromiumInAutoMode) _kChromiumCanvasKitJsFileName,
+      _kFullCanvasKitJsFileName,
+    ],
+    CanvasKitVariant.full => <String>[_kFullCanvasKitJsFileName],
+    CanvasKitVariant.chromium => <String>[_kChromiumCanvasKitJsFileName],
+  };
 }
 
 Iterable<String> get _canvasKitJsUrls {

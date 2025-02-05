@@ -170,7 +170,7 @@ TEST(AndroidSurfaceGL, CreateSnapshopSurfaceWhenOnscreenSurfaceIsNotNull) {
       std::make_unique<AndroidSurfaceGLSkia>(android_context);
   auto window = fml::MakeRefCounted<AndroidNativeWindow>(
       nullptr, /*is_fake_window=*/true);
-  android_surface->SetNativeWindow(window);
+  android_surface->SetNativeWindow(window, nullptr);
   auto onscreen_surface = android_surface->GetOnscreenSurface();
   EXPECT_NE(onscreen_surface, nullptr);
   android_surface->CreateSnapshotSurface();

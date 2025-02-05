@@ -18,7 +18,11 @@ new contributions will only be accepted in `src/main/kotlin` (and `src/test/kotl
 
 ### Testing
 
-Tests can be run in Android Studio, or directly with Gradle: `./gradle test` 
+To run the tests from the CLI, you first need to download the Gradle wrapper.
+1. Ensure you have run gclient sync recently (i.e., from the root of your framework checkout, run `gclient sync -D`).
+2. From this directory, run `../../../engine/src/flutter/third_party/gradle/bin/gradle wrapper`.
+
+Tests can be run in Android Studio, or directly with Gradle: `./gradlew test` 
 (note that this directory does not contain a version controlled Gradle file. You can find one in 
 the engines `third_party` directory at 
 `<flutter_root>/engine/src/flutter/third_party/gradle/bin/gradle`).

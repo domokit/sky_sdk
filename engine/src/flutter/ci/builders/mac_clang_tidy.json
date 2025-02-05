@@ -117,7 +117,12 @@
                     "max_attempts": 1,
                     "script": "flutter/ci/clang_tidy.sh"
                 }
-            ]
+            ],
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
         },
         {
             "name": "test: lint host_debug 1",
@@ -167,7 +172,12 @@
                     "max_attempts": 1,
                     "script": "flutter/ci/clang_tidy.sh"
                 }
-            ]
+            ],
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
         },
         {
             "name": "test: lint host_debug 2",
@@ -217,7 +227,12 @@
                     "max_attempts": 1,
                     "script": "flutter/ci/clang_tidy.sh"
                 }
-            ]
+            ],
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
         },
         {
             "name": "test: lint host_debug 3",
@@ -267,7 +282,12 @@
                     "max_attempts": 1,
                     "script": "flutter/ci/clang_tidy.sh"
                 }
-            ]
+            ],
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
         },
         {
             "name": "test: lint ios_debug_sim",
@@ -335,7 +355,12 @@
                     "max_attempts": 1,
                     "script": "flutter/ci/clang_tidy.sh"
                 }
-            ]
+            ],
+            "properties": {
+                "$flutter/osx_sdk": {
+                    "sdk_version": "15a240d"
+                }
+            }
         }
     ]
 }

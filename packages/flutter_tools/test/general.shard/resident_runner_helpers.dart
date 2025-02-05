@@ -321,6 +321,7 @@ class FakeResidentCompiler extends Fake implements ResidentCompiler {
     bool checkDartPluginRegistry = false,
     File? dartPluginRegistrant,
     Uri? nativeAssetsYaml,
+    bool recompileRestart = false,
   }) async {
     recompileCalled = true;
     receivedNativeAssetsYaml = nativeAssetsYaml;
@@ -488,6 +489,7 @@ class FakeDevFS extends Fake implements DevFS {
     AssetBundle? bundle,
     bool bundleFirstUpload = false,
     bool fullRestart = false,
+    bool resetCompiler = false,
     String? projectRootPath,
     File? dartPluginRegistrant,
   }) async {

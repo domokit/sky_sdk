@@ -29,7 +29,7 @@ ALL_PACKAGES = [
     os.path.join(ENGINE_DIR, 'shell', 'vmservice'),
     os.path.join(ENGINE_DIR, 'testing', 'benchmark'),
     os.path.join(ENGINE_DIR, 'testing', 'dart'),
-    os.path.join(ENGINE_DIR, 'testing', 'scenario_app'),
+    os.path.join(ENGINE_DIR, 'testing', 'ios_scenario_app'),
     os.path.join(ENGINE_DIR, 'testing', 'skia_gold_client'),
     os.path.join(ENGINE_DIR, 'testing', 'smoke_test_failure'),
     os.path.join(ENGINE_DIR, 'testing', 'symbols'),

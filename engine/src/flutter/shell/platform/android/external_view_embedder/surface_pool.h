@@ -45,7 +45,7 @@ struct OverlayLayer {
 
 class SurfacePool {
  public:
-  SurfacePool();
+  explicit SurfacePool(bool use_new_surface_methods);
 
   ~SurfacePool();
 
@@ -76,6 +76,8 @@ class SurfacePool {
   // Returns true if the current pool has layers in use.
   bool HasLayers();
 
+  void TrimLayers();
+
  private:
   // The index of the entry in the layers_ vector that determines the beginning
   // of the unused layers. For example, consider the following vector:
@@ -102,6 +104,7 @@ class SurfacePool {
 
   // Used to guard public methods.
   std::mutex mutex_;
+  bool use_new_surface_methods_ = false;
 
   void DestroyLayersLocked(
       const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade);

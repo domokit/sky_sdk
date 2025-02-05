@@ -353,7 +353,7 @@ class LocalizationOptions {
        outputLocalizationFile = outputLocalizationFile ?? 'app_localizations.dart',
        outputClass = outputClass ?? 'AppLocalizations',
        useDeferredLoading = useDeferredLoading ?? false,
-       syntheticPackage = syntheticPackage ?? true,
+       syntheticPackage = syntheticPackage ?? !featureFlags.isExplicitPackageDependenciesEnabled,
        requiredResourceAttributes = requiredResourceAttributes ?? false,
        nullableGetter = nullableGetter ?? true,
        format = format ?? false,

@@ -37,6 +37,9 @@ class Runner final
 
   ~Runner();
 
+  void handle_unknown_method(uint64_t ordinal,
+                             bool method_has_response) override;
+
  private:
   // CF v2 lifecycle methods.
 

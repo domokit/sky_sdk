@@ -21,6 +21,9 @@
 
 namespace impeller::android {
 
+ASurfaceTransaction* ASurfaceTransaction_fromJava(JNIEnv* env,
+                                                  jobject transaction);
+
 //------------------------------------------------------------------------------
 /// @brief      The Android procs along with the device API level on which these
 ///             will be available. There is no checking of the actual API level
@@ -61,6 +64,7 @@ namespace impeller::android {
   INVOKE(ASurfaceTransaction_setColor, 29)                       \
   INVOKE(ASurfaceTransaction_setOnComplete, 29)                  \
   INVOKE(ASurfaceTransactionStats_getPreviousReleaseFenceFd, 29) \
+  INVOKE(ASurfaceTransaction_fromJava, 34)                       \
   INVOKE(ATrace_isEnabled, 23)                                   \
   INVOKE(eglGetNativeClientBufferANDROID, 0)
 

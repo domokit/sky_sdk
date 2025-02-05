@@ -250,6 +250,73 @@ Future<void> testMain() async {
     );
   });
 
+  test('onSemanticsActionEvent delays action until after frame', () async {
+    final eventLog = <ui.SemanticsAction>[];
+
+    void callback(ui.SemanticsActionEvent event) {
+      eventLog.add(event.type);
+    }
+
+    ui.PlatformDispatcher.instance.onSemanticsActionEvent = callback;
+
+    // Outside frame: action must be sent immediately
+    EnginePlatformDispatcher.instance.invokeOnSemanticsAction(
+      myWindow.viewId,
+      0,
+      ui.SemanticsAction.focus,
+      null,
+    );
+
+    expect(eventLog, [ui.SemanticsAction.focus]);
+    eventLog.clear();
+
+    bool tapCalled = false;
+    EnginePlatformDispatcher.instance.onBeginFrame = (_) {
+      // Inside onBeginFrame: should be delayed
+      EnginePlatformDispatcher.instance.invokeOnSemanticsAction(
+        myWindow.viewId,
+        0,
+        ui.SemanticsAction.tap,
+        null,
+      );
+      tapCalled = true;
+    };
+
+    bool increaseCalled = false;
+    EnginePlatformDispatcher.instance.onDrawFrame = () {
+      // Inside onDrawFrame: should be delayed
+      EnginePlatformDispatcher.instance.invokeOnSemanticsAction(
+        myWindow.viewId,
+        0,
+        ui.SemanticsAction.increase,
+        null,
+      );
+      increaseCalled = true;
+    };
+
+    final frameCompleter = Completer<void>();
+    FrameService.instance.onFinishedRenderingFrame = () {
+      frameCompleter.complete();
+    };
+
+    FrameService.instance.scheduleFrame();
+    await frameCompleter.future;
+
+    // Even though invokeOnSemanticsAction was called for tap and increase
+    // actions the actions have not yet been delivered to the framework, because
+    // the actions happened inside onBeginFrame and onDrawFrame. The events are
+    // queues in zero-length timers.
+    expect(tapCalled, isTrue);
+    expect(increaseCalled, isTrue);
+    expect(eventLog, isEmpty);
+
+    // Flush the timers after the frame.
+    await Future<void>.delayed(Duration.zero);
+
+    // Now the events should be delivered.
+    expect(eventLog, [ui.SemanticsAction.tap, ui.SemanticsAction.increase]);
+  });
+
   test('onAccessibilityFeaturesChanged preserves the zone', () {
     final Zone innerZone = Zone.current.fork();
 

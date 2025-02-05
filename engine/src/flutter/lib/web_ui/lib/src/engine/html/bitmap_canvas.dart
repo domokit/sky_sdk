@@ -938,6 +938,7 @@ class BitmapCanvas extends EngineCanvas {
   void drawParagraph(CanvasParagraph paragraph, ui.Offset offset) {
     assert(paragraph.isLaidOut);
 
+    // dart format off
     // Normally, text is composited as a plain HTML <p> tag. However, if a
     // bitmap canvas was used for a preceding drawing command, then it's more
     // efficient to continue compositing into the existing canvas, if possible.
@@ -948,13 +949,13 @@ class BitmapCanvas extends EngineCanvas {
         // in the first place.
         paragraph.canDrawOnCanvas &&
         // Cannot composite if there's no bitmap canvas to composite into.
-            // Creating a new bitmap canvas just to draw text doesn't make sense.
-            _canvasPool
-            .hasCanvas &&
+        // Creating a new bitmap canvas just to draw text doesn't make sense.
+        _canvasPool.hasCanvas &&
         !_childOverdraw &&
         // Bitmap canvas introduces correctness issues in the presence of SVG
         // filters, so prefer plain HTML in this case.
         !_renderStrategy.isInsideSvgFilterTree;
+    // dart format on
 
     if (canCompositeIntoBitmapCanvas) {
       paragraph.paint(this, offset);
@@ -1010,6 +1011,10 @@ class BitmapCanvas extends EngineCanvas {
       paint.shader == null || paint.shader is EngineImageShader,
       'Linear/Radial/SweepGradient not supported yet',
     );
+    if (vertices.hasNoPoints) {
+      // Drawing empty vertices is a no-op.
+      return;
+    }
     final Int32List? colors = vertices.colors;
     final ui.VertexMode mode = vertices.mode;
     final DomCanvasRenderingContext2D ctx = _canvasPool.context;
@@ -1320,31 +1325,6 @@ SvgBlendMode? blendModeToSvgEnum(ui.BlendMode? blendMode) {
       assert(false, 'Flutter Web does not support the blend mode: $blendMode');
 
       return const SvgBlendMode(kCompositeSourceOver, SVG_FEBLEND_MODE_NORMAL);
-  }
-}
-
-String? stringForStrokeCap(ui.StrokeCap? strokeCap) {
-  if (strokeCap == null) {
-    return null;
-  }
-  switch (strokeCap) {
-    case ui.StrokeCap.butt:
-      return 'butt';
-    case ui.StrokeCap.round:
-      return 'round';
-    case ui.StrokeCap.square:
-      return 'square';
-  }
-}
-
-String stringForStrokeJoin(ui.StrokeJoin strokeJoin) {
-  switch (strokeJoin) {
-    case ui.StrokeJoin.round:
-      return 'round';
-    case ui.StrokeJoin.bevel:
-      return 'bevel';
-    case ui.StrokeJoin.miter:
-      return 'miter';
   }
 }
 

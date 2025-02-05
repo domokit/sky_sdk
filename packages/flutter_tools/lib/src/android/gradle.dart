@@ -52,6 +52,11 @@ import 'migrations/top_level_gradle_build_file_migration.dart';
 final RegExp _kBuildVariantRegex = RegExp('^BuildVariant: (?<$_kBuildVariantRegexGroupName>.*)\$');
 const String _kBuildVariantRegexGroupName = 'variant';
 const String _kBuildVariantTaskName = 'printBuildVariants';
+@visibleForTesting
+const String failedToStripDebugSymbolsErrorMessage = r'''
+Release app bundle failed to strip debug symbols from native libraries. Please run flutter doctor and ensure that the Android toolchain does not report any issues.
+
+Otherwise, file an issue at https://github.com/flutter/flutter/issues.''';
 
 typedef _OutputParser = void Function(String line);
 
@@ -85,6 +90,9 @@ Directory getBundleDirectory(FlutterProject project) {
           .childDirectory('outputs')
           .childDirectory('bundle');
 }
+
+@visibleForTesting
+final String apkAnalyzerBinaryName = globals.platform.isWindows ? 'apkanalyzer.bat' : 'apkanalyzer';
 
 /// The directory where the repo is generated.
 /// Only applicable to AARs.
@@ -577,6 +585,16 @@ class AndroidGradleBuilder implements AndroidBuilder {
 
     if (isBuildingBundle) {
       final File bundleFile = findBundleFile(project, buildInfo, _logger, _analytics);
+
+      if ((buildInfo.mode == BuildMode.release) &&
+          !(await _isAabStrippedOfDebugSymbols(
+            project,
+            bundleFile.path,
+            androidBuildInfo.targetArchs,
+          ))) {
+        throwToolExit(failedToStripDebugSymbolsErrorMessage);
+      }
+
       final String appSize =
           (buildInfo.mode == BuildMode.debug)
               ? '' // Don't display the size when building a debug variant.
@@ -630,6 +648,64 @@ class AndroidGradleBuilder implements AndroidBuilder {
         await _performCodeSizeAnalysis('apk', apkFile, androidBuildInfo);
       }
     }
+  }
+
+  // Checks whether AGP has successfully stripped debug symbols from native libraries
+  // - libflutter.so, aka the engine
+  // - lib_app.so, aka the framework dart code
+  // and moved them to the BUNDLE-METADATA directory. Block the build if this
+  // isn't successful, as it means that debug symbols are getting included in
+  // the final app that would be delivered to users.
+  Future<bool> _isAabStrippedOfDebugSymbols(
+    FlutterProject project,
+    String aabPath,
+    Iterable<AndroidArch> targetArchs,
+  ) async {
+    if (globals.androidSdk == null) {
+      _logger.printTrace(
+        'Failed to find android sdk when checking final appbundle for debug symbols.',
+      );
+      return false;
+    }
+    if (!globals.androidSdk!.cmdlineToolsAvailable) {
+      _logger.printTrace(
+        'Failed to find cmdline-tools when checking final appbundle for debug symbols.',
+      );
+      return false;
+    }
+    final String? apkAnalyzerPath = globals.androidSdk!.getCmdlineToolsPath(apkAnalyzerBinaryName);
+    if (apkAnalyzerPath == null) {
+      _logger.printTrace(
+        'Failed to find apkanalyzer when checking final appbundle for debug symbols.',
+      );
+      return false;
+    }
+
+    final RunResult result = await _processUtils.run(
+      <String>[apkAnalyzerPath, 'files', 'list', aabPath],
+      workingDirectory: project.android.hostAppGradleRoot.path,
+      environment: _java?.environment,
+    );
+
+    if (result.exitCode != 0) {
+      _logger.printTrace(
+        'apkanalyzer finished with exit code 0 when checking final appbundle for debug symbols.\n'
+        'stderr was: ${result.stderr}\n'
+        'and stdout was: ${result.stdout}',
+      );
+      return false;
+    }
+
+    // As long as libflutter.so.sym is present for at least one architecture,
+    // assume AGP succeeded in stripping.
+    if (result.stdout.contains('libflutter.so.sym')) {
+      return true;
+    }
+
+    _logger.printTrace(
+      'libflutter.so.sym not present when checking final appbundle for debug symbols.',
+    );
+    return false;
   }
 
   Future<void> _performCodeSizeAnalysis(

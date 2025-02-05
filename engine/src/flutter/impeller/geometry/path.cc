@@ -60,7 +60,7 @@ bool Path::IsEmpty() const {
 }
 
 bool Path::IsSingleContour() const {
-  return data_->single_countour;
+  return data_->single_contour;
 }
 
 /// Determine required storage for points and indices.

@@ -91,6 +91,25 @@ class MockPlatformViewAndroidJNI : public PlatformViewAndroidJNI {
               (),
               (override));
   MOCK_METHOD(void, FlutterViewDestroyOverlaySurfaces, (), (override));
+  MOCK_METHOD(ASurfaceTransaction*, createTransaction, (), (override));
+  MOCK_METHOD(void, swapTransaction, (), (override));
+  MOCK_METHOD(void, applyTransaction, (), (override));
+  MOCK_METHOD(void, destroyOverlaySurface2, (), (override));
+  MOCK_METHOD(std::unique_ptr<PlatformViewAndroidJNI::OverlayMetadata>,
+              createOverlaySurface2,
+              (),
+              (override));
+  MOCK_METHOD(void,
+              onDisplayPlatformView2,
+              (int32_t view_id,
+               int32_t x,
+               int32_t y,
+               int32_t width,
+               int32_t height,
+               int32_t viewWidth,
+               int32_t viewHeight,
+               MutatorsStack mutators_stack),
+              (override));
   MOCK_METHOD(std::unique_ptr<std::vector<std::string>>,
               FlutterViewComputePlatformResolvedLocale,
               (std::vector<std::string> supported_locales_data),

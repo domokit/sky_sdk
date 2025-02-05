@@ -18,3 +18,7 @@ For example:
 ```sh
 flutter drive -t lib/keyboard_resize.dart --driver test_driver/keyboard_resize_test.dart
 ```
+
+## New tests require new CI runner
+Adding code to this directory will not automatically cause it to be run by any already existing ci tooling.
+This directory is intentinally a "choose your own adventure" piece of tooling.

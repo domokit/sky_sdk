@@ -7,6 +7,7 @@ import 'package:ui/ui.dart' as ui;
 
 import '../dom.dart';
 import '../frame_reference.dart';
+import '../frame_service.dart';
 import '../onscreen_logging.dart';
 import '../semantics.dart';
 import '../util.dart';
@@ -73,7 +74,7 @@ void commitScene(PersistedScene scene) {
     retainedSurfaces = <PersistedSurface>[];
   }
   if (debugExplainSurfaceStats) {
-    debugPrintSurfaceStats(scene, debugFrameNumber);
+    debugPrintSurfaceStats(scene, FrameService.instance.debugFrameNumber);
     debugRepaintSurfaceStatsOverlay(scene);
   }
 
@@ -97,10 +98,6 @@ void commitScene(PersistedScene scene) {
   if (debugExplainSurfaceStats) {
     surfaceStats = <PersistedSurface, DebugSurfaceStats>{};
   }
-  assert(() {
-    debugFrameNumber++;
-    return true;
-  }());
 }
 
 /// Signature of a function that receives a [PersistedSurface].

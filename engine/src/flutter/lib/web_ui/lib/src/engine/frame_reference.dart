@@ -2,10 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// A monotonically increasing frame number being rendered.
-///
-/// Used for debugging only.
-int debugFrameNumber = 1;
+// TODO(yjbanov): this file should be deleted as part of https://github.com/flutter/flutter/issues/145954
+//                because it's only used by the HTML renderer.
 
 List<FrameReference<dynamic>> frameReferences = <FrameReference<dynamic>>[];
 

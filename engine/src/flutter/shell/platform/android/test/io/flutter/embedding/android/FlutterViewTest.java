@@ -53,6 +53,7 @@ import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.embedding.engine.renderer.FlutterRenderer;
 import io.flutter.embedding.engine.systemchannels.SettingsChannel;
 import io.flutter.plugin.platform.PlatformViewsController;
+import io.flutter.plugin.platform.PlatformViewsController2;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,6 +84,7 @@ public class FlutterViewTest {
   @Mock FlutterJNI mockFlutterJni;
   @Mock FlutterLoader mockFlutterLoader;
   @Spy PlatformViewsController platformViewsController;
+  @Spy PlatformViewsController2 platformViewsController2;
 
   @Before
   public void setUp() {
@@ -97,10 +99,12 @@ public class FlutterViewTest {
     FlutterView flutterView = new FlutterView(ctx);
     FlutterEngine flutterEngine = spy(new FlutterEngine(ctx, mockFlutterLoader, mockFlutterJni));
     when(flutterEngine.getPlatformViewsController()).thenReturn(platformViewsController);
+    when(flutterEngine.getPlatformViewsController2()).thenReturn(platformViewsController2);
 
     flutterView.attachToFlutterEngine(flutterEngine);
 
     verify(platformViewsController, times(1)).attachToView(flutterView);
+    verify(platformViewsController2, times(1)).attachToView(flutterView);
   }
 
   @Test
@@ -117,11 +121,13 @@ public class FlutterViewTest {
     FlutterView flutterView = new FlutterView(ctx);
     FlutterEngine flutterEngine = spy(new FlutterEngine(ctx, mockFlutterLoader, mockFlutterJni));
     when(flutterEngine.getPlatformViewsController()).thenReturn(platformViewsController);
+    when(flutterEngine.getPlatformViewsController2()).thenReturn(platformViewsController2);
 
     flutterView.attachToFlutterEngine(flutterEngine);
     flutterView.detachFromFlutterEngine();
 
     verify(platformViewsController, times(1)).detachFromView();
+    verify(platformViewsController2, times(1)).detachFromView();
   }
 
   @Test

@@ -516,10 +516,10 @@ void main() {
       expect(
         parser.usage,
         stringContainsInOrder([
-          '[ci/linux_host_debug]',
-          'A CI-suitable development build of the Linux host.',
           '[host_debug]',
           'A development build of the Linux host.',
+          '[ci/linux_host_debug]',
+          'A CI-suitable development build of the Linux host.',
         ]),
       );
     });

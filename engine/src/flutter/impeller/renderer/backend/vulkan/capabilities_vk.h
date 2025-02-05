@@ -81,6 +81,16 @@ enum class RequiredAndroidDeviceExtensionVK : uint32_t {
   ///
   kKHRDedicatedAllocation,
 
+  kLast,
+};
+
+//------------------------------------------------------------------------------
+/// @brief      A device extension available on some Android platforms.
+///
+///             Platform agnostic code can still check if these Android
+///             extensions are present.
+///
+enum class OptionalAndroidDeviceExtensionVK : uint32_t {
   //----------------------------------------------------------------------------
   /// For exporting file descriptors from fences to interact with platform APIs.
   ///
@@ -188,6 +198,8 @@ class CapabilitiesVK final : public Capabilities,
 
   bool HasExtension(OptionalDeviceExtensionVK ext) const;
 
+  bool HasExtension(OptionalAndroidDeviceExtensionVK ext) const;
+
   std::optional<std::vector<std::string>> GetEnabledLayers() const;
 
   std::optional<std::vector<std::string>> GetEnabledInstanceExtensions() const;
@@ -269,6 +281,10 @@ class CapabilitiesVK final : public Capabilities,
   ///
   bool SupportsTextureFixedRateCompression() const;
 
+  /// Whether the external fence and semaphore extensions used for AHB support
+  /// are available.
+  bool SupportsExternalSemaphoreExtensions() const;
+
   //----------------------------------------------------------------------------
   /// @brief      Get the fixed compression rate supported by the context for
   ///             the given format and usage.
@@ -292,6 +308,8 @@ class CapabilitiesVK final : public Capabilities,
   std::set<RequiredCommonDeviceExtensionVK> required_common_device_extensions_;
   std::set<RequiredAndroidDeviceExtensionVK>
       required_android_device_extensions_;
+  std::set<OptionalAndroidDeviceExtensionVK>
+      optional_android_device_extensions_;
   std::set<OptionalDeviceExtensionVK> optional_device_extensions_;
   mutable PixelFormat default_color_format_ = PixelFormat::kUnknown;
   PixelFormat default_stencil_format_ = PixelFormat::kUnknown;
@@ -305,6 +323,7 @@ class CapabilitiesVK final : public Capabilities,
   bool has_triangle_fans_ = true;
   bool has_primitive_restart_ = true;
   bool has_framebuffer_fetch_ = true;
+  bool supports_external_fence_and_semaphore_ = false;
   bool is_valid_ = false;
 
   // The embedder.h API is responsible for providing the instance and device

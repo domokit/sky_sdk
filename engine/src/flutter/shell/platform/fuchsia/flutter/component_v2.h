@@ -86,6 +86,9 @@ class ComponentV2 final
   void WriteProfileToTrace() const;
 #endif  // !defined(DART_PRODUCT)
 
+  void handle_unknown_method(uint64_t ordinal,
+                             bool method_has_response) override;
+
  private:
   ComponentV2(
       TerminationCallback termination_callback,

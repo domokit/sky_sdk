@@ -236,6 +236,9 @@ class CkCanvas {
   }
 
   void drawVertices(CkVertices vertices, ui.BlendMode blendMode, CkPaint paint) {
+    if (vertices.hasNoPoints) {
+      return;
+    }
     final skPaint = paint.toSkPaint();
     skCanvas.drawVertices(vertices.skiaObject, toSkBlendMode(blendMode), skPaint);
     skPaint.delete();

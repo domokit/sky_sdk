@@ -14,7 +14,6 @@ import '../build_info.dart';
 import '../cache.dart';
 import '../globals.dart' as globals;
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../runner/flutter_command.dart' show FlutterCommandResult;
 import 'build.dart';
 
@@ -75,23 +74,6 @@ class BuildAarCommand extends BuildSubCommand {
 
   @override
   late final FlutterProject project = _getProject();
-
-  @override
-  Future<CustomDimensions> get usageValues async {
-    final String projectType;
-    if (project.manifest.isModule) {
-      projectType = 'module';
-    } else if (project.manifest.isPlugin) {
-      projectType = 'plugin';
-    } else {
-      projectType = 'app';
-    }
-
-    return CustomDimensions(
-      commandBuildAarProjectType: projectType,
-      commandBuildAarTargetPlatform: stringsArg('target-platform').join(','),
-    );
-  }
 
   @override
   Future<Event> unifiedAnalyticsUsageValues(String commandPath) async {

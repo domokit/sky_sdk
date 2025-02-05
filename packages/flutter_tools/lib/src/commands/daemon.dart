@@ -709,7 +709,6 @@ class AppDomain extends Domain {
         stayResident: true,
         urlTunneller: options.webEnableExposeUrl! ? daemon.daemonDomain.exposeUrl : null,
         machine: machine,
-        usage: globals.flutterUsage,
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         logger: globals.logger,

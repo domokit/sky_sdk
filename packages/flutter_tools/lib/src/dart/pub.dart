@@ -7,7 +7,6 @@ import 'dart:async';
 import 'package:meta/meta.dart';
 import 'package:package_config/package_config.dart';
 import 'package:process/process.dart';
-
 import '../base/bot_detector.dart';
 import '../base/common.dart';
 import '../base/context.dart';
@@ -21,7 +20,6 @@ import '../cache.dart';
 import '../convert.dart';
 import '../dart/package_map.dart';
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../version.dart';
 
 /// The [Pub] instance.
@@ -113,7 +111,6 @@ abstract class Pub {
     required ProcessManager processManager,
     required Platform platform,
     required BotDetector botDetector,
-    required Usage usage,
   }) = _DefaultPub;
 
   /// Create a [Pub] instance with a mocked [stdio].
@@ -124,7 +121,6 @@ abstract class Pub {
     required ProcessManager processManager,
     required Platform platform,
     required BotDetector botDetector,
-    required Usage usage,
     required Stdio stdio,
   }) = _DefaultPub.test;
 
@@ -211,12 +207,10 @@ class _DefaultPub implements Pub {
     required ProcessManager processManager,
     required Platform platform,
     required BotDetector botDetector,
-    required Usage usage,
   }) : _fileSystem = fileSystem,
        _logger = logger,
        _platform = platform,
        _botDetector = botDetector,
-       _usage = usage,
        _processUtils = ProcessUtils(logger: logger, processManager: processManager),
        _processManager = processManager,
        _stdio = null;
@@ -228,13 +222,11 @@ class _DefaultPub implements Pub {
     required ProcessManager processManager,
     required Platform platform,
     required BotDetector botDetector,
-    required Usage usage,
     required Stdio stdio,
   }) : _fileSystem = fileSystem,
        _logger = logger,
        _platform = platform,
        _botDetector = botDetector,
-       _usage = usage,
        _processUtils = ProcessUtils(logger: logger, processManager: processManager),
        _processManager = processManager,
        _stdio = stdio;
@@ -244,7 +236,6 @@ class _DefaultPub implements Pub {
   final ProcessUtils _processUtils;
   final Platform _platform;
   final BotDetector _botDetector;
-  final Usage _usage;
   final ProcessManager _processManager;
   final Stdio? _stdio;
 
@@ -501,8 +492,6 @@ class _DefaultPub implements Pub {
     }
 
     final int code = exitCode;
-    final String result = code == 0 ? 'success' : 'failure';
-    PubResultEvent(context: context.toAnalyticsString(), result: result, usage: _usage).send();
 
     if (code != 0) {
       final StringBuffer buffer = StringBuffer('$failureMessage\n');
@@ -580,12 +569,6 @@ class _DefaultPub implements Pub {
       mapFunction: filterWrapper, // may set versionSolvingFailed, lastPubMessage
       environment: pubEnvironment,
     );
-
-    String result = 'success';
-    if (code != 0) {
-      result = 'failure';
-    }
-    PubResultEvent(context: context.toAnalyticsString(), result: result, usage: _usage).send();
 
     if (code != 0) {
       final StringBuffer buffer = StringBuffer('$failureMessage\n');

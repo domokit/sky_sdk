@@ -186,6 +186,8 @@
 /dev/devicelab/bin/tasks/fullscreen_textfield_perf_ios__e2e_summary.dart @louisehsu @flutter/engine
 /dev/devicelab/bin/tasks/hello_world_ios__compile.dart @jmagman @flutter/engine
 /dev/devicelab/bin/tasks/hot_mode_dev_cycle_ios__benchmark.dart @louisehsu @flutter/tool
+/dev/devicelab/bin/tasks/imitation_game_flutter__compile.dart @louisehsu @flutter/tool
+/dev/devicelab/bin/tasks/imitation_game_swiftui__compile.dart @louisehsu @flutter/tool
 # TODO(vashworth): Remove once https://github.com/flutter/flutter/issues/142305 is fixed.
 /dev/devicelab/bin/tasks/hot_mode_dev_cycle_ios__benchmark_no_dds.dart @louisehsu @flutter/tool
 /dev/devicelab/bin/tasks/imagefiltered_transform_animation_perf_ios__timeline_summary.dart @hellohuanlin @flutter/engine

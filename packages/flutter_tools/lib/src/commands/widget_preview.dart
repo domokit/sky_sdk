@@ -8,21 +8,37 @@ import 'package:meta/meta.dart';
 import '../base/common.dart';
 import '../base/deferred_component.dart';
 import '../base/file_system.dart';
+import '../base/logger.dart';
 import '../base/platform.dart';
 import '../cache.dart';
 import '../convert.dart';
 import '../dart/pub.dart';
 import '../flutter_manifest.dart';
 
-import '../globals.dart' as globals;
 import '../project.dart';
 import '../runner/flutter_command.dart';
+import '../widget_preview/preview_code_generator.dart';
+import '../widget_preview/preview_detector.dart';
 import 'create_base.dart';
 
 class WidgetPreviewCommand extends FlutterCommand {
-  WidgetPreviewCommand() {
-    addSubcommand(WidgetPreviewStartCommand());
-    addSubcommand(WidgetPreviewCleanCommand());
+  WidgetPreviewCommand({
+    required Logger logger,
+    required FileSystem fs,
+    required FlutterProjectFactory projectFactory,
+    required Cache cache,
+  }) {
+    addSubcommand(
+      WidgetPreviewStartCommand(
+        logger: logger,
+        fs: fs,
+        projectFactory: projectFactory,
+        cache: cache,
+      ),
+    );
+    addSubcommand(
+      WidgetPreviewCleanCommand(logger: logger, fs: fs, projectFactory: projectFactory),
+    );
   }
 
   @override
@@ -43,27 +59,30 @@ class WidgetPreviewCommand extends FlutterCommand {
   Future<FlutterCommandResult> runCommand() async => FlutterCommandResult.fail();
 }
 
-/// Common utilities for the 'start' and 'clean' commands.
-mixin WidgetPreviewSubCommandMixin on FlutterCommand {
+abstract base class WidgetPreviewSubCommandBase extends FlutterCommand {
+  FileSystem get fs;
+  Logger get logger;
+  FlutterProjectFactory get projectFactory;
+
   FlutterProject getRootProject() {
     final ArgResults results = argResults!;
     final Directory projectDir;
     if (results.rest case <String>[final String directory]) {
-      projectDir = globals.fs.directory(directory);
+      projectDir = fs.directory(directory);
       if (!projectDir.existsSync()) {
         throwToolExit('Could not find ${projectDir.path}.');
       }
     } else if (results.rest.length > 1) {
       throwToolExit('Only one directory should be provided.');
     } else {
-      projectDir = globals.fs.currentDirectory;
+      projectDir = fs.currentDirectory;
     }
     return validateFlutterProjectForPreview(projectDir);
   }
 
   FlutterProject validateFlutterProjectForPreview(Directory directory) {
-    globals.logger.printTrace('Verifying that ${directory.path} is a Flutter project.');
-    final FlutterProject flutterProject = globals.projectFactory.fromDirectory(directory);
+    logger.printTrace('Verifying that ${directory.path} is a Flutter project.');
+    final FlutterProject flutterProject = projectFactory.fromDirectory(directory);
     if (!flutterProject.dartTool.existsSync()) {
       throwToolExit('${flutterProject.directory.path} is not a valid Flutter project.');
     }
@@ -71,9 +90,13 @@ mixin WidgetPreviewSubCommandMixin on FlutterCommand {
   }
 }
 
-class WidgetPreviewStartCommand extends FlutterCommand
-    with CreateBase, WidgetPreviewSubCommandMixin {
-  WidgetPreviewStartCommand() {
+final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with CreateBase {
+  WidgetPreviewStartCommand({
+    required this.logger,
+    required this.fs,
+    required this.projectFactory,
+    required this.cache,
+  }) {
     addPubOptions();
   }
 
@@ -84,6 +107,25 @@ class WidgetPreviewStartCommand extends FlutterCommand
   String get name => 'start';
 
   @override
+  final FileSystem fs;
+
+  @override
+  final Logger logger;
+
+  @override
+  final FlutterProjectFactory projectFactory;
+
+  final Cache cache;
+
+  late final PreviewDetector _previewDetector = PreviewDetector(
+    logger: logger,
+    fs: fs,
+    onChangeDetected: onChangeDetected,
+  );
+
+  late final PreviewCodeGenerator _previewCodeGenerator;
+
+  @override
   Future<FlutterCommandResult> runCommand() async {
     final FlutterProject rootProject = getRootProject();
     final Directory widgetPreviewScaffold = rootProject.widgetPreviewScaffold;
@@ -91,9 +133,7 @@ class WidgetPreviewStartCommand extends FlutterCommand
     // Check to see if a preview scaffold has already been generated. If not,
     // generate one.
     if (!widgetPreviewScaffold.existsSync()) {
-      globals.logger.printStatus(
-        'Creating widget preview scaffolding at: ${widgetPreviewScaffold.path}',
-      );
+      logger.printStatus('Creating widget preview scaffolding at: ${widgetPreviewScaffold.path}');
       await generateApp(
         <String>['widget_preview_scaffold'],
         widgetPreviewScaffold,
@@ -102,7 +142,7 @@ class WidgetPreviewStartCommand extends FlutterCommand
           projectName: 'widget_preview_scaffold',
           titleCaseProjectName: 'Widget Preview Scaffold',
           flutterRoot: Cache.flutterRoot!,
-          dartSdkVersionBounds: '^${globals.cache.dartSdkBuild}',
+          dartSdkVersionBounds: '^${cache.dartSdkBuild}',
           linux: const LocalPlatform().isLinux,
           macos: const LocalPlatform().isMacOS,
           windows: const LocalPlatform().isWindows,
@@ -112,7 +152,24 @@ class WidgetPreviewStartCommand extends FlutterCommand
       );
       await _populatePreviewPubspec(rootProject: rootProject);
     }
+
+    // WARNING: this needs to happen after we generate the scaffold project as invoking the
+    // widgetPreviewScaffoldProject getter triggers lazy initialization of the preview scaffold's
+    // FlutterManifest before the scaffold project's pubspec has been generated.
+    _previewCodeGenerator = PreviewCodeGenerator(
+      widgetPreviewScaffoldProject: rootProject.widgetPreviewScaffoldProject,
+      fs: fs,
+    );
+
+    final PreviewMapping initialPreviews = await _previewDetector.initialize(rootProject.directory);
+    _previewCodeGenerator.populatePreviewsInGeneratedPreviewScaffold(initialPreviews);
+
+    await _previewDetector.dispose();
     return FlutterCommandResult.success();
+  }
+
+  void onChangeDetected(PreviewMapping previews) {
+    // TODO(bkonyi): perform hot reload
   }
 
   @visibleForTesting
@@ -180,7 +237,7 @@ class WidgetPreviewStartCommand extends FlutterCommand
         rootManifest.deferredComponents?.map(transformDeferredComponent).toList();
 
     return widgetPreviewManifest.copyWith(
-      logger: globals.logger,
+      logger: logger,
       assets: assets,
       fonts: fonts,
       shaders: shaders,
@@ -265,11 +322,13 @@ class WidgetPreviewStartCommand extends FlutterCommand
       flutterGenPackageConfigEntry,
     );
     packageConfig.writeAsStringSync(json.encode(packageConfigJson));
-    globals.logger.printStatus('Added flutter_gen dependency to $previewPackageConfigPath');
+    logger.printStatus('Added flutter_gen dependency to $previewPackageConfigPath');
   }
 }
 
-class WidgetPreviewCleanCommand extends FlutterCommand with WidgetPreviewSubCommandMixin {
+final class WidgetPreviewCleanCommand extends WidgetPreviewSubCommandBase {
+  WidgetPreviewCleanCommand({required this.fs, required this.logger, required this.projectFactory});
+
   @override
   String get description => 'Cleans up widget preview state.';
 
@@ -277,14 +336,23 @@ class WidgetPreviewCleanCommand extends FlutterCommand with WidgetPreviewSubComm
   String get name => 'clean';
 
   @override
+  final FileSystem fs;
+
+  @override
+  final Logger logger;
+
+  @override
+  final FlutterProjectFactory projectFactory;
+
+  @override
   Future<FlutterCommandResult> runCommand() async {
     final Directory widgetPreviewScaffold = getRootProject().widgetPreviewScaffold;
     if (widgetPreviewScaffold.existsSync()) {
       final String scaffoldPath = widgetPreviewScaffold.path;
-      globals.logger.printStatus('Deleting widget preview scaffold at $scaffoldPath.');
+      logger.printStatus('Deleting widget preview scaffold at $scaffoldPath.');
       widgetPreviewScaffold.deleteSync(recursive: true);
     } else {
-      globals.logger.printStatus('Nothing to clean up.');
+      logger.printStatus('Nothing to clean up.');
     }
     return FlutterCommandResult.success();
   }

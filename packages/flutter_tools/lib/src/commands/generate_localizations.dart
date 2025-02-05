@@ -151,7 +151,7 @@ class GenerateLocalizationsCommand extends FlutterCommand {
     );
     argParser.addFlag(
       'synthetic-package',
-      defaultsTo: true,
+      defaultsTo: !featureFlags.isExplicitPackageDependenciesEnabled,
       help:
           'Determines whether or not the generated output files will be '
           'generated as a synthetic package or at a specified directory in '
@@ -159,12 +159,8 @@ class GenerateLocalizationsCommand extends FlutterCommand {
           '\n'
           'DEPRECATED: https://flutter.dev/to/flutter-gen-deprecation.\n'
           '\n'
-          'This flag is set to true by default.\n'
-          '\n'
           'When synthetic-package is set to false, it will generate the '
-          'localizations files in the directory specified by arb-dir by default.\n'
-          '\n'
-          'If output-dir is specified, files will be generated there.',
+          'localizations files in the directory specified by arb-dir by default.\n',
     );
     argParser.addOption(
       'project-dir',

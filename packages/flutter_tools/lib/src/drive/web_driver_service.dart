@@ -97,7 +97,6 @@ class WebDriverService extends DriverService {
       stayResident: true,
       flutterProject: FlutterProject.current(),
       fileSystem: globals.fs,
-      usage: globals.flutterUsage,
       analytics: globals.analytics,
       logger: _logger,
       systemClock: globals.systemClock,

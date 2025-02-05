@@ -1057,9 +1057,57 @@ void main() {
     expect(value, isTrue);
   });
 
-  testWidgets('Checkbox responds to density changes.', (WidgetTester tester) async {
+  testWidgets(
+    'Material3 - Checkbox visual density cannot be overriden by ThemeData.visualDensity',
+    (WidgetTester tester) async {
+      const Key key = Key('test');
+      Widget buldCheckbox() {
+        return MaterialApp(
+          theme: theme.copyWith(visualDensity: VisualDensity.compact),
+          home: Material(
+            child: Center(child: Checkbox(key: key, value: true, onChanged: (bool? value) {})),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buldCheckbox());
+      await tester.pumpAndSettle();
+      final RenderBox box = tester.renderObject(find.byKey(key));
+      expect(box.size, equals(const Size(48, 48)));
+    },
+  );
+
+  testWidgets(
+    'Material3 - Checkbox with MaterialTapTargetSize.padded meets Material Guidelines on desktop',
+    (WidgetTester tester) async {
+      const Key key = Key('test');
+      Widget buldCheckbox() {
+        return MaterialApp(
+          theme: theme,
+          home: Material(
+            child: Center(
+              child: Checkbox(
+                key: key,
+                materialTapTargetSize: MaterialTapTargetSize.padded,
+                value: true,
+                onChanged: (bool? value) {},
+              ),
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buldCheckbox());
+      await tester.pumpAndSettle();
+      final RenderBox box = tester.renderObject(find.byKey(key));
+      expect(box.size, equals(const Size(48, 48)));
+    },
+    variant: TargetPlatformVariant.desktop(),
+  );
+
+  testWidgets('Checkbox responds to density changes', (WidgetTester tester) async {
     const Key key = Key('test');
-    Future<void> buildTest(VisualDensity visualDensity) async {
+    Future<void> buildTest({VisualDensity? visualDensity}) async {
       return tester.pumpWidget(
         MaterialApp(
           theme: theme,
@@ -1077,20 +1125,29 @@ void main() {
       );
     }
 
-    await buildTest(VisualDensity.standard);
+    // Test the default visual density.
+    await buildTest();
+    await tester.pumpAndSettle();
     final RenderBox box = tester.renderObject(find.byKey(key));
+    expect(box.size, equals(const Size(48, 48)));
+
+    await buildTest(visualDensity: VisualDensity.standard);
     await tester.pumpAndSettle();
     expect(box.size, equals(const Size(48, 48)));
 
-    await buildTest(const VisualDensity(horizontal: 3.0, vertical: 3.0));
+    await buildTest(visualDensity: VisualDensity.compact);
+    await tester.pumpAndSettle();
+    expect(box.size, equals(const Size(40, 40)));
+
+    await buildTest(visualDensity: const VisualDensity(horizontal: 3.0, vertical: 3.0));
     await tester.pumpAndSettle();
     expect(box.size, equals(const Size(60, 60)));
 
-    await buildTest(const VisualDensity(horizontal: -3.0, vertical: -3.0));
+    await buildTest(visualDensity: const VisualDensity(horizontal: -3.0, vertical: -3.0));
     await tester.pumpAndSettle();
     expect(box.size, equals(const Size(36, 36)));
 
-    await buildTest(const VisualDensity(horizontal: 3.0, vertical: -3.0));
+    await buildTest(visualDensity: const VisualDensity(horizontal: 3.0, vertical: -3.0));
     await tester.pumpAndSettle();
     expect(box.size, equals(const Size(60, 36)));
   });

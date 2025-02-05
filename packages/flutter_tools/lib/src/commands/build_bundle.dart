@@ -11,7 +11,6 @@ import '../bundle_builder.dart';
 import '../features.dart';
 import '../globals.dart' as globals;
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../runner/flutter_command.dart';
 import 'build.dart';
 
@@ -82,18 +81,6 @@ class BuildBundleCommand extends BuildSubCommand {
       'The Flutter assets directory contains your '
       'application code and resources; they are used by some Flutter Android and'
       ' iOS runtimes.';
-
-  @override
-  Future<CustomDimensions> get usageValues async {
-    final String projectDir = globals.fs.file(targetFile).parent.parent.path;
-    final FlutterProject flutterProject = FlutterProject.fromDirectory(
-      globals.fs.directory(projectDir),
-    );
-    return CustomDimensions(
-      commandBuildBundleTargetPlatform: stringArg('target-platform'),
-      commandBuildBundleIsModule: flutterProject.isModule,
-    );
-  }
 
   @override
   Future<Event> unifiedAnalyticsUsageValues(String commandPath) async {

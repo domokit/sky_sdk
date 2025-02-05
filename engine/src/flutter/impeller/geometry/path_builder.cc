@@ -18,7 +18,7 @@ PathBuilder::~PathBuilder() = default;
 
 Path PathBuilder::CopyPath(FillType fill) {
   prototype_.fill = fill;
-  prototype_.single_countour =
+  prototype_.single_contour =
       current_contour_location_ == 0u ||
       (contour_count_ == 2 &&
        prototype_.components.back() == Path::ComponentType::kContour);
@@ -28,7 +28,7 @@ Path PathBuilder::CopyPath(FillType fill) {
 Path PathBuilder::TakePath(FillType fill) {
   prototype_.fill = fill;
   UpdateBounds();
-  prototype_.single_countour =
+  prototype_.single_contour =
       current_contour_location_ == 0u ||
       (contour_count_ == 2 &&
        prototype_.components.back() == Path::ComponentType::kContour);

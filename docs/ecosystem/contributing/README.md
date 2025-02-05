@@ -140,6 +140,18 @@ The same general principles apply to native dependencies for plugins (e.g., depe
 Some dependencies should only be linked as dev_dependencies, such as `integration_test`. Known dev-only dependencies are checked by CI, and if you are adding a new dev-only dependency, consider adding it to
 [the repository tooling checks](https://github.com/flutter/packages/blob/main/script/tool/lib/src/pubspec_check_command.dart).
 
+### Dependency versions
+
+Our general policy is not to update the minimum version of a dependency beyond what the package requires. For instance:
+- We do not regularly make the app-facing package in a federated plugin require the latest bugfix versions of all platform implementation packages just so that people who do not regularly update their transitive dependencies get the latest bugfixes. Our view is that clients who want updates should update their transitive dependencies (`dart pub upgrade`, or `dart pub upgrade --unlock-transitive <package>` for targeted updates), rather than us artifically pushing transitive dependency updates on everyone.
+- When a dependency updates its major version, and the breaking changes do not affect our usage, we expand the constrain to *add* the new major version to the range, rather than requiring the new major version. This minimizes version lock in the ecosystem (where clients are unable to use the latest version of two different packages because each requires a specific, different major version).
+
+We do update minimum versions when it is actually required, such as a breaking change that does affect our usage, or when adding a new feature to the app-facing package in a federated plugin that relies on new APIs in the other sub-packages of that plugin. In most cases, the `analyze_downgraded` CI task will catch cases where that is necessary, but in some cases we rely on PR authors and reviewers (for example, when exposing a new feature in a federated plugin it is often possible to compile with only the platform interface package's minimum version updated, but the feature may throw `UnimplementedError`s at runtime if the implementation package versions are not updated as well).
+
+This is a general policy rather than a hard rule. If you believe you have an exceptional case, please discuss with your reviewer and/or with the `#hackers-ecosystem` Discord channel. Examples of cases where we have made exceptions include:
+- Fixes for serious security issues in dependencies.
+- Changes in dependencies that clients *must* adopt for external reasons, such as policy changes in a platform's app store.
+
 ## Platform Support
 
 The goal is to have any plugin feature work on every platform on which that feature makes sense; having a lot of features that are only partially implemented across platforms is often confusing and frustrating for developers trying to use those plugins. However, a single developer will not always have the expertise to implement a feature across all supported platforms.

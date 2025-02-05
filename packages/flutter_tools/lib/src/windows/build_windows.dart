@@ -205,7 +205,6 @@ Future<void> _runCmakeGeneration({
     throwToolExit('Unable to generate build files');
   }
   final Duration elapsedDuration = sw.elapsed;
-  globals.flutterUsage.sendTiming('build', 'windows-cmake-generation', elapsedDuration);
   globals.analytics.send(
     Event.timing(
       workflow: 'build',
@@ -259,7 +258,6 @@ Future<void> _runBuild(
     throwToolExit('Build process failed.');
   }
   final Duration elapsedDuration = sw.elapsed;
-  globals.flutterUsage.sendTiming('build', 'windows-cmake-build', elapsedDuration);
   globals.analytics.send(
     Event.timing(
       workflow: 'build',

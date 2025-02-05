@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Contents of this file should be generated automatically by
-// dev/tools/bin/generate_gradle_lockfiles.dart, but currently are not.
-// See #141540.
+// This file is auto generated.
+// To update all the settings.gradle files in the Flutter repo,
+// See dev/tools/bin/generate_gradle_lockfiles.dart.
 
 pluginManagement {
     val flutterSdkPath =

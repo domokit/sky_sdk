@@ -488,7 +488,6 @@ void main() {
                   String? sdkName,
                   bool? emulator,
                   String? reason,
-                  Usage usage,
                   Analytics? analytics,
                 ) async {
                   firstReloadDetails['finalLibraryCount'] = 2;

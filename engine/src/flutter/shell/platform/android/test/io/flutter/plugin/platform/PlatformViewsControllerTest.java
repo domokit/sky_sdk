@@ -1664,6 +1664,8 @@ public class PlatformViewsControllerTest {
 
     platformViewsController.attach(context, registry, executor);
 
+    PlatformViewsController2 secondController = new PlatformViewsController2();
+
     final FlutterEngine engine = mock(FlutterEngine.class);
     when(engine.getRenderer()).thenReturn(new FlutterRenderer(jni));
     when(engine.getMouseCursorChannel()).thenReturn(mock(MouseCursorChannel.class));
@@ -1671,6 +1673,7 @@ public class PlatformViewsControllerTest {
     when(engine.getSettingsChannel()).thenReturn(new SettingsChannel(executor));
     when(engine.getScribeChannel()).thenReturn(mock(ScribeChannel.class));
     when(engine.getPlatformViewsController()).thenReturn(platformViewsController);
+    when(engine.getPlatformViewsController2()).thenReturn(secondController);
     when(engine.getLocalizationPlugin()).thenReturn(mock(LocalizationPlugin.class));
     when(engine.getAccessibilityChannel()).thenReturn(mock(AccessibilityChannel.class));
     when(engine.getDartExecutor()).thenReturn(executor);

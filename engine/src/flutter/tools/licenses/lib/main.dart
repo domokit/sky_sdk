@@ -1032,6 +1032,7 @@ class _RepositoryDirectory extends _RepositoryEntry implements LicenseSource {
     '/flutter/third_party/vulkan-deps/vulkan-validation-layers/src/LICENSE.txt':
         _RepositoryVulkanApacheLicenseFile.new,
     '/fuchsia/sdk/linux/LICENSE.vulkan': _RepositoryFuchsiaSdkLinuxLicenseFile.new,
+    '/fuchsia/sdk/linux/fidl/fuchsia.storage.ftl/ftl.fidl': _RepositorySourceFile.new,
     '/fuchsia/sdk/mac/LICENSE.vulkan': _RepositoryFuchsiaSdkLinuxLicenseFile.new,
     '/third_party/khronos/LICENSE': _RepositoryKhronosLicenseFile.new,
   };

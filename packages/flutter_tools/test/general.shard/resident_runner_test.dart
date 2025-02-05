@@ -314,21 +314,6 @@ void main() {
       expect(result.fatal, true);
       expect(result.code, 1);
       expect(
-        (globals.flutterUsage as TestUsage).events,
-        contains(
-          TestUsageEvent(
-            'hot',
-            'exception',
-            parameters: CustomDimensions(
-              hotEventTargetPlatform: getNameForTargetPlatform(TargetPlatform.android_arm),
-              hotEventSdkName: 'Android',
-              hotEventEmulator: false,
-              hotEventFullRestart: false,
-            ),
-          ),
-        ),
-      );
-      expect(
         (globals.analytics as FakeAnalytics).sentEvents,
         contains(
           Event.hotRunnerInfo(
@@ -399,21 +384,6 @@ void main() {
       );
 
       expect(
-        (globals.flutterUsage as TestUsage).events,
-        contains(
-          TestUsageEvent(
-            'hot',
-            'reload-barred',
-            parameters: CustomDimensions(
-              hotEventTargetPlatform: getNameForTargetPlatform(TargetPlatform.android_arm),
-              hotEventSdkName: 'Android',
-              hotEventEmulator: false,
-              hotEventFullRestart: false,
-            ),
-          ),
-        ),
-      );
-      expect(
         fakeAnalytics.sentEvents,
         contains(
           Event.hotRunnerInfo(
@@ -467,21 +437,6 @@ void main() {
       expect(result.fatal, true);
       expect(result.code, 1);
 
-      expect(
-        (globals.flutterUsage as TestUsage).events,
-        contains(
-          TestUsageEvent(
-            'hot',
-            'exception',
-            parameters: CustomDimensions(
-              hotEventTargetPlatform: getNameForTargetPlatform(TargetPlatform.android_arm),
-              hotEventSdkName: 'Android',
-              hotEventEmulator: false,
-              hotEventFullRestart: false,
-            ),
-          ),
-        ),
-      );
       expect(
         fakeAnalytics.sentEvents,
         contains(
@@ -725,19 +680,11 @@ void main() {
       expect(result.fatal, false);
       expect(result.code, 0);
 
-      final TestUsageEvent event = (globals.flutterUsage as TestUsage).events.first;
-      expect(event.category, 'hot');
-      expect(event.parameter, 'reload');
+      final Event event = fakeAnalytics.sentEvents.first;
+      expect(event.eventName.label, 'hot_runner_info');
+      expect(event.eventData['label'], 'reload');
       expect(
-        event.parameters?.hotEventTargetPlatform,
-        getNameForTargetPlatform(TargetPlatform.android_arm),
-      );
-
-      final Event newEvent = fakeAnalytics.sentEvents.first;
-      expect(newEvent.eventName.label, 'hot_runner_info');
-      expect(newEvent.eventData['label'], 'reload');
-      expect(
-        newEvent.eventData['targetPlatform'],
+        event.eventData['targetPlatform'],
         getNameForTargetPlatform(TargetPlatform.android_arm),
       );
     }, overrides: <Type, Generator>{Usage: () => TestUsage()}),
@@ -876,24 +823,14 @@ void main() {
       expect(result.fatal, false);
       expect(result.code, 0);
 
-      final TestUsageEvent event = (globals.flutterUsage as TestUsage).events.first;
-      expect(event.category, 'hot');
-      expect(event.parameter, 'restart');
-      expect(
-        event.parameters?.hotEventTargetPlatform,
-        getNameForTargetPlatform(TargetPlatform.android_arm),
-      );
       expect(fakeVmServiceHost?.hasRemainingExpectations, false);
 
-      // Parse out the event of interest since we may have timing events with
-      // the new analytics package
-      final List<Event> newEventList =
+      final List<Event> hotRunnerInfoEvents =
           fakeAnalytics.sentEvents
               .where((Event e) => e.eventName.label == 'hot_runner_info')
               .toList();
-      expect(newEventList, hasLength(1));
-      final Event newEvent = newEventList.first;
-      expect(newEvent.eventName.label, 'hot_runner_info');
+      expect(hotRunnerInfoEvents, hasLength(1));
+      final Event newEvent = hotRunnerInfoEvents.first;
       expect(newEvent.eventData['label'], 'restart');
       expect(
         newEvent.eventData['targetPlatform'],
@@ -1092,21 +1029,6 @@ void main() {
       expect(result.fatal, true);
       expect(result.code, 1);
 
-      expect(
-        (globals.flutterUsage as TestUsage).events,
-        contains(
-          TestUsageEvent(
-            'hot',
-            'exception',
-            parameters: CustomDimensions(
-              hotEventTargetPlatform: getNameForTargetPlatform(TargetPlatform.android_arm),
-              hotEventSdkName: 'Android',
-              hotEventEmulator: false,
-              hotEventFullRestart: true,
-            ),
-          ),
-        ),
-      );
       expect(
         fakeAnalytics.sentEvents,
         contains(

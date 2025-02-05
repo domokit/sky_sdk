@@ -26,6 +26,8 @@ class FlutterMain {
   static AndroidRenderingAPI SelectedRenderingAPI(
       const flutter::Settings& settings);
 
+  static bool IsDeviceEmulator(std::string_view product_model);
+
  private:
   const flutter::Settings settings_;
   DartServiceIsolate::CallbackHandle vm_service_uri_callback_ = 0;

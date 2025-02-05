@@ -49,19 +49,10 @@ const double _kIndicatorHeight = 32;
 /// for an example.
 ///
 /// {@tool dartpad}
-/// This example shows a [NavigationRail] used within a Scaffold with 3
-/// [NavigationRailDestination]s. The main content is separated by a divider
-/// (although elevation on the navigation rail can be used instead). The
-/// `_selectedIndex` is updated by the `onDestinationSelected` callback.
-///
-/// ** See code in examples/api/lib/material/navigation_rail/navigation_rail.0.dart **
-/// {@end-tool}
-///
-/// {@tool dartpad}
 /// This sample shows the creation of [NavigationRail] widget used within a Scaffold with 3
 /// [NavigationRailDestination]s, as described in: https://m3.material.io/components/navigation-rail/overview
 ///
-/// ** See code in examples/api/lib/material/navigation_rail/navigation_rail.1.dart **
+/// ** See code in examples/api/lib/material/navigation_rail/navigation_rail.0.dart **
 /// {@end-tool}
 ///
 /// See also:

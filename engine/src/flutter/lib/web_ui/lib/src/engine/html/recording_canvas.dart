@@ -620,7 +620,9 @@ class RecordingCanvas {
     renderStrategy.hasArbitraryPaint = true;
     _didDraw = true;
     final PaintDrawVertices command = PaintDrawVertices(vertices, blendMode, paint.paintData);
-    _growPaintBoundsByPoints(vertices.positions, 0, paint, command);
+    if (!vertices.hasNoPoints) {
+      _growPaintBoundsByPoints(vertices.positions, 0, paint, command);
+    }
     _commands.add(command);
   }
 
