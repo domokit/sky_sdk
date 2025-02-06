@@ -448,6 +448,9 @@ mixin _RawMenuAnchorBaseMixin<T extends StatefulWidget> on State<T> {
       ),
     );
   }
+
+  @override
+  String toString({DiagnosticLevel? minLevel}) => describeIdentity(this);
 }
 
 class _RawMenuAnchorState extends State<RawMenuAnchor> with _RawMenuAnchorBaseMixin<RawMenuAnchor> {
@@ -619,6 +622,11 @@ class _RawMenuAnchorState extends State<RawMenuAnchor> with _RawMenuAnchorBaseMi
       );
     }
   }
+
+  @override
+  String toString({DiagnosticLevel? minLevel}) {
+    return describeIdentity(this);
+  }
 }
 
 /// Creates a menu anchor that is always visible and is not displayed in an
@@ -748,8 +756,8 @@ class _RawMenuAnchorGroupState extends State<RawMenuAnchorGroup>
 /// [MenuController.maybeIsOpenOf] can be used to interrogate the state of a
 /// menu from the [BuildContext] of a widget that is a descendant of a
 /// [MenuAnchor]. Unlike [MenuController.maybeOf], this method will establish a
-/// dependency relationship, and the calling widget will rebuild when the menu
-/// opens and closes.
+/// dependency relationship, so the calling widget will rebuild when the menu
+/// opens and closes, and when the [MenuController] changes.
 ///
 /// See also:
 ///
@@ -761,9 +769,10 @@ class _RawMenuAnchorGroupState extends State<RawMenuAnchorGroup>
 /// * [RawMenuAnchor], a generic widget that manages a submenu.
 /// * [RawMenuAnchorGroup], a generic widget that wraps a group of submenus.
 class MenuController {
-  // The anchor that this controller controls.
-  //
-  // This is set automatically when a [MenuController] is given to an anchor
+  /// The anchor that this controller controls.
+  ///
+  /// This is set automatically when a [MenuController] is given to the anchor
+  /// it controls.
   _RawMenuAnchorBaseMixin? _anchor;
 
   /// Whether or not the menu associated with this [MenuController] is open.
