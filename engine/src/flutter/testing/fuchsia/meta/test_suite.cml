@@ -1,6 +1,8 @@
 {
     include: [
          "sys/component/realm_builder_absolute.shard.cml",
+         "syslog/client.shard.cml",
+        "inspect/client.shard.cml",
     ],
     facets: {
         // shell_unittests and embedder_unittests require vulkan to function.
@@ -31,7 +33,6 @@
     use: [
         {
             protocol: [
-                "fuchsia.logger.LogSink",
                 "fuchsia.process.Launcher",
                 "fuchsia.tracing.provider.Registry",
                 "fuchsia.vulkan.loader.Loader",

@@ -9,7 +9,8 @@
         // This test needs both the vulkan facet and the hermetic-tier-2 facet,
         // so we are forced to make it a system test.
         "sys/testing/system-test.shard.cml",
-
+        "syslog/client.shard.cml",
+        "inspect/client.shard.cml",
     ],
     program: {
         binary: "bin/app",
@@ -24,10 +25,8 @@
     offer: [
         {
             protocol: [
-                "fuchsia.inspect.InspectSink",
                 "fuchsia.kernel.RootJobForInspect",
                 "fuchsia.kernel.Stats",
-                "fuchsia.logger.LogSink",
                 "fuchsia.scheduler.ProfileProvider",
                 "fuchsia.sysmem.Allocator",
                 "fuchsia.sysmem2.Allocator",

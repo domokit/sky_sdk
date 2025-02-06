@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
+    include: [ "syslog/client.shard.cml" ],
     use: [
         // This is used by the Dart VM to communicate from Dart code to C++ code.
         {
@@ -26,9 +27,7 @@
             protocol: [
                 "fuchsia.device.NameProvider",  // For fdio uname()
                 "fuchsia.feedback.CrashReporter",
-                "fuchsia.inspect.InspectSink",  // For inspect
                 "fuchsia.intl.PropertyProvider",  // For dartVM timezone support
-                "fuchsia.logger.LogSink",  // For syslog
                 "fuchsia.net.name.Lookup",  // For fdio sockets
                 "fuchsia.posix.socket.Provider",  // For fdio sockets
             ],
