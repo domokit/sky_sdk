@@ -92,18 +92,19 @@ class RawMenuOverlayInfo {
   }
 }
 
-/// The type of builder function used by [RawMenuAnchor] to build
-/// the overlay attached to a [RawMenuAnchor].
+/// Signature for the builder function used by [RawMenuAnchor.overlayBuilder] to
+/// build a menu's overlay.
 ///
 /// The `context` is the context that the overlay is being built in.
 ///
-/// The `info` describes the info of the menu overlay for the
-/// [RawMenuAnchor] constructor.
+/// The `info` describes the anchor's [Rect], the [Size] of the overlay,
+/// the [TapRegion.groupId] used by members of the menu system, and the
+/// `position` argument passed to [MenuController.open].
 typedef RawMenuAnchorOverlayBuilder =
     Widget Function(BuildContext context, RawMenuOverlayInfo info);
 
-/// The type of builder function used by [RawMenuAnchor.builder] to build the
-/// widget that the [RawMenuAnchor] surrounds.
+/// Signature for the builder function used by [RawMenuAnchor.builder] to build
+/// the widget that the [RawMenuAnchor] surrounds.
 ///
 /// The `context` is the context in which the anchor is being built.
 ///
@@ -116,10 +117,8 @@ typedef RawMenuAnchorOverlayBuilder =
 typedef RawMenuAnchorChildBuilder =
     Widget Function(BuildContext context, MenuController controller, Widget? child);
 
-// An inherited widget that provides the [RawMenuAnchor] to its descendants.
-//
-// Used to notify anchor descendants when the menu opens and closes, and to
-// access the anchor's controller.
+// An [InheritedWidget] used to notify anchor descendants when a menu opens
+// and closes, and to pass the anchor's controller to descendants.
 class _MenuControllerScope extends InheritedWidget {
   const _MenuControllerScope({
     required this.isOpen,
@@ -159,7 +158,7 @@ class _MenuControllerScope extends InheritedWidget {
 ///
 /// {@tool dartpad}
 ///
-/// This example uses a [RawMenuAnchor] to build an a basic select menu with
+/// This example uses a [RawMenuAnchor] to build a basic select menu with
 /// four items.
 ///
 /// ** See code in examples/api/lib/widgets/raw_menu_anchor/raw_menu_anchor.0.dart **
@@ -298,7 +297,7 @@ mixin _RawMenuAnchorBaseMixin<T extends StatefulWidget> on State<T> {
   /// [_RawMenuAnchorBaseMixin] will create and manage its own.
   MenuController get menuController;
 
-  /// Whether this menu layer is open.
+  /// Whether this submenu's overlay is visible.
   @protected
   bool get isOpen;
 
@@ -449,9 +448,6 @@ mixin _RawMenuAnchorBaseMixin<T extends StatefulWidget> on State<T> {
       ),
     );
   }
-
-  @override
-  String toString({DiagnosticLevel? minLevel}) => describeIdentity(this);
 }
 
 class _RawMenuAnchorState extends State<RawMenuAnchor> with _RawMenuAnchorBaseMixin<RawMenuAnchor> {
@@ -623,11 +619,6 @@ class _RawMenuAnchorState extends State<RawMenuAnchor> with _RawMenuAnchorBaseMi
       );
     }
   }
-
-  @override
-  String toString({DiagnosticLevel? minLevel}) {
-    return describeIdentity(this);
-  }
 }
 
 /// Creates a menu anchor that is always visible and is not displayed in an
@@ -648,8 +639,8 @@ class _RawMenuAnchorState extends State<RawMenuAnchor> with _RawMenuAnchorBaseMi
 /// {@tool dartpad}
 ///
 /// This example uses [RawMenuAnchorGroup] to build a menu bar with four
-/// submenus. Hovering over menu items opens their respective submenus.
-/// Selecting a menu item will close the menu and update the selected item text.
+/// submenus. Hovering over a menu item opens its respective submenu. Selecting
+/// a menu item will close the menu and update the selected item text.
 ///
 /// ** See code in examples/api/lib/widgets/raw_menu_anchor/raw_menu_anchor.1.dart **
 /// {@end-tool}
@@ -757,8 +748,8 @@ class _RawMenuAnchorGroupState extends State<RawMenuAnchorGroup>
 /// [MenuController.maybeIsOpenOf] can be used to interrogate the state of a
 /// menu from the [BuildContext] of a widget that is a descendant of a
 /// [MenuAnchor]. Unlike [MenuController.maybeOf], this method will establish a
-/// dependency relationship, so the calling widget will rebuild when the menu
-/// opens and closes, and when the [MenuController] changes.
+/// dependency relationship, and the calling widget will rebuild when the menu
+/// opens and closes.
 ///
 /// See also:
 ///
@@ -770,10 +761,9 @@ class _RawMenuAnchorGroupState extends State<RawMenuAnchorGroup>
 /// * [RawMenuAnchor], a generic widget that manages a submenu.
 /// * [RawMenuAnchorGroup], a generic widget that wraps a group of submenus.
 class MenuController {
-  /// The anchor that this controller controls.
-  ///
-  /// This is set automatically when a [MenuController] is given to the anchor
-  /// it controls.
+  // The anchor that this controller controls.
+  //
+  // This is set automatically when a [MenuController] is given to an anchor
   _RawMenuAnchorBaseMixin? _anchor;
 
   /// Whether or not the menu associated with this [MenuController] is open.
