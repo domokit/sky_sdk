@@ -36,7 +36,6 @@ import 'linux/linux_workflow.dart';
 import 'macos/macos_workflow.dart';
 import 'macos/xcode_validator.dart';
 import 'proxy_validator.dart';
-import 'reporting/reporting.dart';
 import 'tester/flutter_tester.dart';
 import 'version.dart';
 import 'vscode/vscode_validator.dart';
@@ -432,9 +431,6 @@ class Doctor {
             ),
           );
         }
-        // TODO(eliasyishak): remove this after migrating from package:usage,
-        //  https://github.com/flutter/flutter/issues/128251
-        DoctorResultEvent(validator: validator, result: result).send();
       }
 
       final String executionDuration = () {

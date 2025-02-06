@@ -10,7 +10,6 @@ import 'package:flutter_tools/src/build_system/targets/web.dart';
 import 'package:flutter_tools/src/dart/pub.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/project.dart';
-import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:flutter_tools/src/web/compile.dart';
 import 'package:flutter_tools/src/web/file_generators/flutter_service_worker_js.dart';
 import 'package:unified_analytics/unified_analytics.dart';
@@ -23,7 +22,6 @@ import '../../src/test_build_system.dart';
 
 void main() {
   late MemoryFileSystem fileSystem;
-  late TestUsage testUsage;
   late FakeAnalytics fakeAnalytics;
   late BufferLogger logger;
   late FakeFlutterVersion flutterVersion;
@@ -41,7 +39,6 @@ void main() {
 
   setUp(() {
     fileSystem = MemoryFileSystem.test();
-    testUsage = TestUsage();
     logger = BufferLogger.test();
     flutterVersion = FakeFlutterVersion(frameworkVersion: '1.0.0', engineRevision: '9.8.7');
     fakeAnalytics = getInitializedFakeAnalyticsInstance(
@@ -174,7 +171,6 @@ void main() {
         logger.errorText,
         contains('Target hello failed: FormatException: illegal character in input string'),
       );
-      expect(testUsage.timings, isEmpty);
       expect(fakeAnalytics.sentEvents, isEmpty);
     },
     overrides: <Type, Generator>{

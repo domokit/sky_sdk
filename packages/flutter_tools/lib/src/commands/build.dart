@@ -111,9 +111,6 @@ abstract class BuildSubCommand extends FlutterCommand {
   @protected
   final Logger logger;
 
-  @override
-  bool get reportNullSafety => true;
-
   bool get supported => true;
 
   /// Display a message describing the current null safety runtime mode

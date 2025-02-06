@@ -28,7 +28,6 @@ import '../device.dart';
 import '../flutter_plugins.dart';
 import '../globals.dart' as globals;
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../resident_devtools_handler.dart';
 import '../resident_runner.dart';
 import '../run_hot.dart';
@@ -523,15 +522,6 @@ Please provide a valid TCP port (an integer between 0 and 65535, inclusive).
             elapsedMilliseconds: elapsed.inMilliseconds,
           ),
         );
-        HotEvent(
-          'restart',
-          targetPlatform: targetPlatform,
-          sdkName: sdkName,
-          emulator: false,
-          fullRestart: true,
-          reason: reason,
-          overallTimeInMs: elapsed.inMilliseconds,
-        ).send();
         _analytics.send(
           Event.hotRunnerInfo(
             label: 'restart',
@@ -551,15 +541,6 @@ Please provide a valid TCP port (an integer between 0 and 65535, inclusive).
             elapsedMilliseconds: elapsed.inMilliseconds,
           ),
         );
-        HotEvent(
-          'reload',
-          targetPlatform: targetPlatform,
-          sdkName: sdkName,
-          emulator: false,
-          fullRestart: false,
-          reason: reason,
-          overallTimeInMs: elapsed.inMilliseconds,
-        ).send();
         _analytics.send(
           Event.hotRunnerInfo(
             label: 'reload',

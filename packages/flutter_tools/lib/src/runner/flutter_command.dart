@@ -29,7 +29,6 @@ import '../features.dart';
 import '../globals.dart' as globals;
 import '../preview_device.dart';
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../reporting/unified_analytics.dart';
 import 'flutter_command_runner.dart';
 import 'target_devices.dart';
@@ -827,9 +826,6 @@ abstract class FlutterCommand extends Command<void> {
   /// Whether it is safe for this command to use a cached pub invocation.
   bool get cachePubGet => true;
 
-  /// Whether this command should report null safety analytics.
-  bool get reportNullSafety => false;
-
   late final Duration? deviceDiscoveryTimeout = () {
     if ((argResults?.options.contains(FlutterOptions.kDeviceTimeout) ?? false) &&
         (argResults?.wasParsed(FlutterOptions.kDeviceTimeout) ?? false)) {
@@ -1543,8 +1539,6 @@ abstract class FlutterCommand extends Command<void> {
         if (_usesFatalWarnings) {
           globals.logger.fatalWarnings = boolArg(FlutterOptions.kFatalWarnings);
         }
-        // Prints the welcome message if needed.
-        globals.flutterUsage.printWelcome();
         _printDeprecationWarning();
         final String? commandPath = await usagePath;
         if (commandPath != null) {
@@ -1777,7 +1771,6 @@ abstract class FlutterCommand extends Command<void> {
   ) {
     // Send command result.
     final int? maxRss = getMaxRss(processInfo);
-    CommandResultEvent(commandPath, commandResult.toString(), maxRss).send();
     analytics.send(
       Event.flutterCommandResult(
         commandPath: commandPath,
@@ -1904,9 +1897,6 @@ Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and 
         allowedPlugins: allowedPlugins,
         releaseMode: featureFlags.isExplicitPackageDependenciesEnabled && getBuildMode().isRelease,
       );
-      if (reportNullSafety) {
-        await _sendNullSafetyAnalyticsEvents(project);
-      }
     }
 
     setupApplicationPackages();
@@ -1916,16 +1906,6 @@ Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and 
     }
 
     return runCommand();
-  }
-
-  Future<void> _sendNullSafetyAnalyticsEvents(FlutterProject project) async {
-    final BuildInfo buildInfo = await getBuildInfo();
-    NullSafetyAnalysisEvent(
-      buildInfo.packageConfig,
-      buildInfo.nullSafetyMode,
-      project.manifest.appName,
-      globals.flutterUsage,
-    ).send();
   }
 
   /// The set of development artifacts required for this command.
