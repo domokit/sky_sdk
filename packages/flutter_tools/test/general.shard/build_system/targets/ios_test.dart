@@ -19,6 +19,7 @@ import '../../../src/common.dart';
 import '../../../src/context.dart';
 import '../../../src/fake_process_manager.dart';
 import '../../../src/fakes.dart';
+import '../../../src/package_config.dart';
 
 final Platform macPlatform = FakePlatform(
   operatingSystem: 'macos',
@@ -208,17 +209,8 @@ void main() {
           .file(artifacts.getArtifactPath(Artifact.isolateSnapshotData, mode: BuildMode.debug))
           .createSync();
       // Project info
-      fileSystem.file('pubspec.yaml').writeAsStringSync('name: hello');
-      fileSystem.directory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync(
-          json.encode(<String, Object?>{
-            'packages': <Object>[
-              <String, Object?>{'name': 'hello', 'rootUri': '../', 'packageUri': 'lib/'},
-            ],
-            'configVersion': 2,
-          }),
-        );
+      fileSystem.file('pubspec.yaml').writeAsStringSync('name: my_app');
+      writePackageConfigFile(directory: fileSystem.currentDirectory);
       // Plist file
       fileSystem
           .file(fileSystem.path.join('ios', 'Flutter', 'AppFrameworkInfo.plist'))
@@ -311,17 +303,8 @@ void main() {
       // Project info
       fileSystem
           .file('pubspec.yaml')
-          .writeAsStringSync('name: hello\nflutter:\n  shaders:\n    - shader.glsl');
-      fileSystem.directory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync(
-          json.encode(<String, Object?>{
-            'packages': <Object>[
-              <String, Object?>{'name': 'hello', 'rootUri': '../', 'packageUri': 'lib/'},
-            ],
-            'configVersion': 2,
-          }),
-        );
+          .writeAsStringSync('name: my_app\nflutter:\n  shaders:\n    - shader.glsl');
+      writePackageConfigFile(directory: fileSystem.currentDirectory);
       // Plist file
       fileSystem
           .file(fileSystem.path.join('ios', 'Flutter', 'AppFrameworkInfo.plist'))
@@ -402,17 +385,9 @@ void main() {
       environment.defines[kXcodeAction] = 'build';
 
       // Project info
-      fileSystem.file('pubspec.yaml').writeAsStringSync('name: hello');
-      fileSystem.directory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync(
-          json.encode(<String, Object?>{
-            'packages': <Object>[
-              <String, Object?>{'name': 'hello', 'rootUri': '../', 'packageUri': 'lib/'},
-            ],
-            'configVersion': 2,
-          }),
-        );
+      fileSystem.file('pubspec.yaml').writeAsStringSync('name: my_app');
+      writePackageConfigFile(directory: fileSystem.currentDirectory);
+
       // Plist file
       fileSystem
           .file(fileSystem.path.join('ios', 'Flutter', 'AppFrameworkInfo.plist'))

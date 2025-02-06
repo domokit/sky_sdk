@@ -21,6 +21,7 @@ import '../../src/common.dart';
 import '../../src/context.dart';
 import '../../src/fakes.dart';
 import '../../src/logging_logger.dart';
+import '../../src/package_config.dart';
 import '../../src/throwing_pub.dart';
 
 final Platform linuxPlatform = FakePlatform(environment: <String, String>{});
@@ -52,20 +53,7 @@ void main() {
 name: foo
 ''');
     fileSystem.file('test/foo.dart').createSync(recursive: true);
-    fileSystem.directory('.dart_tool').childFile('package_config.json')
-      ..createSync(recursive: true)
-      ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": [
-      {
-      "name": "foo",
-      "rootUri": "../",
-      "packageUri": "lib/"
-    }
-  ]
-}
-''');
+    writePackageConfigFile(mainLibName: 'foo', directory: fileSystem.currentDirectory);
     residentCompiler = FakeResidentCompiler(fileSystem);
     logger = LoggingLogger();
   });
@@ -233,25 +221,11 @@ dependencies:
     sdk: flutter
   a_plugin: 1.0.0
 ''');
-      fileSystem.directory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": [
-      {
-      "name": "foo",
-      "rootUri": "../",
-      "packageUri": "lib/"
-    },
-    {
-      "name": "a_plugin",
-      "rootUri": "/a_plugin/",
-      "packageUri": "lib/"
-    }
-  ]
-}
-''');
+      writePackageConfigFile(
+        directory: fileSystem.currentDirectory,
+        mainLibName: 'foo',
+        packages: <String, String>{'a_plugin': '/a_plugin'},
+      );
       fakeDartPlugin.childFile('pubspec.yaml')
         ..createSync(recursive: true)
         ..writeAsStringSync('''

@@ -21,6 +21,7 @@ import 'package:package_config/package_config_types.dart';
 import '../../../src/common.dart';
 import '../../../src/context.dart';
 import '../../../src/fakes.dart';
+import '../../../src/package_config.dart';
 import '../fake_native_assets_build_runner.dart';
 
 void main() {
@@ -388,12 +389,9 @@ InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault
         return;
       }
 
-      final File packageConfigFile = fileSystem
-          .directory(projectUri)
-          .childDirectory('.dart_tool')
-          .childFile('package_config.json');
-      await packageConfigFile.parent.create();
-      await packageConfigFile.create();
+      final File packageConfigFile = writePackageConfigFile(
+        directory: fileSystem.directory(projectUri),
+      );
       final PackageConfig packageConfig = await loadPackageConfigWithLogging(
         packageConfigFile,
         logger: environment.logger,

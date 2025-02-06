@@ -26,6 +26,7 @@ import 'package:test/fake.dart';
 import '../src/common.dart';
 import '../src/context.dart';
 import '../src/fakes.dart';
+import '../src/package_config.dart';
 import '../src/test_build_system.dart';
 import '../src/throwing_pub.dart';
 
@@ -51,16 +52,7 @@ void main() {
 name: my_app
 ''');
 
-    fileSystem.directory('.dart_tool').childFile('package_config.json')
-      ..createSync(recursive: true)
-      ..writeAsStringSync(
-        json.encode(<String, Object?>{
-          'packages': <Object>[
-            <String, Object?>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
-          ],
-          'configVersion': 2,
-        }),
-      );
+    writePackageConfigFile(directory: fileSystem.currentDirectory);
     fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
     fileSystem.file(fileSystem.path.join('web', 'index.html')).createSync(recursive: true);
   });

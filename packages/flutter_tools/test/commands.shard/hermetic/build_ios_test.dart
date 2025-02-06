@@ -96,16 +96,7 @@ void main() {
   // Sets up the minimal mock project files necessary to look like a Flutter project.
   void createCoreMockProjectFiles() {
     fileSystem.file('pubspec.yaml').writeAsStringSync('name: my_app');
-    fileSystem.directory('.dart_tool').childFile('package_config.json')
-      ..createSync(recursive: true)
-      ..writeAsStringSync(
-        json.encode(<String, Object?>{
-          'packages': <Object>[
-            <String, Object?>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
-          ],
-          'configVersion': 2,
-        }),
-      );
+    writePackageConfigFile(directory: fileSystem.currentDirectory);
     fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
   }
 

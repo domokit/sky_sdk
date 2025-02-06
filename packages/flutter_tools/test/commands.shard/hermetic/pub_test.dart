@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
@@ -48,7 +50,7 @@ void main() {
   setUp(() {
     Cache.disableLocking();
     fileSystem = MemoryFileSystem.test();
-    pub = FakePub(fileSystem);
+    pub = FakePub();
     logger = BufferLogger.test();
   });
 
@@ -154,10 +156,12 @@ void main() {
       final File packageConfigFile = rootProject.dartTool.childFile('package_config.json');
 
       expect(packageConfigFile.existsSync(), true);
-      expect(
-        packageConfigFile.readAsStringSync(),
-        '{"configVersion":2,"packages":[{"name":"my_app", "rootUri": "../", "packageUri": "lib/"}]}',
-      );
+      expect(json.decode(packageConfigFile.readAsStringSync()), <String, Object>{
+        'configVersion': 2,
+        'packages': <Object?>[
+          <String, Object?>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
+        ],
+      });
     },
     overrides: <Type, Generator>{
       Pub: () => pub,

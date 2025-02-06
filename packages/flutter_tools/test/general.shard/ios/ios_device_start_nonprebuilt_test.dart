@@ -37,6 +37,7 @@ import '../../src/context.dart' hide FakeXcodeProjectInterpreter;
 import '../../src/fake_devices.dart';
 import '../../src/fake_process_manager.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 import '../../src/throwing_pub.dart';
 
 List<String> _xattrArgs(FlutterProject flutterProject) {
@@ -1153,16 +1154,7 @@ void setUpIOSProject(FileSystem fileSystem, {bool createWorkspace = true}) {
   fileSystem.file('pubspec.yaml').writeAsStringSync('''
 name: my_app
 ''');
-  fileSystem.directory('.dart_tool').childFile('package_config.json')
-    ..createSync(recursive: true)
-    ..writeAsStringSync(
-      json.encode(<String, Object?>{
-        'packages': <Object>[
-          <String, Object?>{'name': 'my_app', 'rootUri': '../', 'packageUri': 'lib/'},
-        ],
-        'configVersion': 2,
-      }),
-    );
+  writePackageConfigFile(directory: fileSystem.currentDirectory);
   fileSystem.directory('ios').createSync();
   if (createWorkspace) {
     fileSystem.directory('ios/Runner.xcworkspace').createSync();

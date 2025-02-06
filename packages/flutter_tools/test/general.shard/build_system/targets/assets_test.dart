@@ -50,7 +50,6 @@ void main() {
         .createSync(recursive: true);
     fileSystem.file('assets/foo/bar.png').createSync(recursive: true);
     fileSystem.file('assets/wildcard/#bar.png').createSync(recursive: true);
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
     fileSystem.file('pubspec.yaml')
       ..createSync()
       ..writeAsStringSync('''
