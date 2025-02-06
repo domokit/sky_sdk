@@ -11534,9 +11534,7 @@ void main() {
         text: 'Atwater Peel Sherbrooke Bonaventure ' * 20,
       );
       await tester.pumpWidget(
-        MaterialApp(
-          home: Material(child: Center(child: TextField(controller: controller))),
-        ),
+        MaterialApp(home: Material(child: Center(child: TextField(controller: controller)))),
       );
 
       final EditableTextState state = tester.state<EditableTextState>(find.byType(EditableText));
