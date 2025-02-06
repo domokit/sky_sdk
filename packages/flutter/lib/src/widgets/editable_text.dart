@@ -5584,7 +5584,12 @@ class EditableTextState extends State<EditableText>
                         excludeFromSemantics: true,
                         axisDirection: _isMultiline ? AxisDirection.down : AxisDirection.right,
                         controller: _scrollController,
-                        physics: widget.scrollPhysics,
+                        // On iOS a single-line TextField should not scroll.
+                        physics:
+                            widget.scrollPhysics ??
+                            (!_isMultiline && defaultTargetPlatform == TargetPlatform.iOS
+                                ? const _NeverUserScrollableScrollPhysics()
+                                : null),
                         dragStartBehavior: widget.dragStartBehavior,
                         restorationId: widget.restorationId,
                         // If a ScrollBehavior is not provided, only apply scrollbars when
@@ -5921,6 +5926,22 @@ class _Editable extends MultiChildRenderObjectWidget {
       ..clipBehavior = clipBehavior
       ..setPromptRectRange(promptRectRange);
   }
+}
+
+class _NeverUserScrollableScrollPhysics extends ScrollPhysics {
+  /// Creates scroll physics that does not let the user scroll, but allows for programatic scrolling.
+  const _NeverUserScrollableScrollPhysics({super.parent});
+
+  @override
+  _NeverUserScrollableScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return _NeverUserScrollableScrollPhysics(parent: buildParent(ancestor));
+  }
+
+  @override
+  bool get allowUserScrolling => false;
+
+  @override
+  bool get allowImplicitScrolling => true;
 }
 
 @immutable
