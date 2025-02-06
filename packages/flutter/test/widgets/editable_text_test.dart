@@ -8634,6 +8634,82 @@ void main() {
     }),
   );
 
+  testWidgets(
+    'single-line field cannot be scroll with touch on iOS',
+    (WidgetTester tester) async {
+      controller.text = 'This is a long string that should overflow the TextField.';
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 100,
+              child: EditableText(
+                showSelectionHandles: true,
+                controller: controller,
+                focusNode: focusNode,
+                style: Typography.material2018().black.titleMedium!.copyWith(fontFamily: 'Roboto'),
+                cursorColor: Colors.blue,
+                backgroundCursorColor: Colors.grey,
+                selectionControls: materialTextSelectionControls,
+                keyboardType: TextInputType.text,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Scrollable scrollable = tester.widget<Scrollable>(find.byType(Scrollable));
+      final double initialScrollOffset = scrollable.controller!.position.pixels;
+
+      await tester.drag(find.byType(EditableText), const Offset(-100.0, 0.0));
+      await tester.pumpAndSettle();
+
+      expect(scrollable.controller!.position.pixels, initialScrollOffset);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+  );
+
+  testWidgets(
+    'multi-line field can scroll with touch on iOS',
+    (WidgetTester tester) async {
+      // 3 lines of text, where the last line overflows and requires scrolling.
+      controller.text = 'XXXXX\nXXXXX\nXXXXX';
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 100,
+              child: EditableText(
+                maxLines: 2,
+                showSelectionHandles: true,
+                controller: controller,
+                focusNode: focusNode,
+                style: Typography.material2018().black.titleMedium!.copyWith(fontFamily: 'Roboto'),
+                cursorColor: Colors.blue,
+                backgroundCursorColor: Colors.grey,
+                selectionControls: materialTextSelectionControls,
+                keyboardType: TextInputType.text,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Scrollable scrollable = tester.widget<Scrollable>(find.byType(Scrollable));
+      final double initialScrollOffset = scrollable.controller!.position.pixels;
+
+      await tester.drag(find.byType(EditableText), const Offset(0.0, -100.0));
+      await tester.pumpAndSettle();
+
+      expect(scrollable.controller!.position.pixels, isNot(initialScrollOffset));
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+  );
+
   testWidgets("scrolling doesn't bounce", (WidgetTester tester) async {
     // 3 lines of text, where the last line overflows and requires scrolling.
     controller.text = 'XXXXX\nXXXXX\nXXXXX';
