@@ -14,7 +14,6 @@ import '../base/file_system.dart';
 import '../base/io.dart';
 import '../base/utils.dart';
 import '../build_info.dart';
-import '../daemon.dart';
 import '../device.dart';
 import '../features.dart';
 import '../globals.dart' as globals;
@@ -761,18 +760,7 @@ class RunCommand extends RunCommandBase {
 
   @visibleForTesting
   Daemon createMachineDaemon() {
-    final Daemon daemon = Daemon(
-      DaemonConnection(
-        daemonStreams: DaemonStreams.fromStdio(globals.stdio, logger: globals.logger),
-        logger: globals.logger,
-      ),
-      notifyingLogger:
-          (globals.logger is NotifyingLogger)
-              ? globals.logger as NotifyingLogger
-              : NotifyingLogger(verbose: globals.logger.isVerbose, parent: globals.logger),
-      logToStdout: true,
-    );
-    return daemon;
+    return Daemon.createMachineDaemon();
   }
 
   @override

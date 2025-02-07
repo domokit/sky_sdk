@@ -95,6 +95,74 @@ void main() {
       },
     );
   });
+
+  group('AutoFillConfiguration', () {
+    late AutofillConfiguration fakeAutoFillConfiguration;
+    late AutofillConfiguration fakeAutoFillConfiguration2;
+
+    setUp(() {
+      // If you create two objects with `const` with the same values, the second object will be equal to the first one by reference.
+      // This means that even without overriding the `equals` method, the test will pass.
+      // ignore: prefer_const_constructors
+      fakeAutoFillConfiguration = AutofillConfiguration(
+        uniqueIdentifier: 'id1',
+        // ignore: prefer_const_literals_to_create_immutables
+        autofillHints: <String>['client1'],
+        currentEditingValue: TextEditingValue.empty,
+        hintText: 'hint',
+      );
+      // ignore: prefer_const_constructors
+      fakeAutoFillConfiguration2 = AutofillConfiguration(
+        uniqueIdentifier: 'id1',
+        // ignore: prefer_const_literals_to_create_immutables
+        autofillHints: <String>['client1'],
+        currentEditingValue: TextEditingValue.empty,
+        hintText: 'hint',
+      );
+    });
+
+    test('equality operator works correctly', () {
+      expect(fakeAutoFillConfiguration, equals(fakeAutoFillConfiguration2));
+      expect(fakeAutoFillConfiguration.enabled, equals(fakeAutoFillConfiguration2.enabled));
+      expect(
+        fakeAutoFillConfiguration.uniqueIdentifier,
+        equals(fakeAutoFillConfiguration2.uniqueIdentifier),
+      );
+      expect(
+        fakeAutoFillConfiguration.autofillHints,
+        equals(fakeAutoFillConfiguration2.autofillHints),
+      );
+      expect(
+        fakeAutoFillConfiguration.currentEditingValue,
+        equals(fakeAutoFillConfiguration2.currentEditingValue),
+      );
+      expect(fakeAutoFillConfiguration.hintText, equals(fakeAutoFillConfiguration2.hintText));
+    });
+
+    test('hashCode works correctly', () {
+      expect(fakeAutoFillConfiguration.hashCode, equals(fakeAutoFillConfiguration2.hashCode));
+      expect(
+        fakeAutoFillConfiguration.enabled.hashCode,
+        equals(fakeAutoFillConfiguration2.enabled.hashCode),
+      );
+      expect(
+        fakeAutoFillConfiguration.uniqueIdentifier.hashCode,
+        equals(fakeAutoFillConfiguration2.uniqueIdentifier.hashCode),
+      );
+      expect(
+        Object.hashAll(fakeAutoFillConfiguration.autofillHints),
+        equals(Object.hashAll(fakeAutoFillConfiguration2.autofillHints)),
+      );
+      expect(
+        fakeAutoFillConfiguration.currentEditingValue.hashCode,
+        equals(fakeAutoFillConfiguration2.currentEditingValue.hashCode),
+      );
+      expect(
+        fakeAutoFillConfiguration.hintText.hashCode,
+        equals(fakeAutoFillConfiguration2.hintText.hashCode),
+      );
+    });
+  });
 }
 
 class FakeAutofillClient implements TextInputClient, AutofillClient {

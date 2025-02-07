@@ -8,6 +8,7 @@
 #include <memory>
 #include <utility>
 
+#include "common/settings.h"
 #include "flutter/common/graphics/texture.h"
 #include "flutter/fml/synchronization/waitable_event.h"
 #include "flutter/shell/common/shell_io_manager.h"
@@ -30,6 +31,7 @@
 #endif
 #include "flutter/shell/platform/android/context/android_context.h"
 #include "flutter/shell/platform/android/external_view_embedder/external_view_embedder.h"
+#include "flutter/shell/platform/android/external_view_embedder/external_view_embedder_2.h"
 #include "flutter/shell/platform/android/jni/platform_view_android_jni.h"
 #include "flutter/shell/platform/android/platform_message_response_android.h"
 #include "flutter/shell/platform/android/surface/android_surface.h"
@@ -131,6 +133,12 @@ PlatformViewAndroid::PlatformViewAndroid(
         delegate.OnPlatformViewGetSettings().enable_impeller  //
     );
     android_surface_ = surface_factory_->CreateSurface();
+    // TODO(jonahwilliams): we need to expose the runtime check for the
+    // correct extensions and allowlist for this to work correctly.
+    android_use_new_platform_view_ =
+        android_context->RenderingApi() ==
+            AndroidRenderingAPI::kImpellerVulkan &&
+        delegate.OnPlatformViewGetSettings().enable_surface_control;
     FML_CHECK(android_surface_ && android_surface_->IsValid())
         << "Could not create an OpenGL, Vulkan or Software surface to set up "
            "rendering.";
@@ -366,6 +374,10 @@ std::unique_ptr<Surface> PlatformViewAndroid::CreateRenderingSurface() {
 // |PlatformView|
 std::shared_ptr<ExternalViewEmbedder>
 PlatformViewAndroid::CreateExternalViewEmbedder() {
+  if (android_use_new_platform_view_) {
+    return std::make_shared<AndroidExternalViewEmbedder2>(
+        *android_context_, jni_facade_, surface_factory_, task_runners_);
+  }
   return std::make_shared<AndroidExternalViewEmbedder>(
       *android_context_, jni_facade_, surface_factory_, task_runners_);
 }

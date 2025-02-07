@@ -1087,6 +1087,10 @@ class WebDevFS implements DevFS {
               generateLoadingIndicator: enableDwds,
             ),
       );
+      const String onLoadEndBootstrap = 'on_load_end_bootstrap.js';
+      if (ddcModuleSystem) {
+        webAssetServer.writeFile(onLoadEndBootstrap, generateDDCLibraryBundleOnLoadEndBootstrap());
+      }
       webAssetServer.writeFile(
         'main_module.bootstrap.js',
         ddcModuleSystem
@@ -1094,6 +1098,7 @@ class WebDevFS implements DevFS {
               entrypoint: entrypoint,
               nullAssertions: nullAssertions,
               nativeNullAssertions: nativeNullAssertions,
+              onLoadEndBootstrap: onLoadEndBootstrap,
             )
             : generateMainModule(
               entrypoint: entrypoint,
@@ -1138,6 +1143,7 @@ class WebDevFS implements DevFS {
       projectRootPath: projectRootPath,
       fs: globals.fs,
       dartPluginRegistrant: dartPluginRegistrant,
+      recompileRestart: fullRestart,
     );
     if (compilerOutput == null || compilerOutput.errorCount > 0) {
       return UpdateFSReport();

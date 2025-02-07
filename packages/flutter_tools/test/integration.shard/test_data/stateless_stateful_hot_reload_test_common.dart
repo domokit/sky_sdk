@@ -13,11 +13,7 @@ import '../test_utils.dart';
 
 // This test verifies that we can hot reload a stateless widget into a
 // stateful one and back.
-void testAll({
-  bool chrome = false,
-  List<String> additionalCommandArgs = const <String>[],
-  Object? skip = false,
-}) {
+void testAll({bool chrome = false, List<String> additionalCommandArgs = const <String>[]}) {
   group('chrome: $chrome'
       '${additionalCommandArgs.isEmpty ? '' : ' with args: $additionalCommandArgs'}', () {
     late Directory tempDir;
@@ -60,5 +56,5 @@ void testAll({
       expect(logs, contains('STATEFUL'));
       await subscription.cancel();
     });
-  }, skip: skip);
+  });
 }

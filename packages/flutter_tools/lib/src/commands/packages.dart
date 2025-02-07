@@ -357,7 +357,6 @@ class PackagesGetCommand extends FlutterCommand {
       );
       // Not limiting to catching Exception because the exception is rethrown.
     } catch (_) {
-      // ignore: avoid_catches_without_on_clauses
       final Duration elapsedDuration = timer.elapsed;
       analytics.send(
         Event.timing(

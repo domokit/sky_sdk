@@ -1232,7 +1232,6 @@ void main() {
         try {
           await createTestCommandRunner(command).run(<String>['run', '--no-pub']);
         } catch (err) {
-          // ignore: avoid_catches_without_on_clauses
           fail('Expected no error, got $err');
         }
         expect(fakeTerminal.setSingleCharModeHistory, isEmpty);

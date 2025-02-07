@@ -1473,6 +1473,14 @@ class _AndroidViewSurfaceState extends State<AndroidViewSurface> {
   @override
   Widget build(BuildContext context) {
     if (widget.controller.requiresViewComposition) {
+      if (widget.controller.useNewHybridComposition) {
+        // TODO(jonahwilliams): make it actually work.
+        return _PlatformLayerBasedAndroidViewSurface(
+          controller: widget.controller,
+          hitTestBehavior: widget.hitTestBehavior,
+          gestureRecognizers: widget.gestureRecognizers,
+        );
+      }
       return _PlatformLayerBasedAndroidViewSurface(
         controller: widget.controller,
         hitTestBehavior: widget.hitTestBehavior,

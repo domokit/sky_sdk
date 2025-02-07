@@ -136,8 +136,13 @@ void testMain() {
         },
       );
 
-      // IMPORTANT: scheduled, but not yet rendering
-      expect(instance.isFrameScheduled, isTrue);
+      // Even though the warm-up frame is scheduled the value of
+      // isFrameScheduled remains false. This is because, for reasons to be yet
+      // addressed, the warm-up frame can be (and indeed is) interleaved with
+      // a normal scheduleFrame request. See the TODOs inside the
+      // scheduleWarmUpFrame code, and this discussion in particular:
+      // https://github.com/flutter/engine/pull/50570#discussion_r1496671676
+      expect(instance.isFrameScheduled, isFalse);
       expect(instance.isRenderingFrame, isFalse);
       await frameCompleter.future;
       expect(instance.isFrameScheduled, isFalse);

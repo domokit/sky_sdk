@@ -18,6 +18,41 @@
 # * Fixes in this file are for InputDecoration and InputDecorationTheme from the Material library. *
 version: 1
 transforms:
+  # Changes made in https://github.com/flutter/flutter/pull/161235.
+  - title: "Migrate to 'maintainHintSize'"
+    date: 2025-01-24
+    element:
+      uris: [ 'material.dart' ]
+      constructor: ''
+      inClass: 'InputDecoration'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'maintainHintHeight'
+        newName: 'maintainHintSize'
+
+  # Changes made in https://github.com/flutter/flutter/pull/161235.
+  - title: "Migrate to 'maintainHintSize'"
+    date: 2025-01-24
+    element:
+      uris: [ 'material.dart' ]
+      constructor: 'collapsed'
+      inClass: 'InputDecoration'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'maintainHintHeight'
+        newName: 'maintainHintSize'
+
+  # Changes made in https://github.com/flutter/flutter/pull/161235.
+  - title: "Migrate to 'maintainHintSize'"
+    date: 2025-01-24
+    element:
+      uris: [ 'material.dart' ]
+      field: 'maintainHintHeight'
+      inClass: 'InputDecoration'
+    changes:
+      - kind: 'rename'
+        newName: 'maintainHintSize'
+
   # Changes made in https://github.com/flutter/flutter/pull/152486.
   - title: "Remove invalid parameter"
     date: 2024-07-27

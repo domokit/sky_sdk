@@ -706,7 +706,6 @@ class ReleaseMacOSBundleFlutterAssets extends MacOSBundleFlutterAssets {
     try {
       await super.build(environment);
     } catch (_) {
-      // ignore: avoid_catches_without_on_clauses
       buildSuccess = false;
       rethrow;
     } finally {

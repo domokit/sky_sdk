@@ -115,11 +115,12 @@ std::unique_ptr<SurfaceFrame> GPUSurfaceVulkanImpeller::AcquireFrame(
       }
 
       SkIRect sk_cull_rect = SkIRect::MakeWH(cull_rect.width, cull_rect.height);
-      return impeller::RenderToTarget(aiks_context->GetContentContext(),  //
-                                      render_target,                      //
-                                      display_list,                       //
-                                      sk_cull_rect,                       //
-                                      /*reset_host_buffer=*/true          //
+      return impeller::RenderToTarget(
+          aiks_context->GetContentContext(),                                //
+          render_target,                                                    //
+          display_list,                                                     //
+          sk_cull_rect,                                                     //
+          /*reset_host_buffer=*/surface_frame.submit_info().frame_boundary  //
       );
     };
 

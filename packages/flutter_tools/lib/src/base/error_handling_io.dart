@@ -326,7 +326,6 @@ class ErrorHandlingFile extends ForwardingFileSystemEntity<File, io.File> with F
             bytes += chunkLength;
           }
         } catch (err) {
-          // ignore: avoid_catches_without_on_clauses, rethrows
           ErrorHandlingFileSystem.deleteIfExists(resultFile, recursive: true);
           rethrow;
         } finally {

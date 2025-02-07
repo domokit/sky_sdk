@@ -401,6 +401,13 @@ abstract final class SystemChannels {
   ///  * [PlatformViewsService] for the available operations on this channel.
   static const MethodChannel platform_views = MethodChannel('flutter/platform_views');
 
+  /// A [MethodChannel] for controlling platform views.
+  ///
+  /// See also:
+  ///
+  ///  * [PlatformViewsService] for the available operations on this channel.
+  static const MethodChannel platform_views_2 = MethodChannel('flutter/platform_views_2');
+
   /// A [MethodChannel] for configuring the Skia graphics library.
   ///
   /// The following outgoing methods are defined for this channel (invoked using

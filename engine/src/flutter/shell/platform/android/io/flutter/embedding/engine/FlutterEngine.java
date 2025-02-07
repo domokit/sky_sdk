@@ -378,10 +378,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
       attachToJni();
     }
 
-    // TODO(mattcarroll): FlutterRenderer is temporally coupled to attach(). Remove that coupling if
-    // possible.
     this.renderer = new FlutterRenderer(flutterJNI);
-
     this.platformViewsController = platformViewsController;
     this.platformViewsController2 = platformViewsController2;
 

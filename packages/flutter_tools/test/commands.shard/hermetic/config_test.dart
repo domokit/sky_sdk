@@ -15,7 +15,6 @@ import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/commands/config.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
-import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:flutter_tools/src/version.dart';
 import 'package:test/fake.dart';
 import 'package:unified_analytics/unified_analytics.dart';
@@ -30,7 +29,6 @@ void main() {
   late FakeAndroidStudio fakeAndroidStudio;
   late FakeAndroidSdk fakeAndroidSdk;
   late FakeFlutterVersion fakeFlutterVersion;
-  late TestUsage testUsage;
   late FakeAnalytics fakeAnalytics;
 
   setUpAll(() {
@@ -42,19 +40,11 @@ void main() {
     fakeAndroidStudio = FakeAndroidStudio();
     fakeAndroidSdk = FakeAndroidSdk();
     fakeFlutterVersion = FakeFlutterVersion();
-    testUsage = TestUsage();
     fakeAnalytics = getInitializedFakeAnalyticsInstance(
       fs: MemoryFileSystem.test(),
       fakeFlutterVersion: fakes.FakeFlutterVersion(),
     );
   });
-
-  void verifyNoAnalytics() {
-    expect(testUsage.commands, isEmpty);
-    expect(testUsage.events, isEmpty);
-    expect(testUsage.timings, isEmpty);
-    expect(fakeAnalytics.sentEvents, isEmpty);
-  }
 
   group('config', () {
     testUsingContext('prints all settings with --list', () async {
@@ -67,7 +57,7 @@ void main() {
         '${allFeatures.where((Feature e) => e.configSetting != null).map((Feature e) => '  ${e.configSetting}: (Not set)').join('\n')}'
         '\n\n',
       );
-    }, overrides: <Type, Generator>{Usage: () => testUsage});
+    });
 
     testUsingContext('throws error on excess arguments', () {
       final ConfigCommand configCommand = ConfigCommand();
@@ -82,8 +72,8 @@ void main() {
         ]),
         throwsToolExit(),
       );
-      verifyNoAnalytics();
-    }, overrides: <Type, Generator>{Usage: () => testUsage});
+      expect(fakeAnalytics.sentEvents, isEmpty);
+    }, overrides: <Type, Generator>{Analytics: () => fakeAnalytics});
 
     testUsingContext(
       'machine flag',
@@ -99,13 +89,13 @@ void main() {
           expect(jsonObject['android-sdk'], fakeAndroidSdk.directory.path);
           expect(jsonObject['jdk-dir'], fakeJava.javaHome);
         }
-        verifyNoAnalytics();
+        expect(fakeAnalytics.sentEvents, isEmpty);
       },
       overrides: <Type, Generator>{
         AndroidStudio: () => fakeAndroidStudio,
         AndroidSdk: () => fakeAndroidSdk,
         Java: () => fakeJava,
-        Usage: () => testUsage,
+        Analytics: () => fakeAnalytics,
       },
     );
 
@@ -116,16 +106,20 @@ void main() {
       await commandRunner.run(<String>['config', '--build-dir=foo']);
 
       expect(getBuildDirectory(), 'foo');
-      verifyNoAnalytics();
-    }, overrides: <Type, Generator>{Usage: () => testUsage});
+      expect(fakeAnalytics.sentEvents, isEmpty);
+    }, overrides: <Type, Generator>{Analytics: () => fakeAnalytics});
 
-    testUsingContext('throws error on absolute path to build-dir', () async {
-      final ConfigCommand configCommand = ConfigCommand();
-      final CommandRunner<void> commandRunner = createTestCommandRunner(configCommand);
+    testUsingContext(
+      'throws error on absolute path to build-dir',
+      () async {
+        final ConfigCommand configCommand = ConfigCommand();
+        final CommandRunner<void> commandRunner = createTestCommandRunner(configCommand);
 
-      expect(() => commandRunner.run(<String>['config', '--build-dir=/foo']), throwsToolExit());
-      verifyNoAnalytics();
-    }, overrides: <Type, Generator>{Usage: () => testUsage});
+        expect(() => commandRunner.run(<String>['config', '--build-dir=/foo']), throwsToolExit());
+        expect(fakeAnalytics.sentEvents, isEmpty);
+      },
+      overrides: <Type, Generator>{Analytics: () => fakeAnalytics},
+    );
 
     testUsingContext(
       'allows setting and removing feature flags',
@@ -175,12 +169,12 @@ void main() {
         expect(globals.config.getValue('enable-linux-desktop'), false);
         expect(globals.config.getValue('enable-windows-desktop'), false);
         expect(globals.config.getValue('enable-macos-desktop'), false);
-        verifyNoAnalytics();
+        expect(fakeAnalytics.sentEvents, isEmpty);
       },
       overrides: <Type, Generator>{
         AndroidStudio: () => fakeAndroidStudio,
         AndroidSdk: () => fakeAndroidSdk,
-        Usage: () => testUsage,
+        Analytics: () => fakeAnalytics,
       },
     );
 
@@ -194,7 +188,7 @@ void main() {
         testLogger.statusText,
         containsIgnoringWhitespace('You may need to restart any open editors'),
       );
-    }, overrides: <Type, Generator>{Usage: () => testUsage});
+    });
 
     testUsingContext(
       'displays which config settings are available on stable',
@@ -217,13 +211,13 @@ void main() {
         expect(testLogger.statusText, containsIgnoringWhitespace('enable-linux-desktop: true'));
         expect(testLogger.statusText, containsIgnoringWhitespace('enable-windows-desktop: true'));
         expect(testLogger.statusText, containsIgnoringWhitespace('enable-macos-desktop: true'));
-        verifyNoAnalytics();
+        expect(fakeAnalytics.sentEvents, isEmpty);
       },
       overrides: <Type, Generator>{
         AndroidStudio: () => fakeAndroidStudio,
         AndroidSdk: () => fakeAndroidSdk,
         FlutterVersion: () => fakeFlutterVersion,
-        Usage: () => testUsage,
+        Analytics: () => fakeAnalytics,
       },
     );
 

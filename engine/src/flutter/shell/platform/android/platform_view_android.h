@@ -128,6 +128,7 @@ class PlatformViewAndroid final : public PlatformView {
 
   std::unique_ptr<AndroidSurface> android_surface_;
   std::shared_ptr<PlatformMessageHandlerAndroid> platform_message_handler_;
+  bool android_use_new_platform_view_ = false;
 
   // |PlatformView|
   void UpdateSemantics(

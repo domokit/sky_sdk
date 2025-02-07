@@ -9,6 +9,8 @@ source_set("external_view_embedder") {
   sources = [
     "external_view_embedder.cc",
     "external_view_embedder.h",
+    "external_view_embedder_2.cc",
+    "external_view_embedder_2.h",
     "surface_pool.cc",
     "surface_pool.h",
   ]

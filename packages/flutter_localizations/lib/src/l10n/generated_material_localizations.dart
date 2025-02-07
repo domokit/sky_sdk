@@ -21688,7 +21688,7 @@ class MaterialLocalizationIt extends GlobalMaterialLocalizations {
   String get cutButtonLabel => 'Taglia';
 
   @override
-  String get dateHelpText => 'mm/gg/aaaa';
+  String get dateHelpText => 'gg/mm/aaaa';
 
   @override
   String get dateInputLabel => 'Inserisci data';

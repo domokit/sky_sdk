@@ -18,7 +18,15 @@ import '../base/logger.dart';
 import '../base/utils.dart';
 import 'preview_code_generator.dart';
 
-typedef PreviewMapping = Map<String, List<String>>;
+/// A path / URI pair used to map previews to a file.
+///
+/// We don't just use a path or a URI as the file watcher doesn't report URIs
+/// (e.g., package:*) but the analyzer APIs do, and the code generator emits
+/// package URIs for preview imports.
+typedef PreviewPath = ({String path, Uri uri});
+
+/// Represents a set of previews for a given file.
+typedef PreviewMapping = Map<PreviewPath, List<String>>;
 
 class PreviewDetector {
   PreviewDetector({required this.fs, required this.logger, required this.onChangeDetected});
@@ -38,7 +46,7 @@ class PreviewDetector {
     final Watcher watcher = Watcher(projectRoot.path);
     // TODO(bkonyi): watch for changes to pubspec.yaml
     _fileWatcher = watcher.events.listen((WatchEvent event) async {
-      final String eventPath = Uri.file(event.path).toString();
+      final String eventPath = event.path;
       // Only trigger a reload when changes to Dart sources are detected. We
       // ignore the generated preview file to avoid getting stuck in a loop.
       if (!eventPath.endsWith('.dart') ||
@@ -49,7 +57,9 @@ class PreviewDetector {
       final PreviewMapping filePreviewsMapping = findPreviewFunctions(
         fs.file(Uri.file(event.path)),
       );
-      if (filePreviewsMapping.isEmpty && !_pathToPreviews.containsKey(eventPath)) {
+      final bool hasExistingPreviews =
+          _pathToPreviews.keys.where((PreviewPath e) => e.path == event.path).isNotEmpty;
+      if (filePreviewsMapping.isEmpty && !hasExistingPreviews) {
         // No previews found or removed, nothing to do.
         return;
       }
@@ -59,20 +69,21 @@ class PreviewDetector {
       }
       if (filePreviewsMapping.isNotEmpty) {
         // The set of previews has changed, but there are still previews in the file.
-        final MapEntry<String, List<String>>(key: String uri, value: List<String> filePreviews) =
-            filePreviewsMapping.entries.first;
-        assert(uri == eventPath);
-        logger.printStatus('Updated previews for $eventPath: $filePreviews');
+        final MapEntry<PreviewPath, List<String>>(
+          key: PreviewPath location,
+          value: List<String> filePreviews,
+        ) = filePreviewsMapping.entries.first;
+        logger.printStatus('Updated previews for ${location.uri}: $filePreviews');
         if (filePreviews.isNotEmpty) {
-          final List<String>? currentPreviewsForFile = _pathToPreviews[eventPath];
+          final List<String>? currentPreviewsForFile = _pathToPreviews[location];
           if (filePreviews != currentPreviewsForFile) {
-            _pathToPreviews[eventPath] = filePreviews;
+            _pathToPreviews[location] = filePreviews;
           }
         }
       } else {
         // The file previously had previews that were removed.
         logger.printStatus('Previews removed from $eventPath');
-        _pathToPreviews.remove(eventPath);
+        _pathToPreviews.removeWhere((PreviewPath e, _) => e.path == eventPath);
       }
       onChangeDetected(_pathToPreviews);
     });
@@ -106,7 +117,8 @@ class PreviewDetector {
         final SomeParsedLibraryResult lib = context.currentSession.getParsedLibrary(filePath);
         if (lib is ParsedLibraryResult) {
           for (final ParsedUnitResult unit in lib.units) {
-            final List<String> previewEntries = previews[unit.uri.toString()] ?? <String>[];
+            final List<String> previewEntries =
+                previews[(path: unit.path, uri: unit.uri)] ?? <String>[];
             for (final SyntacticEntity entity in unit.unit.childEntities) {
               if (entity is FunctionDeclaration && !entity.name.toString().startsWith('_')) {
                 bool foundPreview = false;
@@ -127,7 +139,7 @@ class PreviewDetector {
               }
             }
             if (previewEntries.isNotEmpty) {
-              previews[unit.uri.toString()] = previewEntries;
+              previews[(path: unit.path, uri: unit.uri)] = previewEntries;
             }
           }
         } else {

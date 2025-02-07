@@ -38,7 +38,6 @@ Future<TaskResult> runWebBenchmark(WebBenchmarkOptions benchmarkOptions) async {
       options: <String>[
         'web',
         '--no-tree-shake-icons', // local engine builds are frequently out of sync with the Dart Kernel version
-        '-O2',
         if (benchmarkOptions.useWasm) ...<String>['--wasm', '--no-strip-wasm'],
         '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
         '--profile',

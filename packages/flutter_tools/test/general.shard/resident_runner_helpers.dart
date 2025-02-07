@@ -321,6 +321,7 @@ class FakeResidentCompiler extends Fake implements ResidentCompiler {
     bool checkDartPluginRegistry = false,
     File? dartPluginRegistrant,
     Uri? nativeAssetsYaml,
+    bool recompileRestart = false,
   }) async {
     recompileCalled = true;
     receivedNativeAssetsYaml = nativeAssetsYaml;

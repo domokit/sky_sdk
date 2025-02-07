@@ -57,7 +57,7 @@ Future<void> runAndroidEngineTests({required ImpellerBackend impellerBackend}) a
     // TODO(matanlurey): Enable once `flutter drive` retains error logs.
     // final RegExp impellerStdoutPattern = RegExp('Using the Imepller rendering backend (.*)');
 
-    for (final FileSystemEntity file in mains) {
+    Future<void> runTest(FileSystemEntity file) async {
       final CommandResult result = await runCommand(
         'flutter',
         <String>[
@@ -77,7 +77,7 @@ Future<void> runAndroidEngineTests({required ImpellerBackend impellerBackend}) a
       final String? stdout = result.flattenedStdout;
       if (stdout == null) {
         foundError(<String>['No stdout produced.']);
-        continue;
+        return;
       }
 
       // TODO(matanlurey): Enable once `flutter drive` retains error logs.
@@ -86,7 +86,7 @@ Future<void> runAndroidEngineTests({required ImpellerBackend impellerBackend}) a
       // final Match? stdoutMatch = impellerStdoutPattern.firstMatch(stdout);
       // if (stdoutMatch == null) {
       //   foundError(<String>['Could not find pattern ${impellerStdoutPattern.pattern}.', stdout]);
-      //   continue;
+      //   return;
       // }
 
       // final String reportedBackend = stdoutMatch.group(1)!.toLowerCase();
@@ -94,14 +94,42 @@ Future<void> runAndroidEngineTests({required ImpellerBackend impellerBackend}) a
       //   foundError(<String>[
       //     'Reported Imepller backend was $reportedBackend, expected ${impellerBackend.name}',
       //   ]);
-      //   continue;
+      //   return;
       // }
+    }
+
+    for (final FileSystemEntity file in mains) {
+      if (file.path.contains('hcpp')) {
+        continue;
+      }
+      await runTest(file);
+    }
+
+    // Test HCPP Platform Views on Vulkan.
+    if (impellerBackend == ImpellerBackend.vulkan) {
+      androidManifestXml.writeAsStringSync(
+        androidManifestXml.readAsStringSync().replaceFirst(
+          kSurfaceControlMetadataDisabled,
+          kSurfaceControlMetadataEnabled,
+        ),
+      );
+      for (final FileSystemEntity file in mains) {
+        if (!file.path.contains('hcpp')) {
+          continue;
+        }
+        await runTest(file);
+      }
     }
   } finally {
     // Restore original contents.
     androidManifestXml.writeAsStringSync(androidManifestContents);
   }
 }
+
+const String kSurfaceControlMetadataDisabled =
+    '<meta-data android:name="io.flutter.embedding.android.UseSurfaceControl" android:value="false" />';
+const String kSurfaceControlMetadataEnabled =
+    '<meta-data android:name="io.flutter.embedding.android.UseSurfaceControl" android:value="true" />';
 
 String _impellerBackendMetadata({required String value}) {
   return '<meta-data android:name="io.flutter.embedding.android.ImpellerBackend" android:value="$value" />';

@@ -85,7 +85,10 @@ Future<void> main(List<String> args) async {
   final bool daemon = args.contains('daemon');
   final bool runMachine =
       (args.contains('--machine') && args.contains('run')) ||
-      (args.contains('--machine') && args.contains('attach'));
+      (args.contains('--machine') && args.contains('attach')) ||
+      // `flutter widget-preview start` starts an application that requires a logger
+      // to be setup for machine mode.
+      (args.contains('widget-preview') && args.contains('start'));
 
   // Cache.flutterRoot must be set early because other features use it (e.g.
   // enginePath's initializer uses it). This can only work with the real
@@ -247,10 +250,14 @@ List<FlutterCommand> generateCommands({required bool verboseHelp, required bool 
         nativeAssetsBuilder: globals.nativeAssetsBuilder,
       ),
       WidgetPreviewCommand(
+        verboseHelp: verboseHelp,
         logger: globals.logger,
         fs: globals.fs,
         projectFactory: globals.projectFactory,
         cache: globals.cache,
+        platform: globals.platform,
+        shutdownHooks: globals.shutdownHooks,
+        os: globals.os,
       ),
       UpgradeCommand(verboseHelp: verboseHelp),
       SymbolizeCommand(stdio: globals.stdio, fileSystem: globals.fs),

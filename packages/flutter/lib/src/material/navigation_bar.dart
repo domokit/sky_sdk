@@ -385,9 +385,12 @@ class NavigationDestination extends StatelessWidget {
   /// The text label that appears below the icon of this
   /// [NavigationDestination].
   ///
-  /// The accompanying [Text] widget will use
-  /// [NavigationBarThemeData.labelTextStyle]. If this are null, the default
-  /// text style would use [TextTheme.labelSmall] with [ColorScheme.onSurface].
+  /// The accompanying [Text] widget will use [NavigationBarThemeData.labelTextStyle].
+  /// If this is null, the default text style will use [TextTheme.labelMedium] with
+  /// [ColorScheme.onSurface] when the destination is selected and
+  /// [ColorScheme.onSurfaceVariant] when the destination is unselected. If
+  /// [ThemeData.useMaterial3] is false, then the default text style will use
+  /// [TextTheme.labelSmall] with [ColorScheme.onSurface].
   final String label;
 
   /// The text to display in the tooltip for this [NavigationDestination], when

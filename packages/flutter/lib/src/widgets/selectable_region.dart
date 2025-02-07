@@ -3027,7 +3027,7 @@ abstract class MultiSelectableSelectionContainerDelegate extends SelectionContai
       if (event.forward) {
         currentSelectionStartIndex = currentSelectionEndIndex = 0;
       } else {
-        currentSelectionStartIndex = currentSelectionEndIndex = selectables.length;
+        currentSelectionStartIndex = currentSelectionEndIndex = selectables.length - 1;
       }
     }
     int targetIndex = event.isEnd ? currentSelectionEndIndex : currentSelectionStartIndex;

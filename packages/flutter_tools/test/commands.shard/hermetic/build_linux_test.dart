@@ -92,7 +92,7 @@ void main() {
         '-DFLUTTER_TARGET_PLATFORM=linux-$target',
         '/linux',
       ],
-      workingDirectory: 'build/linux/$target/$buildMode',
+      workingDirectory: '/build/linux/$target/$buildMode',
       onRun: onRun,
     );
   }
@@ -106,7 +106,7 @@ void main() {
     String stdout = '',
   }) {
     return FakeCommand(
-      command: <String>['ninja', '-C', 'build/linux/$target/$buildMode', 'install'],
+      command: <String>['ninja', '-C', '/build/linux/$target/$buildMode', 'install'],
       environment: environment,
       onRun: onRun,
       stdout: stdout,
@@ -397,7 +397,7 @@ void main() {
       // This contains a mix of routine build output and various types of errors
       // (Dart error, compile error, link error), edited down for compactness.
       const String stdout = r'''
-ninja: Entering directory `build/linux/x64/release'
+ninja: Entering directory `/build/linux/x64/release'
 [1/6] Generating /foo/linux/flutter/ephemeral/libflutter_linux_gtk.so, /foo/linux/flutter/ephemeral/flutter_linux/flutter_linux.h, _phony
 lib/main.dart:4:3: Error: Method not found: 'foo'.
 [2/6] Building CXX object CMakeFiles/foo.dir/main.cc.o

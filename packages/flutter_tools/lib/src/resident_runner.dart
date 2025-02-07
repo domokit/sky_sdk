@@ -1799,7 +1799,6 @@ class TerminalHandler {
       await _commonTerminalInputHandler(command);
       // Catch all exception since this is doing cleanup and rethrowing.
     } catch (error, st) {
-      // ignore: avoid_catches_without_on_clauses
       // Don't print stack traces for known error types.
       if (error is! ToolExit) {
         _logger.printError('$error\n$st');

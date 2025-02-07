@@ -48,6 +48,9 @@ class DartComponentController
   /// This should be called after |SetUp|.
   void Run();
 
+  void handle_unknown_method(uint64_t ordinal,
+                             bool method_has_response) override;
+
  private:
   /// Helper for actually running the Dart main. Returns true if successful,
   /// false otherwise.

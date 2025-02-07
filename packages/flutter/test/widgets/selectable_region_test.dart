@@ -4828,6 +4828,92 @@ void main() {
     }, variant: TargetPlatformVariant.all());
 
     testWidgets(
+      'should not throw range error when selecting previous paragraph',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: SelectableRegion(
+              selectionControls: materialTextSelectionControls,
+              child: const Column(
+                children: <Widget>[
+                  Text('How are you?'),
+                  Text('Good, and you?'),
+                  Text('Fine, thank you.'),
+                ],
+              ),
+            ),
+          ),
+        );
+        // Select from offset 2 of paragraph3 to offset 6 of paragraph3.
+        final RenderParagraph paragraph3 = tester.renderObject<RenderParagraph>(
+          find.descendant(of: find.text('Fine, thank you.'), matching: find.byType(RichText)),
+        );
+        final TestGesture gesture = await tester.startGesture(
+          textOffsetToPosition(paragraph3, 2),
+          kind: PointerDeviceKind.mouse,
+        );
+        addTearDown(gesture.removePointer);
+        await tester.pump();
+        await gesture.moveTo(textOffsetToPosition(paragraph3, 6));
+        await gesture.up();
+        await tester.pump();
+
+        final bool alt;
+        final bool meta;
+        switch (defaultTargetPlatform) {
+          case TargetPlatform.android:
+          case TargetPlatform.fuchsia:
+          case TargetPlatform.linux:
+          case TargetPlatform.windows:
+            meta = false;
+            alt = true;
+          case TargetPlatform.iOS:
+          case TargetPlatform.macOS:
+            meta = true;
+            alt = false;
+        }
+
+        // How are you?
+        // Good, and you?
+        // Fi[ne, ]thank you.
+        expect(paragraph3.selections.length, 1);
+        expect(paragraph3.selections[0].start, 2);
+        expect(paragraph3.selections[0].end, 6);
+
+        await sendKeyCombination(
+          tester,
+          SingleActivator(LogicalKeyboardKey.arrowLeft, shift: true, alt: alt, meta: meta),
+        );
+        await tester.pump();
+        // How are you?
+        // Good, and you?
+        // [Fine, ]thank you.
+        expect(paragraph3.selections.length, 1);
+        expect(paragraph3.selections[0].start, 0);
+        expect(paragraph3.selections[0].end, 6);
+
+        await sendKeyCombination(
+          tester,
+          const SingleActivator(LogicalKeyboardKey.arrowLeft, shift: true),
+        );
+        await tester.pump();
+        // How are you?
+        // Good, and you[?
+        // Fine, ]thank you.
+        final RenderParagraph paragraph2 = tester.renderObject<RenderParagraph>(
+          find.descendant(of: find.text('Good, and you?'), matching: find.byType(RichText)),
+        );
+        expect(paragraph3.selections.length, 1);
+        expect(paragraph3.selections[0].start, 0);
+        expect(paragraph3.selections[0].end, 6);
+        expect(paragraph2.selections.length, 1);
+        expect(paragraph2.selections[0].start, 13);
+        expect(paragraph2.selections[0].end, 14);
+      },
+      variant: TargetPlatformVariant.all(),
+    );
+
+    testWidgets(
       'can use keyboard to granularly extend selection - document',
       (WidgetTester tester) async {
         await tester.pumpWidget(

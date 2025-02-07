@@ -991,7 +991,6 @@ class BrowserManager {
       return await controller.suite;
       // Not limiting to catching Exception because the exception is rethrown.
     } catch (_) {
-      // ignore: avoid_catches_without_on_clauses
       closeIframe();
       rethrow;
     }

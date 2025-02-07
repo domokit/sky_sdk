@@ -112,6 +112,9 @@ class BuildAarCommand extends BuildSubCommand {
   }
 
   @override
+  bool get regeneratePlatformSpecificToolingDurifyVerify => false;
+
+  @override
   Future<FlutterCommandResult> runCommand() async {
     if (_androidSdk == null) {
       exitWithNoSdkMessage();
@@ -149,10 +152,12 @@ class BuildAarCommand extends BuildSubCommand {
     }
 
     displayNullSafetyMode(androidBuildInfo.first.buildInfo);
+
     await androidBuilder?.buildAar(
       project: project,
       target: targetFile.path,
       androidBuildInfo: androidBuildInfo,
+      generateTooling: regeneratePlatformSpecificToolingIfApplicable,
       outputDirectoryPath: stringArg('output'),
       buildNumber: buildNumber,
     );

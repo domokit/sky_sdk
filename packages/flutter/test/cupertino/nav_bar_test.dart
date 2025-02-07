@@ -461,8 +461,6 @@ void main() {
   testWidgets('Media padding is applied to CupertinoSliverNavigationBar', (
     WidgetTester tester,
   ) async {
-    final ScrollController scrollController = ScrollController();
-    addTearDown(scrollController.dispose);
     final Key leadingKey = GlobalKey();
     final Key middleKey = GlobalKey();
     final Key trailingKey = GlobalKey();
@@ -475,7 +473,6 @@ void main() {
           ),
           child: CupertinoPageScaffold(
             child: CustomScrollView(
-              controller: scrollController,
               slivers: <Widget>[
                 CupertinoSliverNavigationBar(
                   leading: Placeholder(key: leadingKey),
@@ -795,6 +792,57 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(find.text('Home page'), findsOneWidget);
+  });
+
+  testWidgets('Navigation bars in a CupertinoSheetRoute have no back button', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const CupertinoApp(home: CupertinoNavigationBar(middle: Text('Home page'))),
+    );
+
+    expect(find.byType(CupertinoButton), findsNothing);
+
+    tester
+        .state<NavigatorState>(find.byType(Navigator))
+        .push(
+          CupertinoSheetRoute<void>(
+            builder: (BuildContext context) {
+              return const CupertinoPageScaffold(
+                navigationBar: CupertinoNavigationBar(middle: Text('Page 2')),
+                child: Placeholder(),
+              );
+            },
+          ),
+        );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    // No back button is found.
+    expect(find.byType(CupertinoButton), findsNothing);
+    expect(find.text(String.fromCharCode(CupertinoIcons.back.codePoint)), findsNothing);
+
+    tester
+        .state<NavigatorState>(find.byType(Navigator))
+        .push(
+          CupertinoSheetRoute<void>(
+            builder: (BuildContext context) {
+              return const CupertinoPageScaffold(
+                child: CustomScrollView(
+                  slivers: <Widget>[CupertinoSliverNavigationBar(largeTitle: Text('Page 3'))],
+                ),
+              );
+            },
+          ),
+        );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    // No back button is found.
+    expect(find.byType(CupertinoButton), findsNothing);
+    expect(find.text(String.fromCharCode(CupertinoIcons.back.codePoint)), findsNothing);
   });
 
   testWidgets('Long back label turns into "back"', (WidgetTester tester) async {

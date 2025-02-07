@@ -5,8 +5,6 @@
 @Tags(<String>['flutter-test-driver'])
 library;
 
-import 'dart:io';
-
 import '../integration.shard/test_data/hot_reload_test_common.dart';
 import '../src/common.dart';
 
@@ -16,7 +14,5 @@ void main() {
     additionalCommandArgs: <String>[
       '--extra-front-end-options=--dartdevc-canary,--dartdevc-module-format=ddc',
     ],
-    // https://github.com/flutter/flutter/issues/162567
-    skip: Platform.isWindows,
   );
 }

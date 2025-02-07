@@ -84,56 +84,64 @@ class _DropdownMenuExampleState extends State<DropdownMenuExample> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    DropdownMenu<ColorLabel>(
-                      initialSelection: ColorLabel.green,
-                      controller: colorController,
-                      // requestFocusOnTap is enabled/disabled by platforms when it is null.
-                      // On mobile platforms, this is false by default. Setting this to true will
-                      // trigger focus request on the text field and virtual keyboard will appear
-                      // afterward. On desktop platforms however, this defaults to true.
-                      requestFocusOnTap: true,
-                      label: const Text('Color'),
-                      onSelected: (ColorLabel? color) {
-                        setState(() {
-                          selectedColor = color;
-                        });
-                      },
-                      dropdownMenuEntries: ColorLabel.entries,
-                    ),
-                    const SizedBox(width: 24),
-                    DropdownMenu<IconLabel>(
-                      controller: iconController,
-                      enableFilter: true,
-                      requestFocusOnTap: true,
-                      leadingIcon: const Icon(Icons.search),
-                      label: const Text('Icon'),
-                      inputDecorationTheme: const InputDecorationTheme(
-                        filled: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      DropdownMenu<ColorLabel>(
+                        initialSelection: ColorLabel.green,
+                        controller: colorController,
+                        // The default requestFocusOnTap value depends on the platform.
+                        // On mobile, it defaults to false, and on desktop, it defaults to true.
+                        // Setting this to true will trigger a focus request on the text field, and
+                        // the virtual keyboard will appear afterward.
+                        requestFocusOnTap: true,
+                        label: const Text('Color'),
+                        onSelected: (ColorLabel? color) {
+                          setState(() {
+                            selectedColor = color;
+                          });
+                        },
+                        dropdownMenuEntries: ColorLabel.entries,
                       ),
-                      onSelected: (IconLabel? icon) {
-                        setState(() {
-                          selectedIcon = icon;
-                        });
-                      },
-                      dropdownMenuEntries: IconLabel.entries,
-                    ),
-                  ],
+                      const SizedBox(width: 24),
+                      DropdownMenu<IconLabel>(
+                        controller: iconController,
+                        enableFilter: true,
+                        requestFocusOnTap: true,
+                        leadingIcon: const Icon(Icons.search),
+                        label: const Text('Icon'),
+                        inputDecorationTheme: const InputDecorationTheme(
+                          filled: true,
+                          contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+                        ),
+                        onSelected: (IconLabel? icon) {
+                          setState(() {
+                            selectedIcon = icon;
+                          });
+                        },
+                        dropdownMenuEntries: IconLabel.entries,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               if (selectedColor != null && selectedIcon != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('You selected a ${selectedColor?.label} ${selectedIcon?.label}'),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Icon(selectedIcon?.icon, color: selectedColor?.color),
-                    ),
-                  ],
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text('You selected a ${selectedColor?.label} ${selectedIcon?.label}'),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Icon(selectedIcon?.icon, color: selectedColor?.color),
+                      ),
+                    ],
+                  ),
                 )
               else
                 const Text('Please select a color and an icon.'),

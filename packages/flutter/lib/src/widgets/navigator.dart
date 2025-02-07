@@ -1255,6 +1255,12 @@ class DefaultTransitionDelegate<T> extends TransitionDelegate<T> {
 /// {@macro flutter.widgets.navigator.routeTraversalEdgeBehavior}
 const TraversalEdgeBehavior kDefaultRouteTraversalEdgeBehavior = TraversalEdgeBehavior.parentScope;
 
+/// The default value of [Navigator.routeDirectionalTraversalEdgeBehavior].
+///
+/// {@macro flutter.widgets.navigator.routeTraversalEdgeBehavior}
+const TraversalEdgeBehavior kDefaultRouteDirectionalTraversalEdgeBehavior =
+    TraversalEdgeBehavior.stop;
+
 /// A widget that manages a set of child widgets with a stack discipline.
 ///
 /// Many apps have a navigator near the top of their widget hierarchy in order
@@ -1576,6 +1582,7 @@ class Navigator extends StatefulWidget {
     this.requestFocus = true,
     this.restorationScopeId,
     this.routeTraversalEdgeBehavior = kDefaultRouteTraversalEdgeBehavior,
+    this.routeDirectionalTraversalEdgeBehavior = kDefaultRouteDirectionalTraversalEdgeBehavior,
     this.onDidRemovePage,
   });
 
@@ -1723,6 +1730,12 @@ class Navigator extends StatefulWidget {
   /// not rendered by Flutter.
   /// {@endtemplate}
   final TraversalEdgeBehavior routeTraversalEdgeBehavior;
+
+  /// Controls the directional transfer of focus beyond the first and the last
+  /// items of a focus scope that defines focus traversal of widgets within a route.
+  ///
+  /// {@macro flutter.widgets.navigator.routeTraversalEdgeBehavior}
+  final TraversalEdgeBehavior routeDirectionalTraversalEdgeBehavior;
 
   /// The name for the default route of the application.
   ///

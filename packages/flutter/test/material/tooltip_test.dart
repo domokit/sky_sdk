@@ -1403,7 +1403,8 @@ void main() {
   });
 
   testWidgets('Tooltip is dismissed after tap to dismiss immediately', (WidgetTester tester) async {
-    await setWidgetForTooltipMode(tester, TooltipTriggerMode.tap);
+    // This test relies on not ignoring pointer events.
+    await setWidgetForTooltipMode(tester, TooltipTriggerMode.tap, ignorePointer: false);
 
     final Finder tooltip = find.byType(Tooltip);
     expect(find.text(tooltipText), findsNothing);
@@ -1421,7 +1422,13 @@ void main() {
   testWidgets('Tooltip is not dismissed after tap if enableTapToDismiss is false', (
     WidgetTester tester,
   ) async {
-    await setWidgetForTooltipMode(tester, TooltipTriggerMode.tap, enableTapToDismiss: false);
+    // This test relies on not ignoring pointer events.
+    await setWidgetForTooltipMode(
+      tester,
+      TooltipTriggerMode.tap,
+      enableTapToDismiss: false,
+      ignorePointer: false,
+    );
 
     final Finder tooltip = find.byType(Tooltip);
     expect(find.text(tooltipText), findsNothing);
@@ -1727,6 +1734,8 @@ void main() {
       const MaterialApp(
         home: Center(
           child: Tooltip(
+            // This test relies on not ignoring pointer events.
+            ignorePointer: false,
             message: tooltipText,
             waitDuration: waitDuration,
             child: Text('I am tool tip'),
@@ -3220,6 +3229,167 @@ void main() {
     await tester.pump();
     expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), customCursor);
   });
+
+  testWidgets('Tooltip overlay ignores pointer by default when passing simple message', (
+    WidgetTester tester,
+  ) async {
+    const String tooltipMessage = 'Tooltip message';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Tooltip(
+              message: tooltipMessage,
+              child: ElevatedButton(onPressed: () {}, child: const Text('Hover me')),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Finder buttonFinder = find.text('Hover me');
+    expect(buttonFinder, findsOneWidget);
+
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(tester.getCenter(buttonFinder));
+    await tester.pumpAndSettle();
+
+    final Finder tooltipFinder = find.text(tooltipMessage);
+    expect(tooltipFinder, findsOneWidget);
+
+    final Finder ignorePointerFinder = find.byType(IgnorePointer);
+
+    final IgnorePointer ignorePointer = tester.widget<IgnorePointer>(ignorePointerFinder.last);
+    expect(ignorePointer.ignoring, isTrue);
+
+    await gesture.removePointer();
+  });
+
+  testWidgets(
+    "Tooltip overlay with simple message doesn't ignore pointer when passing ignorePointer: false",
+    (WidgetTester tester) async {
+      const String tooltipMessage = 'Tooltip message';
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: Tooltip(
+                ignorePointer: false,
+                message: tooltipMessage,
+                child: ElevatedButton(onPressed: () {}, child: const Text('Hover me')),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Finder buttonFinder = find.text('Hover me');
+      expect(buttonFinder, findsOneWidget);
+
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer();
+      await gesture.moveTo(tester.getCenter(buttonFinder));
+      await tester.pumpAndSettle();
+
+      final Finder tooltipFinder = find.text(tooltipMessage);
+      expect(tooltipFinder, findsOneWidget);
+
+      final Finder ignorePointerFinder = find.byType(IgnorePointer);
+
+      final IgnorePointer ignorePointer = tester.widget<IgnorePointer>(ignorePointerFinder.last);
+      expect(ignorePointer.ignoring, isFalse);
+
+      await gesture.removePointer();
+    },
+  );
+
+  testWidgets("Tooltip overlay doesn't ignore pointer by default when passing rich message", (
+    WidgetTester tester,
+  ) async {
+    const InlineSpan richMessage = TextSpan(
+      children: <InlineSpan>[
+        TextSpan(text: 'Rich ', style: TextStyle(fontWeight: FontWeight.bold)),
+        TextSpan(text: 'Tooltip'),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Tooltip(
+              richMessage: richMessage,
+              child: ElevatedButton(onPressed: () {}, child: const Text('Hover me')),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Finder buttonFinder = find.text('Hover me');
+    expect(buttonFinder, findsOneWidget);
+
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(tester.getCenter(buttonFinder));
+    await tester.pumpAndSettle();
+
+    final Finder tooltipFinder = find.textContaining('Rich Tooltip');
+    expect(tooltipFinder, findsOneWidget);
+
+    final Finder ignorePointerFinder = find.byType(IgnorePointer);
+
+    final IgnorePointer ignorePointer = tester.widget<IgnorePointer>(ignorePointerFinder.last);
+    expect(ignorePointer.ignoring, isFalse);
+
+    await gesture.removePointer();
+  });
+
+  testWidgets('Tooltip overlay with richMessage ignores pointer when passing ignorePointer: true', (
+    WidgetTester tester,
+  ) async {
+    const InlineSpan richMessage = TextSpan(
+      children: <InlineSpan>[
+        TextSpan(text: 'Rich ', style: TextStyle(fontWeight: FontWeight.bold)),
+        TextSpan(text: 'Tooltip'),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Tooltip(
+              ignorePointer: true,
+              richMessage: richMessage,
+              child: ElevatedButton(onPressed: () {}, child: const Text('Hover me')),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Finder buttonFinder = find.text('Hover me');
+    expect(buttonFinder, findsOneWidget);
+
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(tester.getCenter(buttonFinder));
+    await tester.pumpAndSettle();
+
+    final Finder tooltipFinder = find.textContaining('Rich Tooltip');
+    expect(tooltipFinder, findsOneWidget);
+
+    final Finder ignorePointerFinder = find.byType(IgnorePointer);
+
+    final IgnorePointer ignorePointer = tester.widget<IgnorePointer>(ignorePointerFinder.last);
+    expect(ignorePointer.ignoring, isTrue);
+
+    await gesture.removePointer();
+  });
 }
 
 Future<void> setWidgetForTooltipMode(
@@ -3228,6 +3398,7 @@ Future<void> setWidgetForTooltipMode(
   Duration? showDuration,
   bool? enableTapToDismiss,
   TooltipTriggeredCallback? onTriggered,
+  bool? ignorePointer,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -3237,6 +3408,7 @@ Future<void> setWidgetForTooltipMode(
         onTriggered: onTriggered,
         showDuration: showDuration,
         enableTapToDismiss: enableTapToDismiss ?? true,
+        ignorePointer: ignorePointer,
         child: const SizedBox(width: 100.0, height: 100.0),
       ),
     ),

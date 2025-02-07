@@ -80,9 +80,9 @@ Future<void> buildLinux(
 
   final Status status = logger.startProgress('Building Linux application...');
   final String buildModeName = buildInfo.mode.cliName;
-  final Directory platformBuildDirectory = globals.fs.directory(
-    getLinuxBuildDirectory(targetPlatform),
-  );
+  final Directory platformBuildDirectory = globals.fs
+      .directory(linuxProject.parent.directory.path)
+      .childDirectory(getLinuxBuildDirectory(targetPlatform));
   final Directory buildDirectory = platformBuildDirectory.childDirectory(buildModeName);
   try {
     await _runCmake(

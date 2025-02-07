@@ -258,7 +258,6 @@ class HotRunner extends ResidentRunner {
       );
       // Catches all exceptions, non-Exception objects are rethrown.
     } catch (error) {
-      // ignore: avoid_catches_without_on_clauses
       if (error is! Exception && error is! String) {
         rethrow;
       }

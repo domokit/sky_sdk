@@ -24,6 +24,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.LocaleSpan;
 import android.text.style.TtsSpan;
+import android.text.style.URLSpan;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
@@ -748,7 +749,7 @@ public class AccessibilityBridge extends AccessibilityNodeProvider {
       result.addAction(AccessibilityNodeInfo.ACTION_SET_TEXT);
     }
 
-    if (semanticsNode.hasFlag(Flag.IS_BUTTON) || semanticsNode.hasFlag(Flag.IS_LINK)) {
+    if (semanticsNode.hasFlag(Flag.IS_BUTTON)) {
       result.setClassName("android.widget.Button");
     }
     if (semanticsNode.hasFlag(Flag.IS_IMAGE)) {
@@ -2262,6 +2263,7 @@ public class AccessibilityBridge extends AccessibilityNodeProvider {
   private enum StringAttributeType {
     SPELLOUT,
     LOCALE,
+    URL
   }
 
   private static class StringAttribute {
@@ -2274,6 +2276,10 @@ public class AccessibilityBridge extends AccessibilityNodeProvider {
 
   private static class LocaleStringAttribute extends StringAttribute {
     String locale;
+  }
+
+  private static class UrlStringAttribute extends StringAttribute {
+    String url;
   }
 
   /**
@@ -2328,6 +2334,9 @@ public class AccessibilityBridge extends AccessibilityNodeProvider {
     // The tooltip is attached through AccessibilityNodeInfo.setTooltipText if
     // API level >= 28; otherwise, this is attached to the end of content description.
     @Nullable private String tooltip;
+
+    // The Url the widget's points to.
+    @Nullable private String linkUrl;
 
     // The id of the sibling node that is before this node in traversal
     // order.
@@ -2539,6 +2548,9 @@ public class AccessibilityBridge extends AccessibilityNodeProvider {
 
       stringIndex = buffer.getInt();
       tooltip = stringIndex == -1 ? null : strings[stringIndex];
+
+      stringIndex = buffer.getInt();
+      linkUrl = stringIndex == -1 ? null : strings[stringIndex];
 
       textDirection = TextDirection.fromInt(buffer.getInt());
 
@@ -2832,7 +2844,21 @@ public class AccessibilityBridge extends AccessibilityNodeProvider {
     }
 
     private CharSequence getLabel() {
-      return createSpannableString(label, labelAttributes);
+      List<StringAttribute> attributes = labelAttributes;
+      if (linkUrl != null && linkUrl.length() > 0) {
+        if (attributes == null) {
+          attributes = new ArrayList<StringAttribute>();
+        } else {
+          attributes = new ArrayList<StringAttribute>(attributes);
+        }
+        UrlStringAttribute uriStringAttribute = new UrlStringAttribute();
+        uriStringAttribute.start = 0;
+        uriStringAttribute.end = label.length();
+        uriStringAttribute.url = linkUrl;
+        uriStringAttribute.type = StringAttributeType.URL;
+        attributes.add(uriStringAttribute);
+      }
+      return createSpannableString(label, attributes);
     }
 
     private CharSequence getHint() {
@@ -2889,6 +2915,13 @@ public class AccessibilityBridge extends AccessibilityNodeProvider {
                 Locale locale = Locale.forLanguageTag(localeAttribute.locale);
                 final LocaleSpan localeSpan = new LocaleSpan(locale);
                 spannableString.setSpan(localeSpan, attribute.start, attribute.end, 0);
+                break;
+              }
+            case URL:
+              {
+                UrlStringAttribute uriAttribute = (UrlStringAttribute) attribute;
+                final URLSpan urlSpan = new URLSpan(uriAttribute.url);
+                spannableString.setSpan(urlSpan, attribute.start, attribute.end, 0);
                 break;
               }
           }

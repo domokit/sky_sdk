@@ -139,7 +139,7 @@ void main() {
               rect: TestSemantics.fullScreen,
               children: <TestSemantics>[
                 TestSemantics(
-                  id: 4,
+                  id: 2,
                   label: 'child1',
                   rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 10.0),
                   flags: <SemanticsFlag>[SemanticsFlag.hasSelectedState, SemanticsFlag.isSelected],

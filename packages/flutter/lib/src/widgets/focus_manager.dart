@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 import 'binding.dart';
@@ -1357,6 +1358,7 @@ class FocusScopeNode extends FocusNode {
     super.skipTraversal,
     super.canRequestFocus,
     this.traversalEdgeBehavior = TraversalEdgeBehavior.closedLoop,
+    this.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.stop,
   }) : super(descendantsAreFocusable: true);
 
   @override
@@ -1372,6 +1374,13 @@ class FocusScopeNode extends FocusNode {
   /// focus traversal takes place [FocusTraversalPolicy] will read this value
   /// and apply the new behavior.
   TraversalEdgeBehavior traversalEdgeBehavior;
+
+  /// Controls the directional transfer of focus when the focus is on the first or last item.
+  ///
+  /// Changing this field value has no immediate effect on the UI. Instead, next time
+  /// focus traversal takes place [FocusTraversalPolicy] will read this value
+  /// and apply the new behavior.
+  TraversalEdgeBehavior directionalTraversalEdgeBehavior;
 
   /// Returns true if this scope is the focused child of its parent scope.
   bool get isFirstFocus => enclosingScope!.focusedChild == this;
@@ -2064,9 +2073,9 @@ class _HighlightModeManager {
     }
   }
 
-  // If set, indicates if the last interaction detected was touch or not. If
-  // null, no interactions have occurred yet.
-  bool? _lastInteractionWasTouch;
+  // If null, no interactions have occurred yet and the default highlight mode for the current
+  // platform applies.
+  bool? _lastInteractionRequiresTraditionalHighlights;
 
   FocusHighlightMode get highlightMode => _highlightMode ?? _defaultModeForPlatform;
   FocusHighlightMode? _highlightMode;
@@ -2122,6 +2131,7 @@ class _HighlightModeManager {
     // HardwareKeyboard.
     ServicesBinding.instance.keyEventManager.keyMessageHandler = handleKeyMessage;
     GestureBinding.instance.pointerRouter.addGlobalRoute(handlePointerEvent);
+    SemanticsBinding.instance.addSemanticsActionListener(handleSemanticsAction);
   }
 
   @mustCallSuper
@@ -2132,6 +2142,7 @@ class _HighlightModeManager {
     if (ServicesBinding.instance.keyEventManager.keyMessageHandler == handleKeyMessage) {
       GestureBinding.instance.pointerRouter.removeGlobalRoute(handlePointerEvent);
       ServicesBinding.instance.keyEventManager.keyMessageHandler = null;
+      SemanticsBinding.instance.removeSemanticsActionListener(handleSemanticsAction);
     }
     _listeners = HashedObserverList<ValueChanged<FocusHighlightMode>>();
   }
@@ -2175,29 +2186,28 @@ class _HighlightModeManager {
   }
 
   void handlePointerEvent(PointerEvent event) {
-    final FocusHighlightMode expectedMode;
     switch (event.kind) {
       case PointerDeviceKind.touch:
       case PointerDeviceKind.stylus:
       case PointerDeviceKind.invertedStylus:
-        _lastInteractionWasTouch = true;
-        expectedMode = FocusHighlightMode.touch;
+        if (_lastInteractionRequiresTraditionalHighlights != true) {
+          _lastInteractionRequiresTraditionalHighlights = true;
+          updateMode();
+        }
       case PointerDeviceKind.mouse:
       case PointerDeviceKind.trackpad:
       case PointerDeviceKind.unknown:
-        _lastInteractionWasTouch = false;
-        expectedMode = FocusHighlightMode.traditional;
-    }
-    if (expectedMode != highlightMode) {
-      updateMode();
     }
   }
 
   bool handleKeyMessage(KeyMessage message) {
-    // Update highlightMode first, since things responding to the keys might
-    // look at the highlight mode, and it should be accurate.
-    _lastInteractionWasTouch = false;
-    updateMode();
+    // ignore: use_if_null_to_convert_nulls_to_bools
+    if (_lastInteractionRequiresTraditionalHighlights != false) {
+      // Update highlightMode first, since things responding to the keys might
+      // look at the highlight mode, and it should be accurate.
+      _lastInteractionRequiresTraditionalHighlights = false;
+      updateMode();
+    }
 
     assert(_focusDebug(() => 'Received key event $message'));
     if (FocusManager.instance.primaryFocus == null) {
@@ -2290,20 +2300,29 @@ class _HighlightModeManager {
     return handled;
   }
 
+  void handleSemanticsAction(SemanticsActionEvent semanticsActionEvent) {
+    if (kIsWeb &&
+        semanticsActionEvent.type == SemanticsAction.focus &&
+        _lastInteractionRequiresTraditionalHighlights != true) {
+      _lastInteractionRequiresTraditionalHighlights = true;
+      updateMode();
+    }
+  }
+
   // Update function to be called whenever the state relating to highlightMode
   // changes.
   void updateMode() {
     final FocusHighlightMode newMode;
     switch (strategy) {
       case FocusHighlightStrategy.automatic:
-        if (_lastInteractionWasTouch == null) {
+        if (_lastInteractionRequiresTraditionalHighlights == null) {
           // If we don't have any information about the last interaction yet,
           // then just rely on the default value for the platform, which will be
           // determined based on the target platform if _highlightMode is not
           // set.
           return;
         }
-        if (_lastInteractionWasTouch!) {
+        if (_lastInteractionRequiresTraditionalHighlights!) {
           newMode = FocusHighlightMode.touch;
         } else {
           newMode = FocusHighlightMode.traditional;

@@ -505,10 +505,13 @@ String generateDDCMainModule({
 ''';
 }
 
+const String _onLoadEndCallback = r'$onLoadEndCallback';
+
 String generateDDCLibraryBundleMainModule({
   required String entrypoint,
   required bool nullAssertions,
   required bool nativeNullAssertions,
+  required String onLoadEndBootstrap,
 }) {
   // The typo below in "EXTENTION" is load-bearing, package:build depends on it.
   return '''
@@ -519,19 +522,46 @@ String generateDDCLibraryBundleMainModule({
 
   dartDevEmbedder.debugger.registerDevtoolsFormatter();
 
-  let child = {};
-  child.main = function() {
-    let sdkOptions = {
-      nonNullAsserts: $nullAssertions,
-      nativeNonNullAsserts: $nativeNullAssertions,
-    };
-    dartDevEmbedder.runMain(appName, sdkOptions);
+  // Set up a final script that lets us know when all scripts have been loaded.
+  let onLoadEndSrc = '$onLoadEndBootstrap';
+  window.\$dartLoader.loadConfig.bootstrapScript = {
+    src: onLoadEndSrc,
+    id: onLoadEndSrc,
+  };
+  window.\$dartLoader.loadConfig.tryLoadBootstrapScript = true;
+  let dwdsCalledMain = false;
+  let dartSrcsLoaded = false;
+  let runMainWhenBoth = function() {
+    // Only run once both all the scripts are loaded and DWDS triggers main.
+    if (dwdsCalledMain && dartSrcsLoaded) {
+      let sdkOptions = {
+        nonNullAsserts: $nullAssertions,
+        nativeNonNullAsserts: $nativeNullAssertions,
+      };
+      dartDevEmbedder.runMain(appName, sdkOptions);
+    }
+  }
+  // DWDS expects the main function to be lowercase.
+  // TODO(srujzs): DWDS should be more robust to not have to require that.
+  dwdsmain = function() {
+    dwdsCalledMain = true;
+    runMainWhenBoth();
+  }
+  // Should be called by $onLoadEndBootstrap once all the scripts have been
+  // loaded.
+  window.$_onLoadEndCallback = function() {
+    dartSrcsLoaded = true;
+    runMainWhenBoth();
   }
 
   /* MAIN_EXTENSION_MARKER */
-  child.main();
+  dwdsmain();
 })();
 ''';
+}
+
+String generateDDCLibraryBundleOnLoadEndBootstrap() {
+  return '''window.$_onLoadEndCallback();''';
 }
 
 /// Generate a synthetic main module which captures the application's main

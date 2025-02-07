@@ -52,13 +52,13 @@ class PreviewCodeGenerator {
               b
                 ..body =
                     literalList(<Object?>[
-                      for (final MapEntry<String, List<String>>(
-                            key: String path,
+                      for (final MapEntry<PreviewPath, List<String>>(
+                            key: (path: String _, :Uri uri),
                             value: List<String> previewMethods,
                           )
                           in previews.entries) ...<Object?>[
                         for (final String method in previewMethods)
-                          refer(method, path).call(<Expression>[]),
+                          refer(method, uri.toString()).call(<Expression>[]),
                       ],
                     ]).code
                 ..name = 'previews'

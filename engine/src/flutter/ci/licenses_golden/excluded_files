@@ -3407,6 +3407,7 @@
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.mailbox/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.network.driver/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.network/meta.json
+../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.nfc/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.pci/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.pin/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.pinimpl/meta.json
@@ -3557,6 +3558,9 @@
 ../../../fuchsia/sdk/linux/obj/arm64-api-25/sysroot/dist/lib/asan/ld.so.1
 ../../../fuchsia/sdk/linux/obj/arm64-api-25/sysroot/dist/lib/hwasan/ld.so.1
 ../../../fuchsia/sdk/linux/obj/arm64-api-25/sysroot/dist/lib/ld.so.1
+../../../fuchsia/sdk/linux/obj/arm64-api-26/sysroot/dist/lib/asan/ld.so.1
+../../../fuchsia/sdk/linux/obj/arm64-api-26/sysroot/dist/lib/hwasan/ld.so.1
+../../../fuchsia/sdk/linux/obj/arm64-api-26/sysroot/dist/lib/ld.so.1
 ../../../fuchsia/sdk/linux/obj/arm64-api-NEXT/sysroot/dist/lib/asan/ld.so.1
 ../../../fuchsia/sdk/linux/obj/arm64-api-NEXT/sysroot/dist/lib/hwasan/ld.so.1
 ../../../fuchsia/sdk/linux/obj/arm64-api-NEXT/sysroot/dist/lib/ld.so.1
@@ -3572,6 +3576,8 @@
 ../../../fuchsia/sdk/linux/obj/riscv64-api-24/sysroot/dist/lib/ld.so.1
 ../../../fuchsia/sdk/linux/obj/riscv64-api-25/sysroot/dist/lib/asan/ld.so.1
 ../../../fuchsia/sdk/linux/obj/riscv64-api-25/sysroot/dist/lib/ld.so.1
+../../../fuchsia/sdk/linux/obj/riscv64-api-26/sysroot/dist/lib/asan/ld.so.1
+../../../fuchsia/sdk/linux/obj/riscv64-api-26/sysroot/dist/lib/ld.so.1
 ../../../fuchsia/sdk/linux/obj/riscv64-api-NEXT/sysroot/dist/lib/asan/ld.so.1
 ../../../fuchsia/sdk/linux/obj/riscv64-api-NEXT/sysroot/dist/lib/ld.so.1
 ../../../fuchsia/sdk/linux/obj/x64-api-16/sysroot/dist/lib/asan/ld.so.1
@@ -3586,11 +3592,15 @@
 ../../../fuchsia/sdk/linux/obj/x64-api-24/sysroot/dist/lib/ld.so.1
 ../../../fuchsia/sdk/linux/obj/x64-api-25/sysroot/dist/lib/asan/ld.so.1
 ../../../fuchsia/sdk/linux/obj/x64-api-25/sysroot/dist/lib/ld.so.1
+../../../fuchsia/sdk/linux/obj/x64-api-26/sysroot/dist/lib/asan/ld.so.1
+../../../fuchsia/sdk/linux/obj/x64-api-26/sysroot/dist/lib/ld.so.1
 ../../../fuchsia/sdk/linux/obj/x64-api-NEXT/sysroot/dist/lib/asan/ld.so.1
 ../../../fuchsia/sdk/linux/obj/x64-api-NEXT/sysroot/dist/lib/ld.so.1
 ../../../fuchsia/sdk/linux/packages/blobs
 ../../../fuchsia/sdk/linux/packages/cmd-buf-benchmark-test/meta.json
+../../../fuchsia/sdk/linux/packages/fake-build-info/meta.json
 ../../../fuchsia/sdk/linux/packages/heapdump-collector/meta.json
+../../../fuchsia/sdk/linux/packages/intl_property_manager/meta.json
 ../../../fuchsia/sdk/linux/packages/magma_conformance_tests/meta.json
 ../../../fuchsia/sdk/linux/packages/realm_builder_server/meta.json
 ../../../fuchsia/sdk/linux/packages/vkcopy-test/meta.json

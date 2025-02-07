@@ -464,6 +464,19 @@ void main() {
         expect(root.debugSemantics!.getSemanticsData().actions, expectedActions);
       },
     );
+
+    test('updateWith marks node as dirty when role changes', () {
+      final SemanticsNode node = SemanticsNode();
+
+      expect(node.role, SemanticsRole.none);
+      expect(node.debugIsDirty, isFalse);
+
+      final SemanticsConfiguration config = SemanticsConfiguration()..role = SemanticsRole.tab;
+      node.updateWith(config: config);
+
+      expect(node.role, config.role);
+      expect(node.debugIsDirty, isTrue);
+    });
   });
 
   test('toStringDeep() does not throw with transform == null', () {

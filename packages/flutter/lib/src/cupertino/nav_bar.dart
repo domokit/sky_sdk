@@ -20,6 +20,7 @@ import 'icons.dart';
 import 'page_scaffold.dart';
 import 'route.dart';
 import 'search_field.dart';
+import 'sheet.dart';
 import 'theme.dart';
 
 /// Modes that determine how to display the navigation bar's bottom in relation to scroll events.
@@ -212,7 +213,9 @@ bool _isTransitionable(BuildContext context) {
   // Fullscreen dialogs never transitions their nav bar with other push-style
   // pages' nav bars or with other fullscreen dialog pages on the way in or on
   // the way out.
-  return route is PageRoute && !route.fullscreenDialog;
+  return route is PageRoute &&
+      !route.fullscreenDialog &&
+      !CupertinoSheetRoute.hasParentSheet(context);
 }
 
 /// An iOS-styled navigation bar.
@@ -1571,7 +1574,10 @@ class _PersistentNavigationBar extends StatelessWidget {
     final Widget? backChevron = components.backChevron;
     final Widget? backLabel = components.backLabel;
 
-    if (leading == null && backChevron != null && backLabel != null) {
+    if (leading == null &&
+        backChevron != null &&
+        backLabel != null &&
+        !CupertinoSheetRoute.hasParentSheet(context)) {
       leading = CupertinoNavigationBarBackButton._assemble(backChevron, backLabel);
     }
 
@@ -1591,7 +1597,11 @@ class _PersistentNavigationBar extends StatelessWidget {
 
     return SizedBox(
       height: _kNavBarPersistentHeight + MediaQuery.paddingOf(context).top,
-      child: SafeArea(bottom: false, child: paddedToolbar),
+      child: SafeArea(
+        top: !CupertinoSheetRoute.hasParentSheet(context),
+        bottom: false,
+        child: paddedToolbar,
+      ),
     );
   }
 }

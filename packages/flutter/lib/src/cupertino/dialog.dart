@@ -372,7 +372,7 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
 
   Widget _buildBody(BuildContext context) {
     final Color backgroundColor = CupertinoDynamicColor.resolve(_kDialogColor, context);
-    const Color dividerColor = CupertinoColors.separator;
+    final Color dividerColor = CupertinoDynamicColor.resolve(CupertinoColors.separator, context);
     // Remove view padding here because the `Scrollbar` widget uses the view
     // padding as padding, which is unwanted.
     // https://github.com/flutter/flutter/issues/150544
@@ -407,7 +407,14 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
             top: contentSection,
             bottom: Column(
               children: <Widget>[
-                _Divider(dividerColor: dividerColor, hiddenColor: backgroundColor, hidden: false),
+                SizedBox(
+                  width: double.infinity,
+                  child: _Divider(
+                    dividerColor: dividerColor,
+                    hiddenColor: backgroundColor,
+                    hidden: false,
+                  ),
+                ),
                 Flexible(child: scrolledActionsSection),
               ],
             ),

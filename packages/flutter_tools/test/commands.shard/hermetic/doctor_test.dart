@@ -21,7 +21,6 @@ import 'package:flutter_tools/src/device.dart';
 import 'package:flutter_tools/src/doctor.dart';
 import 'package:flutter_tools/src/doctor_validator.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
-import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:flutter_tools/src/version.dart';
 import 'package:flutter_tools/src/vscode/vscode.dart';
 import 'package:flutter_tools/src/vscode/vscode_validator.dart';
@@ -203,85 +202,6 @@ void main() {
         DoctorValidatorsProvider: () => FakeDoctorValidatorsProvider(),
       },
     );
-  });
-
-  group('doctor usage params', () {
-    late TestUsage testUsage;
-
-    setUp(() {
-      testUsage = TestUsage();
-    });
-
-    testUsingContext(
-      'contains installed',
-      () async {
-        final Doctor doctor = Doctor(logger: logger, clock: const SystemClock());
-        await doctor.diagnose(verbose: false);
-
-        expect(testUsage.events.length, 3);
-        expect(
-          testUsage.events,
-          contains(const TestUsageEvent('doctor-result', 'PassingValidator', label: 'installed')),
-        );
-      },
-      overrides: <Type, Generator>{
-        DoctorValidatorsProvider: () => FakeDoctorValidatorsProvider(),
-        Usage: () => testUsage,
-      },
-    );
-
-    testUsingContext('contains installed and partial', () async {
-      await FakePassingDoctor(logger).diagnose(verbose: false);
-
-      expect(
-        testUsage.events,
-        unorderedEquals(<TestUsageEvent>[
-          const TestUsageEvent('doctor-result', 'PassingValidator', label: 'installed'),
-          const TestUsageEvent('doctor-result', 'PassingValidator', label: 'installed'),
-          const TestUsageEvent('doctor-result', 'PartialValidatorWithHintsOnly', label: 'partial'),
-          const TestUsageEvent('doctor-result', 'PartialValidatorWithErrors', label: 'partial'),
-        ]),
-      );
-    }, overrides: <Type, Generator>{Usage: () => testUsage});
-
-    testUsingContext('contains installed, missing and partial', () async {
-      await FakeDoctor(logger).diagnose(verbose: false);
-
-      expect(
-        testUsage.events,
-        unorderedEquals(<TestUsageEvent>[
-          const TestUsageEvent('doctor-result', 'PassingValidator', label: 'installed'),
-          const TestUsageEvent('doctor-result', 'MissingValidator', label: 'missing'),
-          const TestUsageEvent('doctor-result', 'NotAvailableValidator', label: 'notAvailable'),
-          const TestUsageEvent('doctor-result', 'PartialValidatorWithHintsOnly', label: 'partial'),
-          const TestUsageEvent('doctor-result', 'PartialValidatorWithErrors', label: 'partial'),
-        ]),
-      );
-    }, overrides: <Type, Generator>{Usage: () => testUsage});
-
-    testUsingContext(
-      'events for grouped validators are properly decomposed',
-      () async {
-        await FakeGroupedDoctor(logger).diagnose(verbose: false);
-
-        expect(
-          testUsage.events,
-          unorderedEquals(<TestUsageEvent>[
-            const TestUsageEvent('doctor-result', 'PassingGroupedValidator', label: 'installed'),
-            const TestUsageEvent('doctor-result', 'PassingGroupedValidator', label: 'installed'),
-            const TestUsageEvent('doctor-result', 'PassingGroupedValidator', label: 'installed'),
-            const TestUsageEvent('doctor-result', 'MissingGroupedValidator', label: 'missing'),
-          ]),
-        );
-      },
-      overrides: <Type, Generator>{Usage: () => testUsage},
-    );
-
-    testUsingContext('sending events can be skipped', () async {
-      await FakePassingDoctor(logger).diagnose(verbose: false, sendEvent: false);
-
-      expect(testUsage.events, isEmpty);
-    }, overrides: <Type, Generator>{Usage: () => testUsage});
   });
 
   group('doctor with fake validators', () {
@@ -516,18 +436,24 @@ void main() {
   });
 
   group('doctor diagnosis wrapper', () {
-    late TestUsage testUsage;
+    late FakeAnalytics analytics;
     late BufferLogger logger;
 
     setUp(() {
-      testUsage = TestUsage();
+      analytics = getInitializedFakeAnalyticsInstance(
+        fs: fs,
+        fakeFlutterVersion: FakeFlutterVersion(),
+      );
       logger = BufferLogger.test();
     });
 
     testUsingContext(
       'PII separated, events only sent once',
       () async {
-        final Doctor fakeDoctor = FakePiiDoctor(logger);
+        final DateTime fakeDate = DateTime(1995, 3, 3);
+        final SystemClock systemClock = SystemClock.fixed(fakeDate);
+
+        final Doctor fakeDoctor = FakePiiDoctor(logger, clock: systemClock);
         final DoctorText doctorText = DoctorText(logger, doctor: fakeDoctor);
         const String expectedPiiText =
             '[✓] PII Validator [0ms]\n'
@@ -549,24 +475,25 @@ void main() {
         expect(await doctorText.piiStrippedText, expectedPiiStrippedText);
 
         // Only one event sent.
-        expect(testUsage.events, <TestUsageEvent>[
-          const TestUsageEvent('doctor-result', 'PiiValidator', label: 'installed'),
+        expect(analytics.sentEvents, <Event>[
+          Event.doctorValidatorResult(
+            validatorName: 'PII Validator',
+            result: 'installed',
+            partOfGroupedValidator: false,
+            doctorInvocationId: systemClock.now().millisecondsSinceEpoch,
+          ),
         ]);
       },
-      overrides: <Type, Generator>{AnsiTerminal: () => FakeTerminal(), Usage: () => testUsage},
+      overrides: <Type, Generator>{AnsiTerminal: () => FakeTerminal(), Analytics: () => analytics},
     );
 
-    testUsingContext(
-      'without PII has same text and PII-stripped text',
-      () async {
-        final Doctor fakeDoctor = FakePassingDoctor(logger);
-        final DoctorText doctorText = DoctorText(logger, doctor: fakeDoctor);
-        final String piiText = await doctorText.text;
-        expect(piiText, isNotEmpty);
-        expect(piiText, await doctorText.piiStrippedText);
-      },
-      overrides: <Type, Generator>{Usage: () => testUsage},
-    );
+    testUsingContext('without PII has same text and PII-stripped text', () async {
+      final Doctor fakeDoctor = FakePassingDoctor(logger);
+      final DoctorText doctorText = DoctorText(logger, doctor: fakeDoctor);
+      final String piiText = await doctorText.text;
+      expect(piiText, isNotEmpty);
+      expect(piiText, await doctorText.piiStrippedText);
+    });
   });
 
   testUsingContext(

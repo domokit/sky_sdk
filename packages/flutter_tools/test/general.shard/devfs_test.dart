@@ -966,6 +966,7 @@ class FakeResidentCompiler extends Fake implements ResidentCompiler {
     bool checkDartPluginRegistry = false,
     File? dartPluginRegistrant,
     Uri? nativeAssetsYaml,
+    bool recompileRestart = false,
   }) {
     return onRecompile?.call(mainUri, invalidatedFiles) ??
         Future<CompilerOutput>.value(const CompilerOutput('', 1, <Uri>[]));

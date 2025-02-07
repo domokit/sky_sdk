@@ -150,7 +150,6 @@ Future<void> expectToolExitLater(Future<dynamic> future, Matcher messageMatcher)
     expect(e.message, messageMatcher);
     // Catch all exceptions to give a better test failure message.
   } catch (e, trace) {
-    // ignore: avoid_catches_without_on_clauses
     fail('ToolExit expected, got $e\n$trace');
   }
 }
@@ -160,7 +159,6 @@ Future<void> expectReturnsNormallyLater(Future<dynamic> future) async {
     await future;
     // Catch all exceptions to give a better test failure message.
   } catch (e, trace) {
-    // ignore: avoid_catches_without_on_clauses
     fail('Expected to run with no exceptions, got $e\n$trace');
   }
 }

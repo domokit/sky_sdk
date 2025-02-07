@@ -5621,6 +5621,153 @@ void main() {
     expect(results, hasLength(1));
     expect(results.first, result);
   });
+
+  testWidgets('Directional focus traversal behavior with nested Navigators.', (
+    WidgetTester tester,
+  ) async {
+    final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+    List<bool?> focus = List<bool?>.generate(4, (int _) => null);
+    final List<FocusNode> nodes = List<FocusNode>.generate(
+      6,
+      (int index) => FocusNode(debugLabel: 'Node $index'),
+    );
+    addTearDown(() {
+      for (final FocusNode node in nodes) {
+        node.dispose();
+      }
+    });
+    Focus makeFocus(int index) {
+      return Focus(
+        debugLabel: '[$index]',
+        focusNode: nodes[index],
+        onFocusChange: (bool isFocused) => focus[index] = isFocused,
+        child: const SizedBox(width: 100, height: 100),
+      );
+    }
+
+    Future<void> pumpApp() async {
+      Widget home = Column(
+        children: <Widget>[
+          makeFocus(0),
+          Navigator(
+            key: navigatorKey,
+            onGenerateRoute: (RouteSettings settings) {
+              return MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return const Center(child: Text('home'));
+                },
+              );
+            },
+          ),
+          makeFocus(3),
+        ],
+      );
+      // Prevent the arrow keys from scrolling on the web.
+      if (isBrowser) {
+        home = Shortcuts(
+          shortcuts: const <ShortcutActivator, Intent>{
+            SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(
+              TraversalDirection.up,
+            ),
+            SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(
+              TraversalDirection.down,
+            ),
+          },
+          child: home,
+        );
+      }
+      await tester.pumpWidget(MaterialApp(home: home));
+    }
+
+    /// Layout is:
+    /// ---------MaterialApp---------
+    ///          [0]
+    /// ---------Nested Navigator---------
+    ///          [1]
+    ///          [2]
+    /// ---------Nested Navigator End---------
+    ///          [3]
+    /// ---------MaterialApp End---------
+    void pushWith(TraversalEdgeBehavior behavior) {
+      navigatorKey.currentState!.push(
+        MaterialPageRoute<void>(
+          directionalTraversalEdgeBehavior: behavior,
+          builder: (BuildContext context) {
+            return Column(children: <Widget>[makeFocus(1), makeFocus(2)]);
+          },
+        ),
+      );
+    }
+
+    void clear() {
+      focus = List<bool?>.generate(focus.length, (int _) => null);
+    }
+
+    await pumpApp();
+    Future<void> resetTo(int index) async {
+      nodes[index].requestFocus();
+      await tester.pump();
+      clear();
+    }
+
+    pushWith(TraversalEdgeBehavior.stop);
+    await tester.pumpAndSettle();
+    await resetTo(2);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, null, null, null]));
+    clear();
+    await resetTo(1);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, null, null, null]));
+    clear();
+    navigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+
+    pushWith(TraversalEdgeBehavior.closedLoop);
+    await tester.pumpAndSettle();
+    await resetTo(2);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, true, false, null]));
+    clear();
+    await resetTo(1);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, false, true, null]));
+    clear();
+    navigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+
+    pushWith(TraversalEdgeBehavior.parentScope);
+    await tester.pumpAndSettle();
+    await resetTo(2);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, null, false, true]));
+    clear();
+    await resetTo(1);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[true, false, null, null]));
+    clear();
+    navigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+
+    pushWith(TraversalEdgeBehavior.leaveFlutterView);
+    await tester.pumpAndSettle();
+    await resetTo(2);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, null, false, null]));
+    clear();
+    await resetTo(1);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, false, null, null]));
+    clear();
+  });
 }
 
 typedef AnnouncementCallBack = void Function(Route<dynamic>?);

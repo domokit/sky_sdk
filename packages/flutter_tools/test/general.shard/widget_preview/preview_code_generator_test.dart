@@ -9,6 +9,7 @@ import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/flutter_manifest.dart';
 import 'package:flutter_tools/src/project.dart';
 import 'package:flutter_tools/src/widget_preview/preview_code_generator.dart';
+import 'package:flutter_tools/src/widget_preview/preview_detector.dart';
 import 'package:test/test.dart';
 
 import '../../src/context.dart';
@@ -39,9 +40,9 @@ void main() {
         expect(generatedPreviewFile, isNot(exists));
 
         // Populate the generated preview file.
-        codeGenerator.populatePreviewsInGeneratedPreviewScaffold(const <String, List<String>>{
-          'foo.dart': <String>['preview'],
-          'src/bar.dart': <String>['barPreview1', 'barPreview2'],
+        codeGenerator.populatePreviewsInGeneratedPreviewScaffold(<PreviewPath, List<String>>{
+          (path: '', uri: Uri(path: 'foo.dart')): <String>['preview'],
+          (path: '', uri: Uri(path: 'src/bar.dart')): <String>['barPreview1', 'barPreview2'],
         });
         expect(generatedPreviewFile, exists);
 
@@ -59,7 +60,9 @@ import 'foo.dart' as _i1;import 'src/bar.dart' as _i2;import 'package:widget_pre
         expect(generatedPreviewFile.readAsStringSync(), expectedGeneratedPreviewFileContents);
 
         // Regenerate the generated file with no previews.
-        codeGenerator.populatePreviewsInGeneratedPreviewScaffold(const <String, List<String>>{});
+        codeGenerator.populatePreviewsInGeneratedPreviewScaffold(
+          const <PreviewPath, List<String>>{},
+        );
         expect(generatedPreviewFile, exists);
 
         // The generated file should only contain:

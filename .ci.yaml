@@ -684,10 +684,12 @@ targets:
     presubmit: false
     enabled_branches:
       - master
+    timeout: 60 # TODO(https://github.com/flutter/flutter/issues/162654)
     properties:
       task_name: flutter_packaging
       tags: >
         ["framework", "hostonly", "shard", "linux"]
+      test_timeout_secs: "3600" # TODO(https://github.com/flutter/flutter/issues/162654)
     runIf:
       - .ci.yaml
       - engine/**
@@ -1495,7 +1497,10 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:35v1"},
-          {"dependency": "open_jdk", "version": "version:17"}
+          {"dependency": "open_jdk", "version": "version:17"},
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"}
         ]
       shard: tool_tests
       subshard: commands
@@ -2130,6 +2135,7 @@ targets:
         ["framework", "hostonly", "shard", "linux"]
       # Retry for flakes caused by https://github.com/flutter/flutter/issues/132654
       presubmit_max_attempts: "2"
+      test_timeout_secs: "3600" # https://github.com/flutter/flutter/issues/162714
     runIf:
       - dev/**
       - packages/flutter_tools/**
@@ -3932,7 +3938,7 @@ targets:
     recipe: flutter/flutter_drone
     timeout: 60
     properties:
-      os: Mac-13
+      os: Mac-14
       dependencies: >-
         [
           {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"},
@@ -3940,6 +3946,11 @@ targets:
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "android_sdk", "version": "version:35v1"}
         ]
+      # TODO(vashworth): Remove once Xcode 16 is used by all tests
+      $flutter/osx_sdk : >-
+        {
+          "sdk_version": "16c5032a"
+        }
       shard: framework_tests
       subshard: misc
       tags: >
@@ -6319,7 +6330,8 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:35v1"},
-          {"dependency": "open_jdk", "version": "version:17"}
+          {"dependency": "open_jdk", "version": "version:17"},
+          {"dependency": "vs_build", "version": "version:vs2019"}
         ]
       shard: tool_tests
       subshard: commands

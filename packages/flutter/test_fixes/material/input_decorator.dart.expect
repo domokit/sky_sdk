@@ -33,4 +33,12 @@ void main() {
   const InputDecoration decoration = InputDecoration.collapsed(
     hintText: 'Hint',
   );
+
+  // Changes made in https://github.com/flutter/flutter/pull/161235.
+  const InputDecoration decoration = InputDecoration(maintainHintSize: false);
+  decoration.maintainHintSize;
+
+  const InputDecoration decoration = InputDecoration.collapsed(
+    maintainHintSize: false,
+  );
 }

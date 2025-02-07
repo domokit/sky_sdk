@@ -298,7 +298,8 @@ class SliderThemeData with Diagnosticable {
     this.thumbSize,
     this.trackGap,
     @Deprecated(
-      'Use SliderTheme to customize the Slider appearance. '
+      'Set this flag to false to opt into the 2024 slider appearance. Defaults to true. '
+      'In the future, this flag will default to false. Use SliderThemeData to customize individual properties. '
       'This feature was deprecated after v3.27.0-0.2.pre.',
     )
     this.year2023,
@@ -637,7 +638,8 @@ class SliderThemeData with Diagnosticable {
   ///
   /// If [ThemeData.useMaterial3] is false, then this property is ignored.
   @Deprecated(
-    'Use SliderTheme to customize the Slider appearance. '
+    'Set this flag to false to opt into the 2024 slider appearance. Defaults to true. '
+    'In the future, this flag will default to false. Use SliderThemeData to customize individual properties. '
     'This feature was deprecated after v3.27.0-0.2.pre.',
   )
   final bool? year2023;
@@ -1838,9 +1840,16 @@ mixin BaseSliderTrackShape {
     final double thumbWidth = sliderTheme.thumbShape!.getPreferredSize(isEnabled, isDiscrete).width;
     final double overlayWidth =
         sliderTheme.overlayShape!.getPreferredSize(isEnabled, isDiscrete).width;
-    final double trackHeight = sliderTheme.trackHeight!;
+    double trackHeight = sliderTheme.trackHeight!;
     assert(overlayWidth >= 0);
     assert(trackHeight >= 0);
+
+    // If the track colors are transparent, then override only the track height
+    // to maintain overall Slider width.
+    if (sliderTheme.activeTrackColor == Colors.transparent &&
+        sliderTheme.inactiveTrackColor == Colors.transparent) {
+      trackHeight = 0;
+    }
 
     final double trackLeft =
         offset.dx + (sliderTheme.padding == null ? math.max(overlayWidth / 2, thumbWidth / 2) : 0);
