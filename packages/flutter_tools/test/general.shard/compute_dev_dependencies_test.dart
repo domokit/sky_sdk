@@ -63,7 +63,16 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
       ..writeAsStringSync(jsonEncode(packageConfigMap));
   }
 
-  Future<void> validateComputeGraph(
+  /// Validates basic properties of `computeTransitiveDependencies` when run on
+  /// pubspecs and package_config derrived from [graph] by `writePubspecs`.
+  ///
+  /// Validates all dependencies are found.
+  ///
+  /// And that exactly [exclusiveDevDependencies] are marked as
+  /// exclusiveDevDependency.
+  ///
+  /// And that nothing is logged.
+  Future<void> validatesComputeTransitiveDependencies(
     List<Package> graph,
     List<String> exclusiveDevDependencies,
   ) async {
@@ -94,7 +103,7 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
   }
 
   test('no dev dependencies at all', () async {
-    await validateComputeGraph(<Package>[
+    await validatesComputeTransitiveDependencies(<Package>[
       (name: 'my_app', dependencies: <String>['package_a'], devDependencies: <String>[]),
       (name: 'package_a', dependencies: <String>['package_b'], devDependencies: <String>[]),
       (name: 'package_b', dependencies: <String>['package_a'], devDependencies: <String>[]),
@@ -102,7 +111,7 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
   });
 
   test('dev dependency', () async {
-    await validateComputeGraph(
+    await validatesComputeTransitiveDependencies(
       <Package>[
         (
           name: 'my_app',
@@ -117,7 +126,7 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
   });
 
   test('dev used as a non-dev dependency transitively', () async {
-    await validateComputeGraph(<Package>[
+    await validatesComputeTransitiveDependencies(<Package>[
       (name: 'my_app', dependencies: <String>['package_a'], devDependencies: <String>['package_b']),
       (name: 'package_a', dependencies: <String>['package_b'], devDependencies: <String>[]),
       (name: 'package_b', dependencies: <String>[], devDependencies: <String>[]),
@@ -125,7 +134,7 @@ ${package.devDependencies.map((String d) => '  $d: {path: ../$d}').join('\n')}
   });
 
   test('combination of an included and excluded dev_dependency', () async {
-    await validateComputeGraph(
+    await validatesComputeTransitiveDependencies(
       <Package>[
         (
           name: 'my_app',
