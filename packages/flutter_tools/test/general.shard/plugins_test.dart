@@ -199,7 +199,7 @@ void main() {
       writePackageConfigFile(directory: flutterProject.directory);
     });
 
-    void addToPackageConfig(String name, Directory packageDir) {
+    void addToPackageConfig(String name, Directory packageDir, {bool isDevDependency = false}) {
       final File packageConfigFile = flutterProject.directory
           .childDirectory('.dart_tool')
           .childFile('package_config.json');
@@ -214,7 +214,7 @@ void main() {
       });
 
       packageConfigFile.writeAsStringSync(jsonEncode(packageConfig));
-      flutterManifest.dependencies.add(name);
+      (isDevDependency ? flutterManifest.devDependencies : flutterManifest.dependencies).add(name);
     }
 
     // Makes fake plugin packages for each plugin, adds them to flutterProject,
@@ -370,6 +370,7 @@ dependencies:
       required String name,
       required Map<String, _PluginPlatformInfo> platforms,
       List<String> dependencies = const <String>[],
+      bool isDevDependency = false,
     }) {
       final Iterable<String> platformSections = platforms.entries.map(
         (MapEntry<String, _PluginPlatformInfo> entry) => '''
@@ -392,7 +393,7 @@ dependencies:
             .childFile('pubspec.yaml')
             .writeAsStringSync('  $dependency:\n', mode: FileMode.append);
       }
-      addToPackageConfig(name, pluginDirectory);
+      addToPackageConfig(name, pluginDirectory, isDevDependency: isDevDependency);
       return pluginDirectory;
     }
 
@@ -2504,11 +2505,14 @@ The Flutter Preview device does not support the following plugins from your pubs
       testUsingContext(
         'excludes dev dependencies from Android plugin registrant',
         () async {
+          flutterProject.manifest.devDependencies.add(testPluginName);
+
           final Directory pluginDir = createPlugin(
             name: testPluginName,
             platforms: const <String, _PluginPlatformInfo>{
               'android': _PluginPlatformInfo(pluginClass: 'Foo', androidPackage: 'bar.foo'),
             },
+            isDevDependency: true,
           );
 
           // injectPlugins will fail if main native class not found in expected spot, so add
@@ -2552,6 +2556,7 @@ The Flutter Preview device does not support the following plugins from your pubs
             platforms: const <String, _PluginPlatformInfo>{
               'ios': _PluginPlatformInfo(pluginClass: 'Foo'),
             },
+            isDevDependency: true,
           );
 
           final FakeDarwinDependencyManagement dependencyManagement =
@@ -2596,6 +2601,7 @@ The Flutter Preview device does not support the following plugins from your pubs
             platforms: const <String, _PluginPlatformInfo>{
               'linux': _PluginPlatformInfo(pluginClass: 'Foo'),
             },
+            isDevDependency: true,
           );
 
           const String expectedDevDepImport = '#include <$testPluginName/foo.h>';
@@ -2632,6 +2638,7 @@ The Flutter Preview device does not support the following plugins from your pubs
             platforms: const <String, _PluginPlatformInfo>{
               'macos': _PluginPlatformInfo(pluginClass: 'Foo'),
             },
+            isDevDependency: true,
           );
           final FakeDarwinDependencyManagement dependencyManagement =
               FakeDarwinDependencyManagement();
@@ -2682,6 +2689,7 @@ The Flutter Preview device does not support the following plugins from your pubs
             platforms: const <String, _PluginPlatformInfo>{
               'windows': _PluginPlatformInfo(pluginClass: 'Foo'),
             },
+            isDevDependency: true,
           );
 
           const String expectedDevDepRegistration = '#include <$testPluginName/foo.h>';
