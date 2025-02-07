@@ -16,6 +16,7 @@ import 'package:flutter_tools/src/project.dart';
 import 'package:path/path.dart' show Style; // flutter_ignore: package_path_import
 
 import '../src/common.dart';
+import '../src/package_config.dart';
 
 void main() {
   final Style posix = Style.posix;
@@ -67,7 +68,7 @@ environment:
   sdk: ^3.7.0-0
 
 flutter:
-  uses-material-design: true
+  uses-material-design: false
   fonts:
   - family: test_font
     fonts:
@@ -141,10 +142,6 @@ dependencies:
       testWithoutContext(
         'does not pick up assets from dev-dependencies and workspace packages not in the transitive closure',
         () async {
-          final String packageConfigPath = fileSystem.path.join(
-            '.dart_tool',
-            'package_config.json',
-          );
           final String manifestPath = fileSystem.path.join('main', 'pubspec.yaml');
           final ManifestAssetBundle assetBundle = ManifestAssetBundle(
             logger: logger,
@@ -164,7 +161,7 @@ environment:
   sdk: ^3.7.0-0
 
 flutter:
-  uses-material-design: true
+  uses-material-design: false
   fonts:
   - family: test_font
     fonts:
@@ -184,7 +181,7 @@ environment:
   sdk: ^3.7.0-0
 
 flutter:
-  uses-material-design: true
+  uses-material-design: false
   fonts:
   - family: dev_dependency_test_font
     fonts:
@@ -204,7 +201,7 @@ environment:
   sdk: ^3.7.0-0
 
 flutter:
-  uses-material-design: true
+  uses-material-design: false
   fonts:
   - family: dev_dependency_test_font
     fonts:
@@ -214,36 +211,12 @@ flutter:
             ..createSync(recursive: true)
             ..writeAsStringSync('This is a fake font.');
 
-          fileSystem.file(packageConfigPath)
-            ..createSync(recursive: true)
-            ..writeAsStringSync(r'''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "font",
-      "rootUri": "../font",
-      "packageUri": "lib/",
-      "languageVersion": "3.7"
-    },
-    {
-      "name": "main",
-      "rootUri": "../main",
-      "packageUri": "lib/",
-      "languageVersion": "3.7"
-    },
-    {
-      "name": "workspace_root",
-      "rootUri": "../",
-      "packageUri": "lib/",
-      "languageVersion": "3.7"
-    }
-  ],
-  "generated": "2024-01-08T19:39:02.396620Z",
-  "generator": "pub",
-  "generatorVersion": "3.3.0-276.0.dev"
-}
-''');
+          writePackageConfigFile(
+            mainLibName: 'workspace_root',
+            directory: fileSystem.currentDirectory,
+            packages: <String, String>{'font': 'font', 'main': 'main'},
+          );
+
           fileSystem.file(manifestPath)
             ..createSync(recursive: true)
             ..writeAsStringSync(r'''
@@ -262,6 +235,9 @@ dependencies:
 dev_dependencies:
   dev_dependency:
     path: ../dev_dependency
+
+flutter:
+  uses-material-design: false
 ''');
 
           fileSystem.file('pubspec.yaml')
@@ -277,7 +253,7 @@ workspace:
   - main/
 
 flutter:
-  uses-material-design: true
+  uses-material-design: false
   fonts:
   - family: root_test_font
     fonts:
@@ -287,7 +263,10 @@ flutter:
           fileSystem.file('root_test_font_file')
             ..createSync(recursive: true)
             ..writeAsStringSync('This is a fake font.');
-
+          final String packageConfigPath = fileSystem.path.join(
+            '.dart_tool',
+            'package_config.json',
+          );
           await assetBundle.build(
             packageConfigPath: packageConfigPath,
             manifestPath: manifestPath,
