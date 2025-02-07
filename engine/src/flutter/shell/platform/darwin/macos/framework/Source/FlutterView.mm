@@ -4,15 +4,15 @@
 
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterView.h"
 
+#import "flutter/shell/platform/darwin/macos/framework/Source/FlutterResizeSynchronizer.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterSurfaceManager.h"
-#import "flutter/shell/platform/darwin/macos/framework/Source/FlutterThreadSynchronizer.h"
 
 #import <QuartzCore/QuartzCore.h>
 
 @interface FlutterView () <FlutterSurfaceManagerDelegate> {
   FlutterViewIdentifier _viewIdentifier;
   __weak id<FlutterViewDelegate> _viewDelegate;
-  FlutterThreadSynchronizer* _threadSynchronizer;
+  FlutterResizeSynchronizer* _resizeSynchronizer;
   FlutterSurfaceManager* _surfaceManager;
   NSCursor* _lastCursor;
 }
@@ -24,7 +24,6 @@
 - (instancetype)initWithMTLDevice:(id<MTLDevice>)device
                      commandQueue:(id<MTLCommandQueue>)commandQueue
                          delegate:(id<FlutterViewDelegate>)delegate
-               threadSynchronizer:(FlutterThreadSynchronizer*)threadSynchronizer
                    viewIdentifier:(FlutterViewIdentifier)viewIdentifier {
   self = [super initWithFrame:NSZeroRect];
   if (self) {
@@ -33,30 +32,25 @@
     [self setLayerContentsRedrawPolicy:NSViewLayerContentsRedrawDuringViewResize];
     _viewIdentifier = viewIdentifier;
     _viewDelegate = delegate;
-    _threadSynchronizer = threadSynchronizer;
     _surfaceManager = [[FlutterSurfaceManager alloc] initWithDevice:device
                                                        commandQueue:commandQueue
                                                               layer:self.layer
                                                            delegate:self];
+    _resizeSynchronizer = [[FlutterResizeSynchronizer alloc] init];
   }
   return self;
 }
 
-- (void)onPresent:(CGSize)frameSize withBlock:(dispatch_block_t)block {
-  [_threadSynchronizer performCommitForView:_viewIdentifier size:frameSize notify:block];
+- (void)onPresent:(CGSize)frameSize withBlock:(dispatch_block_t)block delay:(NSTimeInterval)delay {
+  [_resizeSynchronizer performCommitForSize:frameSize notify:block delay:delay];
 }
 
 - (FlutterSurfaceManager*)surfaceManager {
   return _surfaceManager;
 }
 
-- (void)reshaped {
-  CGSize scaledSize = [self convertSizeToBacking:self.bounds.size];
-  [_threadSynchronizer beginResizeForView:_viewIdentifier
-                                     size:scaledSize
-                                   notify:^{
-                                     [_viewDelegate viewDidReshape:self];
-                                   }];
+- (void)shutDown {
+  [_resizeSynchronizer shutDown];
 }
 
 - (void)setBackgroundColor:(NSColor*)color {
@@ -67,7 +61,11 @@
 
 - (void)setFrameSize:(NSSize)newSize {
   [super setFrameSize:newSize];
-  [self reshaped];
+  CGSize scaledSize = [self convertSizeToBacking:self.bounds.size];
+  [_resizeSynchronizer beginResizeForSize:scaledSize
+                                   notify:^{
+                                     [_viewDelegate viewDidReshape:self];
+                                   }];
 }
 
 /**
@@ -99,12 +97,12 @@
   _lastCursor = cursor;
 }
 
-// Restores mouse cursor. There are few cases when this is needed and framework will not handle this
-// automatically:
-// - When mouse cursor leaves subview of FlutterView (technically still within bound of FlutterView
-// tracking area so the framework won't be notified)
-// - When context menu above FlutterView is closed. Context menu will change current cursor to arrow
-// and will not restore it back.
+// Restores mouse cursor. There are few cases when this is needed and framework will not handle
+// this automatically:
+// - When mouse cursor leaves subview of FlutterView (technically still within bound of
+// FlutterView tracking area so the framework won't be notified)
+// - When context menu above FlutterView is closed. Context menu will change current cursor to
+// arrow and will not restore it back.
 - (void)cursorUpdate:(NSEvent*)event {
   // Make sure to not override cursor when over a platform view.
   NSPoint mouseLocation = [[self superview] convertPoint:event.locationInWindow fromView:nil];

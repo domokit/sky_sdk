@@ -38,8 +38,7 @@
  * before being used, and must be set up only once until detachFromEngine:.
  */
 - (void)setUpWithEngine:(nonnull FlutterEngine*)engine
-         viewIdentifier:(FlutterViewIdentifier)viewIdentifier
-     threadSynchronizer:(nonnull FlutterThreadSynchronizer*)threadSynchronizer;
+         viewIdentifier:(FlutterViewIdentifier)viewIdentifier;
 
 /**
  * Reset the `engine` and `id` of this controller.
