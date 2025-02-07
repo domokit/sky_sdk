@@ -25,6 +25,7 @@ import 'constants.dart';
 import 'debug.dart';
 import 'material.dart';
 import 'material_state.dart';
+import 'slider_parts.dart';
 import 'slider_theme.dart';
 import 'theme.dart';
 
