@@ -16877,6 +16877,80 @@ void main() {
     variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}),
     skip: kIsWeb, // [intended]
   );
+
+  testWidgets('onTapUpOutside is called upon tap up outside', (WidgetTester tester) async {
+    int tapOutsideCount = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                const Text('Outside'),
+                EditableText(
+                  autofocus: true,
+                  controller: controller,
+                  focusNode: focusNode,
+                  style: textStyle,
+                  cursorColor: Colors.blue,
+                  backgroundCursorColor: Colors.grey,
+                  onTapUpOutside: (PointerEvent event) {
+                    tapOutsideCount += 1;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(); // Wait for autofocus to take effect.
+
+    expect(tapOutsideCount, 0);
+    await tester.tap(find.byType(EditableText));
+    await tester.tap(find.text('Outside'));
+    await tester.tap(find.text('Outside'));
+    await tester.tap(find.text('Outside'));
+    expect(tapOutsideCount, 3);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/162573
+  testWidgets('onTapUpOutside is not called upon tap up outside when field is not focused', (
+    WidgetTester tester,
+  ) async {
+    int tapOutsideCount = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                const Text('Outside'),
+                EditableText(
+                  controller: controller,
+                  focusNode: focusNode,
+                  style: textStyle,
+                  cursorColor: Colors.blue,
+                  backgroundCursorColor: Colors.grey,
+                  onTapUpOutside: (PointerEvent event) {
+                    tapOutsideCount += 1;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(tapOutsideCount, 0);
+    await tester.tap(find.byType(EditableText));
+    await tester.tap(find.text('Outside'));
+    await tester.tap(find.text('Outside'));
+    await tester.tap(find.text('Outside'));
+    expect(tapOutsideCount, 0);
+  });
 }
 
 class UnsettableController extends TextEditingController {
