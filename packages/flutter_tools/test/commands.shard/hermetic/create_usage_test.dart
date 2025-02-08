@@ -19,6 +19,7 @@ import 'package:test/fake.dart';
 import '../../src/common.dart';
 import '../../src/context.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 import '../../src/test_flutter_command_runner.dart';
 import '../../src/testbed.dart';
 
@@ -39,10 +40,7 @@ class FakePub extends Fake implements Pub {
     bool shouldSkipThirdPartyGenerator = true,
     PubOutputMode outputMode = PubOutputMode.all,
   }) async {
-    project.directory
-        .childDirectory('.dart_tool')
-        .childFile('package_config.json')
-        .createSync(recursive: true);
+    writePackageConfigFile(directory: project.directory);
     if (offline) {
       calledGetOffline += 1;
     } else {
@@ -136,6 +134,10 @@ void main() {
           ];
           for (final String templatePath in templatePaths) {
             globals.fs.directory(templatePath).createSync(recursive: true);
+            globals.fs
+                .directory(templatePath)
+                .childFile('pubspec.yaml.tmpl')
+                .writeAsStringSync('name: my_app');
           }
           // Set up enough of the packages to satisfy the templating code.
           final File packagesFile = globals.fs.file(

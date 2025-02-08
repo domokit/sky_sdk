@@ -294,7 +294,6 @@ class Plugin {
           'See: https://flutter.dev/to/pubspec-plugin-platforms';
       return <String>[errorMessage];
     }
-
     if (!usesOldPluginFormat && !usesNewPluginFormat) {
       const String errorMessage =
           'Cannot find the `flutter.plugin.platforms` key in the `pubspec.yaml` file. '

@@ -35,10 +35,11 @@ import 'package:vm_service/vm_service.dart' as vm_service;
 
 import '../src/common.dart';
 import '../src/context.dart';
-import '../src/fake_pub_deps.dart';
 import '../src/fake_vm_services.dart';
 import '../src/fakes.dart';
+import '../src/package_config.dart';
 import '../src/testbed.dart';
+import '../src/throwing_pub.dart';
 import 'resident_runner_helpers.dart';
 
 FakeAnalytics get fakeAnalytics => globals.analytics as FakeAnalytics;
@@ -1089,26 +1090,16 @@ void main() {
   }
 }''');
         globals.fs.file('l10n.yaml').createSync();
-        globals.fs.file('pubspec.yaml').writeAsStringSync('flutter:\n  generate: true\n');
+        globals.fs.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
+flutter:
+  generate: true''');
 
         // Create necessary files for [DartPluginRegistrantTarget]
-        final File packageConfig = globals.fs
-            .directory('.dart_tool')
-            .childFile('package_config.json');
-        packageConfig.createSync(recursive: true);
-        packageConfig.writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "path_provider_linux",
-      "rootUri": "../../../path_provider_linux",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    }
-  ]
-}
-''');
+        writePackageConfigFile(
+          packages: <String, String>{'path_provider_linux': 'path_provider_linux'},
+        );
+
         // Start from an empty dart_plugin_registrant.dart file.
         globals.fs
             .directory('.dart_tool')
@@ -1123,7 +1114,7 @@ void main() {
       },
       overrides: <Type, Generator>{
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     ),
   );
@@ -1143,6 +1134,7 @@ void main() {
 }''');
         globals.fs.file('l10n.yaml').createSync();
         globals.fs.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
 flutter:
   generate: true
 
@@ -1154,23 +1146,10 @@ dependencies:
 
         // Create necessary files for [DartPluginRegistrantTarget], including a
         // plugin that will trigger generation.
-        final File packageConfig = globals.fs
-            .directory('.dart_tool')
-            .childFile('package_config.json');
-        packageConfig.createSync(recursive: true);
-        packageConfig.writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "path_provider_linux",
-      "rootUri": "../path_provider_linux",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    }
-  ]
-}
-''');
+        writePackageConfigFile(
+          packages: <String, String>{'path_provider_linux': 'path_provider_linux'},
+        );
+
         final Directory fakePluginDir = globals.fs.directory('path_provider_linux');
         final File pluginPubspec = fakePluginDir.childFile('pubspec.yaml');
         pluginPubspec.createSync(recursive: true);
@@ -1206,7 +1185,7 @@ flutter:
       },
       overrides: <Type, Generator>{
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     ),
   );

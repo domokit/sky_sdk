@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:file/memory.dart';
+import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/build_system/build_system.dart';
@@ -17,9 +20,9 @@ import 'package:unified_analytics/unified_analytics.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
 import '../../src/test_build_system.dart';
+import '../../src/throwing_pub.dart';
 
 void main() {
   late MemoryFileSystem fileSystem;
@@ -48,10 +51,30 @@ void main() {
       fs: fileSystem,
       fakeFlutterVersion: flutterVersion,
     );
+    fileSystem.currentDirectory.childFile('pubspec.yaml')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+name: my_app
+environement:
+  sdk: '^3.5.0'
+''');
 
     flutterProject = FlutterProject.fromDirectoryTest(fileSystem.currentDirectory);
 
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+    final File packageConfigFile = flutterProject.packageConfig;
+    packageConfigFile.createSync(recursive: true);
+    packageConfigFile.writeAsStringSync(
+      json.encode(<String, Object?>{
+        'packages': <Object>[
+          <String, Object?>{
+            'name': flutterProject.manifest.appName,
+            'rootUri': '../',
+            'packageUri': 'lib/',
+          },
+        ],
+        'configVersion': 2,
+      }),
+    );
   });
 
   testUsingContext(
@@ -126,7 +149,7 @@ void main() {
     overrides: <Type, Generator>{
       ProcessManager: () => FakeProcessManager.any(),
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -180,7 +203,7 @@ void main() {
     overrides: <Type, Generator>{
       ProcessManager: () => FakeProcessManager.any(),
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 

@@ -19,6 +19,7 @@ import 'package:test_api/fake.dart';
 import '../../src/common.dart';
 import '../../src/context.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 
 void main() {
   group('WidgetPreviewStartCommand', () {
@@ -215,10 +216,6 @@ flutter:
 
   @override
   late final File packageConfig = () {
-    final File file = fileSystem
-      .directory(fileSystem.path.join(projectRoot, '.dart_tool'))
-      .childFile('package_config.json')..createSync(recursive: true);
-    file.writeAsStringSync(basicPackageConfig);
-    return file;
+    return writePackageConfigFile(directory: fileSystem.directory(projectRoot));
   }();
 }

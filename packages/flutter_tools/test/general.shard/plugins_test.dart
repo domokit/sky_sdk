@@ -31,9 +31,10 @@ import 'package:yaml/yaml.dart';
 
 import '../src/common.dart';
 import '../src/context.dart';
-import '../src/fake_pub_deps.dart';
 import '../src/fakes.dart' hide FakeOperatingSystemUtils;
+import '../src/package_config.dart';
 import '../src/pubspec_schema.dart';
+import '../src/throwing_pub.dart';
 
 /// Information for a platform entry in the 'platforms' section of a plugin's
 /// pubspec.yaml.
@@ -114,6 +115,7 @@ void main() {
     void setUpProject(FileSystem fileSystem) {
       flutterProject = FakeFlutterProject();
       flutterManifest = FakeFlutterManifest();
+      flutterManifest.appName = 'my_app';
 
       flutterProject
         ..manifest = flutterManifest
@@ -194,17 +196,10 @@ void main() {
 
       // Add basic properties to the Flutter project and subprojects
       setUpProject(fs);
-      flutterProject.directory.childDirectory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "packages": [],
-  "configVersion": 2
-}
-''');
+      writePackageConfigFile(directory: flutterProject.directory);
     });
 
-    void addToPackageConfig(String name, Directory packageDir) {
+    void addToPackageConfig(String name, Directory packageDir, {bool isDevDependency = false}) {
       final File packageConfigFile = flutterProject.directory
           .childDirectory('.dart_tool')
           .childFile('package_config.json');
@@ -219,6 +214,7 @@ void main() {
       });
 
       packageConfigFile.writeAsStringSync(jsonEncode(packageConfig));
+      (isDevDependency ? flutterManifest.devDependencies : flutterManifest.dependencies).add(name);
     }
 
     // Makes fake plugin packages for each plugin, adds them to flutterProject,
@@ -251,14 +247,7 @@ void main() {
 
       final List<Directory> directories = <Directory>[];
       final Directory fakePubCache = fileSystem.systemTempDirectory.childDirectory('cache');
-      flutterProject.directory.childDirectory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "packages": [],
-  "configVersion": 2
-}
-''');
+      writePackageConfigFile(directory: flutterProject.directory);
       for (final String nameOrPath in pluginNamesOrPaths) {
         final String name = fileSystem.path.basename(nameOrPath);
         final Directory pluginDirectory =
@@ -381,6 +370,7 @@ dependencies:
       required String name,
       required Map<String, _PluginPlatformInfo> platforms,
       List<String> dependencies = const <String>[],
+      bool isDevDependency = false,
     }) {
       final Iterable<String> platformSections = platforms.entries.map(
         (MapEntry<String, _PluginPlatformInfo> entry) => '''
@@ -403,7 +393,7 @@ dependencies:
             .childFile('pubspec.yaml')
             .writeAsStringSync('  $dependency:\n', mode: FileMode.append);
       }
-      addToPackageConfig(name, pluginDirectory);
+      addToPackageConfig(name, pluginDirectory, isDevDependency: isDevDependency);
       return pluginDirectory;
     }
 
@@ -425,7 +415,7 @@ dependencies:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -442,7 +432,7 @@ dependencies:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -486,7 +476,7 @@ dependencies:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -509,7 +499,7 @@ dependencies:
           FileSystem: () => fs,
           ProcessManager: FakeProcessManager.empty,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -712,7 +702,7 @@ dependencies:
           SystemClock: () => systemClock,
           FlutterVersion: () => flutterVersion,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -764,7 +754,7 @@ dependencies:
           SystemClock: () => systemClock,
           FlutterVersion: () => flutterVersion,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -816,7 +806,7 @@ dependencies:
           SystemClock: () => systemClock,
           FlutterVersion: () => flutterVersion,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -868,7 +858,7 @@ dependencies:
           SystemClock: () => systemClock,
           FlutterVersion: () => flutterVersion,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -891,7 +881,7 @@ dependencies:
           SystemClock: () => systemClock,
           FlutterVersion: () => flutterVersion,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -920,7 +910,7 @@ dependencies:
           SystemClock: () => systemClock,
           FlutterVersion: () => flutterVersion,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
     });
@@ -957,7 +947,7 @@ dependencies:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -989,7 +979,7 @@ dependencies:
           ProcessManager: () => FakeProcessManager.any(),
           XcodeProjectInterpreter: () => xcodeProjectInterpreter,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1021,7 +1011,7 @@ dependencies:
           ProcessManager: () => FakeProcessManager.any(),
           XcodeProjectInterpreter: () => xcodeProjectInterpreter,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1051,7 +1041,7 @@ dependencies:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1082,7 +1072,7 @@ dependencies:
           ProcessManager: () => FakeProcessManager.any(),
           XcodeProjectInterpreter: () => xcodeProjectInterpreter,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1113,7 +1103,7 @@ dependencies:
           ProcessManager: () => FakeProcessManager.any(),
           XcodeProjectInterpreter: () => xcodeProjectInterpreter,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1144,7 +1134,7 @@ dependencies:
           ProcessManager: () => FakeProcessManager.any(),
           XcodeProjectInterpreter: () => xcodeProjectInterpreter,
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1159,7 +1149,7 @@ dependencies:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1207,7 +1197,7 @@ dependencies:
             FileSystem: () => fs,
             ProcessManager: () => FakeProcessManager.any(),
             FeatureFlags: enableExplicitPackageDependencies,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
           },
         );
 
@@ -1242,7 +1232,7 @@ flutter:
 
             final FlutterManifest manifest =
                 FlutterManifest.createFromString('''
-name: test
+name: my_app
 version: 1.0.0
 
 dependencies:
@@ -1252,7 +1242,6 @@ dependencies:
 
             flutterProject.manifest = manifest;
             flutterProject.isModule = true;
-
             final Directory destination = flutterProject.directory.childDirectory('lib');
             await injectBuildTimePluginFilesForWebPlatform(
               flutterProject,
@@ -1279,7 +1268,7 @@ dependencies:
             FileSystem: () => fs,
             ProcessManager: () => FakeProcessManager.any(),
             FeatureFlags: enableExplicitPackageDependencies,
-            Pub: FakePubWithPrimedDeps.new,
+            Pub: ThrowingPub.new,
           },
         );
       });
@@ -1310,7 +1299,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1344,7 +1333,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1380,7 +1369,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1418,7 +1407,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1449,7 +1438,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1478,7 +1467,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1511,7 +1500,7 @@ flutter:
 
           final FlutterManifest manifest =
               FlutterManifest.createFromString('''
-name: test
+name: my_app
 version: 1.0.0
 
 dependencies:
@@ -1541,7 +1530,7 @@ dependencies:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1584,7 +1573,7 @@ flutter:
 
           final FlutterManifest manifest =
               FlutterManifest.createFromString('''
-name: test
+name: my_app
 version: 1.0.0
 
 dependencies:
@@ -1614,7 +1603,7 @@ dependencies:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1645,7 +1634,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1677,7 +1666,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1710,7 +1699,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1741,7 +1730,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1767,7 +1756,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1797,7 +1786,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1829,7 +1818,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1860,7 +1849,7 @@ flutter:
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1888,7 +1877,7 @@ flutter:
           FileSystem: () => fsWindows,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1919,7 +1908,7 @@ The Flutter Preview device does not support the following plugins from your pubs
           FileSystem: () => fsWindows,
           ProcessManager: () => FakeProcessManager.empty(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1943,7 +1932,7 @@ The Flutter Preview device does not support the following plugins from your pubs
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1959,7 +1948,7 @@ The Flutter Preview device does not support the following plugins from your pubs
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
     });
@@ -2387,10 +2376,7 @@ The Flutter Preview device does not support the following plugins from your pubs
           ..flutterPluginsDependenciesFile = dependenciesFile
           ..windows = windowsProject;
 
-        flutterProject.directory
-            .childDirectory('.dart_tool')
-            .childFile('package_config.json')
-            .createSync(recursive: true);
+        writePackageConfigFile(directory: flutterProject.directory);
 
         const String dependenciesFileContents = r'''
 {
@@ -2515,18 +2501,18 @@ The Flutter Preview device does not support the following plugins from your pubs
       const String testPluginName = 'test_plugin';
 
       // Fake pub to override dev dependencies of flutterProject.
-      final Pub fakePubWithTestPluginDevDependency = FakePubWithPrimedDeps(
-        devDependencies: <String>{testPluginName},
-      );
 
       testUsingContext(
         'excludes dev dependencies from Android plugin registrant',
         () async {
+          flutterProject.manifest.devDependencies.add(testPluginName);
+
           final Directory pluginDir = createPlugin(
             name: testPluginName,
             platforms: const <String, _PluginPlatformInfo>{
               'android': _PluginPlatformInfo(pluginClass: 'Foo', androidPackage: 'bar.foo'),
             },
+            isDevDependency: true,
           );
 
           // injectPlugins will fail if main native class not found in expected spot, so add
@@ -2558,7 +2544,7 @@ The Flutter Preview device does not support the following plugins from your pubs
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: () => fakePubWithTestPluginDevDependency,
+          Pub: () => const ThrowingPub(),
         },
       );
 
@@ -2570,6 +2556,7 @@ The Flutter Preview device does not support the following plugins from your pubs
             platforms: const <String, _PluginPlatformInfo>{
               'ios': _PluginPlatformInfo(pluginClass: 'Foo'),
             },
+            isDevDependency: true,
           );
 
           final FakeDarwinDependencyManagement dependencyManagement =
@@ -2602,7 +2589,7 @@ The Flutter Preview device does not support the following plugins from your pubs
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: () => fakePubWithTestPluginDevDependency,
+          Pub: () => const ThrowingPub(),
         },
       );
 
@@ -2614,6 +2601,7 @@ The Flutter Preview device does not support the following plugins from your pubs
             platforms: const <String, _PluginPlatformInfo>{
               'linux': _PluginPlatformInfo(pluginClass: 'Foo'),
             },
+            isDevDependency: true,
           );
 
           const String expectedDevDepImport = '#include <$testPluginName/foo.h>';
@@ -2638,7 +2626,7 @@ The Flutter Preview device does not support the following plugins from your pubs
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: () => fakePubWithTestPluginDevDependency,
+          Pub: () => const ThrowingPub(),
         },
       );
 
@@ -2650,6 +2638,7 @@ The Flutter Preview device does not support the following plugins from your pubs
             platforms: const <String, _PluginPlatformInfo>{
               'macos': _PluginPlatformInfo(pluginClass: 'Foo'),
             },
+            isDevDependency: true,
           );
           final FakeDarwinDependencyManagement dependencyManagement =
               FakeDarwinDependencyManagement();
@@ -2688,7 +2677,7 @@ The Flutter Preview device does not support the following plugins from your pubs
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: () => fakePubWithTestPluginDevDependency,
+          Pub: () => const ThrowingPub(),
         },
       );
 
@@ -2700,6 +2689,7 @@ The Flutter Preview device does not support the following plugins from your pubs
             platforms: const <String, _PluginPlatformInfo>{
               'windows': _PluginPlatformInfo(pluginClass: 'Foo'),
             },
+            isDevDependency: true,
           );
 
           const String expectedDevDepRegistration = '#include <$testPluginName/foo.h>';
@@ -2726,7 +2716,7 @@ The Flutter Preview device does not support the following plugins from your pubs
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: () => fakePubWithTestPluginDevDependency,
+          Pub: () => const ThrowingPub(),
         },
       );
     });
@@ -2759,10 +2749,7 @@ The Flutter Preview device does not support the following plugins from your pubs
         )
         ..windows = windowsProject;
 
-      flutterProject.directory
-          .childDirectory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: flutterProject.directory);
 
       createPluginSymlinks(
         flutterProject,
@@ -2812,7 +2799,13 @@ The Flutter Preview device does not support the following plugins from your pubs
 
 class FakeFlutterManifest extends Fake implements FlutterManifest {
   @override
-  Set<String> get dependencies => <String>{};
+  late Set<String> dependencies = <String>{};
+  @override
+  late Set<String> devDependencies = <String>{};
+  @override
+  late String appName;
+  @override
+  YamlMap toYaml() => YamlMap.wrap(<String, String>{});
 }
 
 class FakeXcodeProjectInterpreter extends Fake implements XcodeProjectInterpreter {

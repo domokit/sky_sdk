@@ -21,7 +21,6 @@ import 'compute_dev_dependencies.dart';
 import 'convert.dart';
 import 'dart/language_version.dart';
 import 'dart/package_map.dart';
-import 'dart/pub.dart';
 import 'features.dart';
 import 'globals.dart' as globals;
 import 'macos/darwin_dependency_management.dart';
@@ -43,25 +42,14 @@ Future<void> _renderTemplateToFile(
 
 Future<Plugin?> _pluginFromPackage(
   String name,
+  YamlNode pubspec,
   Uri packageRoot,
   Set<String> appDependencies, {
-  required Set<String> devDependencies,
+  required bool isDevDependency,
   FileSystem? fileSystem,
 }) async {
   final FileSystem fs = fileSystem ?? globals.fs;
-  final File pubspecFile = fs.file(packageRoot.resolve('pubspec.yaml'));
-  if (!pubspecFile.existsSync()) {
-    return null;
-  }
-  Object? pubspec;
-
-  try {
-    pubspec = loadYaml(await pubspecFile.readAsString());
-  } on YamlException catch (err) {
-    globals.printTrace('Failed to parse plugin manifest for $name: $err');
-    // Do nothing, potentially not a plugin.
-  }
-  if (pubspec == null || pubspec is! YamlMap) {
+  if (pubspec is! YamlMap) {
     return null;
   }
   final Object? flutterConfig = pubspec['flutter'];
@@ -73,7 +61,6 @@ Future<Plugin?> _pluginFromPackage(
       flutterConstraintText == null ? null : semver.VersionConstraint.parse(flutterConstraintText);
   final String packageRootPath = fs.path.fromUri(packageRoot);
   final YamlMap? dependencies = pubspec['dependencies'] as YamlMap?;
-  globals.printTrace('Found plugin $name at $packageRootPath');
   return Plugin.fromYaml(
     name,
     packageRootPath,
@@ -82,7 +69,7 @@ Future<Plugin?> _pluginFromPackage(
     dependencies == null ? <String>[] : <String>[...dependencies.keys.cast<String>()],
     fileSystem: fs,
     appDependencies: appDependencies,
-    isDevDependency: devDependencies.contains(name),
+    isDevDependency: isDevDependency,
   );
 }
 
@@ -103,23 +90,29 @@ Future<List<Plugin>> findPlugins(
     logger: globals.logger,
     throwOnError: throwOnError,
   );
-  final Set<String> devDependencies;
-  if (!determineDevDependencies) {
-    devDependencies = <String>{};
-  } else {
-    devDependencies = await computeExclusiveDevDependencies(
-      pub,
-      logger: globals.logger,
-      project: project,
-    );
-  }
-  for (final Package package in packageConfig.packages) {
-    final Uri packageRoot = package.packageUriRoot.resolve('..');
+  final Map<String, Dependency> transitiveDependencies = computeTransitiveDependencies(
+    project,
+    packageConfig,
+    fs,
+    globals.logger,
+  );
+  for (final String packageName in transitiveDependencies.keys) {
+    final Package? package = packageConfig[packageName];
+    if (package == null) {
+      if (throwOnError) {
+        throwToolExit('Could not locate package:$packageName. Try running `flutter pub get`');
+      } else {
+        globals.logger.printTrace('Could not locate package:$packageName');
+        continue;
+      }
+    }
+    final Dependency dependency = transitiveDependencies[packageName]!;
     final Plugin? plugin = await _pluginFromPackage(
-      package.name,
-      packageRoot,
+      packageName,
+      dependency.pubspec,
+      dependency.rootUri,
       project.manifest.dependencies,
-      devDependencies: devDependencies,
+      isDevDependency: determineDevDependencies && dependency.isExclusiveDevDependency,
       fileSystem: fs,
     );
     if (plugin != null) {
@@ -1440,7 +1433,6 @@ _resolvePluginImplementationsByPlatform(
 
   // Key: the plugin name, value: the plugin which provides an implementation for [platformKey].
   final Map<String, Plugin> pluginResolution = <String, Plugin>{};
-
   // Now resolve all the possible resolutions to a single option for each
   // plugin, or throw if that's not possible.
   for (final MapEntry<String, List<Plugin>> implCandidatesEntry in pluginImplCandidates.entries) {

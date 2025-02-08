@@ -19,9 +19,10 @@ import 'package:test/fake.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
 import '../../src/logging_logger.dart';
+import '../../src/package_config.dart';
+import '../../src/throwing_pub.dart';
 
 final Platform linuxPlatform = FakePlatform(environment: <String, String>{});
 
@@ -46,9 +47,13 @@ void main() {
 
   setUp(() {
     fileSystem = MemoryFileSystem.test();
-    fileSystem.file('pubspec.yaml').createSync();
+    fileSystem.file('pubspec.yaml')
+      ..createSync()
+      ..writeAsStringSync('''
+name: foo
+''');
     fileSystem.file('test/foo.dart').createSync(recursive: true);
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+    writePackageConfigFile(mainLibName: 'foo', directory: fileSystem.currentDirectory);
     residentCompiler = FakeResidentCompiler(fileSystem);
     logger = LoggingLogger();
   });
@@ -75,7 +80,7 @@ void main() {
       ProcessManager: () => FakeProcessManager.any(),
       Logger: () => BufferLogger.test(),
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -102,7 +107,7 @@ void main() {
       ProcessManager: () => FakeProcessManager.any(),
       Logger: () => BufferLogger.test(),
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -134,7 +139,7 @@ void main() {
       ProcessManager: () => FakeProcessManager.any(),
       Logger: () => BufferLogger.test(),
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -174,7 +179,7 @@ void main() {
       ProcessManager: () => FakeProcessManager.any(),
       Logger: () => logger,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -201,7 +206,7 @@ void main() {
       ProcessManager: () => FakeProcessManager.any(),
       Logger: () => BufferLogger.test(),
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -216,20 +221,11 @@ dependencies:
     sdk: flutter
   a_plugin: 1.0.0
 ''');
-      fileSystem.directory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "a_plugin",
-      "rootUri": "/a_plugin/",
-      "packageUri": "lib/"
-    }
-  ]
-}
-''');
+      writePackageConfigFile(
+        directory: fileSystem.currentDirectory,
+        mainLibName: 'foo',
+        packages: <String, String>{'a_plugin': '/a_plugin'},
+      );
       fakeDartPlugin.childFile('pubspec.yaml')
         ..createSync(recursive: true)
         ..writeAsStringSync('''
@@ -268,7 +264,7 @@ environment:
       ProcessManager: () => FakeProcessManager.any(),
       Logger: () => BufferLogger.test(),
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 }

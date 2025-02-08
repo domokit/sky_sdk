@@ -42,9 +42,10 @@ import 'package:webkit_inspection_protocol/webkit_inspection_protocol.dart';
 import '../src/common.dart';
 import '../src/context.dart';
 import '../src/fake_process_manager.dart';
-import '../src/fake_pub_deps.dart';
 import '../src/fake_vm_services.dart';
 import '../src/fakes.dart' as test_fakes;
+import '../src/package_config.dart';
+import '../src/throwing_pub.dart';
 
 const List<VmServiceExpectation> kAttachLogExpectations = <VmServiceExpectation>[
   FakeVmServiceRequest(method: 'streamListen', args: <String, Object>{'streamId': 'Stdout'}),
@@ -113,7 +114,10 @@ void main() {
           .._devFS = webDevFS
           ..device = mockDevice
           ..generator = residentCompiler;
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+    fileSystem.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
+''');
+    writePackageConfigFile(directory: fileSystem.currentDirectory);
     fakeAnalytics = getInitializedFakeAnalyticsInstance(
       fs: fileSystem,
       fakeFlutterVersion: test_fakes.FakeFlutterVersion(),
@@ -238,7 +242,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -275,7 +279,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -303,7 +307,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -325,7 +329,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -355,7 +359,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -382,7 +386,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -426,7 +430,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -573,7 +577,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -604,7 +608,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -693,7 +697,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -781,7 +785,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -816,7 +820,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -854,7 +858,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -895,7 +899,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -922,7 +926,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -953,7 +957,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -985,7 +989,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1029,7 +1033,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1056,7 +1060,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1088,7 +1092,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1156,7 +1160,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1201,7 +1205,7 @@ void main() {
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1235,24 +1239,13 @@ void main() {
 }''');
       globals.fs.file('l10n.yaml').createSync();
       globals.fs.file('pubspec.yaml').writeAsStringSync('''
+name: my_app
 flutter:
   generate: true
 ''');
-      globals.fs.directory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "path_provider_linux",
-      "rootUri": "../../../path_provider_linux",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    }
-  ]
-}
-''');
+      writePackageConfigFile(
+        packages: <String, String>{'path_provider_linux': '../../path_provider_linux'},
+      );
       expect(await residentWebRunner.run(), 0);
       final File generatedLocalizationsFile = globals.fs
           .directory('lib')
@@ -1266,7 +1259,7 @@ flutter:
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1276,23 +1269,10 @@ flutter:
     'Does not generate dart_plugin_registrant.dart',
     () async {
       // Create necessary files for [DartPluginRegistrantTarget]
-      final File packageConfig = globals.fs
-          .directory('.dart_tool')
-          .childFile('package_config.json');
-      packageConfig.createSync(recursive: true);
-      packageConfig.writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "path_provider_linux",
-      "rootUri": "../../../path_provider_linux",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    }
-  ]
-}
-''');
+      writePackageConfigFile(
+        packages: <String, String>{'path_provider_linux': '../../path_provider_linux'},
+      );
+
       // Start with a dart_plugin_registrant.dart file.
       globals.fs
           .directory('.dart_tool')
@@ -1334,7 +1314,7 @@ flutter:
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1388,7 +1368,7 @@ flutter:
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1407,7 +1387,7 @@ flutter:
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1427,7 +1407,7 @@ flutter:
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1446,7 +1426,7 @@ flutter:
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 
@@ -1466,7 +1446,7 @@ flutter:
       FileSystem: () => fileSystem,
       ProcessManager: () => processManager,
       FeatureFlags: enableExplicitPackageDependencies,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
     },
   );
 

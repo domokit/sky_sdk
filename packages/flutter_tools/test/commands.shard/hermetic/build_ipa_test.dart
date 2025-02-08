@@ -26,10 +26,11 @@ import '../../general.shard/ios/xcresult_test_data.dart';
 import '../../src/common.dart';
 import '../../src/context.dart';
 import '../../src/fake_process_manager.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 import '../../src/test_build_system.dart';
 import '../../src/test_flutter_command_runner.dart';
+import '../../src/throwing_pub.dart';
 
 class FakeXcodeProjectInterpreterWithBuildSettings extends FakeXcodeProjectInterpreter {
   FakeXcodeProjectInterpreterWithBuildSettings({
@@ -99,8 +100,8 @@ void main() {
 
   // Sets up the minimal mock project files necessary to look like a Flutter project.
   void createCoreMockProjectFiles() {
-    fileSystem.file('pubspec.yaml').createSync();
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+    fileSystem.file('pubspec.yaml').writeAsStringSync('name: my_app');
+    writePackageConfigFile(directory: fileSystem.currentDirectory);
     fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
   }
 
@@ -299,10 +300,7 @@ void main() {
         osUtils: FakeOperatingSystemUtils(),
       );
       fileSystem.file('pubspec.yaml').createSync();
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: fileSystem.currentDirectory);
       fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
 
       final bool supported =
@@ -445,7 +443,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -500,7 +498,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter:
           () => FakeXcodeProjectInterpreterWithBuildSettings(version: Version(15, 4, null)),
@@ -556,7 +554,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter:
           () => FakeXcodeProjectInterpreterWithBuildSettings(version: Version(15, 4, null)),
@@ -612,7 +610,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter:
           () => FakeXcodeProjectInterpreterWithBuildSettings(version: Version(15, 4, null)),
@@ -646,7 +644,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter:
           () => FakeXcodeProjectInterpreterWithBuildSettings(version: Version(15, 3, null)),
@@ -702,7 +700,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter:
           () => FakeXcodeProjectInterpreterWithBuildSettings(version: Version(15, 4, null)),
@@ -736,7 +734,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter:
           () => FakeXcodeProjectInterpreterWithBuildSettings(version: Version(15, 3, null)),
@@ -779,7 +777,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
       PlistParser: () => plistUtils,
@@ -840,7 +838,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -877,7 +875,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -936,7 +934,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -997,7 +995,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1058,7 +1056,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1090,7 +1088,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1123,7 +1121,7 @@ void main() {
     overrides: <Type, Generator>{
       FileSystem: () => fileSystem,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1185,7 +1183,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1216,7 +1214,7 @@ void main() {
     overrides: <Type, Generator>{
       FileSystem: () => fileSystem,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1277,7 +1275,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       FileSystemUtils: () => FileSystemUtils(fileSystem: fileSystem, platform: macosPlatform),
       Analytics: () => fakeAnalytics,
@@ -1327,7 +1325,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1369,7 +1367,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1415,7 +1413,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1469,7 +1467,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1508,7 +1506,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1565,7 +1563,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -1624,7 +1622,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
       PlistParser: () => plistUtils,
@@ -1689,7 +1687,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
       PlistParser: () => plistUtils,
@@ -1753,7 +1751,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
       PlistParser: () => plistUtils,
@@ -1803,7 +1801,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
       PlistParser: () => plistUtils,
@@ -1856,7 +1854,7 @@ void main() {
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
       Platform: () => macosPlatform,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
       PlistParser: () => plistUtils,
     },
@@ -1950,7 +1948,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -2044,7 +2042,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -2120,7 +2118,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -2196,7 +2194,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -2272,7 +2270,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -2350,7 +2348,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -2472,7 +2470,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -2564,7 +2562,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },
@@ -2658,7 +2656,7 @@ void main() {
       FileSystem: () => fileSystem,
       Logger: () => logger,
       ProcessManager: () => fakeProcessManager,
-      Pub: FakePubWithPrimedDeps.new,
+      Pub: ThrowingPub.new,
       Platform: () => macosPlatform,
       XcodeProjectInterpreter: () => FakeXcodeProjectInterpreterWithBuildSettings(),
     },

@@ -152,13 +152,6 @@ abstract class Pub {
     PubOutputMode outputMode = PubOutputMode.all,
   });
 
-  /// Runs, parses, and returns `pub deps --json` for [project].
-  ///
-  /// While it is guaranteed that, if successful, that the result are a valid
-  /// JSON object, the exact contents returned are _not_ validated, and are left
-  /// as a responsibility of the caller.
-  Future<Map<String, Object?>> deps(FlutterProject project);
-
   /// Runs pub in 'batch' mode.
   ///
   /// forwarding complete lines written by pub to its stdout/stderr streams to
@@ -350,44 +343,6 @@ class _DefaultPub implements Pub {
       outputMode: outputMode,
     );
     await _updateVersionAndPackageConfig(project);
-  }
-
-  @override
-  Future<Map<String, Object?>> deps(FlutterProject project) async {
-    final List<String> pubCommand = <String>[..._pubCommand, 'deps', '--json'];
-
-    final RunResult runResult = await _processUtils.run(
-      pubCommand,
-      workingDirectory: project.directory.path,
-    );
-
-    Never fail([String? reason]) {
-      final String stdout = runResult.stdout;
-      if (stdout.isNotEmpty) {
-        _logger.printTrace(stdout);
-      }
-      final String stderr = runResult.stderr;
-      throw StateError(
-        '${pubCommand.join(' ')} ${reason != null ? 'had unexpected output: $reason' : 'failed'}'
-        '${stderr.isNotEmpty ? '\n$stderr' : ''}',
-      );
-    }
-
-    // Guard against dart pub deps crashing.
-    if (runResult.exitCode != 0) {
-      fail();
-    }
-
-    // Guard against dart pub deps having explicitly invalid output.
-    try {
-      final Object? result = json.decode(runResult.stdout);
-      if (result is! Map<String, Object?>) {
-        fail('Not a JSON object');
-      }
-      return result;
-    } on FormatException catch (e) {
-      fail('$e');
-    }
   }
 
   /// Runs pub with [arguments] and [ProcessStartMode.inheritStdio] mode.

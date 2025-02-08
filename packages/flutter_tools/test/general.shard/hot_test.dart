@@ -22,8 +22,9 @@ import 'package:vm_service/vm_service.dart' as vm_service;
 
 import '../src/common.dart';
 import '../src/context.dart';
-import '../src/fake_pub_deps.dart';
 import '../src/fakes.dart';
+import '../src/package_config.dart';
+import '../src/throwing_pub.dart';
 import 'hot_shared.dart';
 
 void main() {
@@ -182,14 +183,7 @@ void main() {
       testUsingContext(
         'setupHotRestart function fails',
         () async {
-          fileSystem.directory('.dart_tool').childFile('package_config.json')
-            ..createSync(recursive: true)
-            ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": []
-}
-''');
+          writePackageConfigFile(directory: fileSystem.currentDirectory);
           final FakeDevice device = FakeDevice();
           final List<FlutterDevice> devices = <FlutterDevice>[FakeFlutterDevice(device)];
           final OperationResult result = await HotRunner(
@@ -210,21 +204,14 @@ void main() {
           Platform: () => FakePlatform(),
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
       testUsingContext(
         'setupHotReload function fails',
         () async {
-          fileSystem.directory('.dart_tool').childFile('package_config.json')
-            ..createSync(recursive: true)
-            ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": []
-}
-''');
+          writePackageConfigFile(directory: fileSystem.currentDirectory);
           final FakeDevice device = FakeDevice();
           final FakeFlutterDevice fakeFlutterDevice = FakeFlutterDevice(device);
           final List<FlutterDevice> devices = <FlutterDevice>[fakeFlutterDevice];
@@ -258,7 +245,7 @@ void main() {
           Platform: () => FakePlatform(),
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
     });
@@ -273,14 +260,7 @@ void main() {
       testUsingContext(
         'shutdown hook called after signal',
         () async {
-          fileSystem.directory('.dart_tool').childFile('package_config.json')
-            ..createSync(recursive: true)
-            ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": []
-}
-''');
+          writePackageConfigFile(directory: fileSystem.currentDirectory);
           final FakeDevice device = FakeDevice();
           final List<FlutterDevice> devices = <FlutterDevice>[
             FlutterDevice(
@@ -310,14 +290,7 @@ void main() {
       testUsingContext(
         'shutdown hook called after app stop',
         () async {
-          fileSystem.directory('.dart_tool').childFile('package_config.json')
-            ..createSync(recursive: true)
-            ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": []
-}
-''');
+          writePackageConfigFile(directory: fileSystem.currentDirectory);
           final FakeDevice device = FakeDevice();
           final List<FlutterDevice> devices = <FlutterDevice>[
             FlutterDevice(
@@ -680,14 +653,7 @@ void main() {
       'Exits with code 2 when HttpException is thrown '
       'during VM service connection',
       () async {
-        fileSystem.directory('.dart_tool').childFile('package_config.json')
-          ..createSync(recursive: true)
-          ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": []
-}
-''');
+        writePackageConfigFile(directory: fileSystem.currentDirectory);
 
         final FakeResidentCompiler residentCompiler = FakeResidentCompiler();
         final FakeDevice device = FakeDevice();

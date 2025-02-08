@@ -996,6 +996,7 @@ class FakeBundle extends AssetBundle {
     bool deferredComponentsEnabled = false,
     TargetPlatform? targetPlatform,
     String? flavor,
+    bool includeAssetsFromDevDependencies = false,
   }) async {
     return 0;
   }

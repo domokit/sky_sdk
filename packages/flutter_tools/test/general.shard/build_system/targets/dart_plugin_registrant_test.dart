@@ -15,8 +15,9 @@ import 'package:flutter_tools/src/project.dart';
 
 import '../../../src/common.dart';
 import '../../../src/context.dart';
-import '../../../src/fake_pub_deps.dart';
 import '../../../src/fakes.dart';
+import '../../../src/package_config.dart';
+import '../../../src/throwing_pub.dart';
 
 const String _kEmptyPubspecFile = '''
 name: path_provider_example
@@ -24,40 +25,6 @@ name: path_provider_example
 dependencies:
   flutter:
     sdk: flutter
-''';
-
-const String _kEmptyPackageJson = '''
-{
-  "configVersion": 2,
-  "packages": [
-     {
-      "name": "path_provider_example",
-      "rootUri": "../",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    }
-  ]
-}
-''';
-
-const String _kSamplePackageJson = '''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "path_provider_linux",
-      "rootUri": "/path_provider_linux",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
-      "name": "path_provider_example",
-      "rootUri": "../",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    }
-  ]
-}
 ''';
 
 const String _kSamplePubspecFile = '''
@@ -174,11 +141,15 @@ void main() {
           generateDartPluginRegistry: true,
         );
 
-        projectDir.childDirectory('.dart_tool').childFile('package_config.json')
-          ..createSync(recursive: true)
-          ..writeAsStringSync(_kSamplePackageJson);
+        writePackageConfigFile(
+          directory: projectDir,
+          mainLibName: 'path_provider_example',
+          packages: <String, String>{'path_provider_linux': '/path_provider_linux'},
+        );
 
-        projectDir.childFile('pubspec.yaml').createSync();
+        projectDir.childFile('pubspec.yaml').writeAsStringSync('''
+name: path_provider_example
+''');
 
         final FlutterProject testProject = FlutterProject.fromDirectoryTest(projectDir);
         await DartPluginRegistrantTarget.test(testProject).build(environment);
@@ -192,7 +163,7 @@ void main() {
       overrides: <Type, Generator>{
         ProcessManager: () => FakeProcessManager.any(),
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
 
@@ -213,9 +184,11 @@ void main() {
           generateDartPluginRegistry: true,
         );
 
-        projectDir.childDirectory('.dart_tool').childFile('package_config.json')
-          ..createSync(recursive: true)
-          ..writeAsStringSync(_kSamplePackageJson);
+        writePackageConfigFile(
+          directory: projectDir,
+          mainLibName: 'path_provider_example',
+          packages: <String, String>{'path_provider_linux': '/path_provider_linux'},
+        );
 
         projectDir.childFile('pubspec.yaml').writeAsStringSync(_kSamplePubspecFile);
 
@@ -276,7 +249,7 @@ void main() {
       overrides: <Type, Generator>{
         ProcessManager: () => FakeProcessManager.any(),
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
 
@@ -296,10 +269,11 @@ void main() {
           },
           generateDartPluginRegistry: true,
         );
-        final File config =
-            projectDir.childDirectory('.dart_tool').childFile('package_config.json')
-              ..createSync(recursive: true)
-              ..writeAsStringSync(_kSamplePackageJson);
+        writePackageConfigFile(
+          directory: projectDir,
+          mainLibName: 'path_provider_example',
+          packages: <String, String>{'path_provider_linux': '/path_provider_linux'},
+        );
 
         final File pubspec = projectDir.childFile('pubspec.yaml')
           ..writeAsStringSync(_kSamplePubspecFile);
@@ -321,7 +295,7 @@ void main() {
 
         // Simulate a user removing everything from pubspec.yaml.
         pubspec.writeAsStringSync(_kEmptyPubspecFile);
-        config.writeAsStringSync(_kEmptyPackageJson);
+        writePackageConfigFile(directory: projectDir, mainLibName: 'path_provider_example');
 
         await DartPluginRegistrantTarget.test(testProject).build(environment);
         expect(generatedMain.existsSync(), isFalse);
@@ -329,7 +303,7 @@ void main() {
       overrides: <Type, Generator>{
         ProcessManager: () => FakeProcessManager.any(),
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
 
@@ -350,9 +324,11 @@ void main() {
           generateDartPluginRegistry: true,
         );
 
-        projectDir.childDirectory('.dart_tool').childFile('package_config.json')
-          ..createSync(recursive: true)
-          ..writeAsStringSync(_kSamplePackageJson);
+        writePackageConfigFile(
+          directory: projectDir,
+          mainLibName: 'path_provider_example',
+          packages: <String, String>{'path_provider_linux': '/path_provider_linux'},
+        );
 
         projectDir.childFile('pubspec.yaml').writeAsStringSync(_kSamplePubspecFile);
 
@@ -414,7 +390,7 @@ void main() {
       overrides: <Type, Generator>{
         ProcessManager: () => FakeProcessManager.any(),
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
   });

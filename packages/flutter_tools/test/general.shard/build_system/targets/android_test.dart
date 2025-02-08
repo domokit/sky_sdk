@@ -17,6 +17,7 @@ import 'package:flutter_tools/src/convert.dart';
 import '../../../src/common.dart';
 import '../../../src/context.dart';
 import '../../../src/fake_process_manager.dart';
+import '../../../src/package_config.dart';
 
 void main() {
   late FakeProcessManager processManager;
@@ -567,10 +568,7 @@ void main() {
       fileSystem
           .file('pubspec.yaml')
           .writeAsStringSync('name: hello\nflutter:\n  shaders:\n    - shader.glsl');
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: fileSystem.currentDirectory, mainLibName: 'hello');
       fileSystem.file('shader.glsl').writeAsStringSync('test');
 
       processManager.addCommands(<FakeCommand>[

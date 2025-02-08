@@ -22,12 +22,14 @@ import 'package:flutter_tools/src/ios/xcresult.dart';
 import 'package:flutter_tools/src/project.dart';
 import 'package:test/fake.dart';
 import 'package:unified_analytics/unified_analytics.dart';
+import 'package:yaml/yaml.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
 import '../../src/fake_process_manager.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
+import '../../src/throwing_pub.dart';
 
 void main() {
   late BufferLogger logger;
@@ -658,7 +660,9 @@ duplicate symbol '_$s29plugin_1_name23PluginNamePluginC9setDouble3key5valueySS_S
         final FakeFlutterProject project = FakeFlutterProject(fileSystem: fs);
         project.ios.podfile.createSync(recursive: true);
         project.manifest = FakeFlutterManifest();
-        createFakePlugins(project, fs, <String>['plugin_1_name', 'plugin_2_name']);
+        final List<String> pluginNames = <String>['plugin_1_name', 'plugin_2_name'];
+        project.manifest.dependencies.addAll(pluginNames);
+        createFakePlugins(project, fs, pluginNames);
         fs.systemTempDirectory
             .childFile('cache/plugin_1_name/ios/plugin_1_name/Package.swift')
             .createSync(recursive: true);
@@ -684,7 +688,7 @@ duplicate symbol '_$s29plugin_1_name23PluginNamePluginC9setDouble3key5valueySS_S
       overrides: <Type, Generator>{
         ProcessManager: () => FakeProcessManager.any(),
         FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
+        Pub: ThrowingPub.new,
       },
     );
   });
@@ -770,23 +774,6 @@ duplicate symbol '_$s29plugin_1_name23PluginNamePluginC9setDouble3key5valueySS_S
   });
 }
 
-void addToPackageConfig(FlutterProject flutterProject, String name, Directory packageDir) {
-  final File packageConfigFile = flutterProject.directory
-      .childDirectory('.dart_tool')
-      .childFile('package_config.json');
-
-  final Map<String, Object?> packageConfig =
-      jsonDecode(packageConfigFile.readAsStringSync()) as Map<String, Object?>;
-
-  (packageConfig['packages']! as List<Object?>).add(<String, Object?>{
-    'name': name,
-    'rootUri': packageDir.uri.toString(),
-    'packageUri': 'lib/',
-  });
-
-  packageConfigFile.writeAsStringSync(jsonEncode(packageConfig));
-}
-
 void createFakePlugins(
   FlutterProject flutterProject,
   FileSystem fileSystem,
@@ -803,17 +790,14 @@ void createFakePlugins(
   ''';
 
   final Directory fakePubCache = fileSystem.systemTempDirectory.childDirectory('cache');
-  flutterProject.directory.childDirectory('.dart_tool').childFile('package_config.json')
-    ..createSync(recursive: true)
-    ..writeAsStringSync('''
-{
-  "packages": [],
-  "configVersion": 2
-}
-''');
+  writePackageConfigFile(
+    directory: flutterProject.directory,
+    packages: <String, String>{
+      for (final String name in pluginNames) name: fakePubCache.childDirectory(name).path,
+    },
+  );
   for (final String name in pluginNames) {
     final Directory pluginDirectory = fakePubCache.childDirectory(name);
-    addToPackageConfig(flutterProject, name, pluginDirectory);
     pluginDirectory.childFile('pubspec.yaml')
       ..createSync(recursive: true)
       ..writeAsStringSync(pluginYamlTemplate.replaceAll('PLUGIN_CLASS', name));
@@ -877,5 +861,14 @@ class FakeFlutterProject extends Fake implements FlutterProject {
 
 class FakeFlutterManifest extends Fake implements FlutterManifest {
   @override
-  Set<String> get dependencies => <String>{};
+  late final Set<String> dependencies = <String>{};
+
+  @override
+  late final Set<String> devDependencies = <String>{};
+
+  @override
+  String get appName => 'my_app';
+
+  @override
+  YamlMap toYaml() => YamlMap.wrap(<String, String>{});
 }

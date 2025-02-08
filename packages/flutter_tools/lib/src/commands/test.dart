@@ -759,7 +759,11 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     required String packageConfigPath,
   }) async {
     final AssetBundle assetBundle = AssetBundleFactory.instance.createBundle();
-    final int build = await assetBundle.build(packageConfigPath: packageConfigPath, flavor: flavor);
+    final int build = await assetBundle.build(
+      packageConfigPath: packageConfigPath,
+      flavor: flavor,
+      includeAssetsFromDevDependencies: true,
+    );
     if (build != 0) {
       throwToolExit('Error: Failed to build asset bundle');
     }

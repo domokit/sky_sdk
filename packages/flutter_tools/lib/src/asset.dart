@@ -17,6 +17,7 @@ import 'base/platform.dart';
 import 'base/utils.dart';
 import 'build_info.dart';
 import 'cache.dart';
+import 'compute_dev_dependencies.dart';
 import 'convert.dart';
 import 'dart/package_map.dart';
 import 'devfs.dart';
@@ -117,6 +118,7 @@ abstract class AssetBundle {
     bool deferredComponentsEnabled = false,
     TargetPlatform? targetPlatform,
     String? flavor,
+    bool includeAssetsFromDevDependencies = false,
   });
 }
 
@@ -239,6 +241,7 @@ class ManifestAssetBundle implements AssetBundle {
     bool deferredComponentsEnabled = false,
     TargetPlatform? targetPlatform,
     String? flavor,
+    bool includeAssetsFromDevDependencies = false,
   }) async {
     if (flutterProject == null) {
       try {
@@ -332,74 +335,86 @@ class ManifestAssetBundle implements AssetBundle {
       primary: true,
     );
 
-    // Add fonts, assets, and licenses from packages.
+    // Add fonts, assets, and licenses from packages in the project's
+    // dependencies.
+    // To avoid bundling assets from dev_dependencies and other pub workspace
+    // packages, we compute the set of transitive dependencies.
+    final Map<String, Dependency> transitiveDependencies = computeTransitiveDependencies(
+      flutterProject,
+      packageConfig,
+      _fileSystem,
+      _logger,
+    );
     final Map<String, List<File>> additionalLicenseFiles = <String, List<File>>{};
-    for (final Package package in packageConfig.packages) {
-      final Uri packageUri = package.packageUriRoot;
-      if (packageUri.scheme == 'file') {
-        final String packageManifestPath = _fileSystem.path.fromUri(
-          packageUri.resolve('../pubspec.yaml'),
+    for (final String packageName in transitiveDependencies.keys) {
+      final Package? package = packageConfig[packageName];
+      if (package == null) {
+        // This can happen with eg. `flutter run --no-pub`.
+        //
+        // We usually expect the package config to be up to date with the
+        // current pubspec.yaml - but because we can force pub get to not be run
+        // with `flutter run --no-pub` we can end up with a new dependency in
+        // pubspec.yaml that is not yet discovered by pub and placed in the
+        // package config.
+        throwToolExit('Could not locate package:$packageName. Try running `flutter pub get`.');
+      }
+      final Dependency dependency = transitiveDependencies[packageName]!;
+      if (!includeAssetsFromDevDependencies && dependency.isExclusiveDevDependency) {
+        continue;
+      }
+      inputFiles.add(_fileSystem.file(package.root.resolve('pubspec.yaml')));
+      final FlutterManifest? packageManifest = FlutterManifest.createFromYaml(
+        dependency.pubspec,
+        _logger,
+      );
+      if (packageManifest == null) {
+        continue;
+      }
+      // Collect any additional licenses from each package.
+      final List<File> licenseFiles = <File>[];
+      for (final String relativeLicensePath in packageManifest.additionalLicenses) {
+        final String absoluteLicensePath = _fileSystem.path.fromUri(
+          package.root.resolve(relativeLicensePath),
         );
-        inputFiles.add(_fileSystem.file(packageManifestPath));
-        final FlutterManifest? packageFlutterManifest = FlutterManifest.createFromPath(
-          packageManifestPath,
-          logger: _logger,
-          fileSystem: _fileSystem,
-        );
-        if (packageFlutterManifest == null) {
-          continue;
-        }
-        // Collect any additional licenses from each package.
-        final List<File> licenseFiles = <File>[];
-        for (final String relativeLicensePath in packageFlutterManifest.additionalLicenses) {
-          final String absoluteLicensePath = _fileSystem.path.fromUri(
-            package.root.resolve(relativeLicensePath),
-          );
-          licenseFiles.add(_fileSystem.file(absoluteLicensePath).absolute);
-        }
-        additionalLicenseFiles[packageFlutterManifest.appName] = licenseFiles;
+        licenseFiles.add(_fileSystem.file(absoluteLicensePath).absolute);
+      }
+      additionalLicenseFiles[packageName] = licenseFiles;
 
-        // Skip the app itself
-        if (packageFlutterManifest.appName == flutterManifest.appName) {
-          continue;
-        }
-        final String packageBasePath = _fileSystem.path.dirname(packageManifestPath);
+      // Skip the app itself
+      if (packageName == flutterManifest.appName) {
+        continue;
+      }
 
-        final Map<_Asset, List<_Asset>>? packageAssets = _parseAssets(
-          packageConfig,
-          packageFlutterManifest,
-          // Do not track wildcard directories for dependencies.
-          <Uri>[],
-          packageBasePath,
-          targetPlatform,
-          packageName: package.name,
-          attributedPackage: package,
-          flavor: flavor,
-        );
+      final String packageBasePath = _fileSystem.path.fromUri(package.root);
 
-        if (packageAssets == null) {
-          return 1;
-        }
-        assetVariants.addAll(packageAssets);
-        if (!includesMaterialFonts && packageFlutterManifest.usesMaterialDesign) {
-          _logger.printError(
-            'package:${package.name} has `uses-material-design: true` set but '
-            'the primary pubspec contains `uses-material-design: false`. '
-            'If the application needs material icons, then `uses-material-design` '
-            ' must be set to true.',
-          );
-        }
-        fonts.addAll(
-          _parseFonts(
-            packageFlutterManifest,
-            packageConfig,
-            packageName: package.name,
-            primary: false,
-          ),
+      final Map<_Asset, List<_Asset>>? packageAssets = _parseAssets(
+        packageConfig,
+        packageManifest,
+        // Do not track wildcard directories for dependencies.
+        <Uri>[],
+        packageBasePath,
+        targetPlatform,
+        packageName: package.name,
+        attributedPackage: package,
+        flavor: flavor,
+      );
+
+      if (packageAssets == null) {
+        return 1;
+      }
+      assetVariants.addAll(packageAssets);
+      if (!includesMaterialFonts && packageManifest.usesMaterialDesign) {
+        _logger.printError(
+          'package:${package.name} has `uses-material-design: true` set but '
+          'the primary pubspec contains `uses-material-design: false`. '
+          'If the application needs material icons, then `uses-material-design` '
+          ' must be set to true.',
         );
       }
+      fonts.addAll(
+        _parseFonts(packageManifest, packageConfig, packageName: package.name, primary: false),
+      );
     }
-
     // Save the contents of each image, image variant, and font
     // asset in entries.
     for (final _Asset asset in assetVariants.keys) {

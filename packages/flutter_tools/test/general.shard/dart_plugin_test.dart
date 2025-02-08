@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/dart/package_map.dart';
@@ -21,8 +19,9 @@ import 'package:yaml/yaml.dart';
 
 import '../src/common.dart';
 import '../src/context.dart';
-import '../src/fake_pub_deps.dart';
 import '../src/fakes.dart';
+import '../src/package_config.dart';
+import '../src/throwing_pub.dart';
 
 void main() {
   // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
@@ -47,10 +46,7 @@ void main() {
             ..flutterPluginsFile = directory.childFile('.flutter-plugins')
             ..flutterPluginsDependenciesFile = directory.childFile('.flutter-plugins-dependencies')
             ..dartPluginRegistrant = directory.childFile('dart_plugin_registrant.dart');
-      flutterProject.directory
-          .childDirectory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: flutterProject.directory);
     });
 
     group('resolvePlatformImplementation', () {
@@ -1112,7 +1108,6 @@ void main() {
         'Generates new entrypoint',
         () async {
           flutterProject.isModule = true;
-
           createFakeDartPlugins(flutterProject, flutterManifest, fs, <String, String>{
             'url_launcher_android': '''
   flutter:
@@ -1166,7 +1161,6 @@ void main() {
 
           final Directory libDir = flutterProject.directory.childDirectory('lib');
           libDir.createSync(recursive: true);
-
           final File mainFile = libDir.childFile('main.dart');
           mainFile.writeAsStringSync('''
 // @dart = 2.8
@@ -1274,7 +1268,7 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1282,7 +1276,7 @@ void main() {
         'Plugin without platform support throws tool exit',
         () async {
           flutterProject.isModule = false;
-
+          flutterManifest.dependencies.add('url_launcher_macos');
           createFakeDartPlugins(flutterProject, flutterManifest, fs, <String, String>{
             'url_launcher_macos': '''
   flutter:
@@ -1321,7 +1315,7 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1367,7 +1361,7 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1375,6 +1369,7 @@ void main() {
         'Does not create new entrypoint if there are no platform resolutions',
         () async {
           flutterProject.isModule = false;
+          createFakeDartPlugins(flutterProject, flutterManifest, fs, <String, String>{});
 
           final Directory libDir = flutterProject.directory.childDirectory('lib');
           libDir.createSync(recursive: true);
@@ -1397,7 +1392,7 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
 
@@ -1449,28 +1444,11 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
+          Pub: ThrowingPub.new,
         },
       );
     });
   });
-}
-
-void addToPackageConfig(FlutterProject project, String name, Directory packageDir) {
-  final File packageConfigFile = project.directory
-      .childDirectory('.dart_tool')
-      .childFile('package_config.json');
-
-  final Map<String, Object?> packageConfig =
-      jsonDecode(packageConfigFile.readAsStringSync()) as Map<String, Object?>;
-
-  (packageConfig['packages']! as List<Object?>).add(<String, Object?>{
-    'name': name,
-    'rootUri': packageDir.uri.toString(),
-    'packageUri': 'lib/',
-  });
-
-  packageConfigFile.writeAsStringSync(jsonEncode(packageConfig));
 }
 
 void createFakeDartPlugins(
@@ -1480,21 +1458,18 @@ void createFakeDartPlugins(
   Map<String, String> plugins,
 ) {
   final Directory fakePubCache = fs.systemTempDirectory.childDirectory('cache');
-
-  flutterProject.directory.childDirectory('.dart_tool').childFile('package_config.json')
-    ..deleteSync(recursive: true)
-    ..createSync(recursive: true)
-    ..writeAsStringSync('''
-{
-  "packages": [],
-  "configVersion": 2
-}
-''');
+  writePackageConfigFile(
+    directory: flutterProject.directory,
+    mainLibName: flutterProject.manifest.appName,
+    packages: <String, String>{
+      for (final String name in plugins.keys)
+        name: fakePubCache.childDirectory(name).uri.toString(),
+    },
+  );
 
   for (final MapEntry<String, String> entry in plugins.entries) {
     final String name = fs.path.basename(entry.key);
     final Directory pluginDirectory = fakePubCache.childDirectory(name);
-    addToPackageConfig(flutterProject, name, pluginDirectory);
     pluginDirectory.childFile('pubspec.yaml')
       ..createSync(recursive: true)
       ..writeAsStringSync(entry.value);
@@ -1505,6 +1480,15 @@ void createFakeDartPlugins(
 class FakeFlutterManifest extends Fake implements FlutterManifest {
   @override
   Set<String> dependencies = <String>{};
+
+  @override
+  Set<String> devDependencies = <String>{};
+
+  @override
+  String get appName => 'my_app';
+
+  @override
+  YamlMap toYaml() => YamlMap.wrap(<String, Object?>{'name': appName});
 }
 
 class FakeFlutterProject extends Fake implements FlutterProject {

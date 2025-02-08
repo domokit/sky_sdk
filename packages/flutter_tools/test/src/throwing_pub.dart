@@ -19,9 +19,7 @@ final class ThrowingPub implements Pub {
       ' 1. Refactor the code or test to not rely on "Pub".\n'
       ' 2. Create and use a test-appropriate Fake (grep for "implements Pub") '
       '    for example code across the test/ repo. It is possible that the '
-      '    file you are editing already has an appropriate Fake.\n'
-      ' 3. Use "FakePubWithPrimedDeps" if your code will transitively call '
-      '    "dart pub deps --json" and you need a realistic output.',
+      '    file you are editing already has an appropriate Fake.\n',
     );
   }
 }
