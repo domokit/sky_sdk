@@ -188,6 +188,8 @@ class DropdownMenu<T> extends StatefulWidget {
     required this.dropdownMenuEntries,
     this.inputFormatters,
     this.closeBehavior = DropdownMenuCloseBehavior.all,
+    this.maxLines = 1,
+    this.textInputAction,
   }) : assert(filterCallback == null || enableFilter);
 
   /// Determine if the [DropdownMenu] is enabled.
@@ -501,6 +503,29 @@ class DropdownMenu<T> extends StatefulWidget {
   ///
   /// Defaults to [DropdownMenuCloseBehavior.all].
   final DropdownMenuCloseBehavior closeBehavior;
+
+  /// Specifies the maximum number of lines the selected value can display
+  /// in the [DropdownMenu].
+  ///
+  /// If the provided value is 1, then the text will not wrap, but will scroll
+  /// horizontally instead. Defaults to 1.
+  ///
+  /// If this is null, there is no limit to the number of lines, and the text
+  /// container will start with enough vertical space for one line and
+  /// automatically grow to accommodate additional lines as they are entered, up
+  /// to the height of its constraints.
+  ///
+  /// If this is not null, the provided value must be greater than zero. The text
+  /// field will restrict the input to the given number of lines and take up enough
+  /// horizontal space to accommodate that number of lines.
+  ///
+  /// See also:
+  ///  * [TextField.maxLines], which specifies the maximum number of lines
+  ///    the [TextField] can display.
+  final int? maxLines;
+
+  /// {@macro flutter.widgets.TextField.textInputAction}
+  final TextInputAction? textInputAction;
 
   @override
   State<DropdownMenu<T>> createState() => _DropdownMenuState<T>();
@@ -1005,6 +1030,8 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
           keyboardType: widget.keyboardType,
           textAlign: widget.textAlign,
           textAlignVertical: TextAlignVertical.center,
+          maxLines: widget.maxLines,
+          textInputAction: widget.textInputAction,
           style: effectiveTextStyle,
           controller: _localTextEditingController,
           onEditingComplete: _handleEditingComplete,

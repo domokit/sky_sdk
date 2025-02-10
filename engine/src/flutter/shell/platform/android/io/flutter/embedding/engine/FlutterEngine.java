@@ -41,6 +41,7 @@ import io.flutter.embedding.engine.systemchannels.SystemChannel;
 import io.flutter.embedding.engine.systemchannels.TextInputChannel;
 import io.flutter.plugin.localization.LocalizationPlugin;
 import io.flutter.plugin.platform.PlatformViewsController;
+import io.flutter.plugin.platform.PlatformViewsController2;
 import io.flutter.plugin.text.ProcessTextPlugin;
 import io.flutter.util.ViewUtils;
 import java.util.HashSet;
@@ -109,6 +110,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
 
   // Platform Views.
   @NonNull private final PlatformViewsController platformViewsController;
+  @NonNull private final PlatformViewsController2 platformViewsController2;
 
   // Engine Lifecycle.
   @NonNull private final Set<EngineLifecycleListener> engineLifecycleListeners = new HashSet<>();
@@ -124,6 +126,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
           }
 
           platformViewsController.onPreEngineRestart();
+          platformViewsController2.onPreEngineRestart();
           restorationChannel.clearData();
         }
 
@@ -360,8 +363,11 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
       flutterLoader.ensureInitializationComplete(context, dartVmArgs);
     }
 
+    PlatformViewsController2 platformViewsController2 = new PlatformViewsController2();
+
     flutterJNI.addEngineLifecycleListener(engineLifecycleListener);
     flutterJNI.setPlatformViewsController(platformViewsController);
+    flutterJNI.setPlatformViewsController2(platformViewsController2);
     flutterJNI.setLocalizationPlugin(localizationPlugin);
     flutterJNI.setDeferredComponentManager(injector.deferredComponentManager());
 
@@ -377,7 +383,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
     this.renderer = new FlutterRenderer(flutterJNI);
 
     this.platformViewsController = platformViewsController;
-    this.platformViewsController.onAttachedToJNI();
+    this.platformViewsController2 = platformViewsController2;
 
     this.pluginRegistry =
         new FlutterEngineConnectionRegistry(
@@ -472,6 +478,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
     // The order that these things are destroyed is important.
     pluginRegistry.destroy();
     platformViewsController.onDetachedFromJNI();
+    platformViewsController2.onDetachedFromJNI();
     dartExecutor.onDetachedFromJNI();
     flutterJNI.removeEngineLifecycleListener(engineLifecycleListener);
     flutterJNI.setDeferredComponentManager(null);
@@ -646,6 +653,11 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
   @NonNull
   public PlatformViewsController getPlatformViewsController() {
     return platformViewsController;
+  }
+
+  @NonNull
+  public PlatformViewsController2 getPlatformViewsController2() {
+    return platformViewsController2;
   }
 
   @NonNull

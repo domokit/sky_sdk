@@ -627,7 +627,6 @@ end
         swiftHostApp,
       );
 
-      final File swiftAnalyticsOutputFile = File(path.join(tempDir.path, 'analytics-swift.log'));
       final Directory swiftBuildDirectory = Directory(path.join(tempDir.path, 'build-swift'));
 
       await inDirectory(swiftHostApp, () async {
@@ -652,9 +651,7 @@ end
             'BUILD_DIR=${swiftBuildDirectory.path}',
             'COMPILER_INDEX_STORE_ENABLE=NO',
           ],
-          environment: <String, String>{
-            'FLUTTER_ANALYTICS_LOG_FILE': swiftAnalyticsOutputFile.path,
-          },
+          environment: <String, String>{'FLUTTER_SUPPRESS_ANALYTICS': 'true'},
         );
       });
 
@@ -663,16 +660,6 @@ end
       );
       if (!existingSwiftAppBuilt) {
         return TaskResult.failure('Failed to build existing Swift app .app');
-      }
-
-      final String swiftAnalyticsOutput = swiftAnalyticsOutputFile.readAsStringSync();
-      if (!swiftAnalyticsOutput.contains('cd24: ios') ||
-          !swiftAnalyticsOutput.contains('cd25: true') ||
-          !swiftAnalyticsOutput.contains('viewName: assemble')) {
-        return TaskResult.failure(
-          'Building outer Swift app produced the following analytics: "$swiftAnalyticsOutput" '
-          'but not the expected strings: "cd24: ios", "cd25: true", "viewName: assemble"',
-        );
       }
 
       return TaskResult.success(null);

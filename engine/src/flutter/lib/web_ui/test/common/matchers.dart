@@ -512,3 +512,17 @@ class HtmlPatternMatcher extends Matcher {
     return mismatchDescription;
   }
 }
+
+Matcher listEqual(List<int> source, {int tolerance = 0}) {
+  return predicate((List<int> target) {
+    if (source.length != target.length) {
+      return false;
+    }
+    for (int i = 0; i < source.length; i += 1) {
+      if ((source[i] - target[i]).abs() > tolerance) {
+        return false;
+      }
+    }
+    return true;
+  }, source.toString());
+}

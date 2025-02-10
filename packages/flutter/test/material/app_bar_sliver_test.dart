@@ -2162,7 +2162,7 @@ void main() {
 
   // Regression test for https://github.com/flutter/flutter/issues/158158.
   testWidgets('SliverAppBar should update TabBar before TabBar build', (WidgetTester tester) async {
-    final List<Tab> tabs = <Tab>[];
+    final List<Tab> tabs = <Tab>[const Tab(text: 'initial tab')];
 
     await tester.pumpWidget(
       MaterialApp(
@@ -2179,7 +2179,7 @@ void main() {
                           child: const Text('Add Tab'),
                           onPressed: () {
                             setState(() {
-                              tabs.add(Tab(text: 'Tab ${tabs.length + 1}'));
+                              tabs.add(Tab(text: 'Tab ${tabs.length}'));
                             });
                           },
                         ),
@@ -2195,7 +2195,8 @@ void main() {
       ),
     );
 
-    // Initializes with zero tabs.
+    // Initializes with only initial tabs.
+    expect(find.text('initial tab'), findsOneWidget);
     expect(find.text('Tab 1'), findsNothing);
     expect(find.text('Tab 2'), findsNothing);
 

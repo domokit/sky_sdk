@@ -1,4 +1,4 @@
-Signature: 24800956dcb396cd799a7adc3643c98c
+Signature: 957084781ba8fa4d42a7bae9c4013f70
 
 ====================================================================================================
 LIBRARY: dart
@@ -4225,10 +4225,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ====================================================================================================
 LIBRARY: dart
 ORIGIN: ../../../flutter/third_party/dart/runtime/bin/dart_api_win.c + ../../../flutter/third_party/dart/LICENSE
+ORIGIN: ../../../flutter/third_party/dart/runtime/engine/dart_engine_impl.cc + ../../../flutter/third_party/dart/LICENSE
+ORIGIN: ../../../flutter/third_party/dart/runtime/engine/engine.cc + ../../../flutter/third_party/dart/LICENSE
+ORIGIN: ../../../flutter/third_party/dart/runtime/engine/engine.h + ../../../flutter/third_party/dart/LICENSE
+ORIGIN: ../../../flutter/third_party/dart/runtime/engine/include/dart_engine.h + ../../../flutter/third_party/dart/LICENSE
+ORIGIN: ../../../flutter/third_party/dart/runtime/platform/lockers.h + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/tools/generate_dart_api_win_c.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/_internal/wasm/lib/function_patch.dart + ../../../flutter/third_party/dart/LICENSE
 TYPE: LicenseType.bsd
 FILE: ../../../flutter/third_party/dart/runtime/bin/dart_api_win.c
+FILE: ../../../flutter/third_party/dart/runtime/engine/dart_engine_impl.cc
+FILE: ../../../flutter/third_party/dart/runtime/engine/engine.cc
+FILE: ../../../flutter/third_party/dart/runtime/engine/engine.h
+FILE: ../../../flutter/third_party/dart/runtime/engine/include/dart_engine.h
+FILE: ../../../flutter/third_party/dart/runtime/platform/lockers.h
 FILE: ../../../flutter/third_party/dart/runtime/tools/generate_dart_api_win_c.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/_internal/wasm/lib/function_patch.dart
 ----------------------------------------------------------------------------------------------------
@@ -4417,7 +4427,14 @@ FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/dartaotruntim
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/dartaotruntime_product.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/gen_snapshot.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/gen_snapshot_product.plist
-FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_kernel.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_main_aot.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_main_kernel.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_timer_aot.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_timer_async_aot.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_timer_async_kernel.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_timer_kernel.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_two_programs_aot.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_two_programs_kernel.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_vm_tests.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/profiling/lib/src/pprof/generated/profile.pb.dart
 FILE: ../../../flutter/third_party/dart/runtime/tools/profiling/lib/src/pprof/generated/profile.pbenum.dart
@@ -4839,7 +4856,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
   This Source Code Form is "Incompatible With Secondary Licenses", as
   defined by the Mozilla Public License, v. 2.0.
 
-You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/3fc177bfd7016bcfa2781f43f1aa04d4cbc1351f
+You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/548dcc7a544dd23b8835be61e5d790d8001a2d0c
 /third_party/fallback_root_certificates/
 
 ====================================================================================================

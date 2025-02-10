@@ -210,27 +210,4 @@ EntityPassClipStack::GetReplayEntities() const {
   return subpass_state_.back().rendered_clip_entities;
 }
 
-void EntityPassClipStack::ActivateClipReplay() {
-  next_replay_index_ = 0;
-}
-
-const EntityPassClipStack::ReplayResult*
-EntityPassClipStack::GetNextReplayResult(size_t current_clip_depth) {
-  if (next_replay_index_ >=
-      subpass_state_.back().rendered_clip_entities.size()) {
-    // No clips need to be replayed.
-    return nullptr;
-  }
-  ReplayResult* next_replay =
-      &subpass_state_.back().rendered_clip_entities[next_replay_index_];
-  if (next_replay->clip_depth < current_clip_depth) {
-    // The next replay clip doesn't affect the current entity, so don't replay
-    // it yet.
-    return nullptr;
-  }
-
-  next_replay_index_++;
-  return next_replay;
-}
-
 }  // namespace impeller

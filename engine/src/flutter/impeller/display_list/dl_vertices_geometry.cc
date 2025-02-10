@@ -87,7 +87,7 @@ bool DlVerticesGeometry::HasTextureCoordinates() const {
   return vertices_->texture_coordinate_data() != nullptr;
 }
 
-std::optional<Rect> DlVerticesGeometry::GetTextureCoordinateCoverge() const {
+std::optional<Rect> DlVerticesGeometry::GetTextureCoordinateCoverage() const {
   if (!HasTextureCoordinates()) {
     return std::nullopt;
   }

@@ -19,6 +19,8 @@
 #include "flutter/fml/platform/android/scoped_java_ref.h"
 #endif
 
+struct ASurfaceTransaction;
+
 namespace flutter {
 
 #if FML_OS_ANDROID
@@ -213,6 +215,27 @@ class PlatformViewAndroidJNI {
   /// @note       Must be called from the platform thread.
   ///
   virtual void FlutterViewDestroyOverlaySurfaces() = 0;
+
+  // New Platform View Support.
+  virtual ASurfaceTransaction* createTransaction() = 0;
+
+  virtual void swapTransaction() = 0;
+
+  virtual void applyTransaction() = 0;
+
+  virtual std::unique_ptr<PlatformViewAndroidJNI::OverlayMetadata>
+  createOverlaySurface2() = 0;
+
+  virtual void destroyOverlaySurface2() = 0;
+
+  virtual void onDisplayPlatformView2(int32_t view_id,
+                                      int32_t x,
+                                      int32_t y,
+                                      int32_t width,
+                                      int32_t height,
+                                      int32_t viewWidth,
+                                      int32_t viewHeight,
+                                      MutatorsStack mutators_stack) = 0;
 
   //----------------------------------------------------------------------------
   /// @brief      Computes the locale Android would select.

@@ -166,16 +166,11 @@ FragmentFlow _getFragmentFlow(String text, int i) {
   }
 
   final ui.TextDirection? textDirection = _textDirectionLookup.findForChar(codePoint);
-  switch (textDirection) {
-    case ui.TextDirection.ltr:
-      return FragmentFlow.ltr;
-
-    case ui.TextDirection.rtl:
-      return FragmentFlow.rtl;
-
-    case null:
-      return FragmentFlow.sandwich;
-  }
+  return switch (textDirection) {
+    ui.TextDirection.ltr => FragmentFlow.ltr,
+    ui.TextDirection.rtl => FragmentFlow.rtl,
+    null => FragmentFlow.sandwich,
+  };
 }
 
 bool _isDigit(int codePoint) {

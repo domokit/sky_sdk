@@ -249,7 +249,7 @@
             "ninja": {
                 "config": "ci/ios_debug_unopt_sim",
                 "targets": [
-                    "flutter/testing/scenario_app",
+                    "flutter/testing/ios_scenario_app",
                     "flutter/shell/platform/darwin/ios:ios_test_flutter"
                 ]
             },
@@ -273,7 +273,7 @@
                     "parameters": [
                         "ci/ios_debug_unopt_sim"
                     ],
-                    "script": "flutter/testing/scenario_app/run_ios_tests.sh"
+                    "script": "flutter/testing/ios_scenario_app/run_ios_tests.sh"
                 }
             ]
         },
@@ -377,7 +377,7 @@
             "ninja": {
                 "config": "ci/ios_debug_unopt_sim_arm64",
                 "targets": [
-                    "flutter/testing/scenario_app",
+                    "flutter/testing/ios_scenario_app",
                     "flutter/shell/platform/darwin/ios:ios_test_flutter"
                 ]
             },
@@ -401,7 +401,7 @@
                     "parameters": [
                         "ci/ios_debug_unopt_sim_arm64"
                     ],
-                    "script": "flutter/testing/scenario_app/run_ios_tests.sh"
+                    "script": "flutter/testing/ios_scenario_app/run_ios_tests.sh"
                 }
 
             ]
@@ -446,7 +446,7 @@
             "ninja": {
                 "config": "ci/ios_debug_unopt_sim_arm64_extension_safe",
                 "targets": [
-                    "flutter/testing/scenario_app",
+                    "flutter/testing/ios_scenario_app",
                     "flutter/shell/platform/darwin/ios:ios_test_flutter"
                 ]
             },
@@ -470,7 +470,7 @@
                     "parameters": [
                         "ci/ios_debug_unopt_sim_arm64_extension_safe"
                     ],
-                    "script": "flutter/testing/scenario_app/run_ios_tests.sh"
+                    "script": "flutter/testing/ios_scenario_app/run_ios_tests.sh"
                 }
             ]
         },

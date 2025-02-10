@@ -276,4 +276,10 @@ void DartRunner::Start(
   }
 }
 
+void DartRunner::handle_unknown_method(uint64_t ordinal,
+                                       bool method_has_response) {
+  FML_LOG(ERROR) << "Unknown method called on DartRunner. Ordinal: "
+                 << ordinal;
+}
+
 }  // namespace dart_runner

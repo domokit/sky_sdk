@@ -11,7 +11,6 @@ import '../base/net.dart';
 import '../base/time.dart';
 import '../device.dart';
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../resident_runner.dart';
 
 WebRunnerFactory? get webRunnerFactory => context.get<WebRunnerFactory>();
@@ -31,7 +30,6 @@ abstract class WebRunnerFactory {
     required Logger logger,
     required FileSystem fileSystem,
     required SystemClock systemClock,
-    required Usage usage,
     required Analytics analytics,
     bool machine = false,
   });

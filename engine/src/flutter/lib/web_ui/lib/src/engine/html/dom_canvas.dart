@@ -14,7 +14,6 @@ import '../svg.dart';
 import '../text/canvas_paragraph.dart';
 import '../util.dart';
 import '../vector_math.dart';
-import 'bitmap_canvas.dart';
 import 'painting.dart';
 import 'path/path.dart';
 import 'path/path_to_svg.dart';
@@ -351,8 +350,8 @@ SVGSVGElement pathToSvgElement(SurfacePath path, SurfacePaintData paint) {
           paint.strokeWidth != null)) {
     svgPath.setAttribute('stroke', colorValueToCssString(paint.color));
     svgPath.setAttribute('stroke-width', '${paint.strokeWidth ?? 1.0}');
-    if (paint.strokeCap != null) {
-      svgPath.setAttribute('stroke-linecap', '${stringForStrokeCap(paint.strokeCap)}');
+    if (paint.strokeCap case final value?) {
+      svgPath.setAttribute('stroke-linecap', value.name);
     }
     svgPath.setAttribute('fill', 'none');
   } else {

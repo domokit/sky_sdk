@@ -1663,4 +1663,25 @@ void main() {
     expect(find.text(forceErrorText), findsOne);
     expect(find.text(decorationErrorText), findsNothing);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/135292.
+  testWidgets('Widget returned by errorBuilder is shown', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: TextFormField(
+              autovalidateMode: AutovalidateMode.always,
+              validator: (String? value) => 'validation error',
+              errorBuilder: (BuildContext context, String errorText) => Text('**$errorText**'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+
+    expect(find.text('**validation error**'), findsOneWidget);
+  });
 }

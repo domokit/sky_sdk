@@ -731,7 +731,9 @@ const std::unique_ptr<DriverInfoVK>& ContextVK::GetDriverInfo() const {
 }
 
 bool ContextVK::GetShouldEnableSurfaceControlSwapchain() const {
-  return should_enable_surface_control_;
+  return should_enable_surface_control_ &&
+         CapabilitiesVK::Cast(*device_capabilities_)
+             .SupportsExternalSemaphoreExtensions();
 }
 
 RuntimeStageBackend ContextVK::GetRuntimeStageBackend() const {

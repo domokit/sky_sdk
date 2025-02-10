@@ -354,5 +354,43 @@ TEST(ContextVKTest, BatchSubmitCommandBuffersOnNonArm) {
                         "vkCreateFence") != functions->end());
 }
 
+TEST(ContextVKTest, AHBSwapchainCapabilitiesCanBeMissing) {
+  {
+    std::shared_ptr<ContextVK> context =
+        MockVulkanContextBuilder()
+            .SetSettingsCallback([](ContextVK::Settings& settings) {
+              settings.enable_surface_control = true;
+            })
+            .Build();
+
+    EXPECT_FALSE(context->GetShouldEnableSurfaceControlSwapchain());
+  }
+
+  ContextVK::EmbedderData data;
+  auto other_context = MockVulkanContextBuilder().Build();
+
+  data.instance = other_context->GetInstance();
+  data.device = other_context->GetDevice();
+  data.physical_device = other_context->GetPhysicalDevice();
+  data.queue = VkQueue{};
+  data.queue_family_index = 0;
+  data.instance_extensions = {"VK_KHR_surface", "VK_KHR_android_surface"};
+  data.device_extensions = {"VK_KHR_swapchain",
+                            VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME,
+                            VK_KHR_EXTERNAL_FENCE_EXTENSION_NAME,
+                            VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME,
+                            VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME};
+
+  auto context = MockVulkanContextBuilder()
+                     .SetSettingsCallback([](ContextVK::Settings& settings) {
+                       settings.enable_surface_control = true;
+                     })
+                     .SetEmbedderData(data)
+                     .Build();
+
+  EXPECT_TRUE(context->GetShouldEnableSurfaceControlSwapchain());
+
+}  // namespace impeller
+
 }  // namespace testing
 }  // namespace impeller

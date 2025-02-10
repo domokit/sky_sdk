@@ -705,15 +705,12 @@ Future<void> _decodeImageFromListAsync(Uint8List list, ImageDecoderCallback call
 // to right, then from top to down. The order of the 4 bytes of pixels is
 // decided by `format`.
 Future<Codec> createBmp(Uint8List pixels, int width, int height, int rowBytes, PixelFormat format) {
-  late bool swapRedBlue;
-  switch (format) {
-    case PixelFormat.bgra8888:
-      swapRedBlue = true;
-    case PixelFormat.rgba8888:
-      swapRedBlue = false;
-    case PixelFormat.rgbaFloat32:
-      throw UnimplementedError('RGB conversion from rgbaFloat32 data is not implemented');
-  }
+  final bool swapRedBlue = switch (format) {
+    PixelFormat.bgra8888 => true,
+    PixelFormat.rgba8888 => false,
+    PixelFormat.rgbaFloat32 =>
+      throw UnimplementedError('RGB conversion from rgbaFloat32 data is not implemented'),
+  };
 
   // See https://en.wikipedia.org/wiki/BMP_file_format for format examples.
   // The header is in the 108-byte BITMAPV4HEADER format, or as called by

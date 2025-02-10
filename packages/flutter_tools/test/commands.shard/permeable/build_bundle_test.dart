@@ -99,9 +99,8 @@ void main() {
         arguments: <String>['--no-pub', '--template=app'],
       );
 
-      final BuildBundleCommand command = await runCommandIn(projectPath);
+      await runCommandIn(projectPath);
 
-      expect((await command.usageValues).commandBuildBundleIsModule, false);
       expect(
         fakeAnalytics.sentEvents,
         contains(
@@ -125,7 +124,10 @@ void main() {
 
     final BuildBundleCommand command = await runCommandIn(projectPath);
 
-    expect((await command.usageValues).commandBuildBundleTargetPlatform, 'android-arm');
+    expect(
+      (await command.unifiedAnalyticsUsageValues('bundle')).eventData['buildBundleTargetPlatform'],
+      'android-arm',
+    );
   });
 
   testUsingContext(

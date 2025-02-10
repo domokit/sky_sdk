@@ -1161,10 +1161,14 @@ class ThemeData with Diagnosticable {
   /// A larger value translates to a spacing increase (less dense), and a
   /// smaller value translates to a spacing decrease (more dense).
   ///
-  /// In Material Design 3, the [visualDensity] does not override the value of
-  /// [IconButton.visualDensity] which defaults to [VisualDensity.standard]
-  /// for all platforms. To override the default value of [IconButton.visualDensity],
-  /// use [ThemeData.iconButtonTheme] instead.
+  /// In Material Design 3, the [visualDensity] does not override the default
+  /// visual for the following components which are set to [VisualDensity.standard]
+  /// for all platforms:
+  ///
+  ///  * [IconButton] - To override the default value of [IconButton.visualDensity],
+  ///    use [ThemeData.iconButtonTheme] instead.
+  ///  * [Checkbox] - To override the default value of [Checkbox.visualDensity],
+  ///    use [ThemeData.checkboxTheme] instead.
   /// {@endtemplate}
   final VisualDensity visualDensity;
 

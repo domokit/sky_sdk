@@ -587,18 +587,13 @@ class LineBuilder {
     final double emptySpace = maxWidth - width;
     final ui.TextAlign textAlign = paragraph.paragraphStyle.effectiveTextAlign;
 
-    switch (textAlign) {
-      case ui.TextAlign.center:
-        return emptySpace / 2.0;
-      case ui.TextAlign.right:
-        return emptySpace;
-      case ui.TextAlign.start:
-        return _paragraphDirection == ui.TextDirection.rtl ? emptySpace : 0.0;
-      case ui.TextAlign.end:
-        return _paragraphDirection == ui.TextDirection.rtl ? 0.0 : emptySpace;
-      default:
-        return 0.0;
-    }
+    return switch (textAlign) {
+      ui.TextAlign.center => emptySpace / 2.0,
+      ui.TextAlign.right => emptySpace,
+      ui.TextAlign.start => _paragraphDirection == ui.TextDirection.rtl ? emptySpace : 0.0,
+      ui.TextAlign.end => _paragraphDirection == ui.TextDirection.rtl ? 0.0 : emptySpace,
+      _ => 0.0,
+    };
   }
 
   bool get isOverflowing => width > maxWidth;

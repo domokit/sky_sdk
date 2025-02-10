@@ -520,8 +520,6 @@ Review licenses that have not been accepted (y/N)?
       userMessages: UserMessages(),
     );
 
-    final String errorMessage = UserMessages().androidMissingCmdTools;
-
     final ValidationResult validationResult = await androidValidator.validate();
     expect(validationResult.type, ValidationType.missing);
 
@@ -531,7 +529,13 @@ Review licenses that have not been accepted (y/N)?
 
     final ValidationMessage cmdlineMessage = validationResult.messages.last;
     expect(cmdlineMessage.type, ValidationMessageType.error);
-    expect(cmdlineMessage.message, errorMessage);
+    expect(
+      cmdlineMessage.message,
+      'cmdline-tools component is missing.\n'
+      'Try installing or updating Android Studio.\n'
+      'Alternatively, download the tools from https://developer.android.com/studio#command-line-tools-only and make sure to set the ANDROID_HOME environment variable.\n'
+      'See https://developer.android.com/studio/command-line for more details.',
+    );
   });
 
   testUsingContext('detects minimum required java version', () async {

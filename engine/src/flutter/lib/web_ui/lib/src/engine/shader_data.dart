@@ -118,33 +118,20 @@ enum UniformType {
 }
 
 UniformType? uniformTypeFromJson(int value) {
-  switch (value) {
-    case 0:
-      return UniformType.Boolean;
-    case 1:
-      return UniformType.SByte;
-    case 2:
-      return UniformType.UByte;
-    case 3:
-      return UniformType.Short;
-    case 4:
-      return UniformType.UShort;
-    case 5:
-      return UniformType.Int;
-    case 6:
-      return UniformType.Uint;
-    case 7:
-      return UniformType.Int64;
-    case 8:
-      return UniformType.Uint64;
-    case 9:
-      return UniformType.Half;
-    case 10:
-      return UniformType.Float;
-    case 11:
-      return UniformType.Double;
-    case 12:
-      return UniformType.SampledImage;
-  }
-  return null;
+  return switch (value) {
+    0 => UniformType.Boolean,
+    1 => UniformType.SByte,
+    2 => UniformType.UByte,
+    3 => UniformType.Short,
+    4 => UniformType.UShort,
+    5 => UniformType.Int,
+    6 => UniformType.Uint,
+    7 => UniformType.Int64,
+    8 => UniformType.Uint64,
+    9 => UniformType.Half,
+    10 => UniformType.Float,
+    11 => UniformType.Double,
+    12 => UniformType.SampledImage,
+    _ => null,
+  };
 }

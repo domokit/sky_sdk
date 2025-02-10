@@ -5,11 +5,12 @@
 @TestOn('vm')
 library;
 
+import 'dart:io' as io;
+
 import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:file_testing/file_testing.dart';
 import 'package:platform/platform.dart';
-import 'package:process_runner/process_runner.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -19,47 +20,56 @@ void main() {
   late Directory tmpDir;
   late _FlutterRootUnderTest testRoot;
   late Map<String, String> environment;
-  late ProcessRunner processRunner;
+
+  void printIfNotEmpty(String prefix, String string) {
+    if (string.isNotEmpty) {
+      string.split(io.Platform.lineTerminator).forEach((String s) {
+        print('$prefix:>$s<');
+      });
+    }
+  }
+
+  io.ProcessResult run(String executable, List<String> args) {
+    print('Running "$executable ${args.join(" ")}"');
+    final io.ProcessResult result = io.Process.runSync(
+      executable,
+      args,
+      environment: environment,
+      workingDirectory: testRoot.root.absolute.path,
+      includeParentEnvironment: false,
+    );
+    if (result.exitCode != 0) {
+      print('exitCode: ${result.exitCode}');
+    }
+    printIfNotEmpty('stdout', (result.stdout as String).trim());
+    printIfNotEmpty('stderr', (result.stderr as String).trim());
+    return result;
+  }
 
   setUp(() async {
     tmpDir = localFs.systemTempDirectory.createTempSync('update_engine_version_test.');
     testRoot = _FlutterRootUnderTest.fromPath(tmpDir.childDirectory('flutter').path);
 
     environment = <String, String>{};
-    processRunner = ProcessRunner(
-      defaultWorkingDirectory: testRoot.root,
-      environment: environment,
-      printOutputDefault: true,
-    );
+    environment.addAll(io.Platform.environment);
+    environment.remove('FLUTTER_PREBUILT_ENGINE_VERSION');
 
     // Copy the update_engine_version script and create a rough directory structure.
     flutterRoot.binInternalUpdateEngineVersion.copySyncRecursive(
       testRoot.binInternalUpdateEngineVersion.path,
     );
-
-    // On some systems, copying the file means losing the executable bit.
-    if (const LocalPlatform().isWindows) {
-      await processRunner.runProcess(<String>[
-        'attrib',
-        '+x',
-        testRoot.binInternalUpdateEngineVersion.path,
-      ]);
-    }
   });
 
   tearDown(() {
     tmpDir.deleteSync(recursive: true);
   });
 
-  Future<void> runUpdateEngineVersion() async {
-    if (const LocalPlatform().isWindows) {
-      await processRunner.runProcess(<String>[
-        'powershell',
-        testRoot.binInternalUpdateEngineVersion.path,
-      ]);
-    } else {
-      await processRunner.runProcess(<String>[testRoot.binInternalUpdateEngineVersion.path]);
-    }
+  io.ProcessResult runUpdateEngineVersion() {
+    final (String executable, List<String> args) =
+        const LocalPlatform().isWindows
+            ? ('powershell', <String>[testRoot.binInternalUpdateEngineVersion.path])
+            : (testRoot.binInternalUpdateEngineVersion.path, <String>[]);
+    return run(executable, args);
   }
 
   group('if FLUTTER_PREBUILT_ENGINE_VERSION is set', () {
@@ -68,7 +78,7 @@ void main() {
     });
 
     test('writes it to engine.version with no git interaction', () async {
-      await runUpdateEngineVersion();
+      runUpdateEngineVersion();
 
       expect(testRoot.binInternalEngineVersion, exists);
       expect(
@@ -78,96 +88,90 @@ void main() {
     });
   });
 
-  Future<void> setupRepo({required String branch}) async {
+  void setupRepo({required String branch}) {
     for (final File f in <File>[testRoot.deps, testRoot.engineSrcGn]) {
       f.createSync(recursive: true);
     }
 
-    await processRunner.runProcess(<String>['git', 'init', '--initial-branch', 'master']);
-    await processRunner.runProcess(<String>['git', 'add', '.']);
-    await processRunner.runProcess(<String>['git', 'commit', '-m', 'Initial commit']);
+    run('git', <String>['init', '--initial-branch', 'master']);
+    run('git', <String>['add', '.']);
+    run('git', <String>['commit', '-m', 'Initial commit']);
     if (branch != 'master') {
-      await processRunner.runProcess(<String>['git', 'checkout', '-b', branch]);
+      run('git', <String>['checkout', '-b', branch]);
     }
   }
 
-  Future<void> setupRemote({required String remote}) async {
-    await processRunner.runProcess(<String>['git', 'remote', 'add', remote, testRoot.root.path]);
-    await processRunner.runProcess(<String>['git', 'fetch', remote]);
+  void setupRemote({required String remote}) {
+    run('git', <String>['remote', 'add', remote, testRoot.root.path]);
+    run('git', <String>['fetch', remote]);
   }
 
   test('writes nothing, even if files are set, if we are on "stable"', () async {
-    await setupRepo(branch: 'stable');
-    await setupRemote(remote: 'upstream');
+    setupRepo(branch: 'stable');
+    setupRemote(remote: 'upstream');
 
-    await runUpdateEngineVersion();
+    runUpdateEngineVersion();
 
     expect(testRoot.binInternalEngineVersion, isNot(exists));
   });
 
   test('writes nothing, even if files are set, if we are on "beta"', () async {
-    await setupRepo(branch: 'beta');
-    await setupRemote(remote: 'upstream');
+    setupRepo(branch: 'beta');
+    setupRemote(remote: 'upstream');
 
-    await runUpdateEngineVersion();
+    runUpdateEngineVersion();
 
     expect(testRoot.binInternalEngineVersion, isNot(exists));
   });
 
   group('if DEPS and engine/src/.gn are present, engine.version is derived from', () {
     setUp(() async {
-      await setupRepo(branch: 'master');
+      setupRepo(branch: 'master');
     });
 
     test('merge-base HEAD upstream/master on non-LUCI when upstream is set', () async {
-      await setupRemote(remote: 'upstream');
+      setupRemote(remote: 'upstream');
 
-      final ProcessRunnerResult mergeBaseHeadUpstream = await processRunner.runProcess(<String>[
-        'git',
+      final io.ProcessResult mergeBaseHeadUpstream = run('git', <String>[
         'merge-base',
         'HEAD',
         'upstream/master',
       ]);
-      await runUpdateEngineVersion();
+      runUpdateEngineVersion();
 
       expect(testRoot.binInternalEngineVersion, exists);
       expect(
         testRoot.binInternalEngineVersion.readAsStringSync(),
-        equalsIgnoringWhitespace(mergeBaseHeadUpstream.stdout),
+        equalsIgnoringWhitespace(mergeBaseHeadUpstream.stdout as String),
       );
     });
 
     test('merge-base HEAD origin/master on non-LUCI when upstream is not set', () async {
-      await setupRemote(remote: 'origin');
+      setupRemote(remote: 'origin');
 
-      final ProcessRunnerResult mergeBaseHeadOrigin = await processRunner.runProcess(<String>[
-        'git',
+      final io.ProcessResult mergeBaseHeadOrigin = run('git', <String>[
         'merge-base',
         'HEAD',
         'origin/master',
       ]);
-      await runUpdateEngineVersion();
+      runUpdateEngineVersion();
 
       expect(testRoot.binInternalEngineVersion, exists);
       expect(
         testRoot.binInternalEngineVersion.readAsStringSync(),
-        equalsIgnoringWhitespace(mergeBaseHeadOrigin.stdout),
+        equalsIgnoringWhitespace(mergeBaseHeadOrigin.stdout as String),
       );
     });
 
     test('rev-parse HEAD when running on LUCI', () async {
       environment['LUCI_CONTEXT'] = '_NON_NULL_AND_NON_EMPTY_STRING';
-      await runUpdateEngineVersion();
+      runUpdateEngineVersion();
 
-      final ProcessRunnerResult revParseHead = await processRunner.runProcess(<String>[
-        'git',
-        'rev-parse',
-        'HEAD',
-      ]);
+      final io.ProcessResult revParseHead = run('git', <String>['rev-parse', 'HEAD']);
       expect(testRoot.binInternalEngineVersion, exists);
       expect(
         testRoot.binInternalEngineVersion.readAsStringSync(),
-        equalsIgnoringWhitespace(revParseHead.stdout),
+        equalsIgnoringWhitespace(revParseHead.stdout as String),
       );
     });
   });
@@ -182,7 +186,7 @@ void main() {
     test('[DEPS] engine.version is blank', () async {
       testRoot.deps.deleteSync();
 
-      await runUpdateEngineVersion();
+      runUpdateEngineVersion();
 
       expect(testRoot.binInternalEngineVersion, exists);
       expect(testRoot.binInternalEngineVersion.readAsStringSync(), equalsIgnoringWhitespace(''));
@@ -191,7 +195,7 @@ void main() {
     test('[engine/src/.gn] engine.version is blank', () async {
       testRoot.engineSrcGn.deleteSync();
 
-      await runUpdateEngineVersion();
+      runUpdateEngineVersion();
 
       expect(testRoot.binInternalEngineVersion, exists);
       expect(testRoot.binInternalEngineVersion.readAsStringSync(), equalsIgnoringWhitespace(''));

@@ -61,6 +61,8 @@ class WindowsConfigBuilder {
   // Adds an argument to the Dart entrypoint arguments List<String>.
   void AddDartEntrypointArgument(std::string_view arg);
 
+  void SetGpuPreference(FlutterDesktopGpuPreference gpu_preference);
+
   // Returns a configured and initialized engine.
   EnginePtr InitializeEngine() const;
 
@@ -84,6 +86,9 @@ class WindowsConfigBuilder {
   WindowsTestContext& context_;
   std::string dart_entrypoint_;
   std::vector<std::string> dart_entrypoint_arguments_;
+
+  FlutterDesktopGpuPreference gpu_preference_ =
+      FlutterDesktopGpuPreference::NoPreference;
 
   FML_DISALLOW_COPY_AND_ASSIGN(WindowsConfigBuilder);
 };

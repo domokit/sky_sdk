@@ -50,6 +50,8 @@ class SurfaceVertices implements ui.Vertices {
     return list;
   }
 
+  bool get hasNoPoints => positions.isEmpty;
+
   bool _disposed = false;
 
   @override
@@ -130,6 +132,10 @@ class _WebGlRenderer implements GlRenderer {
   ) {
     // Compute bounds of vertices.
     final Float32List positions = vertices.positions;
+    if (positions.isEmpty) {
+      // Drawing empty vertices is a no-op.
+      return;
+    }
     final ui.Rect bounds = _computeVerticesBounds(positions, transform);
     final double minValueX = bounds.left;
     final double minValueY = bounds.top;

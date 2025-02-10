@@ -31,6 +31,7 @@ struct TextRenderOptions {
   DlColor color = DlColor::kYellow();
   DlPoint position = DlPoint(100, 200);
   std::shared_ptr<DlMaskFilter> filter;
+  bool is_subpixel = false;
 };
 
 bool RenderTextInCanvasSkia(const std::shared_ptr<Context>& context,
@@ -57,6 +58,9 @@ bool RenderTextInCanvasSkia(const std::shared_ptr<Context>& context,
   }
   sk_sp<SkFontMgr> font_mgr = txt::GetDefaultFontManager();
   SkFont sk_font(font_mgr->makeFromData(mapping), options.font_size);
+  if (options.is_subpixel) {
+    sk_font.setSubpixel(true);
+  }
   auto blob = SkTextBlob::MakeFromString(text.c_str(), sk_font);
   if (!blob) {
     return false;
@@ -152,17 +156,30 @@ TEST_P(AiksTest, CanRenderTextFrameWithHalfScaling) {
 }
 
 TEST_P(AiksTest, CanRenderTextFrameWithFractionScaling) {
-  DisplayListBuilder builder;
+  Scalar fine_scale = 0.f;
+  bool is_subpixel = false;
+  auto callback = [&]() -> sk_sp<DisplayList> {
+    if (AiksTest::ImGuiBegin("Controls", nullptr,
+                             ImGuiWindowFlags_AlwaysAutoResize)) {
+      ImGui::SliderFloat("Fine Scale", &fine_scale, -1, 1);
+      ImGui::Checkbox("subpixel", &is_subpixel);
+      ImGui::End();
+    }
 
-  DlPaint paint;
-  paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
-  builder.DrawPaint(paint);
-  builder.Scale(2.625, 2.625);
+    DisplayListBuilder builder;
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
+    builder.DrawPaint(paint);
+    Scalar scale = 2.625 + fine_scale;
+    builder.Scale(scale, scale);
+    RenderTextInCanvasSkia(GetContext(), builder,
+                           "the quick brown fox jumped over the lazy dog!.?",
+                           "Roboto-Regular.ttf",
+                           TextRenderOptions{.is_subpixel = is_subpixel});
+    return builder.Build();
+  };
 
-  ASSERT_TRUE(RenderTextInCanvasSkia(
-      GetContext(), builder, "the quick brown fox jumped over the lazy dog!.?",
-      "Roboto-Regular.ttf"));
-  ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
+  ASSERT_TRUE(OpenPlaygroundHere(callback));
 }
 
 TEST_P(AiksTest, TextFrameSubpixelAlignment) {

@@ -8,6 +8,7 @@
 
 /packages/flutter_tools/templates/module/ios/ @jmagman
 /packages/flutter_tools/templates/**/Podfile* @jmagman
+/packages/flutter_tools/lib/src/ios/ @jmagman
 
 # Working on flutter_driver improvements.
 # See https://github.com/flutter/flutter/issues/148028.

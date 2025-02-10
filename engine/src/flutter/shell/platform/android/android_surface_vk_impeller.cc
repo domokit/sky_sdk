@@ -81,7 +81,8 @@ bool AndroidSurfaceVKImpeller::ResourceContextClearCurrent() {
 }
 
 bool AndroidSurfaceVKImpeller::SetNativeWindow(
-    fml::RefPtr<AndroidNativeWindow> window) {
+    fml::RefPtr<AndroidNativeWindow> window,
+    const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade) {
   if (window && (native_window_ == window)) {
     return OnScreenSurfaceResize(window->GetSize());
   }

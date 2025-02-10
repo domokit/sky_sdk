@@ -123,7 +123,7 @@ Future<void> testMain() async {
     canvas.drawImage(atlas, ui.Offset.zero, ui.Paint());
     await drawPictureUsingCurrentRenderer(recorder.endRecording());
     await matchGoldenFile('ui_atlas.png', region: region);
-  }, skip: isHtml); // HTML renderer doesn't support drawAtlas
+  });
 
   test('drawAtlas', () async {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
@@ -160,7 +160,7 @@ Future<void> testMain() async {
 
     await drawPictureUsingCurrentRenderer(recorder.endRecording());
     await matchGoldenFile('ui_draw_atlas.png', region: region);
-  }, skip: isHtml); // HTML renderer doesn't support drawAtlas
+  });
 
   test('drawAtlasRaw', () async {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
@@ -209,5 +209,5 @@ Future<void> testMain() async {
 
     await drawPictureUsingCurrentRenderer(recorder.endRecording());
     await matchGoldenFile('ui_draw_atlas_raw.png', region: region);
-  }, skip: isHtml); // HTML renderer doesn't support drawAtlas
+  });
 }

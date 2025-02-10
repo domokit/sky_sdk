@@ -570,6 +570,7 @@ class FlutterDevice {
         bundleFirstUpload: bundleFirstUpload,
         generator: generator!,
         fullRestart: fullRestart,
+        resetCompiler: fullRestart,
         dillOutputPath: dillOutputPath,
         trackWidgetCreation: buildInfo.trackWidgetCreation,
         pathToReload: pathToReload,
@@ -1112,8 +1113,8 @@ abstract class ResidentRunner extends ResidentHandlers {
 
   String get dillOutputPath =>
       _dillOutputPath ?? globals.fs.path.join(artifactDirectory.path, 'app.dill');
-  String getReloadPath({bool fullRestart = false, required bool swap}) {
-    if (!fullRestart) {
+  String getReloadPath({bool resetCompiler = false, required bool swap}) {
+    if (!resetCompiler) {
       return 'main.dart.incremental.dill';
     }
     return 'main.dart${swap ? '.swap' : ''}.dill';

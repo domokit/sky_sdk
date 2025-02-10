@@ -37,7 +37,7 @@ class DlVerticesGeometry final : public VerticesGeometry {
 
   bool HasTextureCoordinates() const override;
 
-  std::optional<Rect> GetTextureCoordinateCoverge() const override;
+  std::optional<Rect> GetTextureCoordinateCoverage() const override;
 
  private:
   PrimitiveType GetPrimitiveType() const;

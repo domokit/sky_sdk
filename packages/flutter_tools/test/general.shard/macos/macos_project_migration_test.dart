@@ -12,7 +12,6 @@ import 'package:flutter_tools/src/macos/migrations/nsapplicationmain_deprecation
 import 'package:flutter_tools/src/macos/migrations/remove_macos_framework_link_and_embedding_migration.dart';
 import 'package:flutter_tools/src/macos/migrations/secure_restorable_state_migration.dart';
 import 'package:flutter_tools/src/project.dart';
-import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:test/fake.dart';
 import 'package:unified_analytics/unified_analytics.dart';
 
@@ -22,7 +21,6 @@ import '../../src/fakes.dart';
 
 void main() {
   group('remove link and embed migration', () {
-    late TestUsage testUsage;
     late FakeAnalytics fakeAnalytics;
     late MemoryFileSystem memoryFileSystem;
     late BufferLogger testLogger;
@@ -30,7 +28,6 @@ void main() {
     late File xcodeProjectInfoFile;
 
     setUp(() {
-      testUsage = TestUsage();
       memoryFileSystem = MemoryFileSystem.test();
       fakeAnalytics = getInitializedFakeAnalyticsInstance(
         fs: memoryFileSystem,
@@ -44,14 +41,8 @@ void main() {
 
     testWithoutContext('skipped if files are missing', () async {
       final RemoveMacOSFrameworkLinkAndEmbeddingMigration macosProjectMigration =
-          RemoveMacOSFrameworkLinkAndEmbeddingMigration(
-            macOSProject,
-            testLogger,
-            testUsage,
-            fakeAnalytics,
-          );
+          RemoveMacOSFrameworkLinkAndEmbeddingMigration(macOSProject, testLogger, fakeAnalytics);
       await macosProjectMigration.migrate();
-      expect(testUsage.events, isEmpty);
       expect(fakeAnalytics.sentEvents, isEmpty);
 
       expect(xcodeProjectInfoFile.existsSync(), isFalse);
@@ -69,14 +60,8 @@ void main() {
       final DateTime projectLastModified = xcodeProjectInfoFile.lastModifiedSync();
 
       final RemoveMacOSFrameworkLinkAndEmbeddingMigration macosProjectMigration =
-          RemoveMacOSFrameworkLinkAndEmbeddingMigration(
-            macOSProject,
-            testLogger,
-            testUsage,
-            fakeAnalytics,
-          );
+          RemoveMacOSFrameworkLinkAndEmbeddingMigration(macOSProject, testLogger, fakeAnalytics);
       await macosProjectMigration.migrate();
-      expect(testUsage.events, isEmpty);
       expect(fakeAnalytics.sentEvents, isEmpty);
 
       expect(xcodeProjectInfoFile.lastModifiedSync(), projectLastModified);
@@ -92,12 +77,7 @@ shellScript = "echo \"$PRODUCT_NAME.app\" > \"$PROJECT_DIR\"/Flutter/ephemeral/.
       xcodeProjectInfoFile.writeAsStringSync(contents);
 
       final RemoveMacOSFrameworkLinkAndEmbeddingMigration macosProjectMigration =
-          RemoveMacOSFrameworkLinkAndEmbeddingMigration(
-            macOSProject,
-            testLogger,
-            testUsage,
-            fakeAnalytics,
-          );
+          RemoveMacOSFrameworkLinkAndEmbeddingMigration(macOSProject, testLogger, fakeAnalytics);
       await macosProjectMigration.migrate();
       expect(xcodeProjectInfoFile.readAsStringSync(), contents);
       expect(testLogger.statusText, isEmpty);
@@ -116,14 +96,8 @@ keep this 2
 ''');
 
       final RemoveMacOSFrameworkLinkAndEmbeddingMigration macosProjectMigration =
-          RemoveMacOSFrameworkLinkAndEmbeddingMigration(
-            macOSProject,
-            testLogger,
-            testUsage,
-            fakeAnalytics,
-          );
+          RemoveMacOSFrameworkLinkAndEmbeddingMigration(macOSProject, testLogger, fakeAnalytics);
       await macosProjectMigration.migrate();
-      expect(testUsage.events, isEmpty);
       expect(fakeAnalytics.sentEvents, isEmpty);
 
       expect(xcodeProjectInfoFile.readAsStringSync(), r'''
@@ -140,20 +114,11 @@ keep this 2
 ''');
 
       final RemoveMacOSFrameworkLinkAndEmbeddingMigration macosProjectMigration =
-          RemoveMacOSFrameworkLinkAndEmbeddingMigration(
-            macOSProject,
-            testLogger,
-            testUsage,
-            fakeAnalytics,
-          );
+          RemoveMacOSFrameworkLinkAndEmbeddingMigration(macOSProject, testLogger, fakeAnalytics);
 
       expect(
         macosProjectMigration.migrate,
         throwsToolExit(message: 'Your Xcode project requires migration'),
-      );
-      expect(
-        testUsage.events,
-        contains(const TestUsageEvent('macos-migration', 'remove-frameworks', label: 'failure')),
       );
       expect(
         fakeAnalytics.sentEvents,
@@ -173,19 +138,10 @@ keep this 2
 ''');
 
       final RemoveMacOSFrameworkLinkAndEmbeddingMigration macosProjectMigration =
-          RemoveMacOSFrameworkLinkAndEmbeddingMigration(
-            macOSProject,
-            testLogger,
-            testUsage,
-            fakeAnalytics,
-          );
+          RemoveMacOSFrameworkLinkAndEmbeddingMigration(macOSProject, testLogger, fakeAnalytics);
       expect(
         macosProjectMigration.migrate,
         throwsToolExit(message: 'Your Xcode project requires migration'),
-      );
-      expect(
-        testUsage.events,
-        contains(const TestUsageEvent('macos-migration', 'remove-frameworks', label: 'failure')),
       );
       expect(
         fakeAnalytics.sentEvents,

@@ -30,6 +30,17 @@ void testMain() {
       vertices.dispose();
       expect(vertices.debugDisposed, isTrue);
     });
+
+    test('can be empty', () {
+      final ui.Vertices vertices = ui.Vertices(ui.VertexMode.triangles, const <ui.Offset>[]);
+      expect(vertices.debugDisposed, isFalse);
+
+      final ui.PictureRecorder recorder = ui.PictureRecorder();
+      final ui.Canvas canvas = ui.Canvas(recorder, const ui.Rect.fromLTRB(0, 0, 100, 100));
+      canvas.drawVertices(vertices, ui.BlendMode.srcOver, ui.Paint());
+      vertices.dispose();
+      expect(vertices.debugDisposed, isTrue);
+    });
   });
 
   test('Vertices are not anti-aliased by default', () async {
@@ -50,7 +61,7 @@ void testMain() {
 
     await drawPictureUsingCurrentRenderer(recorder.endRecording());
     await matchGoldenFile('ui_vertices_antialiased.png', region: region);
-  }, skip: isHtml); // https://github.com/flutter/flutter/issues/127454
+  });
 }
 
 ui.Vertices _testVertices() {

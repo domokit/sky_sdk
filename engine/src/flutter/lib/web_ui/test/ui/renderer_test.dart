@@ -9,7 +9,6 @@ import 'package:ui/ui.dart' as ui;
 import 'package:web_engine_tester/golden_tester.dart';
 
 import '../common/test_initialization.dart';
-import 'utils.dart';
 
 const ui.Color black = ui.Color(0xFF000000);
 const ui.Color red = ui.Color(0xFFFF0000);
@@ -57,7 +56,7 @@ Future<void> testMain() async {
     host1.remove();
     host2.remove();
     host3.remove();
-  }, skip: isHtml); // HTML renderer doesn't support multi-view.
+  });
 }
 
 DomElement createHostElement(ui.Rect rect) {

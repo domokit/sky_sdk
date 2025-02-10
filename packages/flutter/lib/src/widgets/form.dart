@@ -421,6 +421,14 @@ class _FormScope extends InheritedWidget {
 /// Used by [FormField.validator].
 typedef FormFieldValidator<T> = String? Function(T? value);
 
+/// Signature for a callback that builds an error widget.
+///
+/// See also:
+///
+///  * [FormField.errorBuilder], which is of this type, and passes the result error
+/// given by [TextFormField.validator].
+typedef FormFieldErrorBuilder = Widget Function(BuildContext context, String errorText);
+
 /// Signature for being notified when a form field changes value.
 ///
 /// Used by [FormField.onSaved].
@@ -460,11 +468,18 @@ class FormField<T> extends StatefulWidget {
     this.onSaved,
     this.forceErrorText,
     this.validator,
+    this.errorBuilder,
     this.initialValue,
     this.enabled = true,
     AutovalidateMode? autovalidateMode,
     this.restorationId,
   }) : autovalidateMode = autovalidateMode ?? AutovalidateMode.disabled;
+
+  /// Function that returns the widget representing this form field.
+  ///
+  /// It is passed the form field state as input, containing the current value
+  /// and validation state of this field.
+  final FormFieldBuilder<T> builder;
 
   /// An optional method to call with the final value when the form is saved via
   /// [FormState.save].
@@ -503,10 +518,14 @@ class FormField<T> extends StatefulWidget {
   /// parameter to a space.
   final FormFieldValidator<T>? validator;
 
-  /// Function that returns the widget representing this form field. It is
-  /// passed the form field state as input, containing the current value and
-  /// validation state of this field.
-  final FormFieldBuilder<T> builder;
+  /// Function that returns the widget representing the error to display.
+  ///
+  /// It is passed the form field validator error string as input.
+  /// The resulting widget is passed to [InputDecoration.error].
+  ///
+  /// If null, the validator error string is passed to
+  /// [InputDecoration.errorText].
+  final FormFieldErrorBuilder? errorBuilder;
 
   /// An optional value to initialize the form field to, or null otherwise.
   ///

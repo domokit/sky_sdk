@@ -68,7 +68,7 @@ static Point NegPos(Scalar v) {
   return {std::min(v, 0.0f), std::max(v, 0.0f)};
 }
 
-static void SetupFragInfo(
+static bool SetupFragInfo(
     RRectBlurPipeline::FragmentShader::FragInfo& frag_info,
     Scalar blurSigma,
     Point center,
@@ -96,6 +96,15 @@ static void SetupFragInfo(
   frag_info.scale =
       0.5 * computeErf7(frag_info.sInv * 0.5 *
                         (std::max(rSize.x, rSize.y) - 0.5 * radius));
+
+  return frag_info.center.IsFinite() &&           //
+         frag_info.adjust.IsFinite() &&           //
+         std::isfinite(frag_info.minEdge) &&      //
+         std::isfinite(frag_info.r1) &&           //
+         std::isfinite(frag_info.exponent) &&     //
+         std::isfinite(frag_info.sInv) &&         //
+         std::isfinite(frag_info.exponentInv) &&  //
+         std::isfinite(frag_info.scale);
 }
 
 std::optional<Rect> SolidRRectBlurContents::GetCoverage(
@@ -159,8 +168,11 @@ bool SolidRRectBlurContents::Render(const ContentContext& renderer,
                                       positive_rect.GetWidth() * 0.5f),
                            std::clamp(corner_radii_.height, kEhCloseEnough,
                                       positive_rect.GetHeight() * 0.5f));
-  SetupFragInfo(frag_info, blur_sigma, positive_rect.GetCenter(),
-                Point(positive_rect.GetSize()), radius);
+  if (!SetupFragInfo(frag_info, blur_sigma, positive_rect.GetCenter(),
+                     Point(positive_rect.GetSize()), radius)) {
+    return true;
+  }
+
   auto& host_buffer = renderer.GetTransientsBuffer();
   pass.SetCommandLabel("RRect Shadow");
   pass.SetPipeline(renderer.GetRRectBlurPipeline(opts));

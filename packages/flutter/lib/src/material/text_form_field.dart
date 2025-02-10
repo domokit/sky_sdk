@@ -150,6 +150,7 @@ class TextFormField extends FormField<String> {
     ValueChanged<String>? onFieldSubmitted,
     super.onSaved,
     super.validator,
+    super.errorBuilder,
     List<TextInputFormatter>? inputFormatters,
     bool? enabled,
     bool? ignorePointers,
@@ -209,8 +210,17 @@ class TextFormField extends FormField<String> {
          autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
          builder: (FormFieldState<String> field) {
            final _TextFormFieldState state = field as _TextFormFieldState;
-           final InputDecoration effectiveDecoration = (decoration ?? const InputDecoration())
+           InputDecoration effectiveDecoration = (decoration ?? const InputDecoration())
                .applyDefaults(Theme.of(field.context).inputDecorationTheme);
+
+           final String? errorText = field.errorText;
+           if (errorText != null) {
+             effectiveDecoration =
+                 errorBuilder != null
+                     ? effectiveDecoration.copyWith(error: errorBuilder(state.context, errorText))
+                     : effectiveDecoration.copyWith(errorText: errorText);
+           }
+
            void onChangedHandler(String value) {
              field.didChange(value);
              onChanged?.call(value);
@@ -223,7 +233,7 @@ class TextFormField extends FormField<String> {
                restorationId: restorationId,
                controller: state._effectiveController,
                focusNode: focusNode,
-               decoration: effectiveDecoration.copyWith(errorText: field.errorText),
+               decoration: effectiveDecoration,
                keyboardType: keyboardType,
                textInputAction: textInputAction,
                style: style,

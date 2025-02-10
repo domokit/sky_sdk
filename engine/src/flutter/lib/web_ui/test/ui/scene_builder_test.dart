@@ -13,7 +13,6 @@ import 'package:web_engine_tester/golden_tester.dart';
 
 import '../common/rendering.dart';
 import '../common/test_initialization.dart';
-import 'utils.dart';
 
 void main() {
   internalBootstrapBrowserTest(() => testMain);
@@ -210,7 +209,7 @@ Future<void> testMain() async {
 
       await renderScene(sceneBuilder.build());
       await matchGoldenFile('scene_builder_shader_mask.png', region: region);
-    }, skip: isFirefox && isHtml); // https://github.com/flutter/flutter/issues/86623
+    });
 
     test('backdrop filter layer', () async {
       final ui.SceneBuilder sceneBuilder = ui.SceneBuilder();
@@ -527,7 +526,7 @@ Future<void> testMain() async {
       await renderScene(sceneBuilder.build());
 
       await matchGoldenFile('scene_builder_shader_mask_clipped_out.png', region: region);
-    }, skip: isFirefox && isHtml); // https://github.com/flutter/flutter/issues/86623
+    });
 
     test('opacity layer with transformed children', () async {
       final ui.SceneBuilder sceneBuilder = ui.SceneBuilder();
@@ -597,80 +596,55 @@ Future<void> testMain() async {
       );
     });
 
-    test(
-      'backdrop layer with default blur tile mode',
-      () async {
-        final scene = backdropBlurWithTileMode(null, 10, 50);
-        await renderScene(scene);
+    test('backdrop layer with default blur tile mode', () async {
+      final scene = backdropBlurWithTileMode(null, 10, 50);
+      await renderScene(scene);
 
-        await matchGoldenFile(
-          'scene_builder_backdrop_filter_blur_default_tile_mode.png',
-          region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
-        );
-      },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml,
-    );
+      await matchGoldenFile(
+        'scene_builder_backdrop_filter_blur_default_tile_mode.png',
+        region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
+      );
+    });
 
-    test(
-      'backdrop layer with clamp blur tile mode',
-      () async {
-        final scene = backdropBlurWithTileMode(ui.TileMode.clamp, 10, 50);
-        await renderScene(scene);
+    test('backdrop layer with clamp blur tile mode', () async {
+      final scene = backdropBlurWithTileMode(ui.TileMode.clamp, 10, 50);
+      await renderScene(scene);
 
-        await matchGoldenFile(
-          'scene_builder_backdrop_filter_blur_clamp_tile_mode.png',
-          region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
-        );
-      },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml,
-    );
+      await matchGoldenFile(
+        'scene_builder_backdrop_filter_blur_clamp_tile_mode.png',
+        region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
+      );
+    });
 
-    test(
-      'backdrop layer with mirror blur tile mode',
-      () async {
-        final scene = backdropBlurWithTileMode(ui.TileMode.mirror, 10, 50);
-        await renderScene(scene);
+    test('backdrop layer with mirror blur tile mode', () async {
+      final scene = backdropBlurWithTileMode(ui.TileMode.mirror, 10, 50);
+      await renderScene(scene);
 
-        await matchGoldenFile(
-          'scene_builder_backdrop_filter_blur_mirror_tile_mode.png',
-          region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
-        );
-      },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml,
-    );
+      await matchGoldenFile(
+        'scene_builder_backdrop_filter_blur_mirror_tile_mode.png',
+        region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
+      );
+    });
 
-    test(
-      'backdrop layer with repeated blur tile mode',
-      () async {
-        final scene = backdropBlurWithTileMode(ui.TileMode.repeated, 10, 50);
-        await renderScene(scene);
+    test('backdrop layer with repeated blur tile mode', () async {
+      final scene = backdropBlurWithTileMode(ui.TileMode.repeated, 10, 50);
+      await renderScene(scene);
 
-        await matchGoldenFile(
-          'scene_builder_backdrop_filter_blur_repeated_tile_mode.png',
-          region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
-        );
-      },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml,
-    );
+      await matchGoldenFile(
+        'scene_builder_backdrop_filter_blur_repeated_tile_mode.png',
+        region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
+      );
+    });
 
-    test(
-      'backdrop layer with decal blur tile mode',
-      () async {
-        final scene = backdropBlurWithTileMode(ui.TileMode.decal, 10, 50);
-        await renderScene(scene);
+    test('backdrop layer with decal blur tile mode', () async {
+      final scene = backdropBlurWithTileMode(ui.TileMode.decal, 10, 50);
+      await renderScene(scene);
 
-        await matchGoldenFile(
-          'scene_builder_backdrop_filter_blur_decal_tile_mode.png',
-          region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
-        );
-      },
-      // HTML renderer doesn't have tile modes
-      skip: isHtml,
-    );
+      await matchGoldenFile(
+        'scene_builder_backdrop_filter_blur_decal_tile_mode.png',
+        region: const ui.Rect.fromLTWH(0, 0, 10 * 50, 10 * 50),
+      );
+    });
   });
 }
 

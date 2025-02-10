@@ -853,6 +853,43 @@ void main() {
         );
         expect(fakeSkiaClient.initCalls, 0);
       });
+
+      test('reports a failure as a TestFailure', () async {
+        final List<String> log = <String>[];
+        final MemoryFileSystem fs = MemoryFileSystem();
+        final FakePlatform platform = FakePlatform(
+          environment: <String, String>{'FLUTTER_ROOT': _kFlutterRoot},
+          operatingSystem: 'macos',
+        );
+        fs.directory(_kFlutterRoot).createSync(recursive: true);
+        final Directory basedir = fs.directory('flutter/test/library/')
+          ..createSync(recursive: true);
+        final FlutterGoldenFileComparator comparator = FlutterPostSubmitFileComparator(
+          basedir.uri,
+          ThrowsOnImgTestAddSkiaClient(
+            message: 'Skia Gold received an unapproved image in post-submit',
+          ),
+          fs: fs,
+          platform: platform,
+          log: log.add,
+        );
+        await expectLater(
+          () async {
+            return comparator.compare(
+              Uint8List.fromList(_kTestPngBytes),
+              Uri.parse('flutter.golden_test.1.png'),
+            );
+          },
+          throwsA(
+            isA<TestFailure>().having(
+              (TestFailure error) => error.toString(),
+              'description',
+              contains('Skia Gold received an unapproved image in post-submit'),
+            ),
+          ),
+        );
+        expect(log, isEmpty);
+      });
     });
 
     group('Pre-Submit', () {
@@ -1208,6 +1245,21 @@ class FakeSkiaGoldClient extends Fake implements SkiaGoldClient {
   Map<String, String> cleanTestNameValues = <String, String>{};
   @override
   String cleanTestName(String fileName) => cleanTestNameValues[fileName] ?? '';
+}
+
+class ThrowsOnImgTestAddSkiaClient extends Fake implements SkiaGoldClient {
+  ThrowsOnImgTestAddSkiaClient({required this.message});
+  final String message;
+
+  @override
+  Future<void> imgtestInit() async {
+    // Assume this function works.
+  }
+
+  @override
+  Future<bool> imgtestAdd(String testName, File goldenFile) {
+    throw SkiaException(message);
+  }
 }
 
 class FakeLocalFileComparator extends Fake implements LocalFileComparator {

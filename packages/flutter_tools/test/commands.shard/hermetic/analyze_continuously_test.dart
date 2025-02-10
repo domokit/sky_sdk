@@ -82,7 +82,6 @@ void main() {
         processManager: processManager,
         platform: const LocalPlatform(),
         botDetector: globals.botDetector,
-        usage: globals.flutterUsage,
         stdio: mockStdio,
       );
       await pub.get(
@@ -122,7 +121,6 @@ void main() {
       logger: logger,
       processManager: processManager,
       platform: const LocalPlatform(),
-      usage: globals.flutterUsage,
       botDetector: globals.botDetector,
       stdio: mockStdio,
     );

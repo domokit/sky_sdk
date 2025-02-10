@@ -280,6 +280,28 @@ TaskFunction createHelloWorldCompileTest() {
   ).run;
 }
 
+TaskFunction createImitationGameSwiftUITest() {
+  return CompileTest(
+    '${flutterDirectory.path}/dev/benchmarks/imitation_game_swiftui',
+    reportPackageContentSizes: true,
+  ).runSwiftUIApp;
+}
+
+TaskFunction createImitationGameFlutterTest() {
+  flutter(
+    'create',
+    options: <String>[
+      '--platforms=ios',
+      '${flutterDirectory.path}/dev/benchmarks/imitation_game_flutter',
+      '--no-overwrite',
+    ],
+  );
+  return CompileTest(
+    '${flutterDirectory.path}/dev/benchmarks/imitation_game_flutter',
+    reportPackageContentSizes: true,
+  ).run;
+}
+
 TaskFunction createWebCompileTest() {
   return const WebCompileTest().run;
 }
@@ -1684,6 +1706,50 @@ class CompileTest {
       }
 
       return TaskResult.success(metrics, benchmarkScoreKeys: metrics.keys.toList());
+    });
+  }
+
+  Future<TaskResult> runSwiftUIApp() async {
+    return inDirectory<TaskResult>(testDirectory, () async {
+      await Process.run('xcodebuild', <String>['clean', '-allTargets']);
+
+      int releaseSizeInBytes = 0;
+      final Stopwatch watch = Stopwatch();
+
+      watch.start();
+      await Process.run(workingDirectory: testDirectory, 'xcodebuild', <String>[
+        '-scheme',
+        'hello_world_swiftui',
+        '-target',
+        'hello_world_swiftui',
+        '-sdk',
+        'iphoneos',
+        '-configuration',
+        'Release',
+        '-archivePath',
+        '$testDirectory/hello_world_swiftui',
+        'archive',
+      ]).then((ProcessResult results) {
+        watch.stop();
+        print(results.stdout);
+        if (results.exitCode != 0) {
+          print(results.stderr);
+        }
+      });
+
+      final String appPath =
+          '$testDirectory/hello_world_swiftui.xcarchive/Products/Applications/hello_world_swiftui.app';
+
+      // Zip up the .app file to get an approximation of the .ipa size.
+      await exec('tar', <String>['-zcf', 'app.tar.gz', appPath]);
+      releaseSizeInBytes = await file('$testDirectory/app.tar.gz').length();
+
+      final Map<String, dynamic> metrics = <String, dynamic>{};
+      metrics.addAll(<String, dynamic>{
+        'release_swiftui_compile_millis': watch.elapsedMilliseconds,
+        'release_swiftui_size_bytes': releaseSizeInBytes,
+      });
+      return TaskResult.success(metrics);
     });
   }
 

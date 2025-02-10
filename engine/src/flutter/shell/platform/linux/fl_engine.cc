@@ -467,6 +467,7 @@ static void fl_engine_dispose(GObject* object) {
   fl_texture_registrar_shutdown(self->texture_registrar);
 
   g_clear_object(&self->project);
+  g_clear_object(&self->display_monitor);
   g_clear_object(&self->renderer);
   g_clear_object(&self->texture_registrar);
   g_clear_object(&self->binary_messenger);
@@ -519,25 +520,44 @@ static void fl_engine_init(FlEngine* self) {
     g_warning("Failed get get engine function pointers");
   }
 
+  self->display_monitor =
+      fl_display_monitor_new(self, gdk_display_get_default());
+  self->task_runner = fl_task_runner_new(self);
+
   // Implicit view is 0, so start at 1.
   self->next_view_id = 1;
 
   self->texture_registrar = fl_texture_registrar_new(self);
 }
 
-FlEngine* fl_engine_new_with_renderer(FlDartProject* project,
-                                      FlRenderer* renderer) {
+static FlEngine* fl_engine_new_full(FlDartProject* project,
+                                    FlRenderer* renderer,
+                                    FlBinaryMessenger* binary_messenger) {
   g_return_val_if_fail(FL_IS_DART_PROJECT(project), nullptr);
   g_return_val_if_fail(FL_IS_RENDERER(renderer), nullptr);
 
   FlEngine* self = FL_ENGINE(g_object_new(fl_engine_get_type(), nullptr));
   self->project = FL_DART_PROJECT(g_object_ref(project));
   self->renderer = FL_RENDERER(g_object_ref(renderer));
-  self->binary_messenger = fl_binary_messenger_new(self);
-
+  if (binary_messenger != nullptr) {
+    self->binary_messenger =
+        FL_BINARY_MESSENGER(g_object_ref(binary_messenger));
+  } else {
+    self->binary_messenger = fl_binary_messenger_new(self);
+  }
+  self->keyboard_manager = fl_keyboard_manager_new(self);
+  self->mouse_cursor_handler =
+      fl_mouse_cursor_handler_new(self->binary_messenger);
   fl_renderer_set_engine(self->renderer, self);
 
   return self;
+}
+
+FlEngine* fl_engine_new_with_renderer(FlDartProject* project,
+                                      FlRenderer* renderer) {
+  g_return_val_if_fail(FL_IS_DART_PROJECT(project), nullptr);
+  g_return_val_if_fail(FL_IS_RENDERER(renderer), nullptr);
+  return fl_engine_new_full(project, renderer, nullptr);
 }
 
 G_MODULE_EXPORT FlEngine* fl_engine_new(FlDartProject* project) {
@@ -548,10 +568,8 @@ G_MODULE_EXPORT FlEngine* fl_engine_new(FlDartProject* project) {
 FlEngine* fl_engine_new_with_binary_messenger(
     FlBinaryMessenger* binary_messenger) {
   g_autoptr(FlDartProject) project = fl_dart_project_new();
-  FlEngine* self = fl_engine_new(project);
-  g_object_unref(self->binary_messenger);
-  self->binary_messenger = FL_BINARY_MESSENGER(g_object_ref(binary_messenger));
-  return self;
+  g_autoptr(FlRendererGdk) renderer = fl_renderer_gdk_new();
+  return fl_engine_new_full(project, FL_RENDERER(renderer), binary_messenger);
 }
 
 G_MODULE_EXPORT FlEngine* fl_engine_new_headless(FlDartProject* project) {
@@ -571,8 +589,6 @@ FlDisplayMonitor* fl_engine_get_display_monitor(FlEngine* self) {
 
 gboolean fl_engine_start(FlEngine* self, GError** error) {
   g_return_val_if_fail(FL_IS_ENGINE(self), FALSE);
-
-  self->task_runner = fl_task_runner_new(self);
 
   FlutterRendererConfig config = {};
   config.type = kOpenGL;
@@ -671,8 +687,6 @@ gboolean fl_engine_start(FlEngine* self, GError** error) {
   fl_settings_handler_start(self->settings_handler, settings);
 
   self->platform_handler = fl_platform_handler_new(self->binary_messenger);
-  self->mouse_cursor_handler =
-      fl_mouse_cursor_handler_new(self->binary_messenger);
 
   setup_keyboard(self);
 
@@ -681,8 +695,6 @@ gboolean fl_engine_start(FlEngine* self, GError** error) {
     g_warning("Failed to enable accessibility features on Flutter engine");
   }
 
-  self->display_monitor =
-      fl_display_monitor_new(self, gdk_display_get_default());
   fl_display_monitor_start(self->display_monitor);
 
   return TRUE;

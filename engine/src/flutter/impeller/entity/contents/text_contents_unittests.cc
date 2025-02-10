@@ -88,6 +88,9 @@ Rect PerVertexDataUVToRect(
   return Rect::MakeLTRB(left, top, right, bottom);
 }
 
+double GetAspectRatio(Rect rect) {
+  return static_cast<double>(rect.GetWidth()) / rect.GetHeight();
+}
 }  // namespace
 
 TEST_P(TextContentsTest, SimpleComputeVertexData) {
@@ -123,10 +126,7 @@ TEST_P(TextContentsTest, SimpleComputeVertexData) {
   // is 50, the math appears to be to get back a 50x50 rect and apply 1 pixel
   // of padding.
   EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-1, -41, 52, 52));
-  // (0.5, 0.5) gets us sampling from the exact middle of the first pixel, the
-  // extra width takes us 0.5 past the end of the glyph too to sample fully the
-  // last pixel.
-  EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(0.5, 0.5, 53, 53));
+  EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 52, 52));
 }
 
 TEST_P(TextContentsTest, SimpleComputeVertexData2x) {
@@ -160,7 +160,46 @@ TEST_P(TextContentsTest, SimpleComputeVertexData2x) {
   Rect position_rect = PerVertexDataPositionToRect(data);
   Rect uv_rect = PerVertexDataUVToRect(data, texture_size);
   EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-1, -81, 102, 102));
-  EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(0.5, 0.5, 103, 103));
+  EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 102, 102));
+}
+
+TEST_P(TextContentsTest, MaintainsShape) {
+  std::shared_ptr<TextFrame> text_frame =
+      MakeTextFrame("th", "ahem.ttf", /*font_size=*/50);
+
+  std::shared_ptr<TypographerContext> context = TypographerContextSkia::Make();
+  std::shared_ptr<GlyphAtlasContext> atlas_context =
+      context->CreateGlyphAtlasContext(GlyphAtlas::Type::kAlphaBitmap);
+  std::shared_ptr<HostBuffer> host_buffer = HostBuffer::Create(
+      GetContext()->GetResourceAllocator(), GetContext()->GetIdleWaiter());
+  ASSERT_TRUE(context && context->IsValid());
+  for (int i = 0; i <= 1000; ++i) {
+    Scalar font_scale = 0.440 + (i / 1000.0);
+    Rect position_rect[2];
+    Rect uv_rect[2];
+
+    {
+      GlyphAtlasPipeline::VertexShader::PerVertexData data[12];
+      std::shared_ptr<GlyphAtlas> atlas =
+          CreateGlyphAtlas(*GetContext(), context.get(), *host_buffer,
+                           GlyphAtlas::Type::kAlphaBitmap, font_scale,
+                           atlas_context, text_frame);
+      ISize texture_size = atlas->GetTexture()->GetSize();
+
+      TextContents::ComputeVertexData(
+          data, text_frame, font_scale,
+          /*entity_transform=*/Matrix::MakeScale({font_scale, font_scale, 1}),
+          /*offset=*/Vector2(0, 0),
+          /*glyph_properties=*/std::nullopt, atlas);
+      position_rect[0] = PerVertexDataPositionToRect(data);
+      uv_rect[0] = PerVertexDataUVToRect(data, texture_size);
+      position_rect[1] = PerVertexDataPositionToRect(data + 6);
+      uv_rect[1] = PerVertexDataUVToRect(data + 6, texture_size);
+    }
+    EXPECT_NEAR(GetAspectRatio(position_rect[1]), GetAspectRatio(uv_rect[1]),
+                0.001)
+        << i;
+  }
 }
 
 }  // namespace testing

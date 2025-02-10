@@ -1181,6 +1181,7 @@ void main() {
                           textDirection: TextDirection.ltr,
                           children: <TestSemantics>[
                             TestSemantics(
+                              flags: <SemanticsFlag>[SemanticsFlag.isButton],
                               actions: <SemanticsAction>[SemanticsAction.tap],
                               label: 'Dismiss',
                               textDirection: TextDirection.ltr,

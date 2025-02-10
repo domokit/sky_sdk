@@ -13,7 +13,8 @@ dependencies:
   archive: 3.6.1
   args: 2.6.0
   dds: 5.0.0
-  dwds: 24.3.3
+  dwds: 24.3.4
+  code_builder: 4.10.1
   completion: 1.0.1
   coverage: 1.11.1
   crypto: 3.0.6
@@ -22,16 +23,16 @@ dependencies:
   flutter_template_images: 5.0.0
   html: 0.15.5
   http: 1.3.0
-  intl: 0.19.0
+  intl: 0.20.2
   meta: 1.16.0
-  multicast_dns: 0.3.2+7
+  multicast_dns: 0.3.2+8
   mustache_template: 2.0.0
   package_config: 2.1.1
   process: 5.0.3
-  fake_async: 1.3.2
+  fake_async: 1.3.3
   stack_trace: 1.12.1
   usage: 4.1.1
-  webdriver: 3.0.4
+  webdriver: 3.1.0
   webkit_inspection_protocol: 1.2.1
   xml: 6.5.0
   yaml: 3.1.3
@@ -63,7 +64,7 @@ dependencies:
   test_api: 0.7.4
   test_core: 0.6.8
 
-  vm_service: 14.3.1
+  vm_service: 15.0.0
 
   standard_message_codec: 0.0.1+4
 
@@ -121,4 +122,4 @@ dartdoc:
   # Exclude this package from the hosted API docs.
   nodoc: true
 
-# PUBSPEC CHECKSUM: cf3c
+# PUBSPEC CHECKSUM: 5596

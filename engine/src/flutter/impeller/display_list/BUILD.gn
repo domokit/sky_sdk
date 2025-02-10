@@ -78,6 +78,10 @@ template("display_list_unittests_component") {
     "dl_playground.cc",
     "dl_playground.h",
     "dl_unittests.cc",
+    "testing/render_text_in_canvas.cc",
+    "testing/render_text_in_canvas.h",
+    "testing/rmse.cc",
+    "testing/rmse.h",
   ]
   additional_sources = []
   if (defined(invoker.sources)) {

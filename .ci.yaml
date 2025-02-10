@@ -577,6 +577,12 @@ targets:
     timeout: 60
     dimensions:
       os: "Linux"
+    enabled_branches:
+      # Produces docs for main-api.flutter.dev
+      # stable and beta are managed by the targets:
+      #   - Linux docs_deploy_beta
+      #   - Linux docs_deploy_stable
+      - master
     properties:
       cores: "32"
       dependencies: >-
@@ -591,7 +597,6 @@ targets:
       validation_name: Docs
       firebase_project: main-docs-flutter-prod
       release_ref: refs/heads/master
-      release_build: "true"
     drone_dimensions:
       - os=Linux
 
@@ -679,10 +684,12 @@ targets:
     presubmit: false
     enabled_branches:
       - master
+    timeout: 60 # TODO(https://github.com/flutter/flutter/issues/162654)
     properties:
       task_name: flutter_packaging
       tags: >
         ["framework", "hostonly", "shard", "linux"]
+      test_timeout_secs: "3600" # TODO(https://github.com/flutter/flutter/issues/162654)
     runIf:
       - .ci.yaml
       - engine/**
@@ -4846,6 +4853,26 @@ targets:
       tags: >
         ["devicelab", "ios", "mac", "arm64"]
       task_name: hello_world_ios__compile
+
+  - name: Mac_arm64_ios imitation_game_flutter
+    recipe: devicelab/devicelab_drone
+    presubmit: false
+    bringup: true
+    timeout: 60
+    properties:
+      tags: >
+        ["devicelab", "ios", "mac", "arm64"]
+      task_name: imitation_game_swiftui__compile
+
+  - name: Mac_arm64_ios imitation_game_swiftui
+    recipe: devicelab/devicelab_drone
+    presubmit: false
+    bringup: true
+    timeout: 60
+    properties:
+      tags: >
+        ["devicelab", "ios", "mac", "arm64"]
+      task_name: imitation_game_flutter__compile
 
   - name: Mac_x64 hot_mode_dev_cycle_macos_target__benchmark
     recipe: devicelab/devicelab_drone

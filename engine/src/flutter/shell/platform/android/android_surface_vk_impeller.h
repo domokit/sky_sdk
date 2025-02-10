@@ -45,7 +45,9 @@ class AndroidSurfaceVKImpeller : public AndroidSurface {
   std::shared_ptr<impeller::Context> GetImpellerContext() override;
 
   // |AndroidSurface|
-  bool SetNativeWindow(fml::RefPtr<AndroidNativeWindow> window) override;
+  bool SetNativeWindow(
+      fml::RefPtr<AndroidNativeWindow> window,
+      const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade) override;
 
  private:
   std::shared_ptr<impeller::SurfaceContextVK> surface_context_vk_;

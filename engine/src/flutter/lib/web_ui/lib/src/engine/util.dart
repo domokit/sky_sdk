@@ -345,20 +345,14 @@ String colorValueToCssString(int value) {
   if ((0xff000000 & value) == 0xff000000) {
     final String hexValue = (value & 0xFFFFFF).toRadixString(16);
     final int hexValueLength = hexValue.length;
-    switch (hexValueLength) {
-      case 1:
-        return '#00000$hexValue';
-      case 2:
-        return '#0000$hexValue';
-      case 3:
-        return '#000$hexValue';
-      case 4:
-        return '#00$hexValue';
-      case 5:
-        return '#0$hexValue';
-      default:
-        return '#$hexValue';
-    }
+    return switch (hexValueLength) {
+      1 => '#00000$hexValue',
+      2 => '#0000$hexValue',
+      3 => '#000$hexValue',
+      4 => '#00$hexValue',
+      5 => '#0$hexValue',
+      _ => '#$hexValue',
+    };
   } else {
     final double alpha = ((value >> 24) & 0xFF) / 255.0;
     final StringBuffer sb = StringBuffer();
@@ -889,20 +883,7 @@ class LruCache<K extends Object, V extends Object> {
 }
 
 /// Returns the VM-compatible string for the tile mode.
-String tileModeString(ui.TileMode? tileMode) {
-  switch (tileMode) {
-    case ui.TileMode.clamp:
-      return 'clamp';
-    case ui.TileMode.mirror:
-      return 'mirror';
-    case ui.TileMode.repeated:
-      return 'repeated';
-    case ui.TileMode.decal:
-      return 'decal';
-    case null:
-      return 'unspecified';
-  }
-}
+String tileModeString(ui.TileMode? tileMode) => tileMode?.name ?? 'unspecified';
 
 /// A size where both the width and height are integers.
 class BitmapSize {

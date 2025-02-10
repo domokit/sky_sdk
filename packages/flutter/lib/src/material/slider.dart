@@ -239,7 +239,8 @@ class Slider extends StatefulWidget {
     this.autofocus = false,
     this.allowedInteraction,
     @Deprecated(
-      'Use SliderTheme to customize the Slider appearance. '
+      'Set this flag to false to opt into the 2024 slider appearance. Defaults to true. '
+      'In the future, this flag will default to false. Use SliderThemeData to customize individual properties. '
       'This feature was deprecated after v3.27.0-0.1.pre.',
     )
     this.year2023,
@@ -573,7 +574,8 @@ class Slider extends StatefulWidget {
   ///
   /// If [ThemeData.useMaterial3] is false, then this property is ignored.
   @Deprecated(
-    'Use SliderTheme to customize the Slider appearance. '
+    'Set this flag to false to opt into the 2024 slider appearance. Defaults to true. '
+    'In the future, this flag will default to false. Use SliderThemeData to customize individual properties. '
     'This feature was deprecated after v3.27.0-0.1.pre.',
   )
   final bool? year2023;
@@ -989,6 +991,7 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
     }
 
     return Semantics(
+      label: widget.label,
       container: true,
       slider: true,
       onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,

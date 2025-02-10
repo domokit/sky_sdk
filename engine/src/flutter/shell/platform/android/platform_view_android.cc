@@ -30,6 +30,7 @@
 #endif
 #include "flutter/shell/platform/android/context/android_context.h"
 #include "flutter/shell/platform/android/external_view_embedder/external_view_embedder.h"
+#include "flutter/shell/platform/android/external_view_embedder/external_view_embedder_2.h"
 #include "flutter/shell/platform/android/jni/platform_view_android_jni.h"
 #include "flutter/shell/platform/android/platform_message_response_android.h"
 #include "flutter/shell/platform/android/surface/android_surface.h"
@@ -148,8 +149,8 @@ void PlatformViewAndroid::NotifyCreated(
     fml::TaskRunner::RunNowOrPostTask(
         task_runners_.GetRasterTaskRunner(),
         [&latch, surface = android_surface_.get(),
-         native_window = std::move(native_window)]() {
-          surface->SetNativeWindow(native_window);
+         native_window = std::move(native_window), jni_facade = jni_facade_]() {
+          surface->SetNativeWindow(native_window, jni_facade);
           latch.Signal();
         });
     latch.Wait();
@@ -165,9 +166,9 @@ void PlatformViewAndroid::NotifySurfaceWindowChanged(
     fml::TaskRunner::RunNowOrPostTask(
         task_runners_.GetRasterTaskRunner(),
         [&latch, surface = android_surface_.get(),
-         native_window = std::move(native_window)]() {
+         native_window = std::move(native_window), jni_facade = jni_facade_]() {
           surface->TeardownOnScreenContext();
-          surface->SetNativeWindow(native_window);
+          surface->SetNativeWindow(native_window, jni_facade);
           latch.Signal();
         });
     latch.Wait();
@@ -366,6 +367,10 @@ std::unique_ptr<Surface> PlatformViewAndroid::CreateRenderingSurface() {
 // |PlatformView|
 std::shared_ptr<ExternalViewEmbedder>
 PlatformViewAndroid::CreateExternalViewEmbedder() {
+  if (android_use_new_platform_view_) {
+    return std::make_shared<AndroidExternalViewEmbedder2>(
+        *android_context_, jni_facade_, surface_factory_, task_runners_);
+  }
   return std::make_shared<AndroidExternalViewEmbedder>(
       *android_context_, jni_facade_, surface_factory_, task_runners_);
 }

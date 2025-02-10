@@ -101,6 +101,45 @@ final int _kUnblockedUserActions =
     SemanticsAction.didGainAccessibilityFocus.index |
     SemanticsAction.didLoseAccessibilityFocus.index;
 
+/// A static class to conduct semantics role checks.
+sealed class _DebugSemanticsRoleChecks {
+  static FlutterError? _checkSemanticsData(SemanticsNode node) => switch (node.role) {
+    SemanticsRole.none => _noCheckRequired,
+    SemanticsRole.tab => _semanticsTab,
+    SemanticsRole.tabBar => _semanticsTabBar,
+    SemanticsRole.tabPanel => _noCheckRequired,
+  }(node);
+
+  static FlutterError? _noCheckRequired(SemanticsNode node) => null;
+
+  static FlutterError? _semanticsTab(SemanticsNode node) {
+    final SemanticsData data = node.getSemanticsData();
+    if (!data.hasFlag(SemanticsFlag.hasSelectedState)) {
+      return FlutterError('A tab needs selected states');
+    }
+
+    if (!node.areUserActionsBlocked && !data.hasAction(SemanticsAction.tap)) {
+      return FlutterError('A tab must have a tap action');
+    }
+
+    return null;
+  }
+
+  static FlutterError? _semanticsTabBar(SemanticsNode node) {
+    if (node.childrenCount < 1) {
+      return FlutterError('a TabBar cannot be empty');
+    }
+    FlutterError? error;
+    node.visitChildren((SemanticsNode child) {
+      if (child.getSemanticsData().role != SemanticsRole.tab) {
+        error = FlutterError('Children of TabBar must have the tab role');
+      }
+      return error == null;
+    });
+    return error;
+  }
+}
+
 /// A tag for a [SemanticsNode].
 ///
 /// Tags can be interpreted by the parent of a [SemanticsNode]
@@ -3003,6 +3042,13 @@ class SemanticsNode with DiagnosticableTreeMixin {
   void _addToUpdate(SemanticsUpdateBuilder builder, Set<int> customSemanticsActionIdsUpdate) {
     assert(_dirty);
     final SemanticsData data = getSemanticsData();
+    assert(() {
+      final FlutterError? error = _DebugSemanticsRoleChecks._checkSemanticsData(this);
+      if (error != null) {
+        throw error;
+      }
+      return true;
+    }());
     final Int32List childrenInTraversalOrder;
     final Int32List childrenInHitTestOrder;
     if (!hasChildren || mergeAllDescendantsIntoThisNode) {

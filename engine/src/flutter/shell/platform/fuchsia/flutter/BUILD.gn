@@ -520,11 +520,11 @@ if (enable_unittests) {
     ]
 
     deps = [
-             "tests/fakes",
              ":flutter_runner_fixtures",
              ":flutter_runner_sources",
              "${fuchsia_sdk}/pkg/async-testing",
              "${fuchsia_sdk}/pkg/sys_cpp_testing",
+             "tests/fakes",
              "//flutter/shell/platform/common/client_wrapper:client_wrapper_library_stubs",
              "//flutter/testing",
            ] + flutter_deps

@@ -428,10 +428,7 @@ void main() {
     pumpFrame(phase: EnginePhase.compositingBits);
 
     expect(editable, paintsExactlyCountTimes(#drawRRect, 0));
-
-    // TODO(yjbanov): ahem.ttf doesn't have Chinese glyphs, making this test
-    //                sensitive to browser/OS when running in web mode:
-  }, skip: kIsWeb); // https://github.com/flutter/flutter/issues/83129
+  });
 
   test('text is painted above selection', () {
     final TextSelectionDelegate delegate = _FakeEditableTextState();
@@ -810,51 +807,44 @@ void main() {
     expect(editable.hasFocus, false);
   });
 
-  test(
-    'has correct maxScrollExtent',
-    () {
-      final TextSelectionDelegate delegate = _FakeEditableTextState();
-      EditableText.debugDeterministicCursor = true;
+  test('has correct maxScrollExtent', () {
+    final TextSelectionDelegate delegate = _FakeEditableTextState();
+    EditableText.debugDeterministicCursor = true;
 
-      final RenderEditable editable = RenderEditable(
-        maxLines: 2,
-        backgroundCursorColor: Colors.grey,
-        textDirection: TextDirection.ltr,
-        cursorColor: const Color.fromARGB(0xFF, 0xFF, 0x00, 0x00),
-        offset: ViewportOffset.zero(),
-        textSelectionDelegate: delegate,
-        text: const TextSpan(
-          text:
-              '撒地方加咖啡哈金凤凰卡号方式剪坏算法发挥福建垃\nasfjafjajfjaslfjaskjflasjfksajf撒分开建安路口附近拉设\n计费可使肌肤撒附近埃里克圾房卡设计费"',
-          style: TextStyle(height: 1.0, fontSize: 10.0, fontFamily: 'Roboto'),
-        ),
-        startHandleLayerLink: LayerLink(),
-        endHandleLayerLink: LayerLink(),
-        selection: const TextSelection.collapsed(offset: 4, affinity: TextAffinity.upstream),
-      );
+    final RenderEditable editable = RenderEditable(
+      maxLines: 2,
+      backgroundCursorColor: Colors.grey,
+      textDirection: TextDirection.ltr,
+      cursorColor: const Color.fromARGB(0xFF, 0xFF, 0x00, 0x00),
+      offset: ViewportOffset.zero(),
+      textSelectionDelegate: delegate,
+      text: const TextSpan(
+        text:
+            '撒地方加咖啡哈金凤凰卡号方式剪坏算法发挥福建垃\nasfjafjajfjaslfjaskjflasjfksajf撒分开建安路口附近拉设\n计费可使肌肤撒附近埃里克圾房卡设计费"',
+        style: TextStyle(height: 1.0, fontSize: 10.0, fontFamily: 'Roboto'),
+      ),
+      startHandleLayerLink: LayerLink(),
+      endHandleLayerLink: LayerLink(),
+      selection: const TextSelection.collapsed(offset: 4, affinity: TextAffinity.upstream),
+    );
 
-      editable.layout(BoxConstraints.loose(const Size(100.0, 1000.0)));
-      expect(editable.size, equals(const Size(100, 20)));
-      expect(editable.maxLines, equals(2));
-      expect(editable.maxScrollExtent, equals(90));
+    editable.layout(BoxConstraints.loose(const Size(100.0, 1000.0)));
+    expect(editable.size, equals(const Size(100, 20)));
+    expect(editable.maxLines, equals(2));
+    expect(editable.maxScrollExtent, equals(90));
 
-      editable.layout(BoxConstraints.loose(const Size(150.0, 1000.0)));
-      expect(editable.maxScrollExtent, equals(50));
+    editable.layout(BoxConstraints.loose(const Size(150.0, 1000.0)));
+    expect(editable.maxScrollExtent, equals(50));
 
-      editable.layout(BoxConstraints.loose(const Size(200.0, 1000.0)));
-      expect(editable.maxScrollExtent, equals(40));
+    editable.layout(BoxConstraints.loose(const Size(200.0, 1000.0)));
+    expect(editable.maxScrollExtent, equals(40));
 
-      editable.layout(BoxConstraints.loose(const Size(500.0, 1000.0)));
-      expect(editable.maxScrollExtent, equals(10));
+    editable.layout(BoxConstraints.loose(const Size(500.0, 1000.0)));
+    expect(editable.maxScrollExtent, equals(10));
 
-      editable.layout(BoxConstraints.loose(const Size(1000.0, 1000.0)));
-      expect(editable.maxScrollExtent, equals(10));
-      // TODO(yjbanov): This test is failing in the Dart HHH-web bot and
-      //                needs additional investigation before it can be reenabled.
-    },
-    // https://github.com/flutter/flutter/issues/93691
-    skip: const bool.fromEnvironment('DART_HHH_BOT'),
-  );
+    editable.layout(BoxConstraints.loose(const Size(1000.0, 1000.0)));
+    expect(editable.maxScrollExtent, equals(10));
+  });
 
   test('getEndpointsForSelection handles empty characters', () {
     final TextSelectionDelegate delegate = _FakeEditableTextState();
@@ -1505,7 +1495,7 @@ void main() {
       final Rect composingRect =
           editable.getRectForComposingRange(const TextRange(start: 4, end: 5))!;
       expect(composingRect, const Rect.fromLTRB(40.0, 0.0, 54.0, 14.0));
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/61021
+    });
 
     test('able to render multiple WidgetSpans', () async {
       final TextSelectionDelegate delegate =
@@ -1550,7 +1540,7 @@ void main() {
       final Rect composingRect =
           editable.getRectForComposingRange(const TextRange(start: 4, end: 7))!;
       expect(composingRect, const Rect.fromLTRB(40.0, 0.0, 82.0, 14.0));
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/61021
+    });
 
     test('able to render WidgetSpans with line wrap', () async {
       final TextSelectionDelegate delegate =
@@ -1599,7 +1589,7 @@ void main() {
       expect(composingRect, const Rect.fromLTRB(40.0, 0.0, 68.0, 14.0));
       composingRect = editable.getRectForComposingRange(const TextRange(start: 6, end: 7))!;
       expect(composingRect, const Rect.fromLTRB(0.0, 14.0, 14.0, 28.0));
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/61021
+    });
 
     test('able to render WidgetSpans with line wrap alternating spans', () async {
       final TextSelectionDelegate delegate =
@@ -1657,7 +1647,7 @@ void main() {
       expect(composingRect, const Rect.fromLTRB(24.0, 18.0, 34.0, 28.0));
       composingRect = editable.getRectForComposingRange(const TextRange(start: 9, end: 10))!;
       expect(composingRect, const Rect.fromLTRB(34.0, 14.0, 48.0, 28.0));
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/61021
+    });
 
     test('able to render WidgetSpans nested spans', () async {
       final TextSelectionDelegate delegate =
@@ -1711,7 +1701,7 @@ void main() {
       expect(composingRect, const Rect.fromLTRB(0.0, 14.0, 14.0, 28.0));
       composingRect = editable.getRectForComposingRange(const TextRange(start: 7, end: 8));
       expect(composingRect, null);
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/61021
+    });
 
     test('WidgetSpan render box is painted at correct offset when scrolled', () async {
       final TextSelectionDelegate delegate =
@@ -1752,7 +1742,7 @@ void main() {
       final Rect composingRect =
           editable.getRectForComposingRange(const TextRange(start: 4, end: 5))!;
       expect(composingRect, const Rect.fromLTRB(40.0, -100.0, 54.0, -86.0));
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/61021
+    });
 
     test('can compute IntrinsicWidth for WidgetSpans', () {
       // Regression test for https://github.com/flutter/flutter/issues/59316
@@ -1893,7 +1883,7 @@ void main() {
       result = BoxHitTestResult();
       editable.hitTest(result, position: const Offset(5.0, 15.0));
       expect(result.path, hasLength(0));
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/61020
+    });
 
     test('hits correct WidgetSpan when scrolled', () {
       final String text = '${"\n" * 10}test';
@@ -1975,7 +1965,7 @@ void main() {
       result = BoxHitTestResult();
       editable.hitTest(result, position: const Offset(5.0, 15.0));
       expect(result.path, hasLength(1)); // Only the RenderEditable.
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/61020
+    });
   });
 
   test('does not skip TextPainter.layout because of invalid cache', () {

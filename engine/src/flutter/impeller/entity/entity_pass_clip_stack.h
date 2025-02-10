@@ -67,12 +67,6 @@ class EntityPassClipStack {
 
   const std::vector<ReplayResult>& GetReplayEntities() const;
 
-  void ActivateClipReplay();
-
-  /// @brief Returns the next Entity that should be replayed. If there are no
-  ///        enities to replay, then nullptr is returned.
-  const ReplayResult* GetNextReplayResult(size_t current_clip_depth);
-
   // Visible for testing.
   const std::vector<ClipCoverageLayer> GetClipCoverageLayers() const;
 
