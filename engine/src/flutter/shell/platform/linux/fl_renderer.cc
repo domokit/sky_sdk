@@ -74,9 +74,12 @@ typedef struct {
   // Framebuffers to render keyed by view ID.
   GHashTable* framebuffers_by_view_id;
 
-  // Mutex and condition used when block the raster thread until a task
-  // is completed on platform thread.
+  // Mutex used when blocking the raster thread until a task is completed on
+  // platform thread.
   GMutex mutex;
+
+  // Condition to unblock the raster thread after task is completed on platform
+  // thread.
   GCond cond;
 } FlRendererPrivate;
 

@@ -31,6 +31,8 @@ typedef struct _FlTaskRunnerTask {
 
   // callback to execute if scheduled through fl_task_runner_post_callback.
   void (*callback)(gpointer data);
+
+  // data for the callback.
   gpointer callback_data;
 } FlTaskRunnerTask;
 
