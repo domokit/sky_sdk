@@ -243,8 +243,20 @@ bool EmbedderEngine::RunTask(const FlutterTask* task) {
   if (task == nullptr) {
     return false;
   }
-  return thread_host_->PostTask(reinterpret_cast<int64_t>(task->runner),
-                                task->task);
+  auto result = thread_host_->PostTask(reinterpret_cast<int64_t>(task->runner),
+                                       task->task);
+  // Normally the microtask queue is flushed through MessageLoopTaskQueues
+  // observer, but when running with merged platform and UI thread the embedder
+  // implementation is responsible for scheduling the task on platform thread
+  // instead of MessageLoopTaskQueues and the embedder engine is responsible
+  // forflushing the microtask queue.
+  if (result &&
+      task_runners_.GetPlatformTaskRunner() ==
+          task_runners_.GetUITaskRunner() &&
+      task_runners_.GetPlatformTaskRunner()->RunsTasksOnCurrentThread()) {
+    shell_->FlushMicrotaskQueue();
+  }
+  return result;
 }
 
 bool EmbedderEngine::PostTaskOnEngineManagedNativeThreads(

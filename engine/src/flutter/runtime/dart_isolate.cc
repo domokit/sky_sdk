@@ -506,7 +506,10 @@ bool DartIsolate::Initialize(Dart_Isolate dart_isolate) {
     Dart_SetCurrentUserTag(Dart_NewUserTag("AppStartUp"));
   }
 
-  if (is_platform_isolate_) {
+  // When running with merged UI and platform threads post messages directly to
+  // the platform task runner instead of MessageLoopTaskQueues.
+  if (is_platform_isolate_ || GetTaskRunners().GetUITaskRunner() ==
+                                  GetTaskRunners().GetPlatformTaskRunner()) {
     SetMessageHandlingTaskRunner(GetTaskRunners().GetPlatformTaskRunner(),
                                  true);
   } else {
