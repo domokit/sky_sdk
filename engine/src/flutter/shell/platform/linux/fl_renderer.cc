@@ -612,6 +612,8 @@ gboolean fl_renderer_present_layers(FlRenderer* self,
                                     FlutterViewId view_id,
                                     const FlutterLayer** layers,
                                     size_t layers_count) {
+  fl_renderer_clear_current(self);
+
   _FlRendererPresentLayersData data = {
       .self = self,
       .view_id = view_id,
@@ -620,7 +622,6 @@ gboolean fl_renderer_present_layers(FlRenderer* self,
       .res = FALSE,
       .finished = FALSE,
   };
-  fl_renderer_clear_current(self);
   FlRendererPrivate* priv = reinterpret_cast<FlRendererPrivate*>(
       fl_renderer_get_instance_private(self));
   g_autoptr(FlEngine) engine = FL_ENGINE(g_weak_ref_get(&priv->engine));
@@ -629,6 +630,7 @@ gboolean fl_renderer_present_layers(FlRenderer* self,
     // Task runner not available (i.e. test environment), run the callback
     // synchronously.
     fl_renderer_present_layers_trampoline(&data);
+    fl_renderer_make_current(self);
     return data.res;
   }
 
@@ -641,6 +643,7 @@ gboolean fl_renderer_present_layers(FlRenderer* self,
   while (!data.finished) {
     g_cond_wait(&priv->cond, &priv->mutex);
   }
+
   fl_renderer_make_current(self);
   return data.res;
 }
