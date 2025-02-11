@@ -29,8 +29,6 @@ static void fl_mock_renderer_make_current(FlRenderer* renderer) {}
 // Implements FlRenderer::make_resource_current.
 static void fl_mock_renderer_make_resource_current(FlRenderer* renderer) {}
 
-// Implements FlRenderer::schedule_on_main_thread.
-
 // Implements FlRenderer::clear_current.
 static void fl_mock_renderer_clear_current(FlRenderer* renderer) {}
 
