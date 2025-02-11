@@ -108,6 +108,7 @@
 /dev/devicelab/bin/tasks/complex_layout_scroll_perf_impeller__timeline_summary.dart @jonahwilliams @flutter/engine
 /dev/devicelab/bin/tasks/complex_layout_scroll_perf_impeller_gles__timeline_summary.dart @jonahwilliams @flutter/engine
 /dev/devicelab/bin/tasks/rrect_blur_perf__timeline_summary.dart @gaaclarke @flutter/engine
+/dev/devicelab/bin/tasks/platform_views_hcpp_scroll_perf__timeline_summary.dart @jonahwilliams @flutter/engine
 
 ## Windows Android DeviceLab tests
 /dev/devicelab/bin/tasks/basic_material_app_win__compile.dart @bkonyi @flutter/tool

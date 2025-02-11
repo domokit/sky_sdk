@@ -45,7 +45,7 @@ bool DebugReportVK::IsValid() const {
   return is_valid_;
 }
 
-static std::string JoinLabels(const VkDebugUtilsLabelEXT* labels,
+static std::string JoinLabels(const vk::DebugUtilsLabelEXT* labels,
                               size_t count) {
   std::stringstream stream;
   for (size_t i = 0u; i < count; i++) {
@@ -58,7 +58,7 @@ static std::string JoinLabels(const VkDebugUtilsLabelEXT* labels,
 }
 
 static std::string JoinVKDebugUtilsObjectNameInfoEXT(
-    const VkDebugUtilsObjectNameInfoEXT* names,
+    const vk::DebugUtilsObjectNameInfoEXT* names,
     size_t count) {
   std::stringstream stream;
   for (size_t i = 0u; i < count; i++) {
@@ -78,9 +78,9 @@ static std::string JoinVKDebugUtilsObjectNameInfoEXT(
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL DebugReportVK::DebugUtilsMessengerCallback(
-    VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-    VkDebugUtilsMessageTypeFlagsEXT type,
-    const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
+    vk::DebugUtilsMessageSeverityFlagBitsEXT severity,
+    vk::DebugUtilsMessageTypeFlagsEXT type,
+    const vk::DebugUtilsMessengerCallbackDataEXT* callback_data,
     void* debug_report) {
   auto result =
       reinterpret_cast<DebugReportVK*>(debug_report)
@@ -102,7 +102,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugReportVK::DebugUtilsMessengerCallback(
 DebugReportVK::Result DebugReportVK::OnDebugCallback(
     vk::DebugUtilsMessageSeverityFlagBitsEXT severity,
     vk::DebugUtilsMessageTypeFlagsEXT type,
-    const VkDebugUtilsMessengerCallbackDataEXT* data) {
+    const vk::DebugUtilsMessengerCallbackDataEXT* data) {
   // This is a real issue caused by INPUT_ATTACHMENT_BIT not being a supported
   // `VkSurfaceCapabilitiesKHR::supportedUsageFlags` on any platform other than
   // Android. This is necessary for all the framebuffer fetch related tests. We
@@ -130,6 +130,15 @@ DebugReportVK::Result DebugReportVK::OnDebugCallback(
           data->pMessageIdName,
           "VUID-VkPipelineShaderStageCreateInfo-pSpecializationInfo-06849") ==
           0) {
+    return Result::kContinue;
+  }
+
+  // This warning happens when running tests that use SwiftShader.
+  // Some SPIR-V shaders request the UniformAndStorageBuffer16BitAccess
+  // capability, but SwiftShader does not support it.
+  if (data->pMessageIdName != nullptr &&
+      strcmp(data->pMessageIdName,
+             "VUID-VkShaderModuleCreateInfo-pCode-08740") == 0) {
     return Result::kContinue;
   }
 

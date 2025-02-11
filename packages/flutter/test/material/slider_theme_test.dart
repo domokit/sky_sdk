@@ -3009,6 +3009,47 @@ void main() {
     );
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/161210
+  testWidgets(
+    'Slider with transparent track colors and custom track height can reach extreme ends',
+    (WidgetTester tester) async {
+      const double sliderPadding = 24.0;
+      final ThemeData theme = ThemeData(
+        sliderTheme: const SliderThemeData(
+          trackHeight: 100,
+          activeTrackColor: Colors.transparent,
+          inactiveTrackColor: Colors.transparent,
+        ),
+      );
+
+      Widget buildSlider({required double value}) {
+        return MaterialApp(
+          theme: theme,
+          home: Material(
+            child: SizedBox(width: 300, child: Slider(value: value, onChanged: (double value) {})),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildSlider(value: 0));
+
+      MaterialInkController material = Material.of(tester.element(find.byType(Slider)));
+
+      expect(
+        material,
+        paints..circle(x: sliderPadding, y: 300.0, color: theme.colorScheme.primary),
+      );
+
+      await tester.pumpWidget(buildSlider(value: 1));
+
+      material = Material.of(tester.element(find.byType(Slider)));
+      expect(
+        material,
+        paints..circle(x: 800.0 - sliderPadding, y: 300.0, color: theme.colorScheme.primary),
+      );
+    },
+  );
+
   group('Material 2', () {
     // These tests are only relevant for Material 2. Once Material 2
     // support is deprecated and the APIs are removed, these tests

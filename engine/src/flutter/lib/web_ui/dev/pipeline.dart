@@ -89,10 +89,11 @@ abstract class ProcessStep implements PipelineStep {
 }
 
 class _PipelineStepFailure {
-  _PipelineStepFailure(this.step, this.error);
+  _PipelineStepFailure(this.step, this.error, this.stackTrace);
 
   final PipelineStep step;
   final Object error;
+  final StackTrace stackTrace;
 }
 
 /// Executes a sequence of asynchronous tasks, typically as part of a build/test
@@ -133,8 +134,8 @@ class Pipeline {
       _currentStepFuture = step.run();
       try {
         await _currentStepFuture;
-      } catch (e) {
-        failures.add(_PipelineStepFailure(step, e));
+      } catch (error, stackTrace) {
+        failures.add(_PipelineStepFailure(step, error, stackTrace));
       } finally {
         _currentStep = null;
       }
@@ -145,7 +146,7 @@ class Pipeline {
       _status = PipelineStatus.error;
       print('Pipeline experienced the following failures:');
       for (final _PipelineStepFailure failure in failures) {
-        print('  "${failure.step.description}": ${failure.error}');
+        print('  "${failure.step.description}": ${failure.error}\n${failure.stackTrace}');
       }
       throw ToolExit('Test pipeline failed.');
     }

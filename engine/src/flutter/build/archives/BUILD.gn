@@ -58,14 +58,17 @@ if (build_engine_artifacts) {
       # Mac artifacts sometimes use mac and sometimes darwin. Standardizing the
       # names will require changes in the list of artifacts the tool is downloading.
       if (flutter_runtime_mode == "debug") {
-        prefix = "darwin-$target_cpu/"
+        prefix = "darwin-$target_cpu"
       } else {
-        prefix = "darwin-$target_cpu-$flutter_runtime_mode/"
+        prefix = "darwin-$target_cpu-$flutter_runtime_mode"
       }
     } else if (flutter_runtime_mode != "debug") {
-      prefix = "$full_target_platform_name-$flutter_runtime_mode/"
+      prefix = "$full_target_platform_name-$flutter_runtime_mode"
     } else {
-      prefix = "$full_target_platform_name/"
+      prefix = "$full_target_platform_name"
+    }
+    if (dart_dynamic_modules) {
+      prefix = "$prefix-ddm"
     }
     output = "$prefix/artifacts.zip"
 
@@ -199,7 +202,11 @@ generated_file("dart_sdk_entitlement_config") {
 if (build_engine_artifacts && flutter_prebuilt_dart_sdk) {
   zip_bundle("dart_sdk_archive") {
     deps = [ ":dart_sdk_entitlement_config" ]
-    output = "dart-sdk-$full_target_platform_name.zip"
+    if (dart_dynamic_modules) {
+      output = "dart-sdk-$full_target_platform_name-ddm.zip"
+    } else {
+      output = "dart-sdk-$full_target_platform_name.zip"
+    }
     files = [
       {
         source = prebuilt_dart_sdk
@@ -224,7 +231,11 @@ if (build_engine_artifacts && flutter_prebuilt_dart_sdk) {
 if (build_engine_artifacts && !flutter_prebuilt_dart_sdk) {
   zip_bundle_from_file("dart_sdk_archive") {
     deps = [ "$dart_src:create_sdk" ]
-    output = "dart-sdk-$full_target_platform_name.zip"
+    if (dart_dynamic_modules) {
+      output = "dart-sdk-$full_target_platform_name-ddm.zip"
+    } else {
+      output = "dart-sdk-$full_target_platform_name.zip"
+    }
     files = [
       {
         source = rebase_path("$root_build_dir/dart-sdk")

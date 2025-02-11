@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: prefer_const_constructors, unused_local_variable, depend_on_referenced_packages
+// ignore_for_file: prefer_const_constructors, unused_local_variable
 import 'dart:core';
 
 import 'package:const_finder_fixtures_package/package.dart';

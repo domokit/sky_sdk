@@ -8,7 +8,7 @@
 //
 // @dart = 2.12
 
-// ignore_for_file: annotate_overrides, camel_case_types
+// ignore_for_file: annotate_overrides, camel_case_types, comment_references
 // ignore_for_file: constant_identifier_names, library_prefixes
 // ignore_for_file: non_constant_identifier_names, prefer_final_fields
 // ignore_for_file: unnecessary_import, unnecessary_this, unused_import
@@ -18,22 +18,16 @@ import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class ReleasePhase extends $pb.ProtobufEnum {
-  static const ReleasePhase APPLY_ENGINE_CHERRYPICKS =
-      ReleasePhase._(0, _omitEnumNames ? '' : 'APPLY_ENGINE_CHERRYPICKS');
-  static const ReleasePhase VERIFY_ENGINE_CI =
-      ReleasePhase._(1, _omitEnumNames ? '' : 'VERIFY_ENGINE_CI');
   static const ReleasePhase APPLY_FRAMEWORK_CHERRYPICKS =
-      ReleasePhase._(2, _omitEnumNames ? '' : 'APPLY_FRAMEWORK_CHERRYPICKS');
+      ReleasePhase._(0, _omitEnumNames ? '' : 'APPLY_FRAMEWORK_CHERRYPICKS');
   static const ReleasePhase PUBLISH_VERSION =
-      ReleasePhase._(3, _omitEnumNames ? '' : 'PUBLISH_VERSION');
+      ReleasePhase._(1, _omitEnumNames ? '' : 'PUBLISH_VERSION');
   static const ReleasePhase VERIFY_RELEASE =
-      ReleasePhase._(5, _omitEnumNames ? '' : 'VERIFY_RELEASE');
+      ReleasePhase._(2, _omitEnumNames ? '' : 'VERIFY_RELEASE');
   static const ReleasePhase RELEASE_COMPLETED =
-      ReleasePhase._(6, _omitEnumNames ? '' : 'RELEASE_COMPLETED');
+      ReleasePhase._(3, _omitEnumNames ? '' : 'RELEASE_COMPLETED');
 
   static const $core.List<ReleasePhase> values = <ReleasePhase>[
-    APPLY_ENGINE_CHERRYPICKS,
-    VERIFY_ENGINE_CI,
     APPLY_FRAMEWORK_CHERRYPICKS,
     PUBLISH_VERSION,
     VERIFY_RELEASE,
@@ -67,6 +61,9 @@ class CherrypickState extends $pb.ProtobufEnum {
   const CherrypickState._($core.int v, $core.String n) : super(v, n);
 }
 
+///  The type of release that is being created.
+///
+///  This determines how the version will be calculated.
 class ReleaseType extends $pb.ProtobufEnum {
   static const ReleaseType STABLE_INITIAL =
       ReleaseType._(0, _omitEnumNames ? '' : 'STABLE_INITIAL');

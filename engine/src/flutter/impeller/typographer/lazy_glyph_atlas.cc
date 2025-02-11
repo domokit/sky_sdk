@@ -34,8 +34,9 @@ LazyGlyphAtlas::~LazyGlyphAtlas() = default;
 void LazyGlyphAtlas::AddTextFrame(const std::shared_ptr<TextFrame>& frame,
                                   Scalar scale,
                                   Point offset,
+                                  const Matrix& transform,
                                   std::optional<GlyphProperties> properties) {
-  frame->SetPerFrameData(scale, offset, properties);
+  frame->SetPerFrameData(scale, offset, transform, properties);
   FML_DCHECK(alpha_atlas_ == nullptr && color_atlas_ == nullptr);
   if (frame->GetAtlasType() == GlyphAtlas::Type::kAlphaBitmap) {
     alpha_text_frames_.push_back(frame);

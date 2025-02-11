@@ -22,6 +22,9 @@ bool RenderTextInCanvasSkia(DlCanvas* canvas,
   }
   sk_sp<SkFontMgr> font_mgr = txt::GetDefaultFontManager();
   SkFont sk_font(font_mgr->makeFromData(mapping), options.font_size);
+  if (options.is_subpixel) {
+    sk_font.setSubpixel(true);
+  }
   auto blob = SkTextBlob::MakeFromString(text.c_str(), sk_font);
   if (!blob) {
     return false;

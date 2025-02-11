@@ -440,10 +440,9 @@ class _CupertinoSearchTextFieldState extends State<CupertinoSearchTextField> wit
 
   void _handleScrollNotification(ScrollNotification notification) {
     if (_maxHeight == null) {
-      _maxHeight ??= (context.findRenderObject() as RenderBox?)?.size.height;
-    } else {
-      final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-      final double currentHeight = renderBox?.size.height ?? 0.0;
+      _maxHeight ??= context.size?.height;
+    } else if (notification is ScrollUpdateNotification) {
+      final double currentHeight = context.size?.height ?? 0.0;
       setState(() {
         _fadeExtent = _calculateScrollOpacity(currentHeight, _maxHeight!);
       });

@@ -246,7 +246,7 @@ std::map<uint64_t, uint64_t> gtk_keyval_to_logical_key_map = {
     {0x0000fd1b, 0x00100000406},  // 3270_ExSelect
     {0x0000fd1d, 0x00100000608},  // 3270_PrintScreen
     {0x0000fd1e, 0x0010000000d},  // 3270_Enter
-    {0x0000fe03, 0x00200000105},  // ISO_Level3_Shift
+    {0x0000fe03, 0x00100000103},  // ISO_Level3_Shift
     {0x0000fe08, 0x00100000709},  // ISO_Next_Group
     {0x0000fe0a, 0x0010000070a},  // ISO_Prev_Group
     {0x0000fe0c, 0x00100000707},  // ISO_First_Group

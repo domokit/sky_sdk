@@ -85,7 +85,6 @@ Future<void> _testBuildIosFramework(Directory projectDir, {bool isModule = false
       'build',
       options: <String>[
         'ios-framework',
-        '--verbose',
         '--output=$outputDirectoryName',
         '--obfuscate',
         '--split-debug-info=symbols',
@@ -470,7 +469,6 @@ Future<void> _testBuildMacOSFramework(Directory projectDir) async {
       'build',
       options: <String>[
         'macos-framework',
-        '--verbose',
         '--output=$outputDirectoryName',
         '--obfuscate',
         '--split-debug-info=symbols',

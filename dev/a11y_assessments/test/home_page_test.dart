@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_dynamic_calls
-
 import 'package:a11y_assessments/main.dart';
 import 'package:a11y_assessments/use_cases/action_chip.dart';
 import 'package:a11y_assessments/use_cases/auto_complete.dart';

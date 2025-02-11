@@ -74,6 +74,8 @@ class EmbedderConfigBuilder {
 
   void SetPlatformTaskRunner(const FlutterTaskRunnerDescription* runner);
 
+  void SetUITaskRunner(const FlutterTaskRunnerDescription* runner);
+
   void SetRenderTaskRunner(const FlutterTaskRunnerDescription* runner);
 
   void SetPlatformMessageCallback(

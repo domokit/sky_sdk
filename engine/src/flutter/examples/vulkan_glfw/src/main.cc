@@ -25,7 +25,7 @@ VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
   } while (0)
 
 // Convenient reference to vulkan.hpp's global proc table.
-auto& d = vk::defaultDispatchLoaderDynamic;
+auto& d = VULKAN_HPP_DEFAULT_DISPATCHER;
 
 // GLFW needs to be included after Vulkan.
 #include "GLFW/glfw3.h"

@@ -11,7 +11,6 @@ import 'package:flutter_tools/src/base/platform.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/build_system/build_system.dart';
 import 'package:flutter_tools/src/build_system/targets/ios.dart';
-import 'package:flutter_tools/src/convert.dart';
 import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:unified_analytics/unified_analytics.dart';
 
@@ -196,7 +195,6 @@ void main() {
   testUsingContext(
     'DebugIosApplicationBundle',
     () async {
-      environment.defines[kBundleSkSLPath] = 'bundle.sksl';
       environment.defines[kBuildMode] = 'debug';
       environment.defines[kCodesignIdentity] = 'ABC123';
       // Precompiled dart data
@@ -225,16 +223,6 @@ void main() {
           .childDirectory('App.framework')
           .childFile('App')
           .createSync(recursive: true);
-      // sksl bundle
-      fileSystem
-          .file('bundle.sksl')
-          .writeAsStringSync(
-            json.encode(<String, Object>{
-              'engineRevision': '2',
-              'platform': 'ios',
-              'data': <String, Object>{'A': 'B'},
-            }),
-          );
 
       final Directory frameworkDirectory = environment.outputDir.childDirectory('App.framework');
       final File frameworkDirectoryBinary = frameworkDirectory.childFile('App');
@@ -271,11 +259,6 @@ void main() {
       expect(assetDirectory.childFile('AssetManifest.json'), exists);
       expect(assetDirectory.childFile('vm_snapshot_data'), exists);
       expect(assetDirectory.childFile('isolate_snapshot_data'), exists);
-      expect(assetDirectory.childFile('io.flutter.shaders.json'), exists);
-      expect(
-        assetDirectory.childFile('io.flutter.shaders.json').readAsStringSync(),
-        '{"data":{"A":"B"}}',
-      );
     },
     overrides: <Type, Generator>{
       FileSystem: () => fileSystem,

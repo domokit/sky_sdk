@@ -37,7 +37,7 @@ static std::shared_ptr<GlyphAtlas> CreateGlyphAtlas(
     Scalar scale,
     const std::shared_ptr<GlyphAtlasContext>& atlas_context,
     const std::shared_ptr<TextFrame>& frame) {
-  frame->SetPerFrameData(scale, {0, 0}, std::nullopt);
+  frame->SetPerFrameData(scale, {0, 0}, Matrix(), std::nullopt);
   return typographer_context->CreateGlyphAtlas(context, type, host_buffer,
                                                atlas_context, {frame});
 }
@@ -53,7 +53,7 @@ static std::shared_ptr<GlyphAtlas> CreateGlyphAtlas(
     const std::vector<std::optional<GlyphProperties>>& properties) {
   size_t offset = 0;
   for (auto& frame : frames) {
-    frame->SetPerFrameData(scale, {0, 0}, properties[offset++]);
+    frame->SetPerFrameData(scale, {0, 0}, Matrix(), properties[offset++]);
   }
   return typographer_context->CreateGlyphAtlas(context, type, host_buffer,
                                                atlas_context, frames);
@@ -137,14 +137,14 @@ TEST_P(TypographerTest, LazyAtlasTracksColor) {
 
   LazyGlyphAtlas lazy_atlas(TypographerContextSkia::Make());
 
-  lazy_atlas.AddTextFrame(frame, 1.0f, {0, 0}, {});
+  lazy_atlas.AddTextFrame(frame, 1.0f, {0, 0}, Matrix(), {});
 
   frame = MakeTextFrameFromTextBlobSkia(
       SkTextBlob::MakeFromString("😀 ", emoji_font));
 
   ASSERT_TRUE(frame->GetAtlasType() == GlyphAtlas::Type::kColorBitmap);
 
-  lazy_atlas.AddTextFrame(frame, 1.0f, {0, 0}, {});
+  lazy_atlas.AddTextFrame(frame, 1.0f, {0, 0}, Matrix(), {});
 
   // Creates different atlases for color and red bitmap.
   auto color_atlas = lazy_atlas.CreateOrGetGlyphAtlas(
@@ -227,7 +227,7 @@ TEST_P(TypographerTest, GlyphAtlasWithLotsOfdUniqueGlyphSize) {
   std::vector<std::shared_ptr<TextFrame>> frames;
   for (size_t index = 0; index < size_count; index += 1) {
     frames.push_back(MakeTextFrameFromTextBlobSkia(blob));
-    frames.back()->SetPerFrameData(0.6 * index, {0, 0}, {});
+    frames.back()->SetPerFrameData(0.6 * index, {0, 0}, Matrix(), {});
   };
   auto atlas =
       context->CreateGlyphAtlas(*GetContext(), GlyphAtlas::Type::kAlphaBitmap,

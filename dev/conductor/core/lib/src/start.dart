@@ -66,12 +66,6 @@ class StartCommand extends Command<void> {
       hide: true,
     );
     argParser.addOption(
-      kEngineUpstreamOption,
-      defaultsTo: EngineRepository.defaultUpstream,
-      help: 'Configurable Engine repo upstream remote. Primarily for testing.',
-      hide: true,
-    );
-    argParser.addOption(
       kStateOption,
       defaultsTo: defaultPath,
       help: 'Path to persistent state file. Defaults to $defaultPath',
@@ -119,9 +113,6 @@ class StartCommand extends Command<void> {
           allowNull: true,
         ) ??
         'git@github.com:$githubUsername/flutter.git';
-    final String engineUpstream =
-        getValueFromEnvOrArgs(kEngineUpstreamOption, argumentResults, platform.environment)!;
-    final String engineMirror = 'git@github.com:$githubUsername/engine.git';
     final String candidateBranch =
         getValueFromEnvOrArgs(kCandidateOption, argumentResults, platform.environment)!;
     final String releaseChannel =
@@ -151,8 +142,6 @@ class StartCommand extends Command<void> {
       candidateBranch: candidateBranch,
       checkouts: checkouts,
       dartRevision: dartRevision,
-      engineMirror: engineMirror,
-      engineUpstream: engineUpstream,
       conductorVersion: conductorVersion,
       frameworkMirror: frameworkMirror,
       frameworkUpstream: frameworkUpstream,
@@ -183,8 +172,6 @@ class StartContext extends Context {
   StartContext({
     required this.candidateBranch,
     required this.dartRevision,
-    required this.engineMirror,
-    required this.engineUpstream,
     required this.frameworkMirror,
     required this.frameworkUpstream,
     required this.conductorVersion,
@@ -196,12 +183,6 @@ class StartContext extends Context {
     this.force = false,
     this.versionOverride,
   }) : git = Git(processManager),
-       engine = EngineRepository(
-         checkouts,
-         initialRef: 'upstream/$candidateBranch',
-         upstreamRemote: Remote.upstream(engineUpstream),
-         mirrorRemote: Remote.mirror(engineMirror),
-       ),
        framework = FrameworkRepository(
          checkouts,
          initialRef: 'upstream/$candidateBranch',
@@ -211,8 +192,6 @@ class StartContext extends Context {
 
   final String candidateBranch;
   final String? dartRevision;
-  final String engineMirror;
-  final String engineUpstream;
   final String frameworkMirror;
   final String frameworkUpstream;
   final String conductorVersion;
@@ -225,7 +204,6 @@ class StartContext extends Context {
   /// If validations should be overridden.
   final bool force;
 
-  final EngineRepository engine;
   final FrameworkRepository framework;
 
   /// Determine which part of the version to increment in the next release.
@@ -272,71 +250,8 @@ class StartContext extends Context {
     // Create a new branch so that we don't accidentally push to upstream
     // candidateBranch.
     final String workingBranchName = 'cherrypicks-$candidateBranch';
-    await engine.newBranch(workingBranchName);
-
-    if (dartRevision != null && dartRevision!.isNotEmpty) {
-      await engine.updateDartRevision(dartRevision!);
-      await engine.commit('Update Dart SDK to $dartRevision', addFirst: true);
-    }
-
-    final String engineHead = await engine.reverseParse('HEAD');
-    state.engine =
-        (pb.Repository.create()
-          ..candidateBranch = candidateBranch
-          ..workingBranch = workingBranchName
-          ..startingGitHead = engineHead
-          ..currentGitHead = engineHead
-          ..checkoutPath = (await engine.checkoutDirectory).path
-          ..upstream =
-              (pb.Remote.create()
-                ..name = 'upstream'
-                ..url = engine.upstreamRemote.url)
-          ..mirror =
-              (pb.Remote.create()
-                ..name = 'mirror'
-                ..url = engine.mirrorRemote!.url));
-    if (dartRevision != null && dartRevision!.isNotEmpty) {
-      state.engine.dartRevision = dartRevision!;
-    }
-
-    await framework.newBranch(workingBranchName);
-
-    // Get framework version
-    final Version lastVersion = Version.fromString(
-      await framework.getFullTag(framework.upstreamRemote.name, candidateBranch, exact: false),
-    );
 
     final String frameworkHead = await framework.reverseParse('HEAD');
-    final String branchPoint = await framework.branchPoint(
-      '${framework.upstreamRemote.name}/$candidateBranch',
-      '${framework.upstreamRemote.name}/${FrameworkRepository.defaultBranch}',
-    );
-    final bool atBranchPoint = branchPoint == frameworkHead;
-
-    final ReleaseType releaseType = computeReleaseType(lastVersion, atBranchPoint);
-    state.releaseType = releaseType;
-
-    try {
-      lastVersion.ensureValid(candidateBranch, releaseType);
-    } on ConductorException catch (e) {
-      // Let the user know, but resume execution
-      stdio.printError(e.message);
-    }
-
-    Version nextVersion;
-    if (versionOverride != null) {
-      nextVersion = versionOverride!;
-    } else {
-      nextVersion = calculateNextVersion(lastVersion, releaseType);
-      nextVersion = await ensureBranchPointTagged(
-        branchPoint: branchPoint,
-        requestedVersion: nextVersion,
-        framework: framework,
-      );
-    }
-
-    state.releaseVersion = nextVersion.toString();
-
     state.framework =
         (pb.Repository.create()
           ..candidateBranch = candidateBranch
@@ -353,7 +268,46 @@ class StartContext extends Context {
                 ..name = 'mirror'
                 ..url = framework.mirrorRemote!.url));
 
-    state.currentPhase = ReleasePhase.APPLY_ENGINE_CHERRYPICKS;
+    if (dartRevision != null && dartRevision!.isNotEmpty) {
+      // In the monorepo, the DEPS file is in flutter/flutter
+      state.framework.dartRevision = dartRevision!;
+    }
+
+    // Get framework version
+    final Version lastVersion = Version.fromString(
+      await framework.getFullTag(framework.upstreamRemote.name, candidateBranch, exact: false),
+    );
+
+    final String branchPoint = await framework.branchPoint(
+      '${framework.upstreamRemote.name}/$candidateBranch',
+      '${framework.upstreamRemote.name}/${FrameworkRepository.defaultBranch}',
+    );
+    final bool atBranchPoint = branchPoint == frameworkHead;
+
+    final ReleaseType releaseType = computeReleaseType(lastVersion, atBranchPoint);
+    state.releaseType = releaseType;
+
+    Version nextVersion;
+    if (versionOverride != null) {
+      nextVersion = versionOverride!;
+    } else {
+      nextVersion = calculateNextVersion(lastVersion, releaseType);
+      nextVersion = await ensureBranchPointTagged(
+        branchPoint: branchPoint,
+        requestedVersion: nextVersion,
+        framework: framework,
+      );
+    }
+
+    await framework.newBranch(workingBranchName);
+    if (dartRevision != null && dartRevision!.isNotEmpty) {
+      await framework.updateDartRevision(dartRevision!);
+      await framework.commit('Update Dart SDK to $dartRevision', addFirst: true);
+    }
+
+    state.releaseVersion = nextVersion.toString();
+
+    state.currentPhase = ReleasePhase.APPLY_FRAMEWORK_CHERRYPICKS;
 
     state.conductorVersion = conductorVersion;
 

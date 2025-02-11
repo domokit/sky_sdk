@@ -683,33 +683,9 @@ class FrameworkRepository extends Repository {
     return true;
   }
 
-  /// Update this framework's engine version file.
-  ///
-  /// Returns [true] if the version file was updated and a commit is needed.
-  Future<bool> updateEngineRevision(
-    String newEngine, {
-    @visibleForTesting File? engineVersionFile,
-  }) async {
-    assert(newEngine.isNotEmpty);
-    engineVersionFile ??= (await checkoutDirectory)
-        .childDirectory('bin')
-        .childDirectory('internal')
-        .childFile('engine.version');
-    assert(engineVersionFile.existsSync());
-    final String oldEngine = engineVersionFile.readAsStringSync();
-    if (oldEngine.trim() == newEngine.trim()) {
-      stdio.printTrace(
-        'Tried to update the engine revision but version file is already up to date at: $newEngine',
-      );
-      return false;
-    }
-    stdio.printStatus('Updating engine revision from $oldEngine to $newEngine');
-    engineVersionFile.writeAsStringSync(
-      // Version files have trailing newlines
-      '${newEngine.trim()}\n',
-      flush: true,
-    );
-    return true;
+  /// Update the `dart_revision` entry in the DEPS file.
+  Future<void> updateDartRevision(String newRevision, {@visibleForTesting File? depsFile}) async {
+    return _updateDartRevision(this, newRevision, depsFile: depsFile);
   }
 }
 
@@ -770,63 +746,45 @@ class HostFrameworkRepository extends FrameworkRepository {
   }
 }
 
-class EngineRepository extends Repository {
-  EngineRepository(
-    this.checkouts, {
-    super.name = 'engine',
-    String super.initialRef = EngineRepository.defaultBranch,
-    super.upstreamRemote = const Remote.upstream(EngineRepository.defaultUpstream),
-    super.localUpstream,
-    super.previousCheckoutLocation,
-    super.mirrorRemote,
-    List<String>? additionalRequiredLocalBranches,
-  }) : super(
-         fileSystem: checkouts.fileSystem,
-         parentDirectory: checkouts.directory,
-         platform: checkouts.platform,
-         processManager: checkouts.processManager,
-         stdio: checkouts.stdio,
-         requiredLocalBranches: additionalRequiredLocalBranches ?? const <String>[],
-       );
-
-  final Checkouts checkouts;
-
-  static const String defaultUpstream = 'git@github.com:flutter/engine.git';
-  static const String defaultBranch = 'main';
-
-  /// Update the `dart_revision` entry in the DEPS file.
-  Future<void> updateDartRevision(String newRevision, {@visibleForTesting File? depsFile}) async {
-    assert(newRevision.length == 40);
-    depsFile ??= (await checkoutDirectory).childFile('DEPS');
-    final String fileContent = depsFile.readAsStringSync();
-    final RegExp dartPattern = RegExp("[ ]+'dart_revision': '([a-z0-9]{40})',");
-    final Iterable<RegExpMatch> allMatches = dartPattern.allMatches(fileContent);
-    if (allMatches.length != 1) {
-      throw ConductorException(
-        'Unexpected content in the DEPS file at ${depsFile.path}\n'
-        'Expected to find pattern ${dartPattern.pattern} 1 times, but got '
-        '${allMatches.length}.',
-      );
-    }
-    final String updatedFileContent = fileContent.replaceFirst(
-      dartPattern,
-      "  'dart_revision': '$newRevision',",
-    );
-
-    depsFile.writeAsStringSync(updatedFileContent, flush: true);
-  }
-
-  @override
-  Future<Repository> cloneRepository(String? cloneName) async {
-    assert(localUpstream);
-    cloneName ??= 'clone-of-$name';
-    return EngineRepository(
-      checkouts,
-      name: cloneName,
-      upstreamRemote: Remote.upstream('file://${(await checkoutDirectory).path}/'),
-    );
-  }
-}
+//class EngineRepository extends Repository {
+//  EngineRepository(
+//    this.checkouts, {
+//    super.name = 'engine',
+//    String super.initialRef = EngineRepository.defaultBranch,
+//    super.upstreamRemote = const Remote.upstream(EngineRepository.defaultUpstream),
+//    super.localUpstream,
+//    super.previousCheckoutLocation,
+//    super.mirrorRemote,
+//    List<String>? additionalRequiredLocalBranches,
+//  }) : super(
+//         fileSystem: checkouts.fileSystem,
+//         parentDirectory: checkouts.directory,
+//         platform: checkouts.platform,
+//         processManager: checkouts.processManager,
+//         stdio: checkouts.stdio,
+//         requiredLocalBranches: additionalRequiredLocalBranches ?? const <String>[],
+//       );
+//
+//  final Checkouts checkouts;
+//
+//  static const String defaultUpstream = 'git@github.com:flutter/engine.git';
+//  static const String defaultBranch = 'main';
+//
+//  /// Update the `dart_revision` entry in the DEPS file.
+//  Future<void> updateDartRevision(String newRevision, {@visibleForTesting File? depsFile}) =>
+//      _updateDartRevision(this, newRevision, depsFile: depsFile);
+//
+//  @override
+//  Future<Repository> cloneRepository(String? cloneName) async {
+//    assert(localUpstream);
+//    cloneName ??= 'clone-of-$name';
+//    return EngineRepository(
+//      checkouts,
+//      name: cloneName,
+//      upstreamRemote: Remote.upstream('file://${(await checkoutDirectory).path}/'),
+//    );
+//  }
+//}
 
 /// An enum of all the repositories that the Conductor supports.
 enum RepositoryType { framework, engine }
@@ -850,4 +808,29 @@ class Checkouts {
   final Platform platform;
   final ProcessManager processManager;
   final Stdio stdio;
+}
+
+Future<void> _updateDartRevision(
+  Repository repo,
+  String newRevision, {
+  @visibleForTesting File? depsFile,
+}) async {
+  assert(newRevision.length == 40);
+  depsFile ??= (await repo.checkoutDirectory).childFile('DEPS');
+  final String fileContent = depsFile.readAsStringSync();
+  final RegExp dartPattern = RegExp("[ ]+'dart_revision': '([a-z0-9]{40})',");
+  final Iterable<RegExpMatch> allMatches = dartPattern.allMatches(fileContent);
+  if (allMatches.length != 1) {
+    throw ConductorException(
+      'Unexpected content in the DEPS file at ${depsFile.path}\n'
+      'Expected to find pattern ${dartPattern.pattern} 1 times, but got '
+      '${allMatches.length}.',
+    );
+  }
+  final String updatedFileContent = fileContent.replaceFirst(
+    dartPattern,
+    "  'dart_revision': '$newRevision',",
+  );
+
+  depsFile.writeAsStringSync(updatedFileContent, flush: true);
 }

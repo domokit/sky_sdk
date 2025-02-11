@@ -112,16 +112,6 @@ Future<void> main(List<String> rawArguments) async {
   }
   final ArgParser argParser = ArgParser();
   argParser.addOption(
-    'engine-root',
-    defaultsTo: path.join(flutterRoot.path, '..', 'engine', 'src', 'flutter'),
-    help:
-        'The path to the root of the flutter/engine repository. This is used '
-        'to place the generated engine mapping files. If --engine-root is not '
-        r'specified, it will default to $flutterRoot/../engine/src/flutter, '
-        'assuming the engine gclient folder is placed at the same folder as '
-        'the flutter/flutter repository.',
-  );
-  argParser.addOption(
     'physical-data',
     defaultsTo: path.join(dataRoot, 'physical_key_data.g.json'),
     help:
@@ -193,7 +183,7 @@ Future<void> main(List<String> rawArguments) async {
     exit(0);
   }
 
-  PlatformCodeGenerator.engineRoot = parsedArguments['engine-root'] as String;
+  PlatformCodeGenerator.engineRoot = path.join(flutterRoot.path, 'engine', 'src', 'flutter');
 
   PhysicalKeyData physicalData;
   LogicalKeyData logicalData;

@@ -207,7 +207,7 @@ class WebDriverService extends DriverService {
   }
 
   @override
-  Future<void> stop({File? writeSkslOnExit, String? userIdentifier}) async {
+  Future<void> stop({String? userIdentifier}) async {
     final bool appDidFinishPrematurely = _runResult != null;
     await _residentRunner.exitApp();
     await _residentRunner.cleanupAtFinish();

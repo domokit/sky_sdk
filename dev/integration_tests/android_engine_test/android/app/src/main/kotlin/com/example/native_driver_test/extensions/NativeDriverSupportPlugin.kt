@@ -49,6 +49,14 @@ class NativeDriverSupportPlugin :
                 val versionMap = mapOf("version" to Build.VERSION.SDK_INT)
                 result.success(versionMap)
             }
+            "is_emulator" -> {
+                val isEmulator =
+                    when {
+                        Build.MODEL.contains("gphone") -> true
+                        else -> false
+                    }
+                result.success(mapOf("emulator" to isEmulator))
+            }
             "ping" -> {
                 result.success(null)
             }
@@ -61,7 +69,8 @@ class NativeDriverSupportPlugin :
                         selector = NativeSelector.ByContentDescription(call.argument("label")!!)
                     }
                     "byNativeIntegerId" -> {
-                        selector = NativeSelector.ByViewId(call.argument("id")!!)
+                        val stringId = call.argument<String>("id")!!
+                        selector = NativeSelector.ByViewId(stringId.toInt())
                     }
                     else -> {
                         result.error("INVALID_SELECTOR", "Not supported", kind)

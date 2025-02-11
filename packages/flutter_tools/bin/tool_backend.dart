@@ -25,7 +25,6 @@ Future<void> main(List<String> arguments) async {
   final String? localEngineHost = Platform.environment['LOCAL_ENGINE_HOST'];
   final String? projectDirectory = Platform.environment['PROJECT_DIR'];
   final String? splitDebugInfo = Platform.environment['SPLIT_DEBUG_INFO'];
-  final String? bundleSkSLPath = Platform.environment['BUNDLE_SKSL_PATH'];
   final bool trackWidgetCreation = Platform.environment['TRACK_WIDGET_CREATION'] == 'true';
   final bool treeShakeIcons = Platform.environment['TREE_SHAKE_ICONS'] == 'true';
   final bool verbose = Platform.environment['VERBOSE_SCRIPT_LOGGING'] == 'true';
@@ -94,7 +93,6 @@ or
     '-dTargetFile=$flutterTarget',
     '-dTreeShakeIcons="$treeShakeIcons"',
     '-dDartObfuscation=$dartObfuscation',
-    if (bundleSkSLPath != null) '-dBundleSkSLPath=$bundleSkSLPath',
     if (codeSizeDirectory != null) '-dCodeSizeDirectory=$codeSizeDirectory',
     if (splitDebugInfo != null) '-dSplitDebugInfo=$splitDebugInfo',
     if (dartDefines != null) '--DartDefines=$dartDefines',

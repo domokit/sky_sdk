@@ -1548,6 +1548,20 @@ targets:
           {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
         ]
 
+  - name: Linux_mokey android_engine_vulkan_tests
+    recipe: flutter/flutter_drone
+    # TODO(matanlurey): https://github.com/flutter/flutter/issues/163025.
+    bringup: true
+    timeout: 60
+    properties:
+      shard: android_engine_vulkan_tests
+      tags: >
+         ["framework", "hostonly", "shard", "linux"]
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
+
   - name: Linux_android_emu android_engine_opengles_tests
     recipe: flutter/flutter_drone
     timeout: 60
@@ -3196,6 +3210,16 @@ targets:
         ["devicelab", "android", "linux", "pixel", "7pro"]
       task_name: platform_views_scroll_perf_impeller__timeline_summary
 
+  - name: Linux_pixel_7pro platform_views_hcpp_scroll_perf__timeline_summary
+    recipe: devicelab/devicelab_drone
+    presubmit: false
+    bringup: true
+    timeout: 60
+    properties:
+      tags: >
+        ["devicelab", "android", "linux", "pixel", "7pro"]
+      task_name: platform_views_hcpp_scroll_perf__timeline_summary
+
   # linux mokey benchmark
   - name: Linux_mokey platform_view__start_up
     recipe: devicelab/devicelab_drone
@@ -3542,8 +3566,6 @@ targets:
   - name: Mac build_ios_framework_module_test
     recipe: devicelab/devicelab_drone
     timeout: 60
-    # Flake rate of >3.5% in presubmit
-    presubmit: false # https://github.com/flutter/flutter/issues/150642
     properties:
       add_recipes_cq: "true"
       dependencies: >-
@@ -4122,8 +4144,6 @@ targets:
   - name: Mac_arm64 module_test_ios
     recipe: devicelab/devicelab_drone
     timeout: 60
-    # Flake rate of >10% in presubmit
-    presubmit: false # https://github.com/flutter/flutter/issues/150642
     properties:
       dependencies: >-
         [

@@ -1616,6 +1616,7 @@ void main() {
                       children: <TestSemantics>[
                         TestSemantics(
                           id: 4,
+                          role: SemanticsRole.alertDialog,
                           children: <TestSemantics>[
                             TestSemantics(id: 5, label: 'title', textDirection: TextDirection.ltr),
                             // The content semantics does not merge into the semantics
@@ -1803,6 +1804,7 @@ void main() {
                       children: <TestSemantics>[
                         TestSemantics(
                           id: 4,
+                          role: SemanticsRole.dialog,
                           children: <TestSemantics>[
                             // Title semantics does not merge into the semantics
                             // node 4.

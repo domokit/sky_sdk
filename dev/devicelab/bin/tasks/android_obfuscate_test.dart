@@ -22,7 +22,6 @@ Future<void> main() async {
               '--target-platform=android-arm',
               '--obfuscate',
               '--split-debug-info=foo/',
-              '--verbose',
             ],
           );
         });
@@ -67,7 +66,6 @@ Future<void> main() async {
               '--split-debug-info=foo/',
               '--no-debug',
               '--no-profile',
-              '--verbose',
             ],
           );
         });

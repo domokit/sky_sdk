@@ -23,7 +23,6 @@ import 'package:flutter_tools/src/ios/xcodeproj.dart';
 import 'package:flutter_tools/src/macos/darwin_dependency_management.dart';
 import 'package:flutter_tools/src/platform_plugins.dart';
 import 'package:flutter_tools/src/plugins.dart';
-import 'package:flutter_tools/src/preview_device.dart';
 import 'package:flutter_tools/src/project.dart';
 import 'package:flutter_tools/src/version.dart';
 import 'package:test/fake.dart';
@@ -1887,37 +1886,6 @@ flutter:
         overrides: <Type, Generator>{
           FileSystem: () => fsWindows,
           ProcessManager: () => FakeProcessManager.any(),
-          FeatureFlags: enableExplicitPackageDependencies,
-          Pub: FakePubWithPrimedDeps.new,
-        },
-      );
-
-      testUsingContext(
-        'injectPlugins will validate if all plugins in the project are part of the passed allowedPlugins',
-        () async {
-          // Re-run the setup using the Windows filesystem.
-          setUpProject(fsWindows);
-          createFakePlugins(fsWindows, const <String>['plugin_one', 'plugin_two']);
-
-          expect(
-            () => injectPlugins(
-              flutterProject,
-              linuxPlatform: true,
-              windowsPlatform: true,
-              allowedPlugins: PreviewDevice.supportedPubPlugins,
-            ),
-            throwsToolExit(
-              message: '''
-The Flutter Preview device does not support the following plugins from your pubspec.yaml:
-
-[plugin_one, plugin_two]
-''',
-            ),
-          );
-        },
-        overrides: <Type, Generator>{
-          FileSystem: () => fsWindows,
-          ProcessManager: () => FakeProcessManager.empty(),
           FeatureFlags: enableExplicitPackageDependencies,
           Pub: FakePubWithPrimedDeps.new,
         },

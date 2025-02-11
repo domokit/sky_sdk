@@ -8,11 +8,9 @@ import 'dart:typed_data';
 
 import 'package:fake_async/fake_async.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_tools/src/android/android_device.dart';
 import 'package:flutter_tools/src/android/android_workflow.dart';
 import 'package:flutter_tools/src/application_package.dart';
-import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/dds.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/utils.dart';
@@ -23,7 +21,6 @@ import 'package:flutter_tools/src/device.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/ios/ios_workflow.dart';
-import 'package:flutter_tools/src/preview_device.dart';
 import 'package:flutter_tools/src/resident_runner.dart';
 import 'package:flutter_tools/src/vmservice.dart';
 import 'package:flutter_tools/src/windows/windows_workflow.dart';
@@ -127,7 +124,7 @@ void main() {
         expect(response.data['id'], 0);
         expect(response.data['result'], isNotEmpty);
         expect(response.data['result']! as Map<String, Object?>, const <String, Object>{
-          'platforms': <String>['macos', 'windows', 'windowsPreview'],
+          'platforms': <String>['macos', 'windows'],
           'platformTypes': <String, Map<String, Object>>{
             'web': <String, Object>{
               'isSupported': false,
@@ -197,7 +194,6 @@ void main() {
                 },
               ],
             },
-            'windowsPreview': <String, bool>{'isSupported': true},
           },
         });
       },
@@ -208,7 +204,6 @@ void main() {
               isAndroidEnabled: false,
               isIOSEnabled: false,
               isMacOSEnabled: true,
-              isPreviewDeviceEnabled: true,
               isWindowsEnabled: true,
             ),
       },
@@ -424,20 +419,9 @@ void main() {
         final FakePollingDeviceDiscovery discoverer = FakePollingDeviceDiscovery();
         daemon.deviceDomain.addDeviceDiscoverer(discoverer);
         discoverer.addDevice(FakeAndroidDevice());
-        final MemoryFileSystem fs = MemoryFileSystem.test();
-        discoverer.addDevice(
-          PreviewDevice(
-            processManager: FakeProcessManager.empty(),
-            logger: BufferLogger.test(),
-            fileSystem: fs,
-            previewBinary: fs.file(r'preview_device.exe'),
-            artifacts: Artifacts.test(fileSystem: fs),
-            builderFactory: () => throw UnimplementedError('TODO implement builder factory'),
-          ),
-        );
 
         final List<Map<String, Object?>> names = <Map<String, Object?>>[];
-        await daemonStreams.outputs.stream.skipWhile(_isConnectedEvent).take(2).forEach((
+        await daemonStreams.outputs.stream.skipWhile(_isConnectedEvent).take(1).forEach((
           DaemonMessage response,
         ) async {
           expect(response.data['event'], 'device.added');
@@ -467,28 +451,6 @@ void main() {
                 'hotRestart': true,
                 'screenshot': true,
                 'fastStart': true,
-                'flutterExit': true,
-                'hardwareRendering': true,
-                'startPaused': true,
-              },
-            },
-            <String, Object?>{
-              'id': 'preview',
-              'name': 'Preview',
-              'platform': 'windows-x64',
-              'emulator': false,
-              'category': 'desktop',
-              'platformType': 'windowsPreview',
-              'ephemeral': false,
-              'emulatorId': null,
-              'sdk': 'preview',
-              'isConnected': true,
-              'connectionInterface': 'attached',
-              'capabilities': <String, Object?>{
-                'hotReload': true,
-                'hotRestart': true,
-                'screenshot': false,
-                'fastStart': false,
                 'flutterExit': true,
                 'hardwareRendering': true,
                 'startPaused': true,

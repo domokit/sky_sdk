@@ -190,6 +190,7 @@ final Set<String> skippedPaths = <String>{
   r'flutter/third_party/vulkan-deps/glslang/src/LICENSE.txt', // redundant with licenses inside files
   r'flutter/third_party/vulkan-deps/glslang/src/glslang/OSDependent/Web', // we only use glslang in impellerc, not in web apps
   r'flutter/third_party/vulkan-deps/glslang/src/kokoro', // only build files
+  r'flutter/third_party/vulkan-deps/lunarg-vulkantools/src/vkconfig_gui',
   r'flutter/third_party/vulkan-deps/spirv-cross/src/LICENSES', // directory with license templates
   r'flutter/third_party/vulkan-deps/spirv-cross/src/shaders', // used by regression tests
   r'flutter/third_party/vulkan-deps/spirv-cross/src/shaders-hlsl', // used by regression tests

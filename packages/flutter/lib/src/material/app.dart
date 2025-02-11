@@ -1009,6 +1009,10 @@ class _MaterialAppState extends State<MaterialApp> {
       theme = widget.highContrastTheme;
     }
     theme ??= widget.theme ?? ThemeData.light();
+    SystemChrome.setSystemUIOverlayStyle(
+      theme.brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+    );
+
     return theme;
   }
 

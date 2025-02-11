@@ -2087,12 +2087,6 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
     settings.application_kernel_asset = kApplicationKernelSnapshotFileName;
   }
 
-  settings.task_observer_add = [](intptr_t key, const fml::closure& callback) {
-    fml::MessageLoop::GetCurrent().AddTaskObserver(key, callback);
-  };
-  settings.task_observer_remove = [](intptr_t key) {
-    fml::MessageLoop::GetCurrent().RemoveTaskObserver(key);
-  };
   if (SAFE_ACCESS(args, root_isolate_create_callback, nullptr) != nullptr) {
     VoidCallback callback =
         SAFE_ACCESS(args, root_isolate_create_callback, nullptr);
@@ -2354,6 +2348,24 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
     return LOG_EMBEDDER_ERROR(kInternalInconsistency,
                               "Task runner configuration was invalid.");
   }
+
+  // Embedder supplied UI task runner runner does not have a message loop.
+  bool has_ui_thread_message_loop =
+      task_runners.GetUITaskRunner()->GetTaskQueueId().is_valid();
+  // Message loop observers are used to flush the microtask queue.
+  // If there is no message loop the queue is flushed from
+  // EmbedderEngine::RunTask.
+  settings.task_observer_add = [has_ui_thread_message_loop](
+                                   intptr_t key, const fml::closure& callback) {
+    if (has_ui_thread_message_loop) {
+      fml::MessageLoop::GetCurrent().AddTaskObserver(key, callback);
+    }
+  };
+  settings.task_observer_remove = [has_ui_thread_message_loop](intptr_t key) {
+    if (has_ui_thread_message_loop) {
+      fml::MessageLoop::GetCurrent().RemoveTaskObserver(key);
+    }
+  };
 
   auto run_configuration =
       flutter::RunConfiguration::InferFromSettings(settings);

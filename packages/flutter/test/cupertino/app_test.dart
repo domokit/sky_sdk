@@ -481,6 +481,72 @@ void main() {
     },
   );
 
+  testWidgets('CupertinoApp uses the dark SystemUIOverlayStyle when the background is light', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const CupertinoApp(
+        theme: CupertinoThemeData(brightness: Brightness.light),
+        home: CupertinoPageScaffold(child: Text('Hello')),
+      ),
+    );
+
+    expect(SystemChrome.latestStyle, SystemUiOverlayStyle.dark);
+  });
+
+  testWidgets('CupertinoApp uses the light SystemUIOverlayStyle when the background is dark', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const CupertinoApp(
+        theme: CupertinoThemeData(brightness: Brightness.dark),
+        home: CupertinoPageScaffold(child: Text('Hello')),
+      ),
+    );
+
+    expect(SystemChrome.latestStyle, SystemUiOverlayStyle.light);
+  });
+
+  testWidgets(
+    'CupertinoApp uses the dark SystemUIOverlayStyle when theme brightness is null and the system is in light mode',
+    (WidgetTester tester) async {
+      // The theme brightness is null by default.
+      // The system is in light mode by default.
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(),
+          child: CupertinoApp(
+            builder: (BuildContext context, Widget? child) {
+              return const Placeholder();
+            },
+          ),
+        ),
+      );
+
+      expect(SystemChrome.latestStyle, SystemUiOverlayStyle.dark);
+    },
+  );
+
+  testWidgets(
+    'CupertinoApp uses the light SystemUIOverlayStyle when theme brightness is null and the system is in dark mode',
+    (WidgetTester tester) async {
+      // The theme brightness is null by default.
+      // Simulates setting the system to dark mode.
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(platformBrightness: Brightness.dark),
+          child: CupertinoApp(
+            builder: (BuildContext context, Widget? child) {
+              return const Placeholder();
+            },
+          ),
+        ),
+      );
+
+      expect(SystemChrome.latestStyle, SystemUiOverlayStyle.light);
+    },
+  );
+
   testWidgets('Text color is correctly resolved when CupertinoThemeData.brightness is null', (
     WidgetTester tester,
   ) async {

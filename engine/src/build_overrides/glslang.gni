@@ -2,6 +2,5 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# This file is a temporary shim needed during the elimination of the buildroot.
-# See: https://github.com/flutter/flutter/issues/67373
-import("//flutter/build_overrides/glslang.gni")
+glslang_spirv_tools_dir = "//flutter/third_party/vulkan-deps/spirv-tools/src"
+spirv_tools_dir = "//flutter/third_party/vulkan-deps/spirv-tools/src"

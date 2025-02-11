@@ -585,23 +585,6 @@ class DaemonDomain extends Domain {
                 'fixCode': _ReasonCode.config.name,
               });
             }
-          case PlatformType.windowsPreview:
-            // TODO(fujino): detect if there any plugins with native code
-            if (!featureFlags.isPreviewDeviceEnabled) {
-              reasons.add(<String, Object>{
-                'reasonText': 'the Preview Device feature is not enabled',
-                'fixText': 'Run "flutter config --enable-flutter-preview',
-                'fixCode': _ReasonCode.config.name,
-              });
-            }
-            if (!supportedPlatforms.contains(SupportedPlatform.windows)) {
-              reasons.add(<String, Object>{
-                'reasonText': 'the Windows platform is not enabled for this project',
-                'fixText':
-                    'Run "flutter create --platforms=windows ." in your application directory',
-                'fixCode': _ReasonCode.create.name,
-              });
-            }
         }
 
         if (reasons.isEmpty) {

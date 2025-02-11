@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_driver/driver_extension.dart';
 
 import '../src/allow_list_devices.dart';
+import '_shared.dart';
 
 void main() async {
   ensureAndroidDevice();
@@ -18,19 +19,13 @@ void main() async {
 
   // Run on full screen.
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-  runApp(const MainApp());
-}
-
-final class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: _HybridCompositionAndroidPlatformView(viewType: 'blue_orange_gradient_platform_view'),
-    );
-  }
+  runApp(
+    const MainApp(
+      platformView: _HybridCompositionAndroidPlatformView(
+        viewType: 'blue_orange_gradient_platform_view',
+      ),
+    ),
+  );
 }
 
 final class _HybridCompositionAndroidPlatformView extends StatelessWidget {

@@ -12,14 +12,13 @@ void main() {
 }
 
 enum Animal {
-  cat('Cat', leading: Text('🦁')),
-  kitten('Kitten', leading: Text('🐱')),
-  felisCatus('Felis catus', leading: Text('🐈')),
-  dog('Dog', leading: Text('🐕'));
+  cat('Cat'),
+  kitten('Kitten'),
+  felisCatus('Felis catus'),
+  dog('Dog');
 
-  const Animal(this.label, {this.leading});
+  const Animal(this.label);
   final String label;
-  final Widget? leading;
 }
 
 class RawMenuAnchorExample extends StatefulWidget {
@@ -81,7 +80,6 @@ class _RawMenuAnchorExampleState extends State<RawMenuAnchorExample> {
                     });
                     controller.close();
                   },
-                  leadingIcon: SizedBox(width: 24, child: Center(child: animal.leading)),
                   trailingIcon:
                       _selectedAnimal == animal ? const Icon(Icons.check, size: 20) : null,
                   child: Text(animal.label),

@@ -35,7 +35,6 @@ class BuildInfo {
     this.splitDebugInfoPath,
     this.dartObfuscation = false,
     List<String>? dartDefines,
-    this.bundleSkSLPath,
     List<String>? dartExperiments,
     required this.treeShakeIcons,
     this.performanceMeasurementFile,
@@ -117,11 +116,6 @@ class BuildInfo {
 
   /// Whether to apply dart source code obfuscation.
   final bool dartObfuscation;
-
-  /// An optional path to a JSON containing object SkSL shaders.
-  ///
-  /// Currently this is only supported for Android builds.
-  final String? bundleSkSLPath;
 
   /// Additional constant values to be made available in the Dart program.
   ///
@@ -294,7 +288,6 @@ class BuildInfo {
       if (splitDebugInfoPath != null) kSplitDebugInfo: splitDebugInfoPath!,
       kTrackWidgetCreation: trackWidgetCreation.toString(),
       kIconTreeShakerFlag: treeShakeIcons.toString(),
-      if (bundleSkSLPath != null) kBundleSkSLPath: bundleSkSLPath!,
       if (codeSizeDirectory != null) kCodeSizeDirectory: codeSizeDirectory!,
       if (fileSystemRoots.isNotEmpty) kFileSystemRoots: fileSystemRoots.join(','),
       if (fileSystemScheme != null) kFileSystemScheme: fileSystemScheme!,
@@ -323,7 +316,6 @@ class BuildInfo {
       'TREE_SHAKE_ICONS': treeShakeIcons.toString(),
       if (performanceMeasurementFile != null)
         'PERFORMANCE_MEASUREMENT_FILE': performanceMeasurementFile!,
-      if (bundleSkSLPath != null) 'BUNDLE_SKSL_PATH': bundleSkSLPath!,
       'PACKAGE_CONFIG': packageConfigPath,
       if (codeSizeDirectory != null) 'CODE_SIZE_DIRECTORY': codeSizeDirectory!,
       if (flavor != null) 'FLAVOR': flavor!,
@@ -348,7 +340,6 @@ class BuildInfo {
       '-Ptree-shake-icons=$treeShakeIcons',
       if (performanceMeasurementFile != null)
         '-Pperformance-measurement-file=$performanceMeasurementFile',
-      if (bundleSkSLPath != null) '-Pbundle-sksl-path=$bundleSkSLPath',
       if (codeSizeDirectory != null) '-Pcode-size-directory=$codeSizeDirectory',
       for (final String projectArg in androidProjectArgs) '-P$projectArg',
     ];
@@ -974,9 +965,6 @@ const String kIconTreeShakerFlag = 'TreeShakeIcons';
 
 /// Controls whether a web build should use local canvaskit or the CDN
 const String kUseLocalCanvasKitFlag = 'UseLocalCanvasKit';
-
-/// The input key for an SkSL bundle path.
-const String kBundleSkSLPath = 'BundleSkSLPath';
 
 /// The define to pass build name
 const String kBuildName = 'BuildName';

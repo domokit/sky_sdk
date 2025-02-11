@@ -1,0 +1,65 @@
+{
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on linux hosts should go in one of the other linux_ build ",
+        "definition files."
+    ],
+    "builds": [
+        {
+            "archives": [
+                {
+                    "name": "ci/host_debug_ddm",
+                    "base_path": "out/ci/host_debug_ddm/zip_archives/",
+                    "type": "gcs",
+                    "include_paths": [
+                        "out/ci/host_debug_ddm/zip_archives/dart-sdk-linux-x64-ddm.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "download_android_deps": false,
+                "download_jdk": false,
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/host_debug_ddm",
+                "--runtime-mode",
+                "debug",
+                "--no-prebuilt-dart-sdk",
+                "--gn-args=dart_dynamic_modules=true",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/host_debug_ddm",
+            "description": "Produces experimental debug mode Linux host-side tooling with dynamic modules enabled.",
+            "ninja": {
+                "config": "ci/host_debug_ddm",
+                "targets": [
+                    "flutter/build/archives:dart_sdk_archive"
+                ]
+            }
+        }
+    ],
+    "generators": {
+        "tasks": [
+            {
+                "name": "Verify-export-symbols-release-binaries",
+                "parameters": [
+                    "src/out/ci",
+                    "src/flutter/buildtools"
+                ],
+                "script": "flutter/testing/symbols/verify_exported.dart",
+                "language": "dart"
+            }
+        ]
+    }
+}

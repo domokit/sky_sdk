@@ -3,11 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:file/memory.dart';
-import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/platform.dart';
-import 'package:flutter_tools/src/base/process.dart';
 import 'package:flutter_tools/src/build_system/build_system.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/commands/build.dart';
@@ -23,7 +21,6 @@ import '../../src/test_flutter_command_runner.dart';
 void main() {
   late BufferLogger logger;
   late MemoryFileSystem fs;
-  late Artifacts artifacts;
   late FakeProcessManager processManager;
   late Platform platform;
   late Cache cache;
@@ -37,7 +34,6 @@ void main() {
     fs = MemoryFileSystem.test();
     final Directory flutterRoot = fs.directory('flutter');
     Cache.flutterRoot = flutterRoot.path;
-    artifacts = Artifacts.test(fileSystem: fs);
     logger = BufferLogger.test();
     platform = FakePlatform(environment: const <String, String>{'PATH': ''});
     processManager = FakeProcessManager.empty();
@@ -63,12 +59,10 @@ flutter:
 
       final BuildCommand command = BuildCommand(
         androidSdk: FakeAndroidSdk(),
-        artifacts: artifacts,
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fs,
         logger: logger,
         osUtils: FakeOperatingSystemUtils(),
-        processUtils: ProcessUtils(logger: logger, processManager: processManager),
       );
 
       expect(
@@ -120,12 +114,10 @@ flutter:
 
       final BuildCommand command = BuildCommand(
         androidSdk: FakeAndroidSdk(),
-        artifacts: artifacts,
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fs,
         logger: logger,
         osUtils: FakeOperatingSystemUtils(),
-        processUtils: ProcessUtils(logger: logger, processManager: processManager),
       );
 
       await createTestCommandRunner(command).run(const <String>['build', 'aar', '--no-pub']);

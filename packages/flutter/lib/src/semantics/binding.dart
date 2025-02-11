@@ -75,6 +75,23 @@ mixin SemanticsBinding on BindingBase {
     _semanticsEnabled.removeListener(listener);
   }
 
+  final ObserverList<ValueSetter<ui.SemanticsActionEvent>> _semanticsActionListeners =
+      ObserverList<ValueSetter<ui.SemanticsActionEvent>>();
+
+  /// Adds a listener that is called for every [ui.SemanticsActionEvent] received.
+  ///
+  /// The listeners are called before [performSemanticsAction] is invoked.
+  ///
+  /// To remove the listener, call [removeSemanticsActionListener].
+  void addSemanticsActionListener(ValueSetter<ui.SemanticsActionEvent> listener) {
+    _semanticsActionListeners.add(listener);
+  }
+
+  /// Removes a listener previously added with [addSemanticsActionListener].
+  void removeSemanticsActionListener(ValueSetter<ui.SemanticsActionEvent> listener) {
+    _semanticsActionListeners.remove(listener);
+  }
+
   /// The number of clients registered to listen for semantics.
   ///
   /// The number is increased whenever [ensureSemantics] is called and decreased
@@ -125,6 +142,15 @@ mixin SemanticsBinding on BindingBase {
         arguments is ByteData
             ? action.copyWith(arguments: const StandardMessageCodec().decodeMessage(arguments))
             : action;
+    // Listeners may get added/removed while the iteration is in progress. Since the list cannot
+    // be modified while iterating, we are creating a local copy for the iteration.
+    final List<ValueSetter<ui.SemanticsActionEvent>> localListeners = _semanticsActionListeners
+        .toList(growable: false);
+    for (final ValueSetter<ui.SemanticsActionEvent> listener in localListeners) {
+      if (_semanticsActionListeners.contains(listener)) {
+        listener(decodedAction);
+      }
+    }
     performSemanticsAction(decodedAction);
   }
 

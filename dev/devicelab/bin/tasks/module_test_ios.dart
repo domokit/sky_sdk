@@ -85,7 +85,7 @@ dependencies:
       section('Build ephemeral host app in release mode without CocoaPods');
 
       await inDirectory(projectDir, () async {
-        await flutter('build', options: <String>['ios', '--no-codesign', '--verbose']);
+        await flutter('build', options: <String>['ios', '--no-codesign']);
       });
 
       // Check the tool is no longer copying to the legacy xcframework location.
@@ -606,7 +606,7 @@ end
       );
 
       if (!xcodebuildOutput.contains(
-            'flutter --verbose --local-engine-src-path=bogus assemble',
+            RegExp('flutter.*--local-engine-src-path=bogus assemble'),
           ) || // Verbose output
           !xcodebuildOutput.contains(
             'Unable to detect a Flutter engine build directory in bogus',

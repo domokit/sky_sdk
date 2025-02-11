@@ -432,7 +432,6 @@ void main() {
         'b Toggle platform brightness (dark and light mode).                        (debugBrightnessOverride)',
         'P Toggle performance overlay.                                    (WidgetsApp.showPerformanceOverlay)',
         'a Toggle timeline events for all widget build methods.                    (debugProfileWidgetBuilds)',
-        'M Write SkSL shaders to a unique file in the project directory.',
         'g Run source code generators.',
         'h Repeat this help message.',
         'd Detach (terminate "flutter run" but leave application running).',

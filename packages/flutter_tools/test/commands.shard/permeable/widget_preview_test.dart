@@ -31,11 +31,12 @@ void main() {
   late LoggingProcessManager loggingProcessManager;
   late FakeStdio mockStdio;
   late Logger logger;
-  late FileSystem fs;
+  late LocalFileSystem fs;
   late BotDetector botDetector;
   late Platform platform;
 
-  setUp(() {
+  setUp(() async {
+    await ensureFlutterToolsSnapshot();
     loggingProcessManager = LoggingProcessManager();
     logger = BufferLogger.test();
     fs = LocalFileSystem.test(signals: Signals.test());
@@ -43,10 +44,16 @@ void main() {
     tempDir = fs.systemTempDirectory.createTempSync('flutter_tools_create_test.');
     mockStdio = FakeStdio();
     platform = FakePlatform.fromPlatform(const LocalPlatform());
+    // Most, but not all, tests will run some variant of "pub get" after creation,
+    // which in turn will check for the presence of the Flutter SDK root. Without
+    // this field set consistently, the order of the tests becomes important *or*
+    // you need to remember to set it everywhere.
+    Cache.flutterRoot = fs.path.absolute('..', '..');
   });
 
   tearDown(() {
     tryToDelete(tempDir);
+    fs.dispose();
   });
 
   Future<Directory> createRootProject() async {
@@ -91,11 +98,13 @@ void main() {
     final Directory widgetPreviewScaffoldDir = widgetPreviewScaffoldFromRootProject(
       rootProject: rootProject ?? fs.currentDirectory,
     );
-    expect(widgetPreviewScaffoldDir, exists);
-    expect(
-      widgetPreviewScaffoldDir.childFile(PreviewCodeGenerator.generatedPreviewFilePath),
-      exists,
-    );
+    // Don't perform analysis on Windows since `dart pub add` will use '\' for
+    // path dependencies and cause analysis to fail.
+    // TODO(bkonyi): enable analysis on Windows once https://github.com/dart-lang/pub/issues/4520
+    // is resolved.
+    if (!platform.isWindows) {
+      await analyzeProject(widgetPreviewScaffoldDir.path);
+    }
   }
 
   Future<void> cleanWidgetPreview({required Directory rootProject}) async {
@@ -181,13 +190,12 @@ void main() {
     );
 
     const String samplePreviewFile = '''
-// This doesn't need to be valid code for testing as long as it has the @Preview() annotation
 @Preview()
-WidgetPreview preview() => WidgetPreview();''';
+WidgetPreview preview() => const WidgetPreview(child: Text('Foo'));''';
 
     const String expectedGeneratedFileContents = '''
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter_project/foo.dart' as _i1;import 'package:widget_preview/widget_preview.dart';List<WidgetPreview> previews() => [_i1.preview()];''';
+import 'package:flutter_project/foo.dart' as _i1;import 'package:flutter/widgets.dart';List<WidgetPreview> previews() => [_i1.preview()];''';
 
     testUsingContext(
       'start finds existing previews and injects them into ${PreviewCodeGenerator.generatedPreviewFilePath}',

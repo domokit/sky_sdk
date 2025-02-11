@@ -667,7 +667,6 @@ Future<int> exitWithHooks(int code, {required ShutdownHooks shutdownHooks}) asyn
       // This catches all exceptions because the error is propagated on the
       // completer.
     } catch (error, stackTrace) {
-      // ignore: avoid_catches_without_on_clauses
       completer.completeError(error, stackTrace);
     }
   });

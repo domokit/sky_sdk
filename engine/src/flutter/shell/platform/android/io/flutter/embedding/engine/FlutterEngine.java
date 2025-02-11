@@ -364,6 +364,8 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
     }
 
     PlatformViewsController2 platformViewsController2 = new PlatformViewsController2();
+    platformViewsController2.setRegistry(platformViewsController.getRegistry());
+    platformViewsController2.setFlutterJNI(flutterJNI);
 
     flutterJNI.addEngineLifecycleListener(engineLifecycleListener);
     flutterJNI.setPlatformViewsController(platformViewsController);
@@ -378,10 +380,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
       attachToJni();
     }
 
-    // TODO(mattcarroll): FlutterRenderer is temporally coupled to attach(). Remove that coupling if
-    // possible.
     this.renderer = new FlutterRenderer(flutterJNI);
-
     this.platformViewsController = platformViewsController;
     this.platformViewsController2 = platformViewsController2;
 

@@ -11,9 +11,7 @@ import '../src/common.dart';
 void main() {
   testAll(
     chrome: true,
-    additionalCommandArgs: <String>[
-      '--extra-front-end-options=--dartdevc-canary,--dartdevc-module-format=ddc',
-    ],
+    additionalCommandArgs: <String>['--web-experimental-hot-reload'],
     // TODO(srujzs): Remove this custom message once we have the delta inspector emitting the same
     // string as the VM.
     constClassFieldRemovalErrorMessage: 'Const class cannot remove fields',

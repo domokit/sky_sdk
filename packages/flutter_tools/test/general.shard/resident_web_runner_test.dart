@@ -1814,7 +1814,6 @@ class FakeFlutterDevice extends Fake implements FlutterDevice {
     ReloadSources? reloadSources,
     Restart? restart,
     CompileExpression? compileExpression,
-    GetSkSLMethod? getSkSLMethod,
     FlutterProject? flutterProject,
     PrintStructuredErrorLogMethod? printStructuredErrorLogMethod,
     required DebuggingOptions debuggingOptions,

@@ -290,6 +290,13 @@ class Shell final : public PlatformView::Delegate,
   void NotifyLowMemoryWarning() const;
 
   //----------------------------------------------------------------------------
+  /// @brief      Used by embedders to flush the microtask queue. Required
+  ///             when running with merged platform and UI threads, in which
+  ///             case the embedder is responsible for flushing the microtask
+  ///             queue.
+  void FlushMicrotaskQueue() const;
+
+  //----------------------------------------------------------------------------
   /// @brief      Used by embedders to check if all shell subcomponents are
   ///             initialized. It is the embedder's responsibility to make this
   ///             call before accessing any other shell method. A shell that is

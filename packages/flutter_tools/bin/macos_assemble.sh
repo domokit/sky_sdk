@@ -168,9 +168,6 @@ BuildApp() {
   if [[ -n "$PERFORMANCE_MEASUREMENT_FILE" ]]; then
     flutter_args+=("--performance-measurement-file=${PERFORMANCE_MEASUREMENT_FILE}")
   fi
-  if [[ -n "$BUNDLE_SKSL_PATH" ]]; then
-    flutter_args+=("-dBundleSkSLPath=${BUNDLE_SKSL_PATH}")
-  fi
   if [[ -n "$CODE_SIZE_DIRECTORY" ]]; then
     flutter_args+=("-dCodeSizeDirectory=${CODE_SIZE_DIRECTORY}")
   fi

@@ -8,17 +8,18 @@ import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 
 import '../_luci_skia_gold_prelude.dart';
+import '../_unstable_gold_retry.dart';
 
 /// For local debugging, a (local) golden-file is required as a baseline:
 ///
 /// ```sh
 /// # Checkout HEAD, i.e. *before* changes you want to test.
-/// UPDATE_GOLDENS=1 flutter drive lib/platform_view/hybrid_compoisition_platform_view_main.dart
+/// UPDATE_GOLDENS=1 flutter drive lib/platform_view/hybrid_composition_platform_view_main.dart
 ///
 /// # Make your changes.
 ///
 /// # Run the test against baseline.
-/// flutter drive lib/platform_view/hybrid_compoisition_platform_view_main.dart
+/// flutter drive lib/platform_view/hybrid_composition_platform_view_main.dart
 /// ```
 ///
 /// For a convenient way to deflake a test, see `tool/deflake.dart`.
@@ -49,22 +50,10 @@ void main() async {
     // See:
     // - Vulkan: https://github.com/flutter/flutter/issues/162362
     // - OpenGLES: https://github.com/flutter/flutter/issues/162363
-    int retriesLeft = 2;
-    do {
-      try {
-        await expectLater(
-          nativeDriver.screenshot(),
-          matchesGoldenFile('$goldenPrefix.blue_orange_gradient_portrait.png'),
-        );
-        break;
-      } on TestFailure catch (e) {
-        if (retriesLeft == 0) {
-          rethrow;
-        }
-        print('Caught: $e. Retrying...');
-        retriesLeft--;
-      }
-    } while (retriesLeft > 0);
+    await expectLater(
+      nativeDriver.screenshot(),
+      matchesGoldenFileWithRetries('$goldenPrefix.blue_orange_gradient_portrait.png'),
+    );
   }, timeout: Timeout.none);
 
   test('should rotate landscape and screenshot the gradient', () async {

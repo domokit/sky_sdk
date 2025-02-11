@@ -20,6 +20,7 @@ struct TextRenderOptions {
   SkScalar font_size = 50;
   DlColor color = DlColor::kYellow();
   std::shared_ptr<DlMaskFilter> mask_filter;
+  bool is_subpixel = false;
 };
 
 bool RenderTextInCanvasSkia(DlCanvas* canvas,

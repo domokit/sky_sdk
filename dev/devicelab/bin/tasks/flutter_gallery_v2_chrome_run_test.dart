@@ -44,7 +44,7 @@ class NewGalleryChromeRunTest {
 
         await flutter('build', options: <String>['web', '-v', '--release', '--no-pub']);
 
-        final List<String> options = <String>['-d', 'chrome', '--verbose', '--resident'];
+        final List<String> options = <String>['-d', 'chrome', '--resident'];
         final Process process = await startFlutter('run', options: options);
 
         final Completer<void> stdoutDone = Completer<void>();

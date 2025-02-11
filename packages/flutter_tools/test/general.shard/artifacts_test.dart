@@ -534,21 +534,6 @@ void main() {
         ),
       );
 
-      expect(
-        artifacts.getArtifactPath(
-          Artifact.flutterPreviewDevice,
-          platform: TargetPlatform.windows_x64,
-        ),
-        fileSystem.path.join(
-          'root',
-          'bin',
-          'cache',
-          'artifacts',
-          'flutter_preview',
-          'flutter_preview.exe',
-        ),
-      );
-
       fileSystem
           .file(fileSystem.path.join('/out', 'host_debug_unopt', 'impellerc'))
           .createSync(recursive: true);

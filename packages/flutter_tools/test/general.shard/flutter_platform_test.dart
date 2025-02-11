@@ -468,7 +468,6 @@ void main() {
                   ReloadSources? reloadSources,
                   Restart? restart,
                   CompileExpression? compileExpression,
-                  GetSkSLMethod? getSkSLMethod,
                   FlutterProject? flutterProject,
                   PrintStructuredErrorLogMethod? printStructuredErrorLogMethod,
                   io.CompressionOptions? compression,

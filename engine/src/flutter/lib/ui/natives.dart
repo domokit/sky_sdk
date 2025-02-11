@@ -3,8 +3,6 @@
 // found in the LICENSE file.
 part of dart.ui;
 
-// ignore_for_file: avoid_classes_with_only_static_members
-
 /// Helper functions for Dart Plugin Registrants.
 abstract final class DartPluginRegistrant {
   static bool _wasInitialized = false;

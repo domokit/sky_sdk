@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'media_query.dart';
+library;
+
 import 'framework.dart';
 
 /// Annotation used to mark functions that return a widget preview.

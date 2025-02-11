@@ -228,6 +228,8 @@ class PlatformViewAndroidJNI {
 
   virtual void destroyOverlaySurface2() = 0;
 
+  virtual void onEndFrame2() = 0;
+
   virtual void onDisplayPlatformView2(int32_t view_id,
                                       int32_t x,
                                       int32_t y,
@@ -236,6 +238,10 @@ class PlatformViewAndroidJNI {
                                       int32_t viewWidth,
                                       int32_t viewHeight,
                                       MutatorsStack mutators_stack) = 0;
+
+  virtual void showOverlaySurface2() = 0;
+
+  virtual void hideOverlaySurface2() = 0;
 
   //----------------------------------------------------------------------------
   /// @brief      Computes the locale Android would select.

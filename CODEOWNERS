@@ -10,6 +10,7 @@
 /packages/flutter_tools/templates/**/Podfile* @jmagman
 /packages/flutter_tools/lib/src/ios/ @jmagman
 
-# Working on flutter_driver improvements.
-# See https://github.com/flutter/flutter/issues/148028.
+# flutter_driver, integration_test, and internal dev infra.
+/dev/** @matanlurey
 /packages/flutter_driver/** @matanlurey
+/packages/integration_test/** @matanlurey

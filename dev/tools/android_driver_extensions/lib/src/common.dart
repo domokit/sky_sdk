@@ -30,6 +30,9 @@ final class NativeCommand extends Command {
   /// Gets the SDK version code.
   static const NativeCommand getSdkVersion = NativeCommand('sdk_version');
 
+  /// Gets whether the device is an emulator.
+  static const NativeCommand getIsEmulator = NativeCommand('is_emulator');
+
   /// The method to call on the plugin.
   final String method;
 

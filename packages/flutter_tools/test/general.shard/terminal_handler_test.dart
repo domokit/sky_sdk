@@ -1233,9 +1233,6 @@ class FakeResidentRunner extends ResidentHandlers {
   bool supportsServiceProtocol = true;
 
   @override
-  bool supportsWriteSkSL = true;
-
-  @override
   Future<void> cleanupAfterSignal() async {}
 
   @override

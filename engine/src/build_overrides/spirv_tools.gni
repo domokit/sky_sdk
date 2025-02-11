@@ -2,6 +2,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# This file is a temporary shim needed during the elimination of the buildroot.
-# See: https://github.com/flutter/flutter/issues/67373
-import("//flutter/build_overrides/spirv_tools.gni")
+# We are building inside Flutter.
+spirv_tools_standalone = false
+
+# Paths to SPIRV-Tools dependencies in Flutter.
+spirv_tools_googletest_dir = "//third_party/googletest/googletest/src"
+spirv_tools_spirv_headers_dir =
+    "//flutter/third_party/vulkan-deps/spirv-headers/src"

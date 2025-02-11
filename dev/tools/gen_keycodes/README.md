@@ -38,10 +38,6 @@ anew before generating the files. To do this, run:
 This will generate `physical_key_data.g.json` and `logical_key_data.g.json`. These
 files should be checked in.
 
-By default this tool assumes that the gclient directory for flutter/engine
-and the root for the flutter/flutter are placed at the same folder. If not,
-use `--engine-root=/ENGINE/GCLIENT/ROOT` to specify the engine root.
-
 Other options can be found using `--help`.
 
 ## Key ID Scheme

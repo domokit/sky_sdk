@@ -4,8 +4,6 @@
 
 part of ui;
 
-// ignore_for_file: avoid_classes_with_only_static_members
-
 /// Helper functions for Dart Plugin Registrants.
 class DartPluginRegistrant {
   /// Makes sure the that the Dart Plugin Registrant has been called for this

@@ -32,7 +32,6 @@ class BuildAppBundleCommand extends BuildSubCommand {
     addDartObfuscationOption();
     usesDartDefineOption();
     usesExtraDartFlagOptions(verboseHelp: verboseHelp);
-    addBundleSkSLPathOption(hide: !verboseHelp);
     addBuildPerformanceFile(hide: !verboseHelp);
     usesTrackWidgetCreation(verboseHelp: verboseHelp);
     addNullSafetyModeOptions(hide: !verboseHelp);

@@ -65,38 +65,6 @@ void main() {
     expect(mockVMService.services, containsPair(kFlutterMemoryInfoServiceName, kFlutterToolAlias));
   });
 
-  testWithoutContext('VM Service registers flutterGetSkSL service', () async {
-    final MockVMService mockVMService = MockVMService();
-    await setUpVmService(skSLMethod: () async => 'hello', vmService: mockVMService);
-
-    expect(mockVMService.services, containsPair(kFlutterGetSkSLServiceName, kFlutterToolAlias));
-  });
-
-  testWithoutContext('VM Service throws tool exit on service registration failure.', () async {
-    final MockVMService mockVMService = MockVMService()..errorOnRegisterService = true;
-
-    await expectLater(
-      () async => setUpVmService(skSLMethod: () async => 'hello', vmService: mockVMService),
-      throwsToolExit(),
-    );
-  });
-
-  testWithoutContext(
-    'VM Service throws tool exit on service registration failure with awaited future.',
-    () async {
-      final MockVMService mockVMService = MockVMService()..errorOnRegisterService = true;
-
-      await expectLater(
-        () async => setUpVmService(
-          skSLMethod: () async => 'hello',
-          printStructuredErrorLogMethod: (vm_service.Event event) {},
-          vmService: mockVMService,
-        ),
-        throwsToolExit(),
-      );
-    },
-  );
-
   testWithoutContext('VM Service registers flutterPrintStructuredErrorLogMethod', () async {
     final MockVMService mockVMService = MockVMService();
     await setUpVmService(
@@ -186,18 +154,6 @@ void main() {
       'assetDirectory':
           r'C:\Users\Tester\AppData\Local\Temp\hello_worldb42a6da5\hello_world\build\flutter_assets',
     });
-  });
-
-  testWithoutContext('getSkSLs forwards arguments correctly', () async {
-    final MockVMService mockVMService = MockVMService();
-    final FlutterVmService flutterVmService = FlutterVmService(mockVMService);
-
-    await flutterVmService.getSkSLs(viewId: 'abc');
-
-    final ({Map<String, Object?>? args, String? isolateId}) call =
-        mockVMService.calledMethods[kGetSkSLsMethod]!.single;
-    expect(call.isolateId, isNull);
-    expect(call.args, <String, String>{'viewId': 'abc'});
   });
 
   testWithoutContext('flushUIThreadTasks forwards arguments correctly', () async {
@@ -372,11 +328,6 @@ void main() {
       final FakeVmServiceHost fakeVmServiceHost = FakeVmServiceHost(
         requests: <VmServiceExpectation>[
           FakeVmServiceRequest(
-            method: kGetSkSLsMethod,
-            args: <String, Object>{'viewId': '1234'},
-            error: FakeRPCError(code: vm_service.RPCErrorKind.kServiceDisappeared.code),
-          ),
-          FakeVmServiceRequest(
             method: kListViewsMethod,
             error: FakeRPCError(code: vm_service.RPCErrorKind.kServiceDisappeared.code),
           ),
@@ -397,11 +348,6 @@ void main() {
           ),
         ],
       );
-
-      final Map<String, Object?>? skSLs = await fakeVmServiceHost.vmService.getSkSLs(
-        viewId: '1234',
-      );
-      expect(skSLs, isNull);
 
       final List<FlutterView> views = await fakeVmServiceHost.vmService.getFlutterViews();
       expect(views, isEmpty);

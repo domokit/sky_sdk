@@ -510,7 +510,13 @@ bool DartIsolate::Initialize(Dart_Isolate dart_isolate) {
     SetMessageHandlingTaskRunner(GetTaskRunners().GetPlatformTaskRunner(),
                                  true);
   } else {
-    SetMessageHandlingTaskRunner(GetTaskRunners().GetUITaskRunner(), false);
+    // When running with custom UI task runner post directly to runner (there is
+    // no task queue).
+    bool post_directly_to_runner =
+        GetTaskRunners().GetUITaskRunner() &&
+        !GetTaskRunners().GetUITaskRunner()->GetTaskQueueId().is_valid();
+    SetMessageHandlingTaskRunner(GetTaskRunners().GetUITaskRunner(),
+                                 post_directly_to_runner);
   }
 
   if (tonic::CheckAndHandleError(

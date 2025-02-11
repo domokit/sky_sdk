@@ -866,7 +866,7 @@ Future<void> verifyNoMissingLicense(String workingDirectory, {bool checkMinimums
   await _verifyNoMissingLicenseForExtension(
     workingDirectory,
     'java',
-    overrideMinimumMatches ?? 39,
+    overrideMinimumMatches ?? 1,
     _generateLicense('// '),
   );
   await _verifyNoMissingLicenseForExtension(

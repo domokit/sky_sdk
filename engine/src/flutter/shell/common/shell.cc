@@ -634,6 +634,12 @@ void Shell::NotifyLowMemoryWarning() const {
   // to purge them.
 }
 
+void Shell::FlushMicrotaskQueue() const {
+  if (engine_) {
+    engine_->FlushMicrotaskQueue();
+  }
+}
+
 void Shell::RunEngine(RunConfiguration run_configuration) {
   RunEngine(std::move(run_configuration), nullptr);
 }

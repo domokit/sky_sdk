@@ -1663,6 +1663,14 @@
     "names": {
       "web": [
         "AltGraph"
+      ],
+      "gtk": [
+        "ISO_Level3_Shift"
+      ]
+    },
+    "values": {
+      "gtk": [
+        65027
       ]
     }
   },
@@ -8113,8 +8121,7 @@
         "AltRight"
       ],
       "gtk": [
-        "Alt_R",
-        "ISO_Level3_Shift"
+        "Alt_R"
       ],
       "windows": [
         "RMENU"
@@ -8134,8 +8141,7 @@
         230
       ],
       "gtk": [
-        65514,
-        65027
+        65514
       ],
       "windows": [
         165

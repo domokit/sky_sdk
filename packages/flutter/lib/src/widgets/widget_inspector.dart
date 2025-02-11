@@ -3748,10 +3748,7 @@ class _Location {
     required this.file,
     required this.line,
     required this.column,
-    // TODO(srawlins): `unused_element_parameter` is being separated from
-    // `unused_element`. Ignore both names until the separation is complete.
-    // ignore: unused_element, unused_element_parameter
-    this.name,
+    this.name, // ignore: unused_element_parameter
   });
 
   /// File path of the location.

@@ -228,12 +228,6 @@ class FlutterWebPlatform extends PlatformPlugin {
 
   bool get _closed => _closeMemo.hasRun;
 
-  NullSafetyMode get _nullSafetyMode {
-    return buildInfo.nullSafetyMode == NullSafetyMode.sound
-        ? NullSafetyMode.sound
-        : NullSafetyMode.unsound;
-  }
-
   final Configuration _config;
   final shelf.Server _server;
   Uri get url => _server.url;
@@ -298,13 +292,11 @@ class FlutterWebPlatform extends PlatformPlugin {
     if (buildInfo.ddcModuleFormat == DdcModuleFormat.ddc) {
       assert(buildInfo.canaryFeatures ?? true);
     }
-    final Map<WebRendererMode, Map<NullSafetyMode, HostArtifact>> dartSdkArtifactMap =
+    final Map<WebRendererMode, HostArtifact> dartSdkArtifactMap =
         buildInfo.ddcModuleFormat == DdcModuleFormat.ddc
             ? kDdcLibraryBundleDartSdkJsArtifactMap
             : kAmdDartSdkJsArtifactMap;
-    return _fileSystem.file(
-      _artifacts!.getHostArtifact(dartSdkArtifactMap[webRenderer]![_nullSafetyMode]!),
-    );
+    return _fileSystem.file(_artifacts!.getHostArtifact(dartSdkArtifactMap[webRenderer]!));
   }
 
   File get _dartSdkSourcemaps {
@@ -313,13 +305,11 @@ class FlutterWebPlatform extends PlatformPlugin {
     if (buildInfo.ddcModuleFormat == DdcModuleFormat.ddc) {
       assert(buildInfo.canaryFeatures ?? true);
     }
-    final Map<WebRendererMode, Map<NullSafetyMode, HostArtifact>> dartSdkArtifactMap =
+    final Map<WebRendererMode, HostArtifact> dartSdkArtifactMap =
         buildInfo.ddcModuleFormat == DdcModuleFormat.ddc
             ? kDdcLibraryBundleDartSdkJsMapArtifactMap
             : kAmdDartSdkJsMapArtifactMap;
-    return _fileSystem.file(
-      _artifacts!.getHostArtifact(dartSdkArtifactMap[webRenderer]![_nullSafetyMode]!),
-    );
+    return _fileSystem.file(_artifacts!.getHostArtifact(dartSdkArtifactMap[webRenderer]!));
   }
 
   File _canvasKitFile(String relativePath) {
@@ -991,7 +981,6 @@ class BrowserManager {
       return await controller.suite;
       // Not limiting to catching Exception because the exception is rethrown.
     } catch (_) {
-      // ignore: avoid_catches_without_on_clauses
       closeIframe();
       rethrow;
     }

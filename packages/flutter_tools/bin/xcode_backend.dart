@@ -475,10 +475,6 @@ class Context {
       flutterArgs.add('-dCodesignIdentity=$expandedCodeSignIdentity');
     }
 
-    if (environment['BUNDLE_SKSL_PATH'] != null && environment['BUNDLE_SKSL_PATH']!.isNotEmpty) {
-      flutterArgs.add('-dBundleSkSLPath=${environment['BUNDLE_SKSL_PATH']}');
-    }
-
     if (environment['CODE_SIZE_DIRECTORY'] != null &&
         environment['CODE_SIZE_DIRECTORY']!.isNotEmpty) {
       flutterArgs.add('-dCodeSizeDirectory=${environment['CODE_SIZE_DIRECTORY']}');

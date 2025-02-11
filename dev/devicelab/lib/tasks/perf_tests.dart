@@ -107,6 +107,19 @@ TaskFunction createAndroidTextureScrollPerfTest({bool? enableImpeller}) {
   ).run;
 }
 
+TaskFunction createAndroidHCPPScrollPerfTest() {
+  return PerfTest(
+    '${flutterDirectory.path}/dev/benchmarks/platform_views_layout',
+    'test_driver/scroll_perf_hcpp.dart',
+    'platform_views_hcpp_scroll_perf',
+    testDriver: 'test_driver/scroll_perf_hcpp_test.dart',
+    needsFullTimeline: false,
+    enableImpeller: true,
+    enableSurfaceControl: true,
+    enableMergedPlatformThread: true,
+  ).run;
+}
+
 TaskFunction createAndroidViewScrollPerfTest() {
   return PerfTest(
     '${flutterDirectory.path}/dev/benchmarks/platform_views_layout_hybrid_composition',
@@ -847,6 +860,13 @@ void _addMetadataToManifest(String testDirectory, List<(String, String)> keyPair
   file.writeAsStringSync(xmlDoc.toXmlString(pretty: true, indent: '    '));
 }
 
+void _addSurfaceControlSupportToManifest(String testDirectory) {
+  final List<(String, String)> keyPairs = <(String, String)>[
+    ('io.flutter.embedding.android.EnableSurfaceControl', 'true'),
+  ];
+  _addMetadataToManifest(testDirectory, keyPairs);
+}
+
 void _addMergedPlatformThreadSupportToManifest(String testDirectory) {
   final List<(String, String)> keyPairs = <(String, String)>[
     ('io.flutter.embedding.android.EnableMergedPlatformUIThread', 'true'),
@@ -1204,6 +1224,7 @@ class PerfTest {
     this.forceOpenGLES,
     this.disablePartialRepaint = false,
     this.enableMergedPlatformThread = false,
+    this.enableSurfaceControl = false,
     this.createPlatforms = const <String>[],
   }) : _resultFilename = resultFilename;
 
@@ -1225,6 +1246,7 @@ class PerfTest {
     this.forceOpenGLES,
     this.disablePartialRepaint = false,
     this.enableMergedPlatformThread = false,
+    this.enableSurfaceControl = false,
     this.createPlatforms = const <String>[],
   }) : saveTraceFile = false,
        timelineFileName = null,
@@ -1280,6 +1302,9 @@ class PerfTest {
 
   /// Whether the UI thread should be the platform thread.
   final bool enableMergedPlatformThread;
+
+  /// Whether to enable SurfaceControl swapchain.
+  final bool enableSurfaceControl;
 
   /// Number of seconds to time out the test after, allowing debug callbacks to run.
   final int? timeoutSeconds;
@@ -1376,6 +1401,9 @@ class PerfTest {
           if (enableMergedPlatformThread) {
             _addMergedPlatformThreadSupportToManifest(testDirectory);
           }
+          if (enableSurfaceControl) {
+            _addSurfaceControlSupportToManifest(testDirectory);
+          }
         }
         if (disablePartialRepaint || enableMergedPlatformThread) {
           changedPlist = true;
@@ -1450,8 +1478,6 @@ class PerfTest {
           recordGPU = false;
       }
 
-      // TODO(liyuqian): Remove isAndroid restriction once
-      // https://github.com/flutter/flutter/issues/61567 is fixed.
       final bool isAndroid = deviceOperatingSystem == DeviceOperatingSystem.android;
       return TaskResult.success(
         data,

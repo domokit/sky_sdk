@@ -1,0 +1,65 @@
+{
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on linux hosts should go in one of the other linux_ build ",
+        "definition files."
+    ],
+    "builds": [
+        {
+            "archives": [
+                {
+                    "name": "ci/android_debug_arm64_ddm",
+                    "type": "gcs",
+                    "base_path": "out/ci/android_debug_arm64_ddm/zip_archives/",
+                    "include_paths": [
+                        "out/ci/android_debug_arm64_ddm/zip_archives/android-arm64-ddm/artifacts.zip",
+                        "out/ci/android_debug_arm64_ddm/zip_archives/android-arm64-ddm/symbols.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_debug_arm64_ddm",
+                "--android",
+                "--android-cpu=arm64",
+                "--no-lto",
+                "--no-prebuilt-dart-sdk",
+                "--gn-args=dart_dynamic_modules=true",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_debug_arm64_ddm",
+            "description": "Produces experimental debug mode artifacts to target 64-bit arm Android from a Linux host with dynamic modules enabled.",
+            "ninja": {
+                "config": "ci/android_debug_arm64_ddm",
+                "targets": [
+                    "flutter"
+                ]
+            }
+        }
+    ],
+    "generators": {
+        "tasks": [
+            {
+                "name": "Verify-export-symbols-release-binaries",
+                "parameters": [
+                    "src/out/ci",
+                    "src/flutter/buildtools"
+                ],
+                "script": "flutter/testing/symbols/verify_exported.dart",
+                "language": "dart"
+            }
+        ]
+    }
+}

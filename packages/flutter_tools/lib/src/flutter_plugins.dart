@@ -900,37 +900,12 @@ List<Plugin> _filterPluginsByVariant(
 Future<void> writeWindowsPluginFiles(
   FlutterProject project,
   List<Plugin> plugins,
-  TemplateRenderer templateRenderer, {
-  Iterable<String>? allowedPlugins,
-}) async {
+  TemplateRenderer templateRenderer,
+) async {
   final List<Plugin> methodChannelPlugins = _filterMethodChannelPlugins(
     plugins,
     WindowsPlugin.kConfigKey,
   );
-  if (allowedPlugins != null) {
-    final List<Plugin> disallowedPlugins =
-        methodChannelPlugins.toList()
-          ..removeWhere((Plugin plugin) => allowedPlugins.contains(plugin.name));
-    if (disallowedPlugins.isNotEmpty) {
-      final StringBuffer buffer = StringBuffer();
-      buffer.writeln(
-        'The Flutter Preview device does not support the following plugins from your pubspec.yaml:',
-      );
-      buffer.writeln();
-      buffer.writeln(disallowedPlugins.map((Plugin p) => p.name).toList().toString());
-      buffer.writeln();
-      buffer.writeln(
-        'In order to build a Flutter app with plugins, you must use another target platform,',
-      );
-      buffer.writeln(
-        'such as Windows. Type `flutter doctor` into your terminal to see which target platforms',
-      );
-      buffer.writeln(
-        'are ready to be used, and how to get required dependencies for other platforms.',
-      );
-      throwToolExit(buffer.toString());
-    }
-  }
   final List<Plugin> win32Plugins = _filterPluginsByVariant(
     methodChannelPlugins,
     WindowsPlugin.kConfigKey,
@@ -1212,7 +1187,6 @@ Future<void> injectPlugins(
   bool linuxPlatform = false,
   bool macOSPlatform = false,
   bool windowsPlatform = false,
-  Iterable<String>? allowedPlugins,
   DarwinDependencyManagement? darwinDependencyManagement,
   bool? releaseMode,
 }) async {
@@ -1244,7 +1218,6 @@ Future<void> injectPlugins(
       project,
       pluginsByPlatform[WindowsPlugin.kConfigKey]!,
       globals.templateRenderer,
-      allowedPlugins: allowedPlugins,
     );
   }
   if (iosPlatform || macOSPlatform) {

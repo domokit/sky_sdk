@@ -13,9 +13,11 @@ import 'dart:typed_data';
 
 import 'package:file/local.dart';
 import 'package:flutter_goldens/skia_client.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:platform/platform.dart';
 import 'package:process/process.dart';
+import 'package:test_api/test_api.dart';
 
 import 'native_driver.dart';
 
@@ -69,16 +71,30 @@ Future<void> enableSkiaGoldComparator({String? namePrefix}) async {
     httpClient: io.HttpClient(),
     log: io.stderr.writeln,
   );
-  await skiaGoldClient.auth();
-  goldenFileComparator = _GoldenFileComparator(
+  await enableSkiaGoldComparatorForTesting(
     skiaGoldClient,
     namePrefix: namePrefix,
-    isPresubmit: isPresubmit,
+    presubmit: isPresubmit,
   );
 }
 
-final class _GoldenFileComparator extends GoldenFileComparator {
-  _GoldenFileComparator(this.skiaClient, {required this.isPresubmit, this.namePrefix, Uri? baseDir})
+/// Configures [goldenFileComparator] to use Skia Gold (for unit testing).
+@visibleForTesting
+Future<void> enableSkiaGoldComparatorForTesting(
+  SkiaGoldClient skiaGoldClient, {
+  required bool presubmit,
+  String? namePrefix,
+}) async {
+  await skiaGoldClient.auth();
+  goldenFileComparator = _SkiaGoldComparator(
+    skiaGoldClient,
+    namePrefix: namePrefix,
+    isPresubmit: presubmit,
+  );
+}
+
+final class _SkiaGoldComparator extends GoldenFileComparator {
+  _SkiaGoldComparator(this.skiaClient, {required this.isPresubmit, this.namePrefix, Uri? baseDir})
     : baseDir = baseDir ?? Uri.parse(path.dirname(io.Platform.script.path));
 
   final Uri baseDir;
@@ -108,8 +124,18 @@ final class _GoldenFileComparator extends GoldenFileComparator {
         io.stderr.writeln('Skia Gold comparison succeeded comparing "$golden".');
       }
       return true;
-    } else {
-      return skiaClient.imgtestAdd(golden.path, _localFs.file(goldenFile.path));
+    }
+
+    try {
+      return await skiaClient.imgtestAdd(golden.path, _localFs.file(goldenFile.path));
+    } on SkiaException catch (e) {
+      // Convert SkiaException -> TestFailure so that this class implements the
+      // contract of GoldenFileComparator, and matchesGoldenFile() converts the
+      // TestFailure into a standard reported test error (with a better stack
+      // trace, for example).
+      //
+      // https://github.com/flutter/flutter/issues/162621
+      throw TestFailure('$e');
     }
   }
 

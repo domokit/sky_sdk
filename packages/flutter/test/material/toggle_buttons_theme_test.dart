@@ -482,6 +482,7 @@ void main() {
     await hoverGesture.moveTo(Offset.zero);
 
     // focusColor
+    FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
     focusNode.requestFocus();
     await tester.pumpAndSettle();
     inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {

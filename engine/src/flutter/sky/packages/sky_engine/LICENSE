@@ -695,6 +695,7 @@ limitations under the License.
 --------------------------------------------------------------------------------
 abseil-cpp
 angle
+boringssl
 cpu_features
 dart
 etc1
@@ -1105,6 +1106,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 --------------------------------------------------------------------------------
+fuchsia_sdk
 libcxx
 libcxxabi
 
@@ -21356,30 +21358,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-fiat
-
-Copyright (c) 2015-2020 the fiat-crypto authors (see
-
-https://github.com/mit-plv/fiat-crypto/blob/master/AUTHORS).
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
---------------------------------------------------------------------------------
 glfw
 
 Copyright (c) 2016 Google Inc.
@@ -21541,22 +21519,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright (c) 2017, the HRSS authors.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --------------------------------------------------------------------------------
 ffx_spd
 
@@ -22205,22 +22167,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright (c) 2022, Robert Nagy <robert.nagy@gmail.com>
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
 pkg
 
 Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
@@ -22535,55 +22481,6 @@ Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
-Copyright 2005 Nokia. All rights reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright 2005 Nokia. All rights reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 1999-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 freetype2
 
 Copyright 2000 Computing Research Labs, New Mexico State University
@@ -22747,25 +22644,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 icu
 
 Copyright 2001 and onwards Google Inc.
@@ -22820,34 +22698,6 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
 OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2001-2017 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 angle
 
 Copyright 2002 The ANGLE Project Authors. All rights reserved.
@@ -22882,25 +22732,6 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 freetype2
 
 Copyright 2003 by
@@ -22923,15 +22754,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2003-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
 --------------------------------------------------------------------------------
 icu
 
@@ -22965,15 +22787,6 @@ not be used in advertising or otherwise to promote the sale, use or other
 dealings in these Data Files or Software without prior written
 authorization of the copyright holder.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2004-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 skia
 
 Copyright 2005 The Android Open Source Project
@@ -23005,15 +22818,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2005-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
 --------------------------------------------------------------------------------
 skia
 
@@ -23111,42 +22915,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2006-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2006-2017 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2006-2019 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2006-2021 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 icu
 
 Copyright 2007 Google Inc. All Rights Reserved.
@@ -23211,15 +22979,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2007-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 skia
 
 Copyright 2008 Google Inc.
@@ -23283,15 +23042,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
 --------------------------------------------------------------------------------
 libjpeg-turbo
 
@@ -23534,12 +23284,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2010 The Chromium Authors
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file
---------------------------------------------------------------------------------
 double-conversion
 icu
 
@@ -23570,15 +23314,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2010-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
 --------------------------------------------------------------------------------
 skia
 
@@ -23742,31 +23477,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2011 The Chromium Authors
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2011-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2011-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
 --------------------------------------------------------------------------------
 skia
 
@@ -23990,15 +23700,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2012-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 skia
 
 Copyright 2013 Google Inc.
@@ -24215,25 +23916,6 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2013-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2013-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright (c) 2012, Intel Corporation. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 angle
 
 Copyright 2013-2020 The Khronos Group Inc.
@@ -24429,22 +24111,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2014 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
 accessibility
 angle
 icu
@@ -24504,26 +24170,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2014-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright (c) 2014, Intel Corporation. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2014-2016 The OpenSSL Project Authors. All Rights Reserved.
-Copyright (c) 2015, Intel Inc.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
 spirv-cross
 
 Copyright 2014-2016,2021 The Khronos Group, Inc.
@@ -24533,15 +24179,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2014-2020 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
 --------------------------------------------------------------------------------
 skia
 
@@ -24695,28 +24332,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2015 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2015 The Chromium Authors
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file
---------------------------------------------------------------------------------
 accessibility
 brotli
 skia
@@ -24748,31 +24363,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2015-2016 The OpenSSL Project Authors. All Rights Reserved.
-
-Licensed under the OpenSSL license (the "License").  You may not use
-this file except in compliance with the License.  You can obtain a copy
-in the file LICENSE in the source distribution or at
-https://www.openssl.org/source/license.html
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2016 Brian Smith.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --------------------------------------------------------------------------------
 skia
 
@@ -24957,28 +24547,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2016 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2016 The Chromium Authors
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file
 --------------------------------------------------------------------------------
 accessibility
 
@@ -25189,22 +24757,6 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2017 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
 zlib
 
 Copyright 2017 The Chromium Authors
@@ -25234,12 +24786,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2017 The Chromium Authors
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file
 --------------------------------------------------------------------------------
 accessibility
 angle
@@ -25613,39 +25159,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2018 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2018 The BoringSSL Authors
-Copyright (c) 2020, Arm Ltd.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
 zlib
 
 Copyright 2018 The Chromium Authors
@@ -25997,22 +25510,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2019 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
 zlib
 
 Copyright 2019 The Chromium Authors
@@ -26042,12 +25539,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2019 The Chromium Authors
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file
 --------------------------------------------------------------------------------
 accessibility
 
@@ -26333,22 +25824,6 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2020 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
 accessibility
 
 Copyright 2020 The Chromium Authors. All rights reserved.
@@ -26633,22 +26108,6 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2021 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --------------------------------------------------------------------------------
 libjxl
 
@@ -26988,22 +26447,6 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2022 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
 zlib
 
 Copyright 2022 The Chromium Authors
@@ -27033,12 +26476,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2022 The Chromium Authors
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file
 --------------------------------------------------------------------------------
 fuchsia_sdk
 
@@ -27261,28 +26698,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2023 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright 2023 The Chromium Authors
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file
---------------------------------------------------------------------------------
 fuchsia_sdk
 
 Copyright 2023 The Fuchsia Authors. All rights reserved.
@@ -27438,22 +26853,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-Copyright 2024 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
---------------------------------------------------------------------------------
 fuchsia_sdk
 
 Copyright 2024 The Fuchsia Authors. All rights reserved.
@@ -27512,22 +26911,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---------------------------------------------------------------------------------
-boringssl
-
-Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --------------------------------------------------------------------------------
 angle
 
@@ -30095,13 +29478,6 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
-boringssl
-
-DTLS code by Eric Rescorla <ekr@rtfm.com>
-
-Copyright (C) 2006, Network Resonance, Inc.
-Copyright (C) 2011, RTFM, Inc.
---------------------------------------------------------------------------------
 harfbuzz
 
 HarfBuzz is licensed under the so-called "Old MIT" license.  Details follow.
@@ -30565,231 +29941,26 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
   This Source Code Form is "Incompatible With Secondary Licenses", as
   defined by the Mozilla Public License, v. 2.0.
 
-You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/3fc177bfd7016bcfa2781f43f1aa04d4cbc1351f
+You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/d9d7f103b6b70b8ec59fcc6f7e3d20aec7be1c90
 /third_party/fallback_root_certificates/
 
 --------------------------------------------------------------------------------
-boringssl
+fiat
 
-OpenSSL License
----------------
+The Apache License, Version 2.0 (Apache-2.0)
 
-Copyright (c) 1998-2011 The OpenSSL Project.  All rights reserved.
+Copyright 2015-2020 the fiat-crypto authors (see the AUTHORS file)
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
+    http://www.apache.org/licenses/LICENSE-2.0
 
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in
-   the documentation and/or other materials provided with the
-   distribution.
-
-3. All advertising materials mentioning features or use of this
-   software must display the following acknowledgment:
-   "This product includes software developed by the OpenSSL Project
-   for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
-
-4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
-   endorse or promote products derived from this software without
-   prior written permission. For written permission, please contact
-   openssl-core@openssl.org.
-
-5. Products derived from this software may not be called "OpenSSL"
-   nor may "OpenSSL" appear in their names without prior written
-   permission of the OpenSSL Project.
-
-6. Redistributions of any form whatsoever must retain the following
-   acknowledgment:
-   "This product includes software developed by the OpenSSL Project
-   for use in the OpenSSL Toolkit (http://www.openssl.org/)"
-
-THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
-EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-This product includes cryptographic software written by Eric Young
-(eay@cryptsoft.com).  This product includes software written by Tim
-Hudson (tjh@cryptsoft.com).
-
-Original SSLeay License
------------------------
-
-Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
-All rights reserved.
-
-This package is an SSL implementation written
-by Eric Young (eay@cryptsoft.com).
-The implementation was written so as to conform with Netscapes SSL.
-
-This library is free for commercial and non-commercial use as long as
-the following conditions are aheared to.  The following conditions
-apply to all code found in this distribution, be it the RC4, RSA,
-lhash, DES, etc., code; not just the SSL code.  The SSL documentation
-included with this distribution is covered by the same copyright terms
-except that the holder is Tim Hudson (tjh@cryptsoft.com).
-
-Copyright remains Eric Young's, and as such any Copyright notices in
-the code are not to be removed.
-If this package is used in a product, Eric Young should be given attribution
-as the author of the parts of the library used.
-This can be in the form of a textual message at program startup or
-in documentation (online or textual) provided with the package.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-1. Redistributions of source code must retain the copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. All advertising materials mentioning features or use of this software
-   must display the following acknowledgement:
-   "This product includes cryptographic software written by
-    Eric Young (eay@cryptsoft.com)"
-   The word 'cryptographic' can be left out if the rouines from the library
-   being used are not cryptographic related :-).
-4. If you include any Windows specific code (or a derivative thereof) from
-   the apps directory (application code) you must include an acknowledgement:
-   "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
-
-THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-The licence and distribution terms for any publically available version or
-derivative of this code cannot be changed.  i.e. this code cannot simply be
-copied and put under another distribution licence
-[including the GNU Public Licence.]
-
-ISC license used for completely new code in BoringSSL:
-
-Copyright 2015 The BoringSSL Authors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-The code in third_party/fiat carries the MIT license:
-
-Copyright (c) 2015-2016 the fiat-crypto authors (see
-https://github.com/mit-plv/fiat-crypto/blob/master/AUTHORS).
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-Licenses for support code
--------------------------
-
-Parts of the TLS test suite are under the Go license. This code is not included
-in BoringSSL (i.e. libcrypto and libssl) when compiled, however, so
-distributing code linked against BoringSSL does not trigger this license:
-
-Copyright (c) 2009 The Go Authors. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-BoringSSL uses the Chromium test infrastructure to run a continuous build,
-trybots etc. The scripts which manage this, and the script for generating build
-metadata, are under the Chromium license. Distributing code linked against
-BoringSSL does not trigger this license.
-
-Copyright 2015 The Chromium Authors. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
 --------------------------------------------------------------------------------
 freetype2
 

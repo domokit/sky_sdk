@@ -27,7 +27,7 @@ void main() {
     expect(find.text(dogLabel), findsOneWidget);
     expect(
       tester.getRect(find.ancestor(of: find.text(catLabel), matching: find.byType(TapRegion))),
-      rectMoreOrLessEquals(const Rect.fromLTRB(447.2, 328.0, 662.3, 532.0), epsilon: 0.1),
+      rectMoreOrLessEquals(const Rect.fromLTRB(447.2, 328.0, 626.3, 532.0), epsilon: 0.1),
     );
 
     // Close the menu.
@@ -90,7 +90,7 @@ void main() {
 
     expect(
       tester.getRect(find.ancestor(of: find.text(catLabel), matching: find.byType(TapRegion))),
-      rectMoreOrLessEquals(const Rect.fromLTRB(447.2, 328.0, 662.3, 532.0), epsilon: 0.1),
+      rectMoreOrLessEquals(const Rect.fromLTRB(447.2, 328.0, 626.3, 532.0), epsilon: 0.1),
     );
 
     expect(

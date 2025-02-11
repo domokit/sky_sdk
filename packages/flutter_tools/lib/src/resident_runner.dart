@@ -39,7 +39,6 @@ import 'project.dart';
 import 'resident_devtools_handler.dart';
 import 'run_cold.dart';
 import 'run_hot.dart';
-import 'sksl_writer.dart';
 import 'vmservice.dart';
 import 'web/chrome.dart';
 
@@ -260,7 +259,6 @@ class FlutterDevice {
     ReloadSources? reloadSources,
     Restart? restart,
     CompileExpression? compileExpression,
-    GetSkSLMethod? getSkSLMethod,
     PrintStructuredErrorLogMethod? printStructuredErrorLogMethod,
     required DebuggingOptions debuggingOptions,
     int? hostVmServicePort,
@@ -336,7 +334,6 @@ class FlutterDevice {
                       reloadSources: reloadSources,
                       restart: restart,
                       compileExpression: compileExpression,
-                      getSkSLMethod: getSkSLMethod,
                       flutterProject: FlutterProject.current(),
                       printStructuredErrorLogMethod: printStructuredErrorLogMethod,
                       device: device,
@@ -629,9 +626,6 @@ abstract class ResidentHandlers {
   /// before enabling it.
   bool get supportsRestart;
 
-  /// Whether all of the connected devices support gathering SkSL.
-  bool get supportsWriteSkSL;
-
   /// Whether all of the connected devices support hot reload.
   bool get canHotReload;
 
@@ -892,21 +886,6 @@ abstract class ResidentHandlers {
     return true;
   }
 
-  /// Write the SkSL shaders to a zip file in build directory.
-  ///
-  /// Returns the name of the file, or `null` on failures.
-  Future<String?> writeSkSL() async {
-    if (!supportsWriteSkSL) {
-      throw Exception('writeSkSL is not supported by this runner.');
-    }
-    final FlutterDevice flutterDevice = flutterDevices.first!;
-    final FlutterVmService vmService = flutterDevice.vmService!;
-    final List<FlutterView> views = await vmService.getFlutterViews();
-    final Map<String, Object?>? data = await vmService.getSkSLs(viewId: views.first.id);
-    final Device device = flutterDevice.device!;
-    return sharedSkSlWriter(device, data);
-  }
-
   /// Take a screenshot on the provided [device].
   ///
   /// If the device has a connected vmservice, this method will attempt to hide
@@ -1144,9 +1123,6 @@ abstract class ResidentRunner extends ResidentHandlers {
   @override
   bool get supportsServiceProtocol => isRunningDebug || isRunningProfile;
 
-  @override
-  bool get supportsWriteSkSL => supportsServiceProtocol;
-
   bool get trackWidgetCreation => debuggingOptions.buildInfo.trackWidgetCreation;
 
   /// True if the shared Dart plugin registry (which is different than the one
@@ -1345,7 +1321,6 @@ abstract class ResidentRunner extends ResidentHandlers {
     ReloadSources? reloadSources,
     Restart? restart,
     CompileExpression? compileExpression,
-    GetSkSLMethod? getSkSLMethod,
     required bool allowExistingDdsInstance,
   }) async {
     if (!debuggingOptions.debuggingEnabled) {
@@ -1361,7 +1336,6 @@ abstract class ResidentRunner extends ResidentHandlers {
         compileExpression: compileExpression,
         allowExistingDdsInstance: allowExistingDdsInstance,
         hostVmServicePort: debuggingOptions.hostVmServicePort,
-        getSkSLMethod: getSkSLMethod,
         printStructuredErrorLogMethod: printStructuredErrorLog,
       );
       await device.vmService!.getFlutterViews();
@@ -1522,9 +1496,6 @@ abstract class ResidentRunner extends ResidentHandlers {
       // Performance related features: `P` should precede `a`, which should precede `M`.
       commandHelp.P.print();
       commandHelp.a.print();
-      if (supportsWriteSkSL) {
-        commandHelp.M.print();
-      }
       if (isRunningDebug) {
         commandHelp.g.print();
       }
@@ -1722,12 +1693,6 @@ class TerminalHandler {
       case 'o':
       case 'O':
         return residentRunner.debugTogglePlatform();
-      case 'M':
-        if (residentRunner.supportsWriteSkSL) {
-          await residentRunner.writeSkSL();
-          return true;
-        }
-        return false;
       case 'p':
         return residentRunner.debugToggleDebugPaintSizeEnabled();
       case 'P':
@@ -1799,7 +1764,6 @@ class TerminalHandler {
       await _commonTerminalInputHandler(command);
       // Catch all exception since this is doing cleanup and rethrowing.
     } catch (error, st) {
-      // ignore: avoid_catches_without_on_clauses
       // Don't print stack traces for known error types.
       if (error is! ToolExit) {
         _logger.printError('$error\n$st');

@@ -17,6 +17,7 @@
 namespace fml {
 
 const size_t TaskQueueId::kUnmerged = ULONG_MAX;
+const size_t TaskQueueId::kInvalid = ULONG_MAX - 1;
 
 namespace {
 

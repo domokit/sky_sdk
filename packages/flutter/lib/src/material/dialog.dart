@@ -10,7 +10,7 @@
 /// @docImport 'text_button.dart';
 library;
 
-import 'dart:ui' show clampDouble, lerpDouble;
+import 'dart:ui' show SemanticsRole, clampDouble, lerpDouble;
 
 import 'package:flutter/cupertino.dart';
 
@@ -67,6 +67,7 @@ class Dialog extends StatelessWidget {
     this.shape,
     this.alignment,
     this.child,
+    this.semanticsRole = SemanticsRole.dialog,
   }) : assert(elevation == null || elevation >= 0.0),
        _fullscreen = false;
 
@@ -79,6 +80,7 @@ class Dialog extends StatelessWidget {
     this.insetAnimationDuration = Duration.zero,
     this.insetAnimationCurve = Curves.decelerate,
     this.child,
+    this.semanticsRole = SemanticsRole.dialog,
   }) : elevation = 0,
        shadowColor = null,
        surfaceTintColor = null,
@@ -229,6 +231,11 @@ class Dialog extends StatelessWidget {
   /// This value is used to determine if this is a fullscreen dialog.
   final bool _fullscreen;
 
+  /// The role this dialog represent in assist technologies.
+  ///
+  /// Defaults to [SemanticsRole.dialog].
+  final SemanticsRole semanticsRole;
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -268,17 +275,20 @@ class Dialog extends StatelessWidget {
       );
     }
 
-    return AnimatedPadding(
-      padding: effectivePadding,
-      duration: insetAnimationDuration,
-      curve: insetAnimationCurve,
-      child: MediaQuery.removeViewInsets(
-        removeLeft: true,
-        removeTop: true,
-        removeRight: true,
-        removeBottom: true,
-        context: context,
-        child: dialogChild,
+    return Semantics(
+      role: semanticsRole,
+      child: AnimatedPadding(
+        padding: effectivePadding,
+        duration: insetAnimationDuration,
+        curve: insetAnimationCurve,
+        child: MediaQuery.removeViewInsets(
+          removeLeft: true,
+          removeTop: true,
+          removeRight: true,
+          removeBottom: true,
+          context: context,
+          child: dialogChild,
+        ),
       ),
     );
   }
@@ -918,6 +928,7 @@ class AlertDialog extends StatelessWidget {
       clipBehavior: clipBehavior,
       shape: shape,
       alignment: alignment,
+      semanticsRole: SemanticsRole.alertDialog,
       child: dialogChild,
     );
   }

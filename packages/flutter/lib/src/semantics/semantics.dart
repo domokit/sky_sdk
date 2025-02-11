@@ -104,6 +104,8 @@ final int _kUnblockedUserActions =
 /// A static class to conduct semantics role checks.
 sealed class _DebugSemanticsRoleChecks {
   static FlutterError? _checkSemanticsData(SemanticsNode node) => switch (node.role) {
+    SemanticsRole.alertDialog => _noCheckRequired,
+    SemanticsRole.dialog => _noCheckRequired,
     SemanticsRole.none => _noCheckRequired,
     SemanticsRole.tab => _semanticsTab,
     SemanticsRole.tabBar => _semanticsTabBar,
@@ -1524,14 +1526,29 @@ class SemanticsProperties extends DiagnosticableTree {
   /// a level 3 is a subsection of that, and so on.
   final int? headingLevel;
 
-  /// Provides hint values which override the default hints on supported
-  /// platforms.
+  /// Overrides the default accessibility hints provided by the platform.
   ///
-  /// On Android, If no hint overrides are used then default [hint] will be
-  /// combined with the [label]. Otherwise, the [hint] will be ignored as long
-  /// as there as at least one non-null hint override.
+  /// This [hintOverrides] property does not affect how the platform processes hints;
+  /// it only sets the custom text that will be read by assistive technology.
   ///
-  /// On iOS, these are always ignored and the default [hint] is used instead.
+  /// On Android, these overrides replace the default hints for semantics nodes
+  /// with tap or long-press actions. For example, if [SemanticsHintOverrides.onTapHint]
+  /// is provided, instead of saying `Double tap to activate`, the screen reader
+  /// will say `Double tap to <onTapHint>`.
+  ///
+  /// On iOS, this property is ignored, and default platform behavior applies.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// const Semantics.fromProperties(
+  ///  properties: SemanticsProperties(
+  ///    hintOverrides: SemanticsHintOverrides(
+  ///      onTapHint: 'open settings',
+  ///    ),
+  ///  ),
+  ///  child: Text('button'),
+  /// )
+  /// ```
   final SemanticsHintOverrides? hintOverrides;
 
   /// The reading direction of the [label], [value], [increasedValue],

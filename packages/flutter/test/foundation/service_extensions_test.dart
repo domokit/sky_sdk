@@ -413,7 +413,7 @@ void main() {
     });
     await binding.flushMicrotasks();
     expect(binding.frameScheduled, isTrue);
-    expect(completed, isFalse);
+    expect(completed, isTrue);
     await binding.doFrame();
     await binding.flushMicrotasks();
     expect(completed, isTrue);
@@ -484,7 +484,7 @@ void main() {
     });
     await binding.flushMicrotasks();
     expect(binding.frameScheduled, isTrue);
-    expect(completed, isFalse);
+    expect(completed, isTrue);
     await binding.doFrame();
     await binding.flushMicrotasks();
     expect(completed, isTrue);
@@ -546,7 +546,7 @@ void main() {
     });
     await binding.flushMicrotasks();
     expect(binding.frameScheduled, isTrue);
-    expect(completed, isFalse);
+    expect(completed, isTrue);
     await binding.doFrame();
     await binding.flushMicrotasks();
     expect(completed, isTrue);
@@ -1038,7 +1038,7 @@ void main() {
       completed = true;
     });
     await binding.flushMicrotasks();
-    expect(completed, false);
+    expect(completed, isTrue);
     expect(binding.frameScheduled, isTrue);
     await binding.doFrame();
     await binding.flushMicrotasks();
@@ -1082,7 +1082,7 @@ void main() {
     });
     await binding.flushMicrotasks();
     expect(binding.frameScheduled, isTrue);
-    expect(completed, isFalse);
+    expect(completed, isTrue);
     await binding.doFrame();
     await binding.flushMicrotasks();
     expect(completed, isTrue);
@@ -1143,7 +1143,7 @@ void main() {
     });
     await binding.flushMicrotasks();
     expect(binding.frameScheduled, isTrue);
-    expect(completed, isFalse);
+    expect(completed, isTrue);
     await binding.doFrame();
     await binding.flushMicrotasks();
     expect(completed, isTrue);
@@ -1204,7 +1204,7 @@ void main() {
     });
     await binding.flushMicrotasks();
     expect(binding.frameScheduled, isTrue);
-    expect(completed, isFalse);
+    expect(completed, isTrue);
     await binding.doFrame();
     await binding.flushMicrotasks();
     expect(completed, isTrue);

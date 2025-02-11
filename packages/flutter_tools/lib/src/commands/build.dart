@@ -5,14 +5,11 @@
 import 'package:meta/meta.dart';
 
 import '../android/android_sdk.dart';
-import '../artifacts.dart';
 import '../base/file_system.dart';
 import '../base/logger.dart';
 import '../base/os.dart';
-import '../base/process.dart';
 import '../build_info.dart';
 import '../build_system/build_system.dart';
-import '../cache.dart';
 import '../commands/build_linux.dart';
 import '../commands/build_macos.dart';
 import '../commands/build_windows.dart';
@@ -24,18 +21,15 @@ import 'build_bundle.dart';
 import 'build_ios.dart';
 import 'build_ios_framework.dart';
 import 'build_macos_framework.dart';
-import 'build_preview.dart';
 import 'build_web.dart';
 
 class BuildCommand extends FlutterCommand {
   BuildCommand({
-    required Artifacts artifacts,
     required FileSystem fileSystem,
     required BuildSystem buildSystem,
     required OperatingSystemUtils osUtils,
     required Logger logger,
     required AndroidSdk? androidSdk,
-    required ProcessUtils processUtils,
     bool verboseHelp = false,
   }) {
     _addSubcommand(
@@ -70,16 +64,6 @@ class BuildCommand extends FlutterCommand {
     );
     _addSubcommand(
       BuildWindowsCommand(logger: logger, operatingSystemUtils: osUtils, verboseHelp: verboseHelp),
-    );
-    _addSubcommand(
-      BuildPreviewCommand(
-        artifacts: artifacts,
-        flutterRoot: Cache.flutterRoot!,
-        fs: fileSystem,
-        logger: logger,
-        processUtils: processUtils,
-        verboseHelp: verboseHelp,
-      ),
     );
   }
 

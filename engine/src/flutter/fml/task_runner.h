@@ -55,6 +55,9 @@ class TaskRunner : public fml::RefCountedThreadSafe<TaskRunner>,
 
   /// Returns the unique identifier associated with the TaskRunner.
   /// \see fml::MessageLoopTaskQueues
+  ///
+  /// Will be TaskQueueId::kInvalid for embedder supplied task runners
+  /// that are not associated with a task queue.
   virtual TaskQueueId GetTaskQueueId();
 
   /// Executes the \p task directly if the TaskRunner \p runner is the

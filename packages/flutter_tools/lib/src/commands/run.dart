@@ -38,7 +38,6 @@ abstract class RunCommandBase extends FlutterCommand with DeviceBasedDevelopment
     usesFlavorOption();
     usesWebResourcesCdnFlag();
     addNativeNullAssertions(hide: !verboseHelp);
-    addBundleSkSLPathOption(hide: !verboseHelp);
     usesApplicationBinaryOption();
     argParser
       ..addFlag(
@@ -60,20 +59,6 @@ abstract class RunCommandBase extends FlutterCommand with DeviceBasedDevelopment
         'verbose-system-logs',
         negatable: false,
         help: 'Include verbose logging from the Flutter engine.',
-      )
-      ..addFlag(
-        'cache-sksl',
-        negatable: false,
-        help: 'Cache the shader in the SkSL format instead of in binary or GLSL formats.',
-      )
-      ..addFlag(
-        'dump-skp-on-shader-compilation',
-        negatable: false,
-        help:
-            'Automatically dump the skp that triggers new shader compilations. '
-            'This is useful for writing custom ShaderWarmUp to reduce jank. '
-            'By default, this is not enabled as it introduces significant overhead. '
-            'This is only available in profile or debug builds.',
       )
       ..addFlag(
         'purge-persistent-cache',
@@ -240,8 +225,6 @@ abstract class RunCommandBase extends FlutterCommand with DeviceBasedDevelopment
 
   bool get traceStartup => boolArg('trace-startup');
   bool get enableDartProfiling => boolArg('enable-dart-profiling');
-  bool get cacheSkSL => boolArg('cache-sksl');
-  bool get dumpSkpOnShaderCompilation => boolArg('dump-skp-on-shader-compilation');
   bool get purgePersistentCache => boolArg('purge-persistent-cache');
   bool get disableServiceAuthCodes => boolArg('disable-service-auth-codes');
   bool get cacheStartupProfile => boolArg('cache-startup-profile');
@@ -344,8 +327,6 @@ abstract class RunCommandBase extends FlutterCommand with DeviceBasedDevelopment
         traceSystrace: boolArg('trace-systrace'),
         traceToFile: stringArg('trace-to-file'),
         endlessTraceBuffer: boolArg('endless-trace-buffer'),
-        dumpSkpOnShaderCompilation: dumpSkpOnShaderCompilation,
-        cacheSkSL: cacheSkSL,
         purgePersistentCache: purgePersistentCache,
         deviceVmServicePort: deviceVmservicePort,
         hostVmServicePort: hostVmservicePort,

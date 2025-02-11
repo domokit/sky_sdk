@@ -48,9 +48,6 @@ abstract class FeatureFlags {
   /// Whether native assets compilation and bundling is enabled.
   bool get isNativeAssetsEnabled => false;
 
-  /// Whether native assets compilation and bundling is enabled.
-  bool get isPreviewDeviceEnabled => true;
-
   /// Whether Swift Package Manager dependency management is enabled.
   bool get isSwiftPackageManagerEnabled => false;
 
@@ -75,7 +72,6 @@ const List<Feature> allFeatures = <Feature>[
   flutterCustomDevicesFeature,
   cliAnimation,
   nativeAssets,
-  previewDevice,
   swiftPackageManager,
   explicitPackageDependencies,
 ];
@@ -157,15 +153,6 @@ const Feature nativeAssets = Feature(
   configSetting: 'enable-native-assets',
   environmentOverride: 'FLUTTER_NATIVE_ASSETS',
   master: FeatureChannelSetting(available: true),
-);
-
-/// Enable Flutter preview prebuilt device.
-const Feature previewDevice = Feature(
-  name: 'Flutter preview prebuilt device',
-  configSetting: 'enable-flutter-preview',
-  environmentOverride: 'FLUTTER_PREVIEW_DEVICE',
-  master: FeatureChannelSetting(available: true),
-  beta: FeatureChannelSetting(available: true),
 );
 
 /// Enable Swift Package Manager as a darwin dependency manager.

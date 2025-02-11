@@ -15,7 +15,6 @@ import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/platform.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/compile.dart';
-import 'package:flutter_tools/src/convert.dart';
 import 'package:flutter_tools/src/dart/pub.dart';
 import 'package:flutter_tools/src/devfs.dart';
 import 'package:flutter_tools/src/device.dart';
@@ -27,7 +26,6 @@ import 'package:flutter_tools/src/resident_devtools_handler.dart';
 import 'package:flutter_tools/src/resident_runner.dart';
 import 'package:flutter_tools/src/run_cold.dart';
 import 'package:flutter_tools/src/run_hot.dart';
-import 'package:flutter_tools/src/version.dart';
 import 'package:flutter_tools/src/vmservice.dart';
 import 'package:test/fake.dart';
 import 'package:unified_analytics/unified_analytics.dart';
@@ -1291,8 +1289,6 @@ flutter:
       expect(residentRunner.supportsServiceProtocol, true);
       // isRunningDebug
       expect(residentRunner.isRunningDebug, true);
-      // does support SkSL
-      expect(residentRunner.supportsWriteSkSL, true);
       // commands
       expect(
         testLogger.statusText,
@@ -1316,7 +1312,6 @@ flutter:
             commandHelp.b,
             commandHelp.P,
             commandHelp.a,
-            commandHelp.M,
             commandHelp.g,
             commandHelp.hWithDetails,
             commandHelp.d,
@@ -1344,8 +1339,6 @@ flutter:
       expect(residentRunner.supportsServiceProtocol, true);
       // isRunningDebug
       expect(residentRunner.isRunningDebug, true);
-      // does support SkSL
-      expect(residentRunner.supportsWriteSkSL, true);
       // commands
       expect(
         testLogger.statusText,
@@ -1386,8 +1379,6 @@ flutter:
       expect(residentRunner.supportsServiceProtocol, false);
       // isRunningDebug
       expect(residentRunner.isRunningDebug, false);
-      // does support SkSL
-      expect(residentRunner.supportsWriteSkSL, false);
       // commands
       expect(
         testLogger.statusText,
@@ -1425,8 +1416,6 @@ flutter:
       expect(residentRunner.supportsServiceProtocol, false);
       // isRunningDebug
       expect(residentRunner.isRunningDebug, false);
-      // does support SkSL
-      expect(residentRunner.supportsWriteSkSL, false);
       // commands
       expect(
         testLogger.statusText,
@@ -1441,64 +1430,6 @@ flutter:
         ),
       );
     }),
-  );
-
-  testUsingContext(
-    'ResidentRunner handles writeSkSL returning no data',
-    () => testbed.run(() async {
-      fakeVmServiceHost = FakeVmServiceHost(
-        requests: <VmServiceExpectation>[
-          listViews,
-          FakeVmServiceRequest(
-            method: kGetSkSLsMethod,
-            args: <String, Object>{'viewId': fakeFlutterView.id},
-            jsonResponse: <String, Object>{'SkSLs': <String, Object>{}},
-          ),
-        ],
-      );
-      await residentRunner.writeSkSL();
-
-      expect(testLogger.statusText, contains('No data was received'));
-      expect(fakeVmServiceHost?.hasRemainingExpectations, false);
-    }),
-  );
-
-  testUsingContext(
-    'ResidentRunner can write SkSL data to a unique file with engine revision, platform, and device name',
-    () => testbed.run(
-      () async {
-        fakeVmServiceHost = FakeVmServiceHost(
-          requests: <VmServiceExpectation>[
-            listViews,
-            FakeVmServiceRequest(
-              method: kGetSkSLsMethod,
-              args: <String, Object>{'viewId': fakeFlutterView.id},
-              jsonResponse: <String, Object>{
-                'SkSLs': <String, Object>{'A': 'B'},
-              },
-            ),
-          ],
-        );
-        await residentRunner.writeSkSL();
-
-        expect(testLogger.statusText, contains('flutter_01.sksl.json'));
-        expect(globals.fs.file('flutter_01.sksl.json'), exists);
-        expect(
-          json.decode(globals.fs.file('flutter_01.sksl.json').readAsStringSync()),
-          <String, Object>{
-            'platform': 'android',
-            'name': 'FakeDevice',
-            'engineRevision': 'abcdefg',
-            'data': <String, Object>{'A': 'B'},
-          },
-        );
-        expect(fakeVmServiceHost?.hasRemainingExpectations, false);
-      },
-      overrides: <Type, Generator>{
-        FileSystemUtils: () => FileSystemUtils(fileSystem: globals.fs, platform: globals.platform),
-        FlutterVersion: () => FakeFlutterVersion(engineRevision: 'abcdefg'),
-      },
-    ),
   );
 
   testUsingContext(
@@ -2114,7 +2045,6 @@ flutter:
                   ReloadSources? reloadSources,
                   Restart? restart,
                   CompileExpression? compileExpression,
-                  GetSkSLMethod? getSkSLMethod,
                   FlutterProject? flutterProject,
                   PrintStructuredErrorLogMethod? printStructuredErrorLogMethod,
                   io.CompressionOptions? compression,
@@ -2172,7 +2102,6 @@ flutter:
                   ReloadSources? reloadSources,
                   Restart? restart,
                   CompileExpression? compileExpression,
-                  GetSkSLMethod? getSkSLMethod,
                   FlutterProject? flutterProject,
                   PrintStructuredErrorLogMethod? printStructuredErrorLogMethod,
                   io.CompressionOptions? compression,

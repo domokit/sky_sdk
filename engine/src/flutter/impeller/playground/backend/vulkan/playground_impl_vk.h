@@ -32,7 +32,7 @@ class PlaygroundImplVK final : public PlaygroundImpl {
 
   // A global Vulkan instance which ensures that the Vulkan library will remain
   // loaded throughout the lifetime of the process.
-  static vk::UniqueInstance global_instance_;
+  static VkInstance global_instance_;
 
   // |PlaygroundImpl|
   std::shared_ptr<Context> GetContext() const override;

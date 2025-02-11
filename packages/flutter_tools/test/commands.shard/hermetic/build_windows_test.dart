@@ -390,7 +390,6 @@ C:\foo\windows\x64\runner\main.cpp(17,1): error C2065: 'Baz': undeclared identif
         buildCommand('Release'),
       ]);
       fileSystem.file(fileSystem.path.join('lib', 'other.dart')).createSync(recursive: true);
-      fileSystem.file(fileSystem.path.join('foo', 'bar.sksl.json')).createSync(recursive: true);
 
       // Relevant portions of an incorrectly generated project, with some
       // irrelevant details removed for length.
@@ -533,7 +532,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
         buildCommand('Release'),
       ]);
       fileSystem.file(fileSystem.path.join('lib', 'other.dart')).createSync(recursive: true);
-      fileSystem.file(fileSystem.path.join('foo', 'bar.sksl.json')).createSync(recursive: true);
 
       await createTestCommandRunner(command).run(const <String>[
         'windows',
@@ -545,7 +543,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
         r'--split-debug-info=C:\foo\',
         '--dart-define=foo=a',
         '--dart-define=bar=b',
-        r'--bundle-sksl-path=foo\bar.sksl.json',
         r'--target=lib\other.dart',
       ]);
 
@@ -581,7 +578,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
           r'  "FLUTTER_ROOT=C:\\flutter"',
           r'  "PROJECT_DIR=C:\\"',
           r'  "FLUTTER_TARGET=lib\\other.dart"',
-          r'  "BUNDLE_SKSL_PATH=foo\\bar.sksl.json"',
         ]),
       );
     },

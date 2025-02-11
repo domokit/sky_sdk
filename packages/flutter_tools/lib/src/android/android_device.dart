@@ -653,12 +653,6 @@ class AndroidDevice extends Device {
       if (debuggingOptions.traceSystrace) ...<String>['--ez', 'trace-systrace', 'true'],
       if (traceToFile != null) ...<String>['--es', 'trace-to-file', traceToFile],
       if (debuggingOptions.endlessTraceBuffer) ...<String>['--ez', 'endless-trace-buffer', 'true'],
-      if (debuggingOptions.dumpSkpOnShaderCompilation) ...<String>[
-        '--ez',
-        'dump-skp-on-shader-compilation',
-        'true',
-      ],
-      if (debuggingOptions.cacheSkSL) ...<String>['--ez', 'cache-sksl', 'true'],
       if (debuggingOptions.purgePersistentCache) ...<String>[
         '--ez',
         'purge-persistent-cache',

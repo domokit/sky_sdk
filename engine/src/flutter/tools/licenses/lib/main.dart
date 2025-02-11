@@ -817,54 +817,59 @@ class _RepositoryKhronosLicenseFile extends _RepositoryLicenseFile {
 /// This file contains a bunch of different licenses, but other files
 /// refer to it as if it was a monolithic license so we sort of have
 /// to treat the whole thing as a MultiLicense.
-class _RepositoryOpenSSLLicenseFile extends _RepositorySingleLicenseFile {
-  _RepositoryOpenSSLLicenseFile(_RepositoryDirectory parent, fs.TextFile io)
+class _RepositoryBoringSSLLicenseFile extends _RepositorySingleLicenseFile {
+  _RepositoryBoringSSLLicenseFile(_RepositoryDirectory parent, fs.TextFile io)
     : super(parent, io, _parseLicense(io));
 
   static final RegExp _pattern = RegExp(
-    // advice is to skip the first 27 lines of this file in the LICENSE file
-    r'^BoringSSL is a fork of OpenSSL. As such, .+?'
-    r'The following are Google-internal bug numbers where explicit permission from\n'
-    r'some authors is recorded for use of their work\. \(This is purely for our own\n'
-    r'record keeping\.\)\n+'
-    r'[0-9+ \n]+\n+'
-    r'(' // 1
-    r' *OpenSSL License\n'
-    r' *---------------\n+)'
-    r'(.+?)\n+' // 2
-    r'(' // 3
-    r' *Original SSLeay License\n'
-    r' *-----------------------\n+)'
-    r'(.+?)\n+' // 4
-    r'( *ISC license used for completely new code in BoringSSL:\n+)' // 5
-    r'(.+?)\n+' // 6
-    r'( *The code in third_party/fiat carries the MIT license:\n+)' // 7
-    r'(.+?)\n+' // 8
-    r'(' // 9
+    r'^'
+    r'.*\n(' // 1
+    r' *Apache License\n'
+    r' *Version 2.0, January 2004\n'
+    r' *http://www.apache.org/licenses/\n'
+    r'\n'
+    r'.+?)\n+'
+    r'(' // 2
     r' *Licenses for support code\n'
     r' *-------------------------\n+)'
-    r'(.+?)\n+' // 10
-    r'(BoringSSL uses the Chromium test infrastructure to run a continuous build,\n' // 11
+    r'(.+?)\n+' // 3
+    r'(BoringSSL uses the Chromium test infrastructure to run a continuous build,\n' // 4
     r'trybots etc\. The scripts which manage this, and the script for generating build\n'
     r'metadata, are under the Chromium license\. Distributing code linked against\n'
     r'BoringSSL does not trigger this license\.)\n+'
-    r'(.+?)\n+$', // 12
+    r'(.+?)\n+$', // 5
     dotAll: true,
   );
 
   static License _parseLicense(fs.TextFile io) {
     final Match? match = _pattern.firstMatch(io.readString());
     if (match == null) {
-      throw 'Failed to match OpenSSL license pattern.';
+      throw 'Failed to match BoringSSL license pattern.';
     }
-    assert(match.groupCount == 12);
-    return License.fromMultipleBlocks(
-      List<String>.generate(match.groupCount, (int index) => match.group(index + 1)!).toList(),
-      LicenseType.openssl,
-      origin: io.fullName,
-      authors: 'The OpenSSL Project Authors',
-      yesWeKnowWhatItLooksLikeButItIsNot: true, // looks like BSD, but...
-    );
+    assert(match.groupCount == 5);
+    return License.fromBodyAndType(match.group(1)!, LicenseType.apache, origin: io.fullName);
+  }
+}
+
+class _RepositoryBoringSSLFiatLicenseFile extends _RepositorySingleLicenseFile {
+  _RepositoryBoringSSLFiatLicenseFile(_RepositoryDirectory parent, fs.TextFile io)
+    : super(parent, io, _parseLicense(io));
+
+  static final RegExp _pattern = RegExp(
+    r'^(The Apache License, Version 2.0 \(Apache-2.0\)'
+    r'.*\n+'
+    r' *http://www.apache.org/licenses/.*)\n'
+    r'(.+?)\n+$',
+    dotAll: true,
+  );
+
+  static License _parseLicense(fs.TextFile io) {
+    final Match? match = _pattern.firstMatch(io.readString());
+    if (match == null) {
+      throw 'Failed to match BoringSSL Fiat license pattern.';
+    }
+    assert(match.groupCount == 2);
+    return License.fromBodyAndType(match.group(1)!, LicenseType.apache, origin: io.fullName);
   }
 }
 
@@ -890,13 +895,13 @@ class _RepositoryFuchsiaSdkLinuxLicenseFile extends _RepositorySingleLicenseFile
   }
 }
 
-/// The BoringSSL license file.
+/// The Vulkan validation layers license file.
 ///
 /// This file contains a bunch of different licenses, but other files
 /// refer to it as if it was a monolithic license so we sort of have
 /// to treat the whole thing as a MultiLicense.
-class _RepositoryVulkanApacheLicenseFile extends _RepositorySingleLicenseFile {
-  _RepositoryVulkanApacheLicenseFile(_RepositoryDirectory parent, fs.TextFile io)
+class _RepositoryVulkanValidationApacheLicenseFile extends _RepositorySingleLicenseFile {
+  _RepositoryVulkanValidationApacheLicenseFile(_RepositoryDirectory parent, fs.TextFile io)
     : super(parent, io, _parseLicense(io));
 
   static const String _prefix =
@@ -911,7 +916,28 @@ class _RepositoryVulkanApacheLicenseFile extends _RepositorySingleLicenseFile {
   static License _parseLicense(fs.TextFile io) {
     final String body = io.readString();
     if (!body.startsWith(_prefix)) {
-      throw 'Failed to match Vulkan Apache license prefix.';
+      throw 'Failed to match vulkan-validation-layers license prefix.';
+    }
+    return License.fromBody(body.substring(_prefix.length), origin: io.fullName);
+  }
+}
+
+/// The Vulkan lunarg-vulkantools license file.
+class _RepositoryVulkanLunarGApacheLicenseFile extends _RepositorySingleLicenseFile {
+  _RepositoryVulkanLunarGApacheLicenseFile(_RepositoryDirectory parent, fs.TextFile io)
+    : super(parent, io, _parseLicense(io));
+
+  static const String _prefix =
+      'The majority of files in this project use the Apache 2.0 License.\n'
+      'There are a few exceptions and their license can either be found in the source or their directory homing the source.\n'
+      '\n'
+      '===========================================================================================\n'
+      '\n';
+
+  static License _parseLicense(fs.TextFile io) {
+    final String body = io.readString();
+    if (!body.startsWith(_prefix)) {
+      throw 'Failed to match lunarg-vulkantools Apache license prefix.';
     }
     return License.fromBody(body.substring(_prefix.length), origin: io.fullName);
   }
@@ -1017,7 +1043,9 @@ class _RepositoryDirectory extends _RepositoryEntry implements LicenseSource {
   );
 
   static const Map<String, _Constructor> _specialCaseFiles = <String, _Constructor>{
-    '/flutter/third_party/boringssl/src/LICENSE': _RepositoryOpenSSLLicenseFile.new,
+    '/flutter/third_party/boringssl/src/LICENSE': _RepositoryBoringSSLLicenseFile.new,
+    '/flutter/third_party/boringssl/src/third_party/fiat/LICENSE':
+        _RepositoryBoringSSLFiatLicenseFile.new,
     '/flutter/third_party/dart/LICENSE': _RepositoryDartLicenseFile.new,
     '/flutter/third_party/freetype2/LICENSE.TXT': _RepositoryFreetypeLicenseFile.new,
     '/flutter/third_party/icu/LICENSE': _RepositoryIcuLicenseFile.new,
@@ -1029,8 +1057,10 @@ class _RepositoryDirectory extends _RepositoryEntry implements LicenseSource {
     '/flutter/third_party/libpng/LICENSE': _RepositoryLibPngLicenseFile.new,
     '/flutter/third_party/rapidjson/LICENSE': _RepositoryOpaqueLicenseFile.new,
     '/flutter/third_party/rapidjson/license.txt': _RepositoryOpaqueLicenseFile.new,
+    '/flutter/third_party/vulkan-deps/lunarg-vulkantools/src/LICENSE.txt':
+        _RepositoryVulkanLunarGApacheLicenseFile.new,
     '/flutter/third_party/vulkan-deps/vulkan-validation-layers/src/LICENSE.txt':
-        _RepositoryVulkanApacheLicenseFile.new,
+        _RepositoryVulkanValidationApacheLicenseFile.new,
     '/fuchsia/sdk/linux/LICENSE.vulkan': _RepositoryFuchsiaSdkLinuxLicenseFile.new,
     '/fuchsia/sdk/linux/fidl/fuchsia.storage.ftl/ftl.fidl': _RepositorySourceFile.new,
     '/fuchsia/sdk/mac/LICENSE.vulkan': _RepositoryFuchsiaSdkLinuxLicenseFile.new,
@@ -1753,6 +1783,16 @@ class _RepositoryBoringSSLSourceDirectory extends _RepositoryDirectory {
 
   @override
   bool get isLicenseRoot => true;
+
+  @override
+  License? nearestLicenseOfType(LicenseType type) {
+    if (type == LicenseType.openssl) {
+      // OpenSSL has switched to the Apache license.  But one file (x86_64-gcc.cc.inc)
+      // includes the Apache license along with a comment using older language.
+      return nearestLicenseWithName('LICENSE');
+    }
+    return super.nearestLicenseOfType(type);
+  }
 }
 
 class _RepositoryFlutterDirectory extends _RepositoryDirectory {

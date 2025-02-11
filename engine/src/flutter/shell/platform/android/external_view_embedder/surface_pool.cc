@@ -122,6 +122,10 @@ void SurfacePool::SetFrameSize(SkISize frame_size) {
   requested_frame_size_ = frame_size;
 }
 
+void SurfacePool::ResetLayers() {
+  available_layer_index_ = 0;
+}
+
 void SurfacePool::TrimLayers() {
   std::lock_guard lock(mutex_);
   layers_.erase(layers_.begin() + available_layer_index_, layers_.end());

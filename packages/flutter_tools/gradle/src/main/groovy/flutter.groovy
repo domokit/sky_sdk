@@ -1220,11 +1220,6 @@ class FlutterPlugin implements Plugin<Project> {
         if (project.hasProperty(propDartDefines)) {
             dartDefinesValue = project.property(propDartDefines)
         }
-        String bundleSkSLPathValue
-        final String propBundleSkslPath = "bundle-sksl-path"
-        if (project.hasProperty(propBundleSkslPath)) {
-            bundleSkSLPathValue = project.property(propBundleSkslPath)
-        }
         String performanceMeasurementFileValue
         final String propPerformanceMeasurementFile = "performance-measurement-file"
         if (project.hasProperty(propPerformanceMeasurementFile)) {
@@ -1316,7 +1311,6 @@ class FlutterPlugin implements Plugin<Project> {
                 treeShakeIcons(treeShakeIconsOptionsValue)
                 dartObfuscation(dartObfuscationValue)
                 dartDefines(dartDefinesValue)
-                bundleSkSLPath(bundleSkSLPathValue)
                 performanceMeasurementFile(performanceMeasurementFileValue)
                 codeSizeDirectory(codeSizeDirectoryValue)
                 deferredComponents(deferredComponentsValue)
@@ -1648,9 +1642,6 @@ abstract class BaseFlutterTask extends DefaultTask {
     String dartDefines
 
     @Optional @Input
-    String bundleSkSLPath
-
-    @Optional @Input
     String codeSizeDirectory
 
     @Optional @Input
@@ -1739,9 +1730,6 @@ abstract class BaseFlutterTask extends DefaultTask {
             }
             if (dartDefines != null) {
                 args("--DartDefines=${dartDefines}")
-            }
-            if (bundleSkSLPath != null) {
-                args("-dBundleSkSLPath=${bundleSkSLPath}")
             }
             if (codeSizeDirectory != null) {
                 args("-dCodeSizeDirectory=${codeSizeDirectory}")

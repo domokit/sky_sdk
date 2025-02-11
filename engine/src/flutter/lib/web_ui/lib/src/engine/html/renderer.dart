@@ -140,8 +140,7 @@ class HtmlRenderer implements Renderer {
     required ui.ImageFilter outer,
     required ui.ImageFilter inner,
   }) {
-    // TODO(ferhat): add implementation and remove the "ignore".
-    // ignore: avoid_unused_constructor_parameters
+    // TODO(ferhat): add implementation.
     throw UnimplementedError('ImageFilter.erode not implemented for HTML renderer.');
   }
 

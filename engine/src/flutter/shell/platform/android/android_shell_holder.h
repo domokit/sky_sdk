@@ -93,6 +93,8 @@ class AndroidShellHolder {
 
   fml::WeakPtr<PlatformViewAndroid> GetPlatformView();
 
+  bool IsSurfaceControlEnabled();
+
   Rasterizer::Screenshot Screenshot(Rasterizer::ScreenshotType type,
                                     bool base64_encode);
 

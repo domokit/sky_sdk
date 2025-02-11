@@ -1,0 +1,82 @@
+{
+    "_comment": [
+        "The builds defined in this file should not contain tests, ",
+        "and the file should not contain builds that are essentially tests. ",
+        "The only builds in this file should be the builds necessary to produce ",
+        "release artifacts. ",
+        "Tests to run on linux hosts should go in one of the other linux_ build ",
+        "definition files."
+    ],
+    "builds": [
+        {
+            "archives": [
+                {
+                    "name": "ci/android_release_arm64_ddm",
+                    "type": "gcs",
+                    "base_path": "out/ci/android_release_arm64_ddm/zip_archives/",
+                    "include_paths": [
+                        "out/ci/android_release_arm64_ddm/zip_archives/android-arm64-release-ddm/artifacts.zip",
+                        "out/ci/android_release_arm64_ddm/zip_archives/android-arm64-release-ddm/linux-x64.zip",
+                        "out/ci/android_release_arm64_ddm/zip_archives/android-arm64-release-ddm/symbols.zip",
+                        "out/ci/android_release_arm64_ddm/zip_archives/android-arm64-release-ddm/analyze-snapshot-linux-x64.zip"
+                    ],
+                    "realm": "production"
+                }
+            ],
+            "drone_dimensions": [
+                "device_type=none",
+                "os=Linux"
+            ],
+            "gclient_variables": {
+                "use_rbe": true
+            },
+            "gn": [
+                "--target-dir",
+                "ci/android_release_arm64_ddm",
+                "--runtime-mode",
+                "release",
+                "--android",
+                "--android-cpu",
+                "arm64",
+                "--no-prebuilt-dart-sdk",
+                "--gn-args=dart_dynamic_modules=true",
+                "--rbe",
+                "--no-goma"
+            ],
+            "name": "ci/android_release_arm64_ddm",
+            "description": "Produces experimental release mode artifacts to target 64-bit arm Android from a Linux host with dynamic modules enabled.",
+            "ninja": {
+                "config": "ci/android_release_arm64_ddm",
+                "targets": [
+                    "default",
+                    "clang_x64/gen_snapshot",
+                    "flutter/shell/platform/android:analyze_snapshot"
+                ]
+            },
+            "tests": [
+                {
+                    "name": "Generate treemap for android_release_arm64_ddm",
+                    "language": "bash",
+                    "script": "flutter/ci/binary_size_treemap.sh",
+                    "parameters": [
+                        "../../src/out/ci/android_release_arm64_ddm/libflutter.so",
+                        "${FLUTTER_LOGS_DIR}"
+                    ]
+                }
+            ]
+        }
+    ],
+    "generators": {
+        "tasks": [
+            {
+                "name": "Verify-export-symbols-release-binaries",
+                "parameters": [
+                    "src/out/ci",
+                    "src/flutter/buildtools"
+                ],
+                "script": "flutter/testing/symbols/verify_exported.dart",
+                "language": "dart"
+            }
+        ]
+    }
+}

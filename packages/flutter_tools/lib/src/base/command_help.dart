@@ -47,11 +47,6 @@ class CommandHelp {
     'debugDumpLayerTree',
   );
 
-  late final CommandHelpOption M = _makeOption(
-    'M',
-    'Write SkSL shaders to a unique file in the project directory.',
-  );
-
   late final CommandHelpOption P = _makeOption(
     'P',
     'Toggle performance overlay.',
