@@ -316,11 +316,10 @@ static void fl_renderer_dispose(GObject* object) {
   g_weak_ref_clear(&priv->engine);
   g_clear_pointer(&priv->views, g_hash_table_unref);
   g_clear_pointer(&priv->framebuffers_by_view_id, g_hash_table_unref);
-
-  G_OBJECT_CLASS(fl_renderer_parent_class)->dispose(object);
-
   g_mutex_clear(&priv->mutex);
   g_cond_clear(&priv->cond);
+
+  G_OBJECT_CLASS(fl_renderer_parent_class)->dispose(object);
 }
 
 static void fl_renderer_class_init(FlRendererClass* klass) {
