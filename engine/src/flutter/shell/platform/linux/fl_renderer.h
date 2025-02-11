@@ -55,14 +55,6 @@ struct _FlRendererClass {
    * @renderer: an #FlRenderer.
    */
   void (*clear_current)(FlRenderer* renderer);
-
-  /**
-   * Virtual method responsible for scheduling the callback on the main thread.
-   * Overriden in the mock renderer.
-   */
-  gboolean (*schedule_on_main_thread)(FlRenderer* renderer,
-                                      void (*callback)(gpointer data),
-                                      gpointer data);
 };
 
 /**
