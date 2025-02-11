@@ -44,7 +44,7 @@ void fl_task_runner_post_flutter_task(FlTaskRunner* task_runner,
  * @data: data to be passed to the callback
  *
  * Schedules arbitrary callback to be executed on main thread. The callback
- * will be executed in next run loop turn.This function is thread
+ * will be executed in next run loop turn. This function is thread
  * safe and may be called from any thread.
  */
 void fl_task_runner_post_callback(FlTaskRunner* task_runner,
