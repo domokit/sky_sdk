@@ -832,15 +832,15 @@ void Canvas::DrawVertices(const std::shared_ptr<VerticesGeometry>& vertices,
   contents->SetAlpha(paint.color.alpha);
   contents->SetGeometry(vertices);
   contents->SetLazyTextureCoverage(src_coverage);
-  contents->SetLazyTexture(
-      [src_contents, src_coverage](const ContentContext& renderer) {
-        // Applying the src coverage as the coverage limit prevents the 1px
-        // coverage pad from adding a border that is picked up by developer
-        // specified UVs.
-        return src_contents
-            ->RenderToSnapshot(renderer, {}, Rect::Round(src_coverage))
-            ->texture;
-      });
+  contents->SetLazyTexture([src_contents,
+                            src_coverage](const ContentContext& renderer) {
+    // Applying the src coverage as the coverage limit prevents the 1px
+    // coverage pad from adding a border that is picked up by developer
+    // specified UVs.
+    auto snapshot =
+        src_contents->RenderToSnapshot(renderer, {}, Rect::Round(src_coverage));
+    return snapshot.has_value() ? snapshot->texture : nullptr;
+  });
   entity.SetContents(paint.WithFilters(std::move(contents)));
   AddRenderEntityToCurrentPass(entity);
 }

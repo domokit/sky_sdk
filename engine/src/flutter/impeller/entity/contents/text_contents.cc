@@ -149,7 +149,7 @@ void TextContents::ComputeVertexData(
           continue;
         }
         Point subpixel = TextFrame::ComputeSubpixelPosition(
-            glyph_position, font.GetAxisAlignment(), offset, rounded_scale);
+            glyph_position, font.GetAxisAlignment(), entity_transform);
 
         std::optional<FrameBounds> maybe_atlas_glyph_bounds =
             font_atlas->FindGlyphBounds(SubpixelGlyph{

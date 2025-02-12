@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/io.dart';
+import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:process/process.dart';
 
@@ -47,7 +48,7 @@ Future<void> analyzeProject(
   List<String> expectedFailures = const <String>[],
 }) async {
   final String flutterToolsSnapshotPath = globals.fs.path.absolute(
-    globals.fs.path.join('..', '..', 'bin', 'cache', 'flutter_tools.snapshot'),
+    globals.fs.path.join(Cache.flutterRoot!, 'bin', 'cache', 'flutter_tools.snapshot'),
   );
 
   final List<String> args = <String>[flutterToolsSnapshotPath, 'analyze'];

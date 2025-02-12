@@ -94,12 +94,6 @@ void main() {
       expect(response, throwsA(const TypeMatcher<RPCError>()));
     });
 
-    testWithoutContext('flutterGetSkSL can be called', () async {
-      final Response response = await vmService.callMethod('s0.flutterGetSkSL');
-
-      expect(response.type, 'Success');
-    });
-
     testWithoutContext('ext.flutter.brightnessOverride can toggle window brightness', () async {
       final Isolate isolate = await waitForExtension(vmService, 'ext.flutter.brightnessOverride');
       final Response response = await vmService.callServiceExtension(

@@ -20,6 +20,7 @@ import 'package:flutter_tools/src/base/process.dart';
 import 'package:flutter_tools/src/base/user_messages.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/cache.dart';
+import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/project.dart';
 import 'package:test/fake.dart';
 import 'package:unified_analytics/unified_analytics.dart';
@@ -41,6 +42,11 @@ const String minimalV2EmbeddingManifest = r'''
 ''';
 
 void main() {
+  // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
+  FeatureFlags enableExplicitPackageDependencies() {
+    return TestFeatureFlags(isExplicitPackageDependenciesEnabled: true);
+  }
+
   group('gradle build', () {
     late BufferLogger logger;
     late FakeAnalytics fakeAnalytics;
@@ -1564,6 +1570,141 @@ Gradle Crashed
         AndroidStudio: () => FakeAndroidStudio(),
         Analytics: () => fakeAnalytics,
       },
+    );
+
+    // Regression test for https://github.com/flutter/flutter/issues/162649.
+    testUsingContext(
+      'buildAar generates tooling for each sub-build for AARs',
+      () async {
+        addTearDown(() {
+          printOnFailure(logger.statusText);
+          printOnFailure(logger.errorText);
+        });
+        final AndroidGradleBuilder builder = AndroidGradleBuilder(
+          java: FakeJava(),
+          logger: logger,
+          processManager: processManager,
+          fileSystem: fileSystem,
+          artifacts: Artifacts.test(),
+          analytics: fakeAnalytics,
+          gradleUtils: FakeGradleUtils(),
+          platform: FakePlatform(),
+          androidStudio: FakeAndroidStudio(),
+        );
+        processManager.addCommands(const <FakeCommand>[
+          FakeCommand(
+            command: <String>[
+              'gradlew',
+              '-I=/packages/flutter_tools/gradle/aar_init_script.gradle',
+              '-Pflutter-root=/',
+              '-Poutput-dir=/build/host',
+              '-Pis-plugin=false',
+              '-PbuildNumber=1.0',
+              '-q',
+              '-Pdart-obfuscation=false',
+              '-Ptrack-widget-creation=false',
+              '-Ptree-shake-icons=false',
+              '-Ptarget-platform=android-arm,android-arm64,android-x64',
+              'assembleAarDebug',
+            ],
+          ),
+          FakeCommand(
+            command: <String>[
+              'gradlew',
+              '-I=/packages/flutter_tools/gradle/aar_init_script.gradle',
+              '-Pflutter-root=/',
+              '-Poutput-dir=/build/host',
+              '-Pis-plugin=false',
+              '-PbuildNumber=1.0',
+              '-q',
+              '-Pdart-obfuscation=false',
+              '-Ptrack-widget-creation=false',
+              '-Ptree-shake-icons=false',
+              '-Ptarget-platform=android-arm,android-arm64,android-x64',
+              'assembleAarProfile',
+            ],
+          ),
+          FakeCommand(
+            command: <String>[
+              'gradlew',
+              '-I=/packages/flutter_tools/gradle/aar_init_script.gradle',
+              '-Pflutter-root=/',
+              '-Poutput-dir=/build/host',
+              '-Pis-plugin=false',
+              '-PbuildNumber=1.0',
+              '-q',
+              '-Pdart-obfuscation=false',
+              '-Ptrack-widget-creation=false',
+              '-Ptree-shake-icons=false',
+              '-Ptarget-platform=android-arm,android-arm64,android-x64',
+              'assembleAarRelease',
+            ],
+          ),
+        ]);
+
+        final File manifestFile = fileSystem.file('pubspec.yaml');
+        manifestFile.createSync(recursive: true);
+        manifestFile.writeAsStringSync('''
+        flutter:
+          module:
+            androidPackage: com.example.test
+        ''');
+
+        fileSystem.file('.android/gradlew').createSync(recursive: true);
+        fileSystem.file('.android/gradle.properties').writeAsStringSync('irrelevant');
+        fileSystem.file('.android/build.gradle').createSync(recursive: true);
+        fileSystem.directory('build/host/outputs/repo').createSync(recursive: true);
+
+        final List<(FlutterProject, bool)> generateToolingCalls = <(FlutterProject, bool)>[];
+        await builder.buildAar(
+          project: FlutterProject.fromDirectoryTest(fileSystem.currentDirectory),
+          androidBuildInfo: const <AndroidBuildInfo>{
+            AndroidBuildInfo(
+              BuildInfo(
+                BuildMode.debug,
+                null,
+                treeShakeIcons: false,
+                packageConfigPath: '.dart_tool/package_config.json',
+              ),
+            ),
+            AndroidBuildInfo(
+              BuildInfo(
+                BuildMode.profile,
+                null,
+                treeShakeIcons: false,
+                packageConfigPath: '.dart_tool/package_config.json',
+              ),
+            ),
+            AndroidBuildInfo(
+              BuildInfo(
+                BuildMode.release,
+                null,
+                treeShakeIcons: false,
+                packageConfigPath: '.dart_tool/package_config.json',
+              ),
+            ),
+          },
+          target: '',
+          buildNumber: '1.0',
+          generateTooling: (FlutterProject project, {required bool releaseMode}) async {
+            generateToolingCalls.add((project, releaseMode));
+          },
+        );
+        expect(processManager, hasNoRemainingExpectations);
+
+        // Ideally, this should be checked before each invocation to the process,
+        // but instead we'll assume it was invoked in the same order as the calls
+        // to gradle to keep the scope of this test light.
+        expect(generateToolingCalls, hasLength(3));
+        expect(
+          generateToolingCalls.map(((FlutterProject, bool) call) {
+            return call.$2;
+          }),
+          <bool>[false, false, true],
+          reason: 'generateTooling should omit debug metadata for release builds',
+        );
+      },
+      overrides: <Type, Generator>{FeatureFlags: enableExplicitPackageDependencies},
     );
 
     testUsingContext(

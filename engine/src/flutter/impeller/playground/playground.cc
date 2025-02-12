@@ -521,4 +521,9 @@ Playground::GLProcAddressResolver Playground::CreateGLProcAddressResolver()
   return impl_->CreateGLProcAddressResolver();
 }
 
+Playground::VKProcAddressResolver Playground::CreateVKProcAddressResolver()
+    const {
+  return impl_->CreateVKProcAddressResolver();
+}
+
 }  // namespace impeller

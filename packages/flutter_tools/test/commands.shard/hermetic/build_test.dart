@@ -4,10 +4,8 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
-import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/logger.dart';
-import 'package:flutter_tools/src/base/process.dart';
 import 'package:flutter_tools/src/build_system/build_system.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/commands/build.dart';
@@ -39,30 +37,24 @@ void main() {
     late MemoryFileSystem fs;
     late BufferLogger logger;
     late ProcessManager processManager;
-    late ProcessUtils processUtils;
-    late Artifacts artifacts;
 
     setUp(() {
       fs = MemoryFileSystem.test();
-      artifacts = Artifacts.test(fileSystem: fs);
       fs.file('/package/pubspec.yaml').createSync(recursive: true);
       fs.currentDirectory = '/package';
       Cache.disableLocking();
       logger = BufferLogger.test();
       processManager = FakeProcessManager.empty();
-      processUtils = ProcessUtils(logger: logger, processManager: processManager);
     });
 
     testUsingContext(
       "doesn't fail if --fatal-warnings specified and no warnings occur",
       () async {
         command = FakeBuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fs,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         try {
@@ -80,12 +72,10 @@ void main() {
       "doesn't fail if --fatal-warnings not specified",
       () async {
         command = FakeBuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fs,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         testLogger.printWarning('Warning: Mild annoyance Will Robinson!');
@@ -102,12 +92,10 @@ void main() {
       'fails if --fatal-warnings specified and warnings emitted',
       () async {
         command = FakeBuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fs,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         testLogger.printWarning('Warning: Mild annoyance Will Robinson!');
@@ -128,12 +116,10 @@ void main() {
       'fails if --fatal-warnings specified and errors emitted',
       () async {
         command = FakeBuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fs,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         testLogger.printError('Error: Danger Will Robinson!');
@@ -178,8 +164,6 @@ class FakeBuildCommand extends BuildCommand {
     required super.osUtils,
     required Logger logger,
     required super.androidSdk,
-    required super.processUtils,
-    required super.artifacts,
     bool verboseHelp = false,
   }) : super(logger: logger) {
     addSubcommand(FakeBuildSubcommand(logger: logger, verboseHelp: verboseHelp));

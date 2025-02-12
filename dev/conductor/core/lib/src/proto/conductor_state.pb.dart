@@ -8,7 +8,7 @@
 //
 // @dart = 2.12
 
-// ignore_for_file: annotate_overrides, camel_case_types
+// ignore_for_file: annotate_overrides, camel_case_types, comment_references
 // ignore_for_file: constant_identifier_names, library_prefixes
 // ignore_for_file: non_constant_identifier_names, prefer_final_fields
 // ignore_for_file: unnecessary_import, unnecessary_this, unused_import
@@ -22,8 +22,21 @@ import 'conductor_state.pbenum.dart';
 
 export 'conductor_state.pbenum.dart';
 
+/// A git remote
 class Remote extends $pb.GeneratedMessage {
-  factory Remote() => create();
+  factory Remote({
+    $core.String? name,
+    $core.String? url,
+  }) {
+    final $result = create();
+    if (name != null) {
+      $result.name = name;
+    }
+    if (url != null) {
+      $result.url = url;
+    }
+    return $result;
+  }
   Remote._() : super();
   factory Remote.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
@@ -86,7 +99,23 @@ class Remote extends $pb.GeneratedMessage {
 }
 
 class Cherrypick extends $pb.GeneratedMessage {
-  factory Cherrypick() => create();
+  factory Cherrypick({
+    $core.String? trunkRevision,
+    $core.String? appliedRevision,
+    CherrypickState? state,
+  }) {
+    final $result = create();
+    if (trunkRevision != null) {
+      $result.trunkRevision = trunkRevision;
+    }
+    if (appliedRevision != null) {
+      $result.appliedRevision = appliedRevision;
+    }
+    if (state != null) {
+      $result.state = state;
+    }
+    return $result;
+  }
   Cherrypick._() : super();
   factory Cherrypick.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
@@ -127,6 +156,7 @@ class Cherrypick extends $pb.GeneratedMessage {
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Cherrypick>(create);
   static Cherrypick? _defaultInstance;
 
+  /// The revision on trunk to cherrypick.
   @$pb.TagNumber(1)
   $core.String get trunkRevision => $_getSZ(0);
   @$pb.TagNumber(1)
@@ -139,6 +169,7 @@ class Cherrypick extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearTrunkRevision() => clearField(1);
 
+  /// Once applied, the actual commit revision of the cherrypick.
   @$pb.TagNumber(2)
   $core.String get appliedRevision => $_getSZ(1);
   @$pb.TagNumber(2)
@@ -165,7 +196,47 @@ class Cherrypick extends $pb.GeneratedMessage {
 }
 
 class Repository extends $pb.GeneratedMessage {
-  factory Repository() => create();
+  factory Repository({
+    $core.String? candidateBranch,
+    $core.String? startingGitHead,
+    $core.String? currentGitHead,
+    $core.String? checkoutPath,
+    Remote? upstream,
+    Remote? mirror,
+    $core.Iterable<Cherrypick>? cherrypicks,
+    $core.String? dartRevision,
+    $core.String? workingBranch,
+  }) {
+    final $result = create();
+    if (candidateBranch != null) {
+      $result.candidateBranch = candidateBranch;
+    }
+    if (startingGitHead != null) {
+      $result.startingGitHead = startingGitHead;
+    }
+    if (currentGitHead != null) {
+      $result.currentGitHead = currentGitHead;
+    }
+    if (checkoutPath != null) {
+      $result.checkoutPath = checkoutPath;
+    }
+    if (upstream != null) {
+      $result.upstream = upstream;
+    }
+    if (mirror != null) {
+      $result.mirror = mirror;
+    }
+    if (cherrypicks != null) {
+      $result.cherrypicks.addAll(cherrypicks);
+    }
+    if (dartRevision != null) {
+      $result.dartRevision = dartRevision;
+    }
+    if (workingBranch != null) {
+      $result.workingBranch = workingBranch;
+    }
+    return $result;
+  }
   Repository._() : super();
   factory Repository.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
@@ -210,6 +281,9 @@ class Repository extends $pb.GeneratedMessage {
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Repository>(create);
   static Repository? _defaultInstance;
 
+  ///  The development git branch the release is based on.
+  ///
+  ///  Must be of the form /flutter-(\d+)\.(\d+)-candidate\.(\d+)/
   @$pb.TagNumber(1)
   $core.String get candidateBranch => $_getSZ(0);
   @$pb.TagNumber(1)
@@ -222,6 +296,7 @@ class Repository extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearCandidateBranch() => clearField(1);
 
+  /// The commit hash at the tip of the branch before cherrypicks were applied.
   @$pb.TagNumber(2)
   $core.String get startingGitHead => $_getSZ(1);
   @$pb.TagNumber(2)
@@ -234,6 +309,8 @@ class Repository extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   void clearStartingGitHead() => clearField(2);
 
+  /// The difference in commits between this and [startingGitHead] is the number
+  /// of cherrypicks that have been currently applied.
   @$pb.TagNumber(3)
   $core.String get currentGitHead => $_getSZ(2);
   @$pb.TagNumber(3)
@@ -246,6 +323,7 @@ class Repository extends $pb.GeneratedMessage {
   @$pb.TagNumber(3)
   void clearCurrentGitHead() => clearField(3);
 
+  /// Path to the git checkout on local disk.
   @$pb.TagNumber(4)
   $core.String get checkoutPath => $_getSZ(3);
   @$pb.TagNumber(4)
@@ -258,6 +336,7 @@ class Repository extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   void clearCheckoutPath() => clearField(4);
 
+  /// The remote commits will be fetched from.
   @$pb.TagNumber(5)
   Remote get upstream => $_getN(4);
   @$pb.TagNumber(5)
@@ -272,6 +351,9 @@ class Repository extends $pb.GeneratedMessage {
   @$pb.TagNumber(5)
   Remote ensureUpstream() => $_ensure(4);
 
+  ///  The remote cherrypicks will be pushed to create a Pull Request.
+  ///
+  ///  This should be a mirror owned by the user conducting the release.
   @$pb.TagNumber(6)
   Remote get mirror => $_getN(5);
   @$pb.TagNumber(6)
@@ -286,9 +368,11 @@ class Repository extends $pb.GeneratedMessage {
   @$pb.TagNumber(6)
   Remote ensureMirror() => $_ensure(5);
 
+  /// Desired cherrypicks.
   @$pb.TagNumber(7)
   $core.List<Cherrypick> get cherrypicks => $_getList(6);
 
+  /// For the repository that has a dart_revision in a DEPS file.
   @$pb.TagNumber(8)
   $core.String get dartRevision => $_getSZ(7);
   @$pb.TagNumber(8)
@@ -301,6 +385,10 @@ class Repository extends $pb.GeneratedMessage {
   @$pb.TagNumber(8)
   void clearDartRevision() => clearField(8);
 
+  ///  Name of local and remote branch for applying cherrypicks.
+  ///
+  ///  When the pull request is merged, all commits here will be squashed to a
+  ///  single commit on the [candidateBranch].
   @$pb.TagNumber(9)
   $core.String get workingBranch => $_getSZ(8);
   @$pb.TagNumber(9)
@@ -315,7 +403,51 @@ class Repository extends $pb.GeneratedMessage {
 }
 
 class ConductorState extends $pb.GeneratedMessage {
-  factory ConductorState() => create();
+  factory ConductorState({
+    $core.String? releaseChannel,
+    $core.String? releaseVersion,
+    Repository? engine,
+    Repository? framework,
+    $fixnum.Int64? createdDate,
+    $fixnum.Int64? lastUpdatedDate,
+    $core.Iterable<$core.String>? logs,
+    ReleasePhase? currentPhase,
+    $core.String? conductorVersion,
+    ReleaseType? releaseType,
+  }) {
+    final $result = create();
+    if (releaseChannel != null) {
+      $result.releaseChannel = releaseChannel;
+    }
+    if (releaseVersion != null) {
+      $result.releaseVersion = releaseVersion;
+    }
+    if (engine != null) {
+      $result.engine = engine;
+    }
+    if (framework != null) {
+      $result.framework = framework;
+    }
+    if (createdDate != null) {
+      $result.createdDate = createdDate;
+    }
+    if (lastUpdatedDate != null) {
+      $result.lastUpdatedDate = lastUpdatedDate;
+    }
+    if (logs != null) {
+      $result.logs.addAll(logs);
+    }
+    if (currentPhase != null) {
+      $result.currentPhase = currentPhase;
+    }
+    if (conductorVersion != null) {
+      $result.conductorVersion = conductorVersion;
+    }
+    if (releaseType != null) {
+      $result.releaseType = releaseType;
+    }
+    return $result;
+  }
   ConductorState._() : super();
   factory ConductorState.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
@@ -336,7 +468,7 @@ class ConductorState extends $pb.GeneratedMessage {
     ..pPS(8, _omitFieldNames ? '' : 'logs')
     ..e<ReleasePhase>(9, _omitFieldNames ? '' : 'currentPhase', $pb.PbFieldType.OE,
         protoName: 'currentPhase',
-        defaultOrMaker: ReleasePhase.APPLY_ENGINE_CHERRYPICKS,
+        defaultOrMaker: ReleasePhase.APPLY_FRAMEWORK_CHERRYPICKS,
         valueOf: ReleasePhase.valueOf,
         enumValues: ReleasePhase.values)
     ..aOS(10, _omitFieldNames ? '' : 'conductorVersion', protoName: 'conductorVersion')
@@ -368,6 +500,7 @@ class ConductorState extends $pb.GeneratedMessage {
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConductorState>(create);
   static ConductorState? _defaultInstance;
 
+  /// One of 'stable', 'beta', or 'dev'
   @$pb.TagNumber(1)
   $core.String get releaseChannel => $_getSZ(0);
   @$pb.TagNumber(1)
@@ -380,6 +513,7 @@ class ConductorState extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearReleaseChannel() => clearField(1);
 
+  /// The name of the release.
   @$pb.TagNumber(2)
   $core.String get releaseVersion => $_getSZ(1);
   @$pb.TagNumber(2)
@@ -447,6 +581,7 @@ class ConductorState extends $pb.GeneratedMessage {
   @$pb.TagNumber(8)
   $core.List<$core.String> get logs => $_getList(6);
 
+  /// The current [ReleasePhase] that has yet to be completed.
   @$pb.TagNumber(9)
   ReleasePhase get currentPhase => $_getN(7);
   @$pb.TagNumber(9)
@@ -459,6 +594,8 @@ class ConductorState extends $pb.GeneratedMessage {
   @$pb.TagNumber(9)
   void clearCurrentPhase() => clearField(9);
 
+  /// A string used to validate that the current conductor is the same version
+  /// that created the [ConductorState] object.
   @$pb.TagNumber(10)
   $core.String get conductorVersion => $_getSZ(8);
   @$pb.TagNumber(10)

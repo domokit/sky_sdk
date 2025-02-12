@@ -1140,7 +1140,7 @@ void main() {
     WebRendererMode.canvaskit,
     WebRendererMode.skwasm,
   ]) {
-    for (int level = 1; level <= 4; level++) {
+    for (final int? level in <int?>[null, 0, 1, 2, 3, 4]) {
       for (final bool strip in <bool>[true, false]) {
         for (final List<String> defines in const <List<String>>[
           <String>[],
@@ -1151,6 +1151,13 @@ void main() {
               test(
                 'Dart2WasmTarget invokes dart2wasm with renderer=$renderer, -O$level, stripping=$strip, defines=$defines, modeMode=$buildMode sourceMaps=$sourceMaps',
                 () => testbed.run(() async {
+                  final int expectedLevel =
+                      level ??
+                      switch (buildMode) {
+                        'debug' => 0,
+                        'profile' || 'release' => 2,
+                        _ => throw UnimplementedError(),
+                      };
                   environment.defines[kBuildMode] = buildMode;
                   environment.defines[kDartDefines] = encodeDartDefines(defines);
 
@@ -1182,7 +1189,7 @@ void main() {
                         ],
                         '-DFLUTTER_WEB_CANVASKIT_URL=https://www.gstatic.com/flutter-canvaskit/abcdefghijklmnopqrstuvwxyz/',
                         '--extra-compiler-option=--depfile=${depFile.absolute.path}',
-                        '-O$level',
+                        '-O$expectedLevel',
                         if (strip && buildMode == 'release') '--strip-wasm' else '--no-strip-wasm',
                         if (!sourceMaps) '--no-source-maps',
                         if (buildMode == 'debug') '--extra-compiler-option=--enable-asserts',

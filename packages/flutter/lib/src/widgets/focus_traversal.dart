@@ -93,8 +93,13 @@ enum TraversalDirection {
   left,
 }
 
-/// Controls the transfer of focus beyond the first and the last items of a
-/// [FocusScopeNode].
+/// Controls the focus transfer at the edges of a [FocusScopeNode].
+/// For movement transfers (previous or next), the edge represents
+/// the first or last items. For directional transfers, the edge
+/// represents the outermost items of the [FocusScopeNode], For example:
+/// for moving downwards, the edge node is the one with the largest bottom
+/// coordinate; for moving leftwards, the edge node is the one with the
+/// smallest x coordinate.
 ///
 /// This enumeration only controls the traversal behavior performed by
 /// [FocusTraversalPolicy]. Other methods of focus transfer, such as direct
@@ -108,10 +113,16 @@ enum TraversalDirection {
 enum TraversalEdgeBehavior {
   /// Keeps the focus among the items of the focus scope.
   ///
-  /// Requesting the next focus after the last focusable item will transfer the
-  /// focus to the first item, and requesting focus previous to the first item
-  /// will transfer the focus to the last item, thus forming a closed loop of
-  /// focusable items.
+  /// Transfer focus to the edge node in the opposite direction of [FocusScopeNode]
+  /// as the edge node continues to move, thus forming a closed loop of focusable items.
+  ///
+  /// For moving transfers, requesting the next focus after the last focusable item will
+  /// transfer focus to the first item, and requesting focus before the first item will
+  /// transfer focus to the last item.
+  ///
+  /// For directional transfers, continuing to request right focus at the rightmost node
+  /// will transfer focus to the leftmost node. Continuing to request left focus at the
+  /// leftmost node will transfer focus to the rightmost node.
   closedLoop,
 
   /// Allows the focus to leave the [FlutterView].
@@ -137,6 +148,11 @@ enum TraversalEdgeBehavior {
   /// If there is no parent scope above the current scope, fallback to
   /// [closedLoop] behavior.
   parentScope,
+
+  /// Stops the focus traversal at the edge of the focus scope.
+  ///
+  /// Keeps the focus in its current position when it reaches the edge of a focus scope.
+  stop,
 }
 
 /// Determines how focusable widgets are traversed within a [FocusTraversalGroup].
@@ -618,6 +634,8 @@ abstract class FocusTraversalPolicy with Diagnosticable {
             alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
             forward: forward,
           );
+        case TraversalEdgeBehavior.stop:
+          return false;
       }
     }
     if (!forward && focusedChild == sortedNodes.first) {
@@ -645,6 +663,8 @@ abstract class FocusTraversalPolicy with Diagnosticable {
             alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
             forward: forward,
           );
+        case TraversalEdgeBehavior.stop:
+          return false;
       }
     }
 
@@ -702,14 +722,24 @@ class _DirectionalPolicyData {
 /// follow the same path on the way up as it did on the way down, since changing
 /// the axis of motion resets the history.
 ///
-/// This class implements an algorithm that considers an infinite band extending
-/// along the direction of movement, the width or height (depending on
-/// direction) of the currently focused widget, and finds the closest widget in
-/// that band along the direction of movement. If nothing is found in that band,
-/// then it picks the widget with an edge closest to the band in the
+/// This class implements an algorithm that considers an band extending
+/// along the direction of movement within the [FocusScope], the width or height
+/// (depending on direction) of the currently focused widget, and finds the closest
+/// widget inthat band along the direction of movement. If nothing is found in that
+/// band,then it picks the widget with an edge closest to the band in the
 /// perpendicular direction. If two out-of-band widgets are the same distance
 /// from the band, then it picks the one closest along the direction of
-/// movement.
+/// movement. When reaching the edge in the direction specified by [FocusScope],
+/// different behaviors are taken according to [FocusScopeNode.directionalTraversalEdgeBehavior].
+/// For [TraversalEdgeBehavior.closedLoop], the algorithm will reselect
+/// the farthest node in the opposite direction within the band. For
+/// [TraversalEdgeBehavior.parentScope], the band will extend to the parent
+/// [FocusScopeNode],and if it is still an edge node in the parent, it will continue
+/// to search according to the parent's [FocusScopeNode.directionalTraversalEdgeBehavior],
+/// If there is no parent scope above the current scope, fallback to
+/// [TraversalEdgeBehavior.closedLoop] behavior. For [TraversalEdgeBehavior.leaveFlutterView],
+/// the focus will be lost. For [TraversalEdgeBehavior.stop], the current focused
+/// element will remain.
 ///
 /// The goal of this algorithm is to pick a widget that (to the user) doesn't
 /// appear to traverse along the wrong axis, as it might if it only sorted
@@ -777,6 +807,120 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
     );
 
     return sorted.firstOrNull;
+  }
+
+  FocusNode? _findNextFocusInDirection(
+    FocusNode focusedChild,
+    Iterable<FocusNode> traversalDescendants,
+    TraversalDirection direction, {
+    bool forward = true,
+  }) {
+    final ScrollableState? focusedScrollable = Scrollable.maybeOf(focusedChild.context!);
+    switch (direction) {
+      case TraversalDirection.down:
+      case TraversalDirection.up:
+        Iterable<FocusNode> eligibleNodes = _sortAndFilterVertically(
+          direction,
+          focusedChild.rect,
+          traversalDescendants,
+          forward: forward,
+        );
+        if (eligibleNodes.isEmpty) {
+          break;
+        }
+        if (focusedScrollable != null && !focusedScrollable.position.atEdge) {
+          final Iterable<FocusNode> filteredEligibleNodes = eligibleNodes.where(
+            (FocusNode node) => Scrollable.maybeOf(node.context!) == focusedScrollable,
+          );
+          if (filteredEligibleNodes.isNotEmpty) {
+            eligibleNodes = filteredEligibleNodes;
+          }
+        }
+        if (direction == TraversalDirection.up) {
+          eligibleNodes = eligibleNodes.toList().reversed;
+        }
+        // Find any nodes that intersect the band of the focused child.
+        final Rect band = Rect.fromLTRB(
+          focusedChild.rect.left,
+          -double.infinity,
+          focusedChild.rect.right,
+          double.infinity,
+        );
+        final Iterable<FocusNode> inBand = eligibleNodes.where(
+          (FocusNode node) => !node.rect.intersect(band).isEmpty,
+        );
+        if (inBand.isNotEmpty) {
+          if (forward) {
+            return _sortByDistancePreferVertical(focusedChild.rect.center, inBand).first;
+          }
+          return _sortByDistancePreferVertical(focusedChild.rect.center, inBand).last;
+        }
+        // Only out-of-band targets are eligible, so pick the one that is
+        // closest to the center line horizontally, and if any are the same
+        // distance horizontally, pick the closest one of those vertically.
+        if (forward) {
+          return _sortClosestEdgesByDistancePreferHorizontal(
+            focusedChild.rect.center,
+            eligibleNodes,
+          ).first;
+        }
+        return _sortClosestEdgesByDistancePreferHorizontal(
+          focusedChild.rect.center,
+          eligibleNodes,
+        ).last;
+      case TraversalDirection.right:
+      case TraversalDirection.left:
+        Iterable<FocusNode> eligibleNodes = _sortAndFilterHorizontally(
+          direction,
+          focusedChild.rect,
+          traversalDescendants,
+          forward: forward,
+        );
+        if (eligibleNodes.isEmpty) {
+          break;
+        }
+        if (focusedScrollable != null && !focusedScrollable.position.atEdge) {
+          final Iterable<FocusNode> filteredEligibleNodes = eligibleNodes.where(
+            (FocusNode node) => Scrollable.maybeOf(node.context!) == focusedScrollable,
+          );
+          if (filteredEligibleNodes.isNotEmpty) {
+            eligibleNodes = filteredEligibleNodes;
+          }
+        }
+        if (direction == TraversalDirection.left) {
+          eligibleNodes = eligibleNodes.toList().reversed;
+        }
+        // Find any nodes that intersect the band of the focused child.
+        final Rect band = Rect.fromLTRB(
+          -double.infinity,
+          focusedChild.rect.top,
+          double.infinity,
+          focusedChild.rect.bottom,
+        );
+        final Iterable<FocusNode> inBand = eligibleNodes.where(
+          (FocusNode node) => !node.rect.intersect(band).isEmpty,
+        );
+        if (inBand.isNotEmpty) {
+          if (forward) {
+            return _sortByDistancePreferHorizontal(focusedChild.rect.center, inBand).first;
+          }
+          return _sortByDistancePreferHorizontal(focusedChild.rect.center, inBand).last;
+        }
+        // Only out-of-band targets are eligible, so pick the one that is
+        // closest to the center line vertically, and if any are the same
+        // distance vertically, pick the closest one of those horizontally.
+        if (forward) {
+          return _sortClosestEdgesByDistancePreferVertical(
+            focusedChild.rect.center,
+            eligibleNodes,
+          ).first;
+        }
+        return _sortClosestEdgesByDistancePreferVertical(
+          focusedChild.rect.center,
+          eligibleNodes,
+        ).last;
+    }
+    return null;
   }
 
   static int _verticalCompare(Offset target, Offset a, Offset b) {
@@ -906,15 +1050,22 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
   Iterable<FocusNode> _sortAndFilterHorizontally(
     TraversalDirection direction,
     Rect target,
-    Iterable<FocusNode> nodes,
-  ) {
+    Iterable<FocusNode> nodes, {
+    bool forward = true,
+  }) {
     assert(direction == TraversalDirection.left || direction == TraversalDirection.right);
     final List<FocusNode> sorted =
         nodes.where(switch (direction) {
           TraversalDirection.left =>
-            (FocusNode node) => node.rect != target && node.rect.center.dx <= target.left,
+            (FocusNode node) =>
+                node.rect != target &&
+                (forward ? node.rect.center.dx <= target.left : node.rect.center.dx >= target.left),
           TraversalDirection.right =>
-            (FocusNode node) => node.rect != target && node.rect.center.dx >= target.right,
+            (FocusNode node) =>
+                node.rect != target &&
+                (forward
+                    ? node.rect.center.dx >= target.right
+                    : node.rect.center.dx <= target.right),
           TraversalDirection.up ||
           TraversalDirection.down => throw ArgumentError('Invalid direction $direction'),
         }).toList();
@@ -932,15 +1083,22 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
   Iterable<FocusNode> _sortAndFilterVertically(
     TraversalDirection direction,
     Rect target,
-    Iterable<FocusNode> nodes,
-  ) {
+    Iterable<FocusNode> nodes, {
+    bool forward = true,
+  }) {
     assert(direction == TraversalDirection.up || direction == TraversalDirection.down);
     final List<FocusNode> sorted =
         nodes.where(switch (direction) {
           TraversalDirection.up =>
-            (FocusNode node) => node.rect != target && node.rect.center.dy <= target.top,
+            (FocusNode node) =>
+                node.rect != target &&
+                (forward ? node.rect.center.dy <= target.top : node.rect.center.dy >= target.top),
           TraversalDirection.down =>
-            (FocusNode node) => node.rect != target && node.rect.center.dy >= target.bottom,
+            (FocusNode node) =>
+                node.rect != target &&
+                (forward
+                    ? node.rect.center.dy >= target.bottom
+                    : node.rect.center.dy <= target.bottom),
           TraversalDirection.left ||
           TraversalDirection.right => throw ArgumentError('Invalid direction $direction'),
         }).toList();
@@ -1048,6 +1206,98 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
     }
   }
 
+  bool _requestTraversalFocusInDirection(
+    FocusNode currentNode,
+    FocusNode node,
+    FocusScopeNode nearestScope,
+    TraversalDirection direction,
+  ) {
+    if (node is FocusScopeNode) {
+      if (node.focusedChild != null) {
+        return _requestTraversalFocusInDirection(currentNode, node.focusedChild!, node, direction);
+      }
+      final FocusNode firstNode = findFirstFocusInDirection(node, direction) ?? currentNode;
+      switch (direction) {
+        case TraversalDirection.up:
+        case TraversalDirection.left:
+          requestFocusCallback(
+            firstNode,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+          );
+        case TraversalDirection.right:
+        case TraversalDirection.down:
+          requestFocusCallback(
+            firstNode,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+          );
+      }
+      return true;
+    }
+    final bool nodeHadPrimaryFocus = node.hasPrimaryFocus;
+    switch (direction) {
+      case TraversalDirection.up:
+      case TraversalDirection.left:
+        requestFocusCallback(
+          node,
+          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+        );
+      case TraversalDirection.right:
+      case TraversalDirection.down:
+        requestFocusCallback(node, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
+    }
+    return !nodeHadPrimaryFocus;
+  }
+
+  bool _onEdgeForDirection(
+    FocusNode currentNode,
+    FocusNode focusedChild,
+    TraversalDirection direction, {
+    FocusScopeNode? scope,
+  }) {
+    FocusScopeNode nearestScope = scope ?? currentNode.nearestScope!;
+    FocusNode? found;
+    switch (nearestScope.directionalTraversalEdgeBehavior) {
+      case TraversalEdgeBehavior.leaveFlutterView:
+        focusedChild.unfocus();
+        return false;
+      case TraversalEdgeBehavior.parentScope:
+        final FocusScopeNode? parentScope = nearestScope.enclosingScope;
+        if (parentScope != null && parentScope != FocusManager.instance.rootScope) {
+          invalidateScopeData(nearestScope);
+          nearestScope = parentScope;
+          invalidateScopeData(nearestScope);
+          found = _findNextFocusInDirection(
+            focusedChild,
+            nearestScope.traversalDescendants,
+            direction,
+          );
+          if (found == null) {
+            return _onEdgeForDirection(currentNode, focusedChild, direction, scope: nearestScope);
+          }
+        } else {
+          found = _findNextFocusInDirection(
+            focusedChild,
+            nearestScope.traversalDescendants,
+            direction,
+            forward: false,
+          );
+        }
+      case TraversalEdgeBehavior.closedLoop:
+        found = _findNextFocusInDirection(
+          focusedChild,
+          nearestScope.traversalDescendants,
+          direction,
+          forward: false,
+        );
+      case TraversalEdgeBehavior.stop:
+        return false;
+    }
+    if (found != null) {
+      return _requestTraversalFocusInDirection(currentNode, found, nearestScope, direction);
+    }
+    return false;
+  }
+
   /// Focuses the next widget in the given [direction] in the [FocusScope] that
   /// contains the [currentNode].
   ///
@@ -1091,115 +1341,16 @@ mixin DirectionalFocusTraversalPolicyMixin on FocusTraversalPolicy {
     if (_popPolicyDataIfNeeded(direction, nearestScope, focusedChild)) {
       return true;
     }
-    FocusNode? found;
-    final ScrollableState? focusedScrollable = Scrollable.maybeOf(focusedChild.context!);
-    switch (direction) {
-      case TraversalDirection.down:
-      case TraversalDirection.up:
-        Iterable<FocusNode> eligibleNodes = _sortAndFilterVertically(
-          direction,
-          focusedChild.rect,
-          nearestScope.traversalDescendants,
-        );
-        if (eligibleNodes.isEmpty) {
-          break;
-        }
-        if (focusedScrollable != null && !focusedScrollable.position.atEdge) {
-          final Iterable<FocusNode> filteredEligibleNodes = eligibleNodes.where(
-            (FocusNode node) => Scrollable.maybeOf(node.context!) == focusedScrollable,
-          );
-          if (filteredEligibleNodes.isNotEmpty) {
-            eligibleNodes = filteredEligibleNodes;
-          }
-        }
-        if (direction == TraversalDirection.up) {
-          eligibleNodes = eligibleNodes.toList().reversed;
-        }
-        // Find any nodes that intersect the band of the focused child.
-        final Rect band = Rect.fromLTRB(
-          focusedChild.rect.left,
-          -double.infinity,
-          focusedChild.rect.right,
-          double.infinity,
-        );
-        final Iterable<FocusNode> inBand = eligibleNodes.where(
-          (FocusNode node) => !node.rect.intersect(band).isEmpty,
-        );
-        if (inBand.isNotEmpty) {
-          found = _sortByDistancePreferVertical(focusedChild.rect.center, inBand).first;
-          break;
-        }
-        // Only out-of-band targets are eligible, so pick the one that is
-        // closest to the center line horizontally, and if any are the same
-        // distance horizontally, pick the closest one of those vertically.
-        found =
-            _sortClosestEdgesByDistancePreferHorizontal(
-              focusedChild.rect.center,
-              eligibleNodes,
-            ).first;
-      case TraversalDirection.right:
-      case TraversalDirection.left:
-        Iterable<FocusNode> eligibleNodes = _sortAndFilterHorizontally(
-          direction,
-          focusedChild.rect,
-          nearestScope.traversalDescendants,
-        );
-        if (eligibleNodes.isEmpty) {
-          break;
-        }
-        if (focusedScrollable != null && !focusedScrollable.position.atEdge) {
-          final Iterable<FocusNode> filteredEligibleNodes = eligibleNodes.where(
-            (FocusNode node) => Scrollable.maybeOf(node.context!) == focusedScrollable,
-          );
-          if (filteredEligibleNodes.isNotEmpty) {
-            eligibleNodes = filteredEligibleNodes;
-          }
-        }
-        if (direction == TraversalDirection.left) {
-          eligibleNodes = eligibleNodes.toList().reversed;
-        }
-        // Find any nodes that intersect the band of the focused child.
-        final Rect band = Rect.fromLTRB(
-          -double.infinity,
-          focusedChild.rect.top,
-          double.infinity,
-          focusedChild.rect.bottom,
-        );
-        final Iterable<FocusNode> inBand = eligibleNodes.where(
-          (FocusNode node) => !node.rect.intersect(band).isEmpty,
-        );
-        if (inBand.isNotEmpty) {
-          found = _sortByDistancePreferHorizontal(focusedChild.rect.center, inBand).first;
-          break;
-        }
-        // Only out-of-band targets are eligible, so pick the one that is
-        // closest to the center line vertically, and if any are the same
-        // distance vertically, pick the closest one of those horizontally.
-        found =
-            _sortClosestEdgesByDistancePreferVertical(
-              focusedChild.rect.center,
-              eligibleNodes,
-            ).first;
-    }
+    final FocusNode? found = _findNextFocusInDirection(
+      focusedChild,
+      nearestScope.traversalDescendants,
+      direction,
+    );
     if (found != null) {
       _pushPolicyData(direction, nearestScope, focusedChild);
-      switch (direction) {
-        case TraversalDirection.up:
-        case TraversalDirection.left:
-          requestFocusCallback(
-            found,
-            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
-          );
-        case TraversalDirection.down:
-        case TraversalDirection.right:
-          requestFocusCallback(
-            found,
-            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-          );
-      }
-      return true;
+      return _requestTraversalFocusInDirection(currentNode, found, nearestScope, direction);
     }
-    return false;
+    return _onEdgeForDirection(currentNode, focusedChild, direction);
   }
 }
 

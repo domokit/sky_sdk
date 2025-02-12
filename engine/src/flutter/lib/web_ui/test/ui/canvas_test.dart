@@ -46,7 +46,7 @@ Future<void> testMain() async {
       } on TestFailure {
         return;
       }
-      throw TestFailure('transforms were too close to equal'); // ignore: only_throw_errors
+      throw TestFailure('transforms were too close to equal');
     }
 
     test('ui.Canvas.translate affects canvas.getTransform', () {
@@ -136,7 +136,7 @@ Future<void> testMain() async {
     } on TestFailure {
       return;
     }
-    throw TestFailure('transforms were too close to equal'); // ignore: only_throw_errors
+    throw TestFailure('transforms were too close to equal');
   }
 
   group('ui.Canvas clip tests', () {

@@ -55,28 +55,20 @@ class RouteConfiguration {
     ),
     Path(
       r'^' + rally_routes.homeRoute,
-      (BuildContext context, String? match) => StudyWrapper(
-        study: DeferredWidget(
-          rally.loadLibrary,
-          () => rally.RallyApp(),
-        ), // ignore: prefer_const_constructors
-      ),
+      (BuildContext context, String? match) =>
+          StudyWrapper(study: DeferredWidget(rally.loadLibrary, () => rally.RallyApp())),
     ),
     Path(
       r'^' + shrine_routes.homeRoute,
-      (BuildContext context, String? match) => StudyWrapper(
-        study: DeferredWidget(
-          shrine.loadLibrary,
-          () => shrine.ShrineApp(),
-        ), // ignore: prefer_const_constructors
-      ),
+      (BuildContext context, String? match) =>
+          StudyWrapper(study: DeferredWidget(shrine.loadLibrary, () => shrine.ShrineApp())),
     ),
     Path(
       r'^' + crane_routes.defaultRoute,
       (BuildContext context, String? match) => StudyWrapper(
         study: DeferredWidget(
           crane.loadLibrary,
-          () => crane.CraneApp(), // ignore: prefer_const_constructors
+          () => crane.CraneApp(),
           placeholder: const DeferredLoadingPlaceholder(name: 'Crane'),
         ),
       ),
@@ -84,16 +76,11 @@ class RouteConfiguration {
     Path(
       r'^' + fortnightly_routes.defaultRoute,
       (BuildContext context, String? match) => StudyWrapper(
-        study: DeferredWidget(
-          fortnightly.loadLibrary,
-          // ignore: prefer_const_constructors
-          () => fortnightly.FortnightlyApp(),
-        ),
+        study: DeferredWidget(fortnightly.loadLibrary, () => fortnightly.FortnightlyApp()),
       ),
     ),
     Path(
       r'^' + reply_routes.homeRoute,
-      // ignore: prefer_const_constructors
       (BuildContext context, String? match) =>
           const StudyWrapper(study: reply.ReplyApp(), hasBottomNavBar: true),
     ),

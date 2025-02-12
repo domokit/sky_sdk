@@ -279,6 +279,38 @@ const ISize& KHRSwapchainImplVK::GetSize() const {
   return size_;
 }
 
+std::optional<ISize> KHRSwapchainImplVK::GetCurrentUnderlyingSurfaceSize()
+    const {
+  if (!IsValid()) {
+    return std::nullopt;
+  }
+
+  auto context = context_.lock();
+  if (!context) {
+    return std::nullopt;
+  }
+
+  auto& vk_context = ContextVK::Cast(*context);
+  const auto [result, surface_caps] =
+      vk_context.GetPhysicalDevice().getSurfaceCapabilitiesKHR(surface_.get());
+  if (result != vk::Result::eSuccess) {
+    return std::nullopt;
+  }
+
+  // From the spec: `currentExtent` is the current width and height of the
+  // surface, or the special value (0xFFFFFFFF, 0xFFFFFFFF) indicating that the
+  // surface size will be determined by the extent of a swapchain targeting the
+  // surface.
+  constexpr uint32_t kCurrentExtentsPlaceholder = 0xFFFFFFFF;
+  if (surface_caps.currentExtent.width == kCurrentExtentsPlaceholder ||
+      surface_caps.currentExtent.height == kCurrentExtentsPlaceholder) {
+    return std::nullopt;
+  }
+
+  return ISize::MakeWH(surface_caps.currentExtent.width,
+                       surface_caps.currentExtent.height);
+}
+
 bool KHRSwapchainImplVK::IsValid() const {
   return is_valid_;
 }

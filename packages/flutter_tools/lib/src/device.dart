@@ -50,8 +50,7 @@ enum PlatformType {
   macos,
   windows,
   fuchsia,
-  custom,
-  windowsPreview;
+  custom;
 
   @override
   String toString() => name;
@@ -939,8 +938,6 @@ class DebuggingOptions {
     this.traceSystrace = false,
     this.traceToFile,
     this.endlessTraceBuffer = false,
-    this.dumpSkpOnShaderCompilation = false,
-    this.cacheSkSL = false,
     this.purgePersistentCache = false,
     this.useTestFonts = false,
     this.verboseSystemLogs = false,
@@ -1002,7 +999,6 @@ class DebuggingOptions {
     this.webHeaders = const <String, String>{},
     WebRendererMode? webRenderer,
     this.webUseWasm = false,
-    this.cacheSkSL = false,
     this.traceAllowlist,
     this.enableImpeller = ImpellerStatus.platformDefault,
     this.enableVulkanValidation = false,
@@ -1025,7 +1021,6 @@ class DebuggingOptions {
        traceSystrace = false,
        traceToFile = null,
        endlessTraceBuffer = false,
-       dumpSkpOnShaderCompilation = false,
        purgePersistentCache = false,
        verboseSystemLogs = false,
        hostVmServicePort = null,
@@ -1062,8 +1057,6 @@ class DebuggingOptions {
     required this.traceSystrace,
     required this.traceToFile,
     required this.endlessTraceBuffer,
-    required this.dumpSkpOnShaderCompilation,
-    required this.cacheSkSL,
     required this.purgePersistentCache,
     required this.useTestFonts,
     required this.verboseSystemLogs,
@@ -1123,8 +1116,6 @@ class DebuggingOptions {
   final bool traceSystrace;
   final String? traceToFile;
   final bool endlessTraceBuffer;
-  final bool dumpSkpOnShaderCompilation;
-  final bool cacheSkSL;
   final bool purgePersistentCache;
   final bool useTestFonts;
   final bool verboseSystemLogs;
@@ -1232,9 +1223,7 @@ class DebuggingOptions {
       if (traceAllowlist != null) '--trace-allowlist="$traceAllowlist"',
       if (traceSkiaAllowlist != null) '--trace-skia-allowlist="$traceSkiaAllowlist"',
       if (endlessTraceBuffer) '--endless-trace-buffer',
-      if (dumpSkpOnShaderCompilation) '--dump-skp-on-shader-compilation',
       if (verboseSystemLogs) '--verbose-logging',
-      if (cacheSkSL) '--cache-sksl',
       if (purgePersistentCache) '--purge-persistent-cache',
       if (route != null) '--route=$route',
       if (platformArgs['trace-startup'] as bool? ?? false) '--trace-startup',
@@ -1269,8 +1258,6 @@ class DebuggingOptions {
     'traceSystrace': traceSystrace,
     'traceToFile': traceToFile,
     'endlessTraceBuffer': endlessTraceBuffer,
-    'dumpSkpOnShaderCompilation': dumpSkpOnShaderCompilation,
-    'cacheSkSL': cacheSkSL,
     'purgePersistentCache': purgePersistentCache,
     'useTestFonts': useTestFonts,
     'verboseSystemLogs': verboseSystemLogs,
@@ -1314,6 +1301,10 @@ class DebuggingOptions {
     // the flutter_tools binary that is currently checked into Google3.
     // Remove this when that binary has been updated.
     'webUseLocalCanvaskit': false,
+    // See above: these fields are required for backwards compatibility
+    // with the google3 checked in binary.
+    'dumpSkpOnShaderCompilation': false,
+    'cacheSkSL': false,
   };
 
   static DebuggingOptions fromJson(Map<String, Object?> json, BuildInfo buildInfo) =>
@@ -1334,8 +1325,6 @@ class DebuggingOptions {
         traceSystrace: json['traceSystrace']! as bool,
         traceToFile: json['traceToFile'] as String?,
         endlessTraceBuffer: json['endlessTraceBuffer']! as bool,
-        dumpSkpOnShaderCompilation: json['dumpSkpOnShaderCompilation']! as bool,
-        cacheSkSL: json['cacheSkSL']! as bool,
         purgePersistentCache: json['purgePersistentCache']! as bool,
         useTestFonts: json['useTestFonts']! as bool,
         verboseSystemLogs: json['verboseSystemLogs']! as bool,

@@ -118,6 +118,10 @@ class Playground {
   using GLProcAddressResolver = std::function<void*(const char* proc_name)>;
   GLProcAddressResolver CreateGLProcAddressResolver() const;
 
+  using VKProcAddressResolver =
+      std::function<void*(void* instance, const char* proc_name)>;
+  VKProcAddressResolver CreateVKProcAddressResolver() const;
+
  protected:
   const PlaygroundSwitches switches_;
 

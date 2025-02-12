@@ -25,7 +25,7 @@ void main() {
       final Directory projectDir =
           fs.currentDirectory.childDirectory('project')
             ..createSync()
-            ..childDirectory('lib').createSync();
+            ..childDirectory('lib/src').createSync(recursive: true);
       project = FlutterProject(projectDir, manifest, manifest);
       codeGenerator = PreviewCodeGenerator(widgetPreviewScaffoldProject: project, fs: fs);
     });
@@ -56,7 +56,7 @@ void main() {
         // The generated file is unfortunately unformatted.
         const String expectedGeneratedPreviewFileContents = '''
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'foo.dart' as _i1;import 'src/bar.dart' as _i2;import 'package:widget_preview/widget_preview.dart';List<WidgetPreview> previews() => [_i1.preview(), _i2.barPreview1(), _i2.barPreview2(), ];''';
+import 'foo.dart' as _i1;import 'src/bar.dart' as _i2;import 'package:flutter/widgets.dart';List<WidgetPreview> previews() => [_i1.preview(), _i2.barPreview1(), _i2.barPreview2(), ];''';
         expect(generatedPreviewFile.readAsStringSync(), expectedGeneratedPreviewFileContents);
 
         // Regenerate the generated file with no previews.
@@ -69,7 +69,7 @@ import 'foo.dart' as _i1;import 'src/bar.dart' as _i2;import 'package:widget_pre
         // - An import of the widget preview library
         // - A top-level function 'List<WidgetPreview> previews()' that returns an empty list.
         const String emptyGeneratedPreviewFileContents = '''
-import 'package:widget_preview/widget_preview.dart';List<WidgetPreview> previews() => [];''';
+import 'package:flutter/widgets.dart';List<WidgetPreview> previews() => [];''';
         expect(generatedPreviewFile.readAsStringSync(), emptyGeneratedPreviewFileContents);
       },
     );

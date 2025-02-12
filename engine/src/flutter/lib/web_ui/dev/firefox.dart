@@ -7,8 +7,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 import 'package:test_api/backend.dart';
-// TODO(ditman): Fix ignore when https://github.com/flutter/flutter/issues/143599 is resolved.
-import 'package:test_core/src/util/io.dart'; // ignore: implementation_imports
+import 'package:test_core/src/util/io.dart';
 
 import 'browser.dart';
 import 'browser_process.dart';

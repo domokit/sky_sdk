@@ -126,16 +126,11 @@ class WebTestCompiler {
     final List<String> extraFrontEndOptions = List<String>.of(buildInfo.extraFrontEndOptions);
     switch (buildInfo.nullSafetyMode) {
       case NullSafetyMode.unsound || NullSafetyMode.autodetect:
-        platformDillName = 'ddc_outline.dill';
-        if (!extraFrontEndOptions.contains('--no-sound-null-safety')) {
-          extraFrontEndOptions.add('--no-sound-null-safety');
-        }
+        // TODO(matanlurey): Should be unreachable, remove as part of https://github.com/flutter/flutter/issues/162846.
+        throw UnsupportedError('Unsound null safety mode is not supported');
       case NullSafetyMode.sound:
         languageVersion = currentLanguageVersion(_fileSystem, Cache.flutterRoot!);
-        platformDillName = 'ddc_outline_sound.dill';
-        if (!extraFrontEndOptions.contains('--sound-null-safety')) {
-          extraFrontEndOptions.add('--sound-null-safety');
-        }
+        platformDillName = 'ddc_outline.dill';
     }
 
     final String platformDillPath = _fileSystem.path.join(

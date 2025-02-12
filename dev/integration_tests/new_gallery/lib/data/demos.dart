@@ -1036,11 +1036,7 @@ class Demos {
             description: localizations.demoCupertinoPickerDescription,
             documentationUrl: '$_docsBaseUrl/cupertino/CupertinoDatePicker-class.html',
             buildRoute:
-                (_) => DeferredWidget(
-                  cupertinoLoader,
-                  // ignore: prefer_const_constructors
-                  () => cupertino_demos.CupertinoPickerDemo(),
-                ),
+                (_) => DeferredWidget(cupertinoLoader, () => cupertino_demos.CupertinoPickerDemo()),
           ),
         ],
         category: GalleryDemoCategory.cupertino,
@@ -1056,11 +1052,8 @@ class Demos {
             description: localizations.demoCupertinoScrollbarDescription,
             documentationUrl: '$_docsBaseUrl/cupertino/CupertinoScrollbar-class.html',
             buildRoute:
-                (_) => DeferredWidget(
-                  cupertinoLoader,
-                  // ignore: prefer_const_constructors
-                  () => cupertino_demos.CupertinoScrollbarDemo(),
-                ),
+                (_) =>
+                    DeferredWidget(cupertinoLoader, () => cupertino_demos.CupertinoScrollbarDemo()),
           ),
         ],
         category: GalleryDemoCategory.cupertino,

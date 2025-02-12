@@ -9,24 +9,16 @@ message Remote {
 }
 
 enum ReleasePhase {
-  // Release was started with `conductor start` and repositories cloned.
-  APPLY_ENGINE_CHERRYPICKS = 0;
-
-  // Verify engine CI is green before opening framework PR.
-  VERIFY_ENGINE_CI = 1;
-
-  APPLY_FRAMEWORK_CHERRYPICKS = 2;
+  APPLY_FRAMEWORK_CHERRYPICKS = 0;
 
   // Git tag applied to framework RC branch HEAD and pushed upstream.
-  PUBLISH_VERSION = 3;
-
-  reserved 4; // Formerly PUBLISH_CHANNEL, merged into PUBLISH_VERSION.
+  PUBLISH_VERSION = 1;
 
   // Package artifacts verified to exist on cloud storage.
-  VERIFY_RELEASE = 5;
+  VERIFY_RELEASE = 2;
 
   // There is no further work to be done.
-  RELEASE_COMPLETED = 6;
+  RELEASE_COMPLETED = 3;
 }
 
 enum CherrypickState {
@@ -100,7 +92,7 @@ message Repository {
   // Desired cherrypicks.
   repeated Cherrypick cherrypicks = 7;
 
-  // Only for engine repositories.
+  // For the repository that has a dart_revision in a DEPS file.
   string dartRevision = 8;
 
   // Name of local and remote branch for applying cherrypicks.

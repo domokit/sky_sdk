@@ -208,6 +208,33 @@ class PlatformViewsService {
     return controller;
   }
 
+  /// {@macro flutter.services.PlatformViewsService.initAndroidView}
+  ///
+  /// When this factory is used, the Android view and Flutter widgets are
+  /// composed at the Android view hierarchy level.
+  ///
+  /// This functionality is only supported on Android devices running Vulkan on
+  /// API 34 or newer.
+  static HybridAndroidViewController initHybridAndroidView({
+    required int id,
+    required String viewType,
+    required TextDirection layoutDirection,
+    dynamic creationParams,
+    MessageCodec<dynamic>? creationParamsCodec,
+    VoidCallback? onFocus,
+  }) {
+    final HybridAndroidViewController controller = HybridAndroidViewController._(
+      viewId: id,
+      viewType: viewType,
+      layoutDirection: layoutDirection,
+      creationParams: creationParams,
+      creationParamsCodec: creationParamsCodec,
+    );
+
+    _instance._focusCallbacks[id] = onFocus ?? () {};
+    return controller;
+  }
+
   /// Factory method to create a `UiKitView`.
   ///
   /// The `id` parameter is an unused unique identifier generated with
@@ -1117,6 +1144,71 @@ class ExpensiveAndroidViewController extends AndroidViewController {
   }
 }
 
+/// Controls an Android view that is composed using the Android view hierarchy.
+/// This controller is created from the [PlatformViewsService.initExpensiveAndroidView] factory.
+class HybridAndroidViewController extends AndroidViewController {
+  HybridAndroidViewController._({
+    required super.viewId,
+    required super.viewType,
+    required super.layoutDirection,
+    super.creationParams,
+    super.creationParamsCodec,
+  }) : super._();
+
+  final _AndroidViewControllerInternals _internals = _Hybrid2AndroidViewControllerInternals();
+
+  /// Perform a runtime check to determine if HCPP mode is supported on the
+  /// current device.
+  static Future<bool> checkIfSupported() =>
+      _Hybrid2AndroidViewControllerInternals.checkIfSurfaceControlEnabled();
+
+  @override
+  bool get _createRequiresSize => false;
+
+  @override
+  Future<void> _sendCreateMessage({required Size? size, Offset? position}) async {
+    await _AndroidViewControllerInternals.sendCreateMessage(
+      viewId: viewId,
+      viewType: _viewType,
+      hybrid: true,
+      layoutDirection: _layoutDirection,
+      creationParams: _creationParams,
+      position: position,
+      useNewController: true,
+    );
+  }
+
+  @override
+  int? get textureId {
+    return _internals.textureId;
+  }
+
+  @override
+  bool get requiresViewComposition {
+    return _internals.requiresViewComposition;
+  }
+
+  @override
+  Future<void> _sendDisposeMessage() {
+    return _internals.sendDisposeMessage(viewId: viewId);
+  }
+
+  @override
+  Future<Size> _sendResizeMessage(Size size) {
+    return _internals.setSize(size, viewId: viewId, viewState: _state);
+  }
+
+  @override
+  Future<void> setOffset(Offset off) {
+    return _internals.setOffset(off, viewId: viewId, viewState: _state);
+  }
+
+  @override
+  Future<void> sendMotionEvent(AndroidMotionEvent event) async {
+    await SystemChannels.platform_views_2.invokeMethod<dynamic>('touch', event._asList(viewId));
+  }
+}
+
 /// Controls an Android view that is rendered as a texture.
 /// This is typically used by [AndroidView] to display a View in the Android view hierarchy.
 ///
@@ -1201,6 +1293,7 @@ abstract class _AndroidViewControllerInternals {
     required TextDirection layoutDirection,
     required bool hybrid,
     bool hybridFallback = false,
+    bool useNewController = false,
     _CreationParams? creationParams,
     Size? size,
     Offset? position,
@@ -1219,6 +1312,9 @@ abstract class _AndroidViewControllerInternals {
     if (creationParams != null) {
       final ByteData paramsByteData = creationParams.codec.encodeMessage(creationParams.data)!;
       args['params'] = Uint8List.view(paramsByteData.buffer, 0, paramsByteData.lengthInBytes);
+    }
+    if (useNewController) {
+      return SystemChannels.platform_views_2.invokeMethod<dynamic>('create', args);
     }
     return SystemChannels.platform_views.invokeMethod<dynamic>('create', args);
   }
@@ -1343,6 +1439,49 @@ class _HybridAndroidViewControllerInternals extends _AndroidViewControllerIntern
   @override
   Future<void> sendDisposeMessage({required int viewId}) {
     return SystemChannels.platform_views.invokeMethod<void>('dispose', <String, dynamic>{
+      'id': viewId,
+      'hybrid': true,
+    });
+  }
+}
+
+// The HCPP platform view controller.
+//
+// This is only supported via an opt in on Impeller Android.
+class _Hybrid2AndroidViewControllerInternals extends _AndroidViewControllerInternals {
+  // Determine if HCPP can be used.
+  static Future<bool> checkIfSurfaceControlEnabled() async {
+    return (await SystemChannels.platform_views_2.invokeMethod<bool>(
+      'isSurfaceControlEnabled',
+      <String, Object?>{},
+    ))!;
+  }
+
+  @override
+  int get textureId {
+    throw UnimplementedError('Not supported for hybrid composition.');
+  }
+
+  @override
+  bool get requiresViewComposition => true;
+
+  @override
+  Future<Size> setSize(Size size, {required int viewId, required _AndroidViewState viewState}) {
+    throw UnimplementedError('Not supported for hybrid composition.');
+  }
+
+  @override
+  Future<void> setOffset(
+    Offset offset, {
+    required int viewId,
+    required _AndroidViewState viewState,
+  }) {
+    throw UnimplementedError('Not supported for hybrid composition.');
+  }
+
+  @override
+  Future<void> sendDisposeMessage({required int viewId}) {
+    return SystemChannels.platform_views_2.invokeMethod<void>('dispose', <String, dynamic>{
       'id': viewId,
       'hybrid': true,
     });

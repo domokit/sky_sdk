@@ -4,12 +4,10 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
-import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/common.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/platform.dart';
-import 'package:flutter_tools/src/base/process.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/build_system/build_system.dart';
 import 'package:flutter_tools/src/build_system/targets/web.dart';
@@ -31,10 +29,8 @@ import '../../src/test_flutter_command_runner.dart';
 void main() {
   late FileSystem fileSystem;
   final Platform fakePlatform = FakePlatform(environment: <String, String>{'FLUTTER_ROOT': '/'});
-  late ProcessUtils processUtils;
   late BufferLogger logger;
   late ProcessManager processManager;
-  late Artifacts artifacts;
 
   // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
   // See https://github.com/flutter/flutter/issues/160257 for details.
@@ -59,10 +55,8 @@ void main() {
     fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
     fileSystem.file(fileSystem.path.join('web', 'index.html')).createSync(recursive: true);
     fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
-    artifacts = Artifacts.test(fileSystem: fileSystem);
     logger = BufferLogger.test();
     processManager = FakeProcessManager.any();
-    processUtils = ProcessUtils(logger: logger, processManager: processManager);
   });
 
   testUsingContext(
@@ -71,12 +65,10 @@ void main() {
       fileSystem.file(fileSystem.path.join('web', 'index.html')).deleteSync();
       final CommandRunner<void> runner = createTestCommandRunner(
         BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         ),
       );
@@ -99,12 +91,10 @@ void main() {
     () async {
       final CommandRunner<void> runner = createTestCommandRunner(
         BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: MemoryFileSystem.test(),
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         ),
       );
@@ -129,12 +119,10 @@ void main() {
     'Setup for a web build with default output directory',
     () async {
       final BuildCommand buildCommand = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       final CommandRunner<void> runner = createTestCommandRunner(buildCommand);
@@ -182,13 +170,11 @@ void main() {
     'Does not allow -O0 optimization level',
     () async {
       final BuildCommand buildCommand = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
         osUtils: FakeOperatingSystemUtils(),
-        processUtils: processUtils,
       );
       final CommandRunner<void> runner = createTestCommandRunner(buildCommand);
       setupFileSystemForEndToEndTest(fileSystem);
@@ -244,12 +230,10 @@ void main() {
     'Setup for a web build with a user specified output directory',
     () async {
       final BuildCommand buildCommand = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       final CommandRunner<void> runner = createTestCommandRunner(buildCommand);

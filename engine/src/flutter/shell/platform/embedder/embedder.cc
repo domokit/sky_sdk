@@ -2087,12 +2087,6 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
     settings.application_kernel_asset = kApplicationKernelSnapshotFileName;
   }
 
-  settings.task_observer_add = [](intptr_t key, const fml::closure& callback) {
-    fml::MessageLoop::GetCurrent().AddTaskObserver(key, callback);
-  };
-  settings.task_observer_remove = [](intptr_t key) {
-    fml::MessageLoop::GetCurrent().RemoveTaskObserver(key);
-  };
   if (SAFE_ACCESS(args, root_isolate_create_callback, nullptr) != nullptr) {
     VoidCallback callback =
         SAFE_ACCESS(args, root_isolate_create_callback, nullptr);
@@ -2355,6 +2349,24 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
                               "Task runner configuration was invalid.");
   }
 
+  // Embedder supplied UI task runner runner does not have a message loop.
+  bool has_ui_thread_message_loop =
+      task_runners.GetUITaskRunner()->GetTaskQueueId().is_valid();
+  // Message loop observers are used to flush the microtask queue.
+  // If there is no message loop the queue is flushed from
+  // EmbedderEngine::RunTask.
+  settings.task_observer_add = [has_ui_thread_message_loop](
+                                   intptr_t key, const fml::closure& callback) {
+    if (has_ui_thread_message_loop) {
+      fml::MessageLoop::GetCurrent().AddTaskObserver(key, callback);
+    }
+  };
+  settings.task_observer_remove = [has_ui_thread_message_loop](intptr_t key) {
+    if (has_ui_thread_message_loop) {
+      fml::MessageLoop::GetCurrent().RemoveTaskObserver(key);
+    }
+  };
+
   auto run_configuration =
       flutter::RunConfiguration::InferFromSettings(settings);
 
@@ -2554,6 +2566,7 @@ FlutterEngineResult FlutterEngineDeinitialize(FLUTTER_API_SYMBOL(FlutterEngine)
   auto embedder_engine = reinterpret_cast<flutter::EmbedderEngine*>(engine);
   embedder_engine->NotifyDestroyed();
   embedder_engine->CollectShell();
+  embedder_engine->CollectThreadHost();
   return kSuccess;
 }
 
@@ -3212,6 +3225,13 @@ FlutterEngineResult FlutterEngineRunTask(FLUTTER_API_SYMBOL(FlutterEngine)
                                          const FlutterTask* task) {
   if (engine == nullptr) {
     return LOG_EMBEDDER_ERROR(kInvalidArguments, "Invalid engine handle.");
+  }
+
+  if (!flutter::EmbedderThreadHost::RunnerIsValid(
+          reinterpret_cast<intptr_t>(task->runner))) {
+    // This task came too late, the embedder has already been destroyed.
+    // This is not an error, just ignore the task.
+    return kSuccess;
   }
 
   return reinterpret_cast<flutter::EmbedderEngine*>(engine)->RunTask(task)

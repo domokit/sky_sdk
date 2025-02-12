@@ -80,6 +80,15 @@ TEST(PathTest, PathSingleContour) {
     EXPECT_TRUE(path.IsSingleContour());
   }
 
+  {
+    Path path = PathBuilder{}
+                    .AddRoundSuperellipse(RoundSuperellipse::MakeRectRadius(
+                        Rect::MakeXYWH(100, 100, 100, 100), 10))
+                    .TakePath();
+
+    EXPECT_TRUE(path.IsSingleContour());
+  }
+
   // Open shapes.
   {
     Point p(100, 100);
@@ -150,6 +159,28 @@ TEST(PathTest, PathSingleContourDoubleShapes) {
                     .AddRoundRect(RoundRect::MakeRectXY(
                         Rect::MakeXYWH(100, 100, 100, 100), Size(10, 20)))
                     .AddRoundRect(RoundRect::MakeRectXY(
+                        Rect::MakeXYWH(100, 100, 100, 100), Size(10, 20)))
+                    .TakePath();
+
+    EXPECT_FALSE(path.IsSingleContour());
+  }
+
+  {
+    Path path = PathBuilder{}
+                    .AddRoundSuperellipse(RoundSuperellipse::MakeRectRadius(
+                        Rect::MakeXYWH(100, 100, 100, 100), 10))
+                    .AddRoundSuperellipse(RoundSuperellipse::MakeRectRadius(
+                        Rect::MakeXYWH(100, 100, 100, 100), 10))
+                    .TakePath();
+
+    EXPECT_FALSE(path.IsSingleContour());
+  }
+
+  {
+    Path path = PathBuilder{}
+                    .AddRoundSuperellipse(RoundSuperellipse::MakeRectXY(
+                        Rect::MakeXYWH(100, 100, 100, 100), Size(10, 20)))
+                    .AddRoundSuperellipse(RoundSuperellipse::MakeRectXY(
                         Rect::MakeXYWH(100, 100, 100, 100), Size(10, 20)))
                     .TakePath();
 
@@ -233,6 +264,28 @@ TEST(PathTest, PathBuilderSetsCorrectContourPropertiesForAddCommands) {
     ContourComponent contour;
     path.GetContourComponentAtIndex(0, contour);
     EXPECT_POINT_NEAR(contour.destination, Point(110, 100));
+    EXPECT_TRUE(contour.IsClosed());
+  }
+
+  {
+    Path path = PathBuilder{}
+                    .AddRoundSuperellipse(RoundSuperellipse::MakeRectRadius(
+                        Rect::MakeXYWH(100, 100, 100, 100), 10))
+                    .TakePath();
+    ContourComponent contour;
+    path.GetContourComponentAtIndex(0, contour);
+    EXPECT_POINT_NEAR(contour.destination, Point(150, 100));
+    EXPECT_TRUE(contour.IsClosed());
+  }
+
+  {
+    Path path = PathBuilder{}
+                    .AddRoundSuperellipse(RoundSuperellipse::MakeRectXY(
+                        Rect::MakeXYWH(100, 100, 100, 100), Size(10, 20)))
+                    .TakePath();
+    ContourComponent contour;
+    path.GetContourComponentAtIndex(0, contour);
+    EXPECT_POINT_NEAR(contour.destination, Point(150, 100));
     EXPECT_TRUE(contour.IsClosed());
   }
 

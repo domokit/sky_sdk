@@ -1,0 +1,15 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+
+impeller_component("metal") {
+  public_deps = [ "../../:interop_base" ]
+  sources = [
+    "context_mtl.h",
+    "context_mtl.mm",
+    "surface_mtl.h",
+    "surface_mtl.mm",
+  ]
+}

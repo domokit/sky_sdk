@@ -8,6 +8,7 @@ import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 
 import '../_luci_skia_gold_prelude.dart';
+import '../_unstable_gold_retry.dart';
 
 /// For local debugging, a (local) golden-file is required as a baseline:
 ///
@@ -28,6 +29,9 @@ void main() async {
   late final FlutterDriver flutterDriver;
   late final NativeDriver nativeDriver;
 
+  late final bool isEmulator;
+  late final bool isVulkan;
+
   setUpAll(() async {
     if (isLuci) {
       await enableSkiaGoldComparator(namePrefix: 'android_engine_test$goldenVariant');
@@ -42,9 +46,18 @@ void main() async {
     if (await nativeDriver.sdkVersion case final int version when version < 23) {
       fail('Requires SDK >= 23, got $version');
     }
+
+    // TODO(matanlurey): https://github.com/flutter/flutter/issues/162362#issuecomment-2649555821.
+    isEmulator = await nativeDriver.isEmulator;
+    isVulkan = goldenVariant.contains('vulkan');
+    if (isEmulator && isVulkan) {
+      print('Detected running on a vulkan emulator. Will retry certain failures');
+    }
   });
 
   tearDownAll(() async {
+    await flutterDriver.tap(find.byValueKey('AddOverlay'));
+
     await nativeDriver.close();
     await flutterDriver.close();
   });
@@ -60,13 +73,29 @@ void main() async {
     await nativeDriver.rotateToLandscape();
     await expectLater(
       nativeDriver.screenshot(),
-      matchesGoldenFile('$goldenPrefix.blue_orange_gradient_landscape_rotated.png'),
+      matchesGoldenFileWithRetries(
+        '$goldenPrefix.blue_orange_gradient_landscape_rotated.png',
+        retries: isEmulator && isVulkan ? 2 : 0,
+      ),
     );
 
     await nativeDriver.rotateResetDefault();
     await expectLater(
       nativeDriver.screenshot(),
-      matchesGoldenFile('$goldenPrefix.blue_orange_gradient_portait_rotated_back.png'),
+      matchesGoldenFileWithRetries(
+        '$goldenPrefix.blue_orange_gradient_portait_rotated_back.png',
+        retries: isEmulator && isVulkan ? 2 : 0,
+      ),
+    );
+  }, timeout: Timeout.none);
+
+  test('should hide overlay layer', () async {
+    await flutterDriver.tap(find.byValueKey('RemoveOverlay'));
+    await Future<void>.delayed(const Duration(seconds: 1));
+
+    await expectLater(
+      nativeDriver.screenshot(),
+      matchesGoldenFile('$goldenPrefix.hide_overlay.png'),
     );
   }, timeout: Timeout.none);
 }

@@ -76,6 +76,9 @@ class SurfacePool {
   // Returns true if the current pool has layers in use.
   bool HasLayers();
 
+  // Reset the layer index but do not release any layers.
+  void ResetLayers();
+
   void TrimLayers();
 
  private:

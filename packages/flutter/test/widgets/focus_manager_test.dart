@@ -1519,19 +1519,19 @@ void main() {
         kind: PointerDeviceKind.mouse,
       );
       await gesture.up();
-      expect(callCount, equals(3));
-      expect(lastMode, FocusHighlightMode.traditional);
-      expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
+      expect(callCount, equals(2));
+      expect(lastMode, FocusHighlightMode.touch);
+      expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.touch));
       await tester.tap(find.byType(Container), warnIfMissed: false);
-      expect(callCount, equals(4));
+      expect(callCount, equals(2));
       expect(lastMode, FocusHighlightMode.touch);
       expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.touch));
       FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
-      expect(callCount, equals(5));
+      expect(callCount, equals(3));
       expect(lastMode, FocusHighlightMode.traditional);
       expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
       FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTouch;
-      expect(callCount, equals(6));
+      expect(callCount, equals(4));
       expect(lastMode, FocusHighlightMode.touch);
       expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.touch));
     });

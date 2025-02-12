@@ -4,12 +4,11 @@
 
 import 'dart:async';
 
-// ignore: implementation_imports
-import 'package:_fe_analyzer_shared/src/base/syntactic_entity.dart';
 import 'package:analyzer/dart/analysis/analysis_context.dart';
 import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:watcher/watcher.dart';
 
@@ -27,6 +26,27 @@ typedef PreviewPath = ({String path, Uri uri});
 
 /// Represents a set of previews for a given file.
 typedef PreviewMapping = Map<PreviewPath, List<String>>;
+
+extension on Token {
+  /// Convenience getter to identify tokens for private fields and functions.
+  bool get isPrivate => toString().startsWith('_');
+}
+
+extension on Annotation {
+  /// Convenience getter to identify `@Preview` annotations
+  bool get isPreview => name.name == 'Preview';
+}
+
+/// Convenience getters for examining [String] paths.
+extension on String {
+  bool get isDartFile => endsWith('.dart');
+  bool get isGeneratedPreviewFile => endsWith(PreviewCodeGenerator.generatedPreviewFilePath);
+}
+
+extension on ParsedUnitResult {
+  /// Convenience method to package [path] and [uri] into a [PreviewPath]
+  PreviewPath toPreviewPath() => (path: path, uri: uri);
+}
 
 class PreviewDetector {
   PreviewDetector({required this.fs, required this.logger, required this.onChangeDetected});
@@ -49,8 +69,7 @@ class PreviewDetector {
       final String eventPath = event.path;
       // Only trigger a reload when changes to Dart sources are detected. We
       // ignore the generated preview file to avoid getting stuck in a loop.
-      if (!eventPath.endsWith('.dart') ||
-          eventPath.endsWith(PreviewCodeGenerator.generatedPreviewFilePath)) {
+      if (!eventPath.isDartFile || eventPath.isGeneratedPreviewFile) {
         return;
       }
       logger.printStatus('Detected change in $eventPath.');
@@ -110,20 +129,19 @@ class PreviewDetector {
 
       for (final String filePath in context.contextRoot.analyzedFiles()) {
         logger.printTrace('Checking file: $filePath');
-        if (!filePath.endsWith('.dart')) {
+        if (!filePath.isDartFile) {
           continue;
         }
 
         final SomeParsedLibraryResult lib = context.currentSession.getParsedLibrary(filePath);
         if (lib is ParsedLibraryResult) {
-          for (final ParsedUnitResult unit in lib.units) {
-            final List<String> previewEntries =
-                previews[(path: unit.path, uri: unit.uri)] ?? <String>[];
-            for (final SyntacticEntity entity in unit.unit.childEntities) {
-              if (entity is FunctionDeclaration && !entity.name.toString().startsWith('_')) {
+          for (final ParsedUnitResult libUnit in lib.units) {
+            final List<String> previewEntries = previews[libUnit.toPreviewPath()] ?? <String>[];
+            for (final CompilationUnitMember entity in libUnit.unit.declarations) {
+              if (entity is FunctionDeclaration && !entity.name.isPrivate) {
                 bool foundPreview = false;
                 for (final Annotation annotation in entity.metadata) {
-                  if (annotation.name.name == 'Preview') {
+                  if (annotation.isPreview) {
                     // What happens if the annotation is applied multiple times?
                     foundPreview = true;
                     break;
@@ -131,7 +149,7 @@ class PreviewDetector {
                 }
                 if (foundPreview) {
                   logger.printStatus('Found preview at:');
-                  logger.printStatus('File path: ${unit.uri}');
+                  logger.printStatus('File path: ${libUnit.uri}');
                   logger.printStatus('Preview function: ${entity.name}');
                   logger.printStatus('');
                   previewEntries.add(entity.name.toString());
@@ -139,7 +157,7 @@ class PreviewDetector {
               }
             }
             if (previewEntries.isNotEmpty) {
-              previews[(path: unit.path, uri: unit.uri)] = previewEntries;
+              previews[libUnit.toPreviewPath()] = previewEntries;
             }
           }
         } else {

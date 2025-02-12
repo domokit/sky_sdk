@@ -5,6 +5,7 @@
 import '../base/fingerprint.dart';
 import '../build_info.dart';
 import '../cache.dart';
+import '../features.dart';
 import '../flutter_plugins.dart';
 import '../globals.dart' as globals;
 import '../plugins.dart';
@@ -34,12 +35,19 @@ Future<void> processPodsIfNeeded(
     iosPlatform: project.ios.existsSync(),
     macOSPlatform: project.macos.existsSync(),
     forceCocoaPodsOnly: forceCocoaPodsOnly,
+
+    // TODO(matanlurey): Ideally processPodsIfNeeded would not be used at all, and it would definitely
+    //  not call refreshPluginsList, but until that happens (https://github.com/flutter/flutter/issues/157391)
+    //  we have to reproduce some of the work that otherwise would be handled by underlying commands, otherwise
+    //  this call to refreshPluginsList would overwrite the correct plugins list generated elsewhere.
+    determineDevDependencies:
+        featureFlags.isExplicitPackageDependenciesEnabled && buildMode.isRelease,
+
     // TODO(matanlurey): As-per discussion on https://github.com/flutter/flutter/pull/157393
     //  we'll assume that iOS/MacOS builds do not use or rely on the `.flutter-plugins` legacy
     //  file being generated. A better long-term fix would be not to have a call to refreshPluginsList
     //  at all, and instead have it implicitly run by the FlutterCommand instead. See
     //  https://github.com/flutter/flutter/issues/157391 for details.
-    determineDevDependencies: false,
     generateLegacyPlugins: false,
   );
 

@@ -1168,7 +1168,6 @@ void main() {
         expect(schemeFile.existsSync(), isTrue);
         expect(schemeFile.readAsStringSync(), contains('FilePath = "/path/to/bundle"'));
       } catch (err) {
-        // ignore: avoid_catches_without_on_clauses
         fail(err.toString());
       } finally {
         projectDirectory.deleteSync(recursive: true);

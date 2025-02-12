@@ -357,7 +357,7 @@ class Size extends OffsetBase {
   ///
   ///  * [Size.fromRadius], which is more convenient when the available size
   ///    is the radius of a circle.
-  const Size.square(double dimension) : super(dimension, dimension); // ignore: use_super_parameters
+  const Size.square(double dimension) : super(dimension, dimension);
 
   /// Creates a [Size] with the given [width] and an infinite [height].
   const Size.fromWidth(double width) : super(width, double.infinity);

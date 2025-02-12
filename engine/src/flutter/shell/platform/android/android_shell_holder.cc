@@ -16,6 +16,7 @@
 #include <string>
 #include <utility>
 
+#include "common/settings.h"
 #include "flutter/fml/cpu_affinity.h"
 #include "flutter/fml/logging.h"
 #include "flutter/fml/make_copyable.h"
@@ -261,8 +262,6 @@ std::unique_ptr<AndroidShellHolder> AndroidShellHolder::Spawn(
     return std::make_unique<Rasterizer>(shell);
   };
 
-  // TODO(xster): could be worth tracing this to investigate whether
-  // the IsolateConfiguration could be cached somewhere.
   auto config = BuildRunConfiguration(entrypoint, libraryUrl, entrypoint_args);
   if (!config) {
     // If the RunConfiguration was null, the kernel blob wasn't readable.
@@ -356,6 +355,10 @@ void AndroidShellHolder::UpdateDisplayMetrics() {
   std::vector<std::unique_ptr<Display>> displays;
   displays.push_back(std::make_unique<AndroidDisplay>(jni_facade_));
   shell_->OnDisplayUpdates(std::move(displays));
+}
+
+bool AndroidShellHolder::IsSurfaceControlEnabled() {
+  return GetPlatformView()->IsSurfaceControlEnabled();
 }
 
 }  // namespace flutter

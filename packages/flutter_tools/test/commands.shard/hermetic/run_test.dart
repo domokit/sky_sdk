@@ -1237,7 +1237,6 @@ void main() {
         try {
           await createTestCommandRunner(command).run(<String>['run', '--no-pub']);
         } catch (err) {
-          // ignore: avoid_catches_without_on_clauses
           fail('Expected no error, got $err');
         }
         expect(fakeTerminal.setSingleCharModeHistory, isEmpty);
@@ -1301,25 +1300,6 @@ void main() {
       await expectLater(
         () => createTestCommandRunner(command).run(<String>['run', '--no-pub']),
         throwsA(isA<RPCError>()),
-      );
-    },
-    overrides: <Type, Generator>{
-      Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-      FileSystem: () => MemoryFileSystem.test(),
-      ProcessManager: () => FakeProcessManager.any(),
-    },
-  );
-
-  testUsingContext(
-    'Passes sksl bundle info the build options',
-    () async {
-      final TestRunCommandWithFakeResidentRunner command = TestRunCommandWithFakeResidentRunner();
-
-      await expectLater(
-        () => createTestCommandRunner(
-          command,
-        ).run(<String>['run', '--no-pub', '--bundle-sksl-path=foo.json']),
-        throwsToolExit(message: 'No SkSL shader bundle found at foo.json'),
       );
     },
     overrides: <Type, Generator>{

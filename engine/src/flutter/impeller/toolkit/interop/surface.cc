@@ -7,7 +7,6 @@
 #include "impeller/base/validation.h"
 #include "impeller/display_list/aiks_context.h"
 #include "impeller/display_list/dl_dispatcher.h"
-#include "impeller/renderer/backend/gles/surface_gles.h"
 #include "impeller/toolkit/interop/formats.h"
 
 namespace impeller::interop {
@@ -19,31 +18,6 @@ Surface::Surface(Context& context, std::shared_ptr<impeller::Surface> surface)
 }
 
 Surface::~Surface() = default;
-
-ScopedObject<Surface> Surface::WrapFBO(Context& context,
-                                       uint64_t fbo,
-                                       PixelFormat color_format,
-                                       ISize size) {
-  if (context.GetContext()->GetBackendType() !=
-      impeller::Context::BackendType::kOpenGLES) {
-    VALIDATION_LOG << "Context is not OpenGL ES based.";
-    return nullptr;
-  }
-
-  auto impeller_surface = impeller::SurfaceGLES::WrapFBO(
-      context.GetContext(), []() { return true; }, fbo, color_format, size);
-  if (!impeller_surface || !impeller_surface->IsValid()) {
-    VALIDATION_LOG << "Could not wrap FBO as a surface";
-    return nullptr;
-  }
-
-  auto surface = Create<Surface>(context, std::move(impeller_surface));
-  if (!surface->IsValid()) {
-    VALIDATION_LOG << "Could not create valid surface.";
-    return nullptr;
-  }
-  return surface;
-}
 
 bool Surface::IsValid() const {
   return is_valid_;
@@ -66,6 +40,13 @@ bool Surface::DrawDisplayList(const DisplayList& dl) const {
                                skia_cull_rect, /*reset_host_buffer=*/true);
   context_->GetContext()->ResetThreadLocalState();
   return result;
+}
+
+bool Surface::Present() const {
+  if (!IsValid()) {
+    return false;
+  }
+  return surface_->Present();
 }
 
 }  // namespace impeller::interop

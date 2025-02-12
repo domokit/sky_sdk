@@ -6,6 +6,7 @@ import 'dart:io' as io;
 
 import 'package:process_runner/process_runner.dart';
 
+import 'dart_utils.dart';
 import 'environment.dart';
 import 'logger.dart';
 
@@ -16,7 +17,20 @@ Future<int> fetchDependencies(Environment environment) async {
     return 1;
   }
 
+  final dotGclientPath = findDotGclient(environment);
+
+  if (dotGclientPath == null) {
+    environment.logger.error(
+      'Failed to find the .gclient file. Make sure your local engine build '
+      'environment is configured as described in '
+      'https://github.com/flutter/flutter/blob/master/engine/README.md',
+    );
+    return 1;
+  }
+
   environment.logger.status('Fetching dependencies... ', newline: environment.verbose);
+
+  final dotGclient = io.File(dotGclientPath);
 
   Spinner? spinner;
   ProcessRunnerResult result;
@@ -30,6 +44,7 @@ Future<int> fetchDependencies(Environment environment) async {
       runInShell: true,
       startMode:
           environment.verbose ? io.ProcessStartMode.inheritStdio : io.ProcessStartMode.normal,
+      workingDirectory: dotGclient.parent,
     );
   } finally {
     spinner?.finish();

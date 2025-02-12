@@ -154,12 +154,6 @@ class DriveCommand extends RunCommandBase {
             'Location of the Chrome binary. '
             'Works only if "browser-name" is set to "chrome".',
       )
-      ..addOption(
-        'write-sksl-on-exit',
-        help:
-            'Attempts to write an SkSL file when the drive process is finished '
-            'to the provided file, overwriting it if necessary.',
-      )
       ..addMultiOption(
         'test-arguments',
         help:
@@ -381,11 +375,7 @@ class DriveCommand extends RunCommandBase {
       if (boolArg('keep-app-running')) {
         _logger.printStatus('Leaving the application running.');
       } else {
-        final File? skslFile =
-            stringArg('write-sksl-on-exit') != null
-                ? _fileSystem.file(stringArg('write-sksl-on-exit'))
-                : null;
-        await driverService.stop(userIdentifier: userIdentifier, writeSkslOnExit: skslFile);
+        await driverService.stop(userIdentifier: userIdentifier);
       }
       if (testResult != 0) {
         throwToolExit(null);

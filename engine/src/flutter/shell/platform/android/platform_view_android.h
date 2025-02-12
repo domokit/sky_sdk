@@ -119,6 +119,9 @@ class PlatformViewAndroid final : public PlatformView {
     return platform_message_handler_;
   }
 
+  /// @brief Whether the SurfaceControl based swapchain is enabled and active.
+  bool IsSurfaceControlEnabled() const;
+
  private:
   const std::shared_ptr<PlatformViewAndroidJNI> jni_facade_;
   std::shared_ptr<AndroidContext> android_context_;

@@ -30,70 +30,14 @@ import '../../src/common.dart';
 import '../../src/testbed.dart';
 
 const List<int> kTransparentImage = <int>[
-  0x89,
-  0x50,
-  0x4E,
-  0x47,
-  0x0D,
-  0x0A,
-  0x1A,
-  0x0A,
-  0x00,
-  0x00,
-  0x00,
-  0x0D,
-  0x49,
-  0x48,
-  0x44,
-  0x52,
-  0x00,
-  0x00,
-  0x00,
-  0x01,
-  0x00,
-  0x00,
-  0x00,
-  0x01,
-  0x08,
-  0x06,
-  0x00,
-  0x00,
-  0x00,
-  0x1F,
-  0x15,
-  0xC4,
-  0x89,
-  0x00,
-  0x00,
-  0x00,
-  0x0A,
-  0x49,
-  0x44,
-  0x41,
-  0x54,
-  0x78,
-  0x9C,
-  0x63,
-  0x00,
-  0x01,
-  0x00,
-  0x00,
-  0x05,
-  0x00,
-  0x01,
-  0x0D,
-  0x0A,
-  0x2D,
-  0xB4,
-  0x00,
-  0x00,
-  0x00,
-  0x00,
-  0x49,
-  0x45,
-  0x4E,
-  0x44,
-  0xAE,
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, //
+  0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+  0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+  0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+  0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41,
+  0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
+  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
+  0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
 ];
 
 void main() {
@@ -127,7 +71,6 @@ void main() {
           InternetAddress.loopbackIPv4,
           <String, String>{},
           <String, String>{},
-          NullSafetyMode.unsound,
           usesDdcModuleSystem,
           canaryFeatures,
           webRenderer: WebRendererMode.canvaskit,
@@ -395,7 +338,6 @@ void main() {
         InternetAddress.loopbackIPv4,
         <String, String>{},
         <String, String>{},
-        NullSafetyMode.unsound,
         usesDdcModuleSystem,
         canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -419,7 +361,6 @@ void main() {
         InternetAddress.loopbackIPv4,
         <String, String>{},
         <String, String>{},
-        NullSafetyMode.unsound,
         usesDdcModuleSystem,
         canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -446,7 +387,6 @@ void main() {
           InternetAddress.loopbackIPv4,
           <String, String>{},
           <String, String>{},
-          NullSafetyMode.unsound,
           usesDdcModuleSystem,
           canaryFeatures,
           webRenderer: WebRendererMode.canvaskit,
@@ -472,7 +412,6 @@ void main() {
           InternetAddress.loopbackIPv4,
           <String, String>{},
           <String, String>{},
-          NullSafetyMode.unsound,
           usesDdcModuleSystem,
           canaryFeatures,
           webRenderer: WebRendererMode.canvaskit,
@@ -545,7 +484,6 @@ void main() {
         InternetAddress.loopbackIPv4,
         <String, String>{},
         <String, String>{},
-        NullSafetyMode.unsound,
         usesDdcModuleSystem,
         canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -988,7 +926,6 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.unsound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.html,
@@ -1007,12 +944,6 @@ void main() {
           globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSdk).path;
       final String webPrecompiledSdkSourcemaps =
           globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSdkSourcemaps).path;
-      final String webPrecompiledCanvaskitSdk =
-          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSdk).path;
-      final String webPrecompiledCanvaskitSdkSourcemaps =
-          globals.artifacts!
-              .getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSdkSourcemaps)
-              .path;
       globals.fs.currentDirectory.childDirectory('lib').childFile('web_entrypoint.dart')
         ..createSync(recursive: true)
         ..writeAsStringSync('GENERATED');
@@ -1022,12 +953,6 @@ void main() {
       globals.fs.file(webPrecompiledSdkSourcemaps)
         ..createSync(recursive: true)
         ..writeAsStringSync('THERE');
-      globals.fs.file(webPrecompiledCanvaskitSdk)
-        ..createSync(recursive: true)
-        ..writeAsStringSync('OL');
-      globals.fs.file(webPrecompiledCanvaskitSdkSourcemaps)
-        ..createSync(recursive: true)
-        ..writeAsStringSync('CHUM');
 
       await webDevFS.update(
         mainUri: globals.fs.file(globals.fs.path.join('lib', 'main.dart')).uri,
@@ -1108,7 +1033,6 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.sound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.html,
@@ -1127,14 +1051,14 @@ void main() {
         ..createSync(recursive: true)
         ..writeAsStringSync('GENERATED');
       final String webPrecompiledSdk =
-          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSoundSdk).path;
+          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSdk).path;
       final String webPrecompiledSdkSourcemaps =
-          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSoundSdkSourcemaps).path;
+          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSdkSourcemaps).path;
       final String webPrecompiledCanvaskitSdk =
-          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSoundSdk).path;
+          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSdk).path;
       final String webPrecompiledCanvaskitSdkSourcemaps =
           globals.artifacts!
-              .getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSoundSdkSourcemaps)
+              .getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSdkSourcemaps)
               .path;
       final String flutterJs = globals.fs.path.join(
         globals.artifacts!.getHostArtifact(HostArtifact.flutterJsDirectory).path,
@@ -1234,7 +1158,6 @@ void main() {
           expressionCompiler: null,
           extraHeaders: const <String, String>{},
           chromiumLauncher: null,
-          nullSafetyMode: NullSafetyMode.sound,
           ddcModuleSystem: usesDdcModuleSystem,
           canaryFeatures: canaryFeatures,
           webRenderer: WebRendererMode.canvaskit,
@@ -1313,7 +1236,6 @@ void main() {
         chromiumLauncher: null,
         nullAssertions: true,
         nativeNullAssertions: true,
-        nullSafetyMode: NullSafetyMode.sound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -1367,7 +1289,6 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.sound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -1422,7 +1343,6 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.sound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.auto,
@@ -1477,7 +1397,6 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.unsound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -1520,7 +1439,6 @@ void main() {
       Uri.base,
       null,
       const <String, String>{},
-      NullSafetyMode.unsound,
       webRenderer: WebRendererMode.canvaskit,
       isWasm: false,
       useLocalCanvasKit: false,
@@ -1555,7 +1473,6 @@ void main() {
       Uri.base,
       null,
       const <String, String>{extraHeaderKey: extraHeaderValue},
-      NullSafetyMode.unsound,
       webRenderer: WebRendererMode.canvaskit,
       isWasm: false,
       useLocalCanvasKit: false,
@@ -1601,7 +1518,6 @@ void main() {
         InternetAddress.anyIPv4,
         <String, String>{},
         <String, String>{},
-        NullSafetyMode.sound,
         usesDdcModuleSystem,
         canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -1652,7 +1568,6 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.unsound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,

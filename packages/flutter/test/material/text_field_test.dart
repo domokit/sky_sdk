@@ -1923,7 +1923,6 @@ void main() {
             .simulatedAccessibilityTraversal(startNode: find.semantics.byLabel('prefix1'))
             .map((SemanticsNode node) => node.label + node.value)
             .toList();
-
     expect(orders, <String>['prefix1', 'abc', 'suffix1', 'prefix2', 'def', 'suffix2']);
   });
 

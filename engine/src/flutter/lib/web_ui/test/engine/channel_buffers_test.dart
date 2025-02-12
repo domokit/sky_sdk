@@ -191,7 +191,7 @@ void testMain() {
     }
 
     void twoCallback(ByteData? responseData) {
-      throw TestFailure('wrong callback called'); // ignore: only_throw_errors
+      throw TestFailure('wrong callback called');
     }
 
     _resize(buffers, channel, 100);
@@ -214,7 +214,7 @@ void testMain() {
     }
 
     void twoCallback(ByteData? responseData) {
-      throw TestFailure('wrong callback called'); // ignore: only_throw_errors
+      throw TestFailure('wrong callback called');
     }
 
     _resize(buffers, channel, 1);

@@ -4,7 +4,6 @@
 
 @DefaultAsset('skwasm')
 // The web_sdk/sdk_rewriter.dart uses this directive.
-// ignore: unnecessary_library_directive
 library skwasm_impl;
 
 import 'dart:ffi';

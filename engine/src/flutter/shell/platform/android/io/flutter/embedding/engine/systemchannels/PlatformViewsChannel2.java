@@ -79,6 +79,9 @@ public class PlatformViewsChannel2 {
             case "clearFocus":
               clearFocus(call, result);
               break;
+            case "isSurfaceControlEnabled":
+              isSurfaceControlEnabled(call, result);
+              break;
             default:
               result.notImplemented();
           }
@@ -171,6 +174,11 @@ public class PlatformViewsChannel2 {
             result.error("error", detailedExceptionString(exception), null);
           }
         }
+
+        private void isSurfaceControlEnabled(
+            @NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+          result.success(handler.isSurfaceControlEnabled());
+        }
       };
 
   /**
@@ -213,6 +221,9 @@ public class PlatformViewsChannel2 {
 
     /** Clears the focus from the platform view with a give id if it is currently focused. */
     void clearFocus(int viewId);
+
+    /** Whether the SurfaceControl swapchain is enabled. */
+    boolean isSurfaceControlEnabled();
   }
 
   /** Request sent from Flutter to create a new platform view. */

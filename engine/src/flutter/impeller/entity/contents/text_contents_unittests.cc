@@ -49,8 +49,8 @@ std::shared_ptr<GlyphAtlas> CreateGlyphAtlas(
     Scalar scale,
     const std::shared_ptr<GlyphAtlasContext>& atlas_context,
     const std::shared_ptr<TextFrame>& frame) {
-  frame->SetPerFrameData(scale, /*offset=*/{0, 0},
-                         /*properties=*/std::nullopt);
+  frame->SetPerFrameData(scale, /*offset=*/Point(0, 0),
+                         /*transform=*/Matrix(), /*properties=*/std::nullopt);
   return typographer_context->CreateGlyphAtlas(context, type, host_buffer,
                                                atlas_context, {frame});
 }

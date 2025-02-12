@@ -112,6 +112,7 @@ void runSemanticsTests() {
   });
   group('route', () {
     _testRoute();
+    _testDialogs();
   });
   group('focusable', () {
     _testFocusable();
@@ -3347,6 +3348,99 @@ void _testRoute() {
 
     expect(capturedActions, isEmpty);
     expect(domDocument.activeElement, flutterViewRoot);
+
+    semantics().semanticsEnabled = false;
+  });
+}
+
+void _testDialogs() {
+  test('nodes with dialog role', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    SemanticsObject pumpSemantics() {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.dialog,
+        rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+      );
+      tester.apply();
+      return tester.getSemanticsObject(0);
+    }
+
+    final SemanticsObject object = pumpSemantics();
+    expect(object.semanticRole?.kind, EngineSemanticsRole.dialog);
+    expect(object.element.getAttribute('role'), 'dialog');
+  });
+
+  test('nodes with alertdialog role', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    SemanticsObject pumpSemantics() {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.alertDialog,
+        rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+      );
+      tester.apply();
+      return tester.getSemanticsObject(0);
+    }
+
+    final SemanticsObject object = pumpSemantics();
+    expect(object.semanticRole?.kind, EngineSemanticsRole.alertDialog);
+    expect(object.element.getAttribute('role'), 'alertdialog');
+  });
+
+  test('dialog can be described by a descendant', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    void pumpSemantics({required String label}) {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.dialog,
+        transform: Matrix4.identity().toFloat64(),
+        children: <SemanticsNodeUpdate>[
+          tester.updateNode(
+            id: 1,
+            children: <SemanticsNodeUpdate>[
+              tester.updateNode(id: 2, namesRoute: true, label: label),
+            ],
+          ),
+        ],
+      );
+      tester.apply();
+
+      expectSemanticsTree(owner(), '''
+        <sem role="dialog" aria-describedby="flt-semantic-node-2">
+          <sem-c>
+            <sem>
+              <sem-c>
+                <sem><span>$label</span></sem>
+              </sem-c>
+            </sem>
+          </sem-c>
+        </sem>
+      ''');
+    }
+
+    pumpSemantics(label: 'Route label');
+
+    expect(owner().debugSemanticsTree![0]!.semanticRole?.kind, EngineSemanticsRole.dialog);
+    expect(owner().debugSemanticsTree![2]!.semanticRole?.kind, EngineSemanticsRole.generic);
+    expect(
+      owner().debugSemanticsTree![2]!.semanticRole?.debugSemanticBehaviorTypes,
+      contains(RouteName),
+    );
+
+    pumpSemantics(label: 'Updated route label');
 
     semantics().semanticsEnabled = false;
   });

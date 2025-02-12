@@ -416,6 +416,12 @@ enum EngineSemanticsRole {
   /// A main content for a tab.
   tabPanel,
 
+  /// A popup dialog.
+  dialog,
+
+  /// An alert dialog.
+  alertDialog,
+
   /// A role used when a more specific role cannot be assigend to
   /// a [SemanticsObject].
   ///
@@ -1745,6 +1751,10 @@ class SemanticsObject {
         return EngineSemanticsRole.tabPanel;
       case ui.SemanticsRole.tabBar:
         return EngineSemanticsRole.tabList;
+      case ui.SemanticsRole.dialog:
+        return EngineSemanticsRole.dialog;
+      case ui.SemanticsRole.alertDialog:
+        return EngineSemanticsRole.alertDialog;
       case ui.SemanticsRole.none:
       // fallback to checking semantics properties.
     }
@@ -1794,6 +1804,8 @@ class SemanticsObject {
       EngineSemanticsRole.tab => SemanticTab(this),
       EngineSemanticsRole.tabList => SemanticTabList(this),
       EngineSemanticsRole.tabPanel => SemanticTabPanel(this),
+      EngineSemanticsRole.dialog => SemanticDialog(this),
+      EngineSemanticsRole.alertDialog => SemanticAlertDialog(this),
       EngineSemanticsRole.generic => GenericRole(this),
     };
   }

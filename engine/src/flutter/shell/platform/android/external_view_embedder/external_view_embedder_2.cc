@@ -3,10 +3,12 @@
 // found in the LICENSE file.
 
 #include "flutter/shell/platform/android/external_view_embedder/external_view_embedder_2.h"
+#include "display_list/dl_color.h"
 #include "flow/view_slicer.h"
 #include "flutter/fml/synchronization/waitable_event.h"
 #include "flutter/fml/trace_event.h"
 #include "fml/make_copyable.h"
+#include "fml/synchronization/count_down_latch.h"
 
 namespace flutter {
 
@@ -74,10 +76,15 @@ void AndroidExternalViewEmbedder2::SubmitFlutterView(
 
   if (!FrameHasPlatformLayers()) {
     frame->Submit();
+    // If the previous frame had platform views, hide the overlay surface.
+    if (previous_frame_view_count_ > 0) {
+      jni_facade_->hideOverlaySurface2();
+    }
     jni_facade_->applyTransaction();
     return;
   }
 
+  bool prev_frame_no_platform_views = previous_frame_view_count_ == 0;
   std::unordered_map<int64_t, SkRect> view_rects;
   for (auto platform_id : composition_order_) {
     view_rects[platform_id] = GetViewRect(platform_id, view_params_);
@@ -90,11 +97,28 @@ void AndroidExternalViewEmbedder2::SubmitFlutterView(
                  view_rects           //
       );
 
-  // Create Overlay frame.
-  surface_pool_->TrimLayers();
+  // If there is no overlay Surface, initialize one on the platform thread. This
+  // will only be done once per application launch, as the singular overlay
+  // surface is never released.
+  if (!surface_pool_->HasLayers()) {
+    std::shared_ptr<fml::CountDownLatch> latch =
+        std::make_shared<fml::CountDownLatch>(1u);
+    task_runners_.GetPlatformTaskRunner()->PostTask(
+        fml::MakeCopyable([&, latch]() {
+          surface_pool_->GetLayer(context, android_context_, jni_facade_,
+                                  surface_factory_);
+          latch->CountDown();
+        }));
+    latch->Wait();
+  }
+  surface_pool_->ResetLayers();
+
+  // Create Overlay frame. If overlay surface creation failed,
+  // all this work must be skipped.
   std::unique_ptr<SurfaceFrame> overlay_frame;
   if (surface_pool_->HasLayers()) {
-    for (int64_t view_id : composition_order_) {
+    for (size_t i = 0; i < composition_order_.size(); i++) {
+      int64_t view_id = composition_order_[i];
       std::unordered_map<int64_t, SkRect>::const_iterator overlay =
           overlay_layers.find(view_id);
 
@@ -105,13 +129,26 @@ void AndroidExternalViewEmbedder2::SubmitFlutterView(
         std::shared_ptr<OverlayLayer> layer = surface_pool_->GetLayer(
             context, android_context_, jni_facade_, surface_factory_);
         overlay_frame = layer->surface->AcquireFrame(frame_size_);
+        overlay_frame->Canvas()->Clear(flutter::DlColor::kTransparent());
       }
 
       DlCanvas* overlay_canvas = overlay_frame->Canvas();
       int restore_count = overlay_canvas->GetSaveCount();
       overlay_canvas->Save();
       overlay_canvas->ClipRect(overlay->second);
-      overlay_canvas->Clear(DlColor::kTransparent());
+
+      // For all following platform views that would cover this overlay,
+      // emulate the effect by adding a difference clip. This makes the
+      // overlays appear as if they are under the platform view, when in
+      // reality there is only a single layer.
+      for (size_t j = i + 1; j < composition_order_.size(); j++) {
+        SkRect view_rect = GetViewRect(composition_order_[j], view_params_);
+        overlay_canvas->ClipRect(
+            DlRect::MakeLTRB(view_rect.left(), view_rect.top(),
+                             view_rect.right(), view_rect.bottom()),
+            DlClipOp::kDifference);
+      }
+
       slices_[view_id]->render_into(overlay_canvas);
       overlay_canvas->RestoreToCount(restore_count);
     }
@@ -125,8 +162,13 @@ void AndroidExternalViewEmbedder2::SubmitFlutterView(
   task_runners_.GetPlatformTaskRunner()->PostTask(fml::MakeCopyable(
       [&, composition_order = composition_order_, view_params = view_params_,
        jni_facade = jni_facade_, device_pixel_ratio = device_pixel_ratio_,
-       slices = std::move(slices_)]() -> void {
+       slices = std::move(slices_), prev_frame_no_platform_views]() -> void {
         jni_facade->swapTransaction();
+
+        if (prev_frame_no_platform_views) {
+          jni_facade_->showOverlaySurface2();
+        }
+
         for (int64_t view_id : composition_order) {
           SkRect view_rect = GetViewRect(view_id, view_params);
           const EmbeddedViewParams& params = view_params.at(view_id);
@@ -141,10 +183,7 @@ void AndroidExternalViewEmbedder2::SubmitFlutterView(
               params.mutatorsStack()  //
           );
         }
-        if (!surface_pool_->HasLayers()) {
-          surface_pool_->GetLayer(context, android_context_, jni_facade_,
-                                  surface_factory_);
-        }
+        jni_facade_->onEndFrame2();
       }));
 }
 

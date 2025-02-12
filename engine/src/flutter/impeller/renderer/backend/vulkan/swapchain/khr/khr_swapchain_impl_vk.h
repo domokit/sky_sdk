@@ -64,6 +64,8 @@ class KHRSwapchainImplVK final
 
   void AddFinalCommandBuffer(std::shared_ptr<CommandBuffer> cmd_buffer);
 
+  std::optional<ISize> GetCurrentUnderlyingSurfaceSize() const;
+
  private:
   std::weak_ptr<Context> context_;
   vk::UniqueSurfaceKHR surface_;

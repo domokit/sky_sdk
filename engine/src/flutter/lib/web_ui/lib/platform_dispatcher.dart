@@ -16,7 +16,6 @@ typedef PlatformMessageCallback =
     void Function(String name, ByteData? data, PlatformMessageResponseCallback? callback);
 typedef ErrorCallback = bool Function(Object exception, StackTrace stackTrace);
 
-// ignore: avoid_classes_with_only_static_members
 /// A token that represents a root isolate.
 class RootIsolateToken {
   static RootIsolateToken? get instance {

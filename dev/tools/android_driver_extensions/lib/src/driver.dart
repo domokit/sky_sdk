@@ -45,8 +45,11 @@ abstract interface class NativeDriver {
   /// ```
   Future<Duration> ping();
 
-  /// Returns the SDK version.
+  /// The SDK version.
   Future<int> get sdkVersion;
+
+  /// Whether the device is an emulator.
+  Future<bool> get isEmulator;
 
   /// Take a screenshot using a platform-specific mechanism.
   ///

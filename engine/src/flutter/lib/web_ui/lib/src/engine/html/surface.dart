@@ -6,12 +6,12 @@ import 'package:meta/meta.dart';
 import 'package:ui/ui.dart' as ui;
 
 import '../dom.dart';
-import '../frame_reference.dart';
 import '../frame_service.dart';
 import '../onscreen_logging.dart';
 import '../semantics.dart';
 import '../util.dart';
 import '../vector_math.dart';
+import 'frame_reference.dart';
 import 'picture.dart';
 import 'scene.dart';
 import 'surface_stats.dart';

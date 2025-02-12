@@ -5,13 +5,11 @@
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/android/android_sdk.dart';
-import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/common.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/os.dart';
 import 'package:flutter_tools/src/base/platform.dart';
-import 'package:flutter_tools/src/base/process.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/build_system/build_system.dart';
 import 'package:flutter_tools/src/cache.dart';
@@ -71,8 +69,6 @@ void main() {
   late FakeAnalytics fakeAnalytics;
   late BufferLogger logger;
   late FakeProcessManager processManager;
-  late ProcessUtils processUtils;
-  late Artifacts artifacts;
 
   setUpAll(() {
     Cache.disableLocking();
@@ -80,14 +76,12 @@ void main() {
 
   setUp(() {
     fileSystem = MemoryFileSystem.test();
-    artifacts = Artifacts.test(fileSystem: fileSystem);
     fakeAnalytics = getInitializedFakeAnalyticsInstance(
       fs: fileSystem,
       fakeFlutterVersion: FakeFlutterVersion(),
     );
     logger = BufferLogger.test();
     processManager = FakeProcessManager.empty();
-    processUtils = ProcessUtils(logger: logger, processManager: processManager);
   });
 
   // Sets up the minimal mock project files necessary to look like a Flutter project.
@@ -205,12 +199,10 @@ void main() {
     'ios build fails when there is no ios project',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       createCoreMockProjectFiles();
@@ -232,12 +224,10 @@ void main() {
     'ios build fails in debug with code analysis',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       createCoreMockProjectFiles();
@@ -261,12 +251,10 @@ void main() {
     'ios build fails on non-macOS platform',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       fileSystem.file('pubspec.yaml').createSync();
@@ -295,12 +283,10 @@ void main() {
     'ios build outputs path and size when successful',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: MemoryFileSystem.test(),
         logger: BufferLogger.test(),
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       createMinimalMockProjectFiles();
@@ -335,12 +321,10 @@ void main() {
     'ios build invokes xcode build',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       createMinimalMockProjectFiles();
@@ -373,12 +357,10 @@ void main() {
     'ios build invokes xcode build with disable port publication setting',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       createMinimalMockProjectFiles();
@@ -413,12 +395,10 @@ void main() {
     'ios build invokes xcode build without disable port publication setting when not in CI',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       createMinimalMockProjectFiles();
@@ -452,13 +432,11 @@ void main() {
     'ios build invokes xcode build with renamed xcodeproj and xcworkspace',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         osUtils: FakeOperatingSystemUtils(),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
       );
 
       processManager.addCommands(<FakeCommand>[
@@ -501,12 +479,10 @@ void main() {
     'ios build invokes xcode build with device ID',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       processManager.addCommands(<FakeCommand>[
@@ -541,12 +517,10 @@ void main() {
     'ios simulator build invokes xcode build',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       processManager.addCommands(<FakeCommand>[
@@ -580,12 +554,10 @@ void main() {
     'ios build invokes xcode build with verbosity',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       createMinimalMockProjectFiles();
@@ -617,12 +589,10 @@ void main() {
     'Performs code size analysis and sends analytics',
     () async {
       final BuildCommand command = BuildCommand(
-        artifacts: artifacts,
         androidSdk: FakeAndroidSdk(),
         buildSystem: TestBuildSystem.all(BuildResult(success: true)),
         fileSystem: fileSystem,
         logger: logger,
-        processUtils: processUtils,
         osUtils: FakeOperatingSystemUtils(),
       );
       processManager.addCommands(<FakeCommand>[
@@ -698,13 +668,11 @@ void main() {
       'Sends an analytics event when Impeller is enabled',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: MemoryFileSystem.test(),
           logger: BufferLogger.test(),
           osUtils: FakeOperatingSystemUtils(),
-          processUtils: processUtils,
         );
         createMinimalMockProjectFiles();
 
@@ -749,13 +717,11 @@ void main() {
       'Sends an analytics event when Impeller is disabled',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: BufferLogger.test(),
           osUtils: FakeOperatingSystemUtils(),
-          processUtils: processUtils,
         );
         createMinimalMockProjectFiles();
 
@@ -821,12 +787,10 @@ void main() {
       'Trace error if xcresult is empty.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -864,12 +828,10 @@ void main() {
       'Display xcresult issues on console if parsed, suppress Xcode output',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -914,12 +876,10 @@ void main() {
       'Do not display xcresult issues that needs to be discarded.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -969,12 +929,10 @@ void main() {
       'Trace if xcresult bundle does not exist.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1009,12 +967,10 @@ void main() {
       'Extra error message for provision profile issue in xcresult bundle.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1067,12 +1023,10 @@ void main() {
       'Display xcresult issues with no provisioning profile.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1116,12 +1070,10 @@ void main() {
       'Extra error message for missing simulator platform in xcresult bundle.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1159,12 +1111,10 @@ void main() {
       'Delete xcresult bundle before each xcodebuild command.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1219,12 +1169,10 @@ void main() {
       'Failed to parse xcresult but display missing provisioning profile issue from stdout.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1265,12 +1213,10 @@ Runner requires a provisioning profile. Select a provisioning profile in the Sig
       'Failed to parse xcresult but detected no development team issue.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1309,12 +1255,10 @@ Runner requires a provisioning profile. Select a provisioning profile in the Sig
       'xcresult did not detect issue but detected by stdout.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
 
@@ -1357,12 +1301,10 @@ Runner requires a provisioning profile. Select a provisioning profile in the Sig
       'xcresult did not detect issue, no development team is detected from build setting.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1400,12 +1342,10 @@ Runner requires a provisioning profile. Select a provisioning profile in the Sig
       'No development team issue error message is not displayed if no provisioning profile issue is detected from xcresult first.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1445,12 +1385,10 @@ Runner requires a provisioning profile. Select a provisioning profile in the Sig
       'General provisioning profile issue error message is not displayed if no development team issue is detected first.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1499,12 +1437,10 @@ Runner requires a provisioning profile. Select a provisioning profile in the Sig
       'Trace error if xcresult is empty.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1545,12 +1481,10 @@ Runner requires a provisioning profile. Select a provisioning profile in the Sig
       'Display xcresult issues on console if parsed.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[
@@ -1595,12 +1529,10 @@ Runner requires a provisioning profile. Select a provisioning profile in the Sig
       'Do not display xcresult issues that needs to be discarded.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
 
@@ -1654,12 +1586,10 @@ Runner requires a provisioning profile. Select a provisioning profile in the Sig
       'Trace if xcresult bundle does not exist.',
       () async {
         final BuildCommand command = BuildCommand(
-          artifacts: artifacts,
           androidSdk: FakeAndroidSdk(),
           buildSystem: TestBuildSystem.all(BuildResult(success: true)),
           fileSystem: fileSystem,
           logger: logger,
-          processUtils: processUtils,
           osUtils: FakeOperatingSystemUtils(),
         );
         processManager.addCommands(<FakeCommand>[

@@ -42,6 +42,8 @@ class MaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixi
     super.fullscreenDialog,
     super.allowSnapshotting = true,
     super.barrierDismissible = false,
+    super.traversalEdgeBehavior,
+    super.directionalTraversalEdgeBehavior,
   }) {
     assert(opaque);
   }

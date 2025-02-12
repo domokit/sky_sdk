@@ -15,6 +15,7 @@ Texture::Texture(const Context& context, const TextureDescriptor& descriptor) {
   if (!texture || !texture->IsValid()) {
     return;
   }
+  texture->SetLabel("UserCreated");
   backend_ = context.GetContext()->GetBackendType();
   texture_ = std::move(texture);
 }

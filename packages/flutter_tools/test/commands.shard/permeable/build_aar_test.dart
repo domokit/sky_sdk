@@ -13,6 +13,7 @@ import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/commands/build_aar.dart';
+import 'package:flutter_tools/src/dart/pub.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/project.dart';
@@ -24,22 +25,40 @@ import '../../src/android_common.dart';
 import '../../src/common.dart';
 import '../../src/context.dart';
 import '../../src/fake_process_manager.dart';
+import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart' hide FakeFlutterProjectFactory;
 import '../../src/test_flutter_command_runner.dart';
 
 void main() {
   Cache.disableLocking();
 
-  Future<BuildAarCommand> runCommandIn(String target, {List<String>? arguments}) async {
+  /// Runs the equivalent of `flutter build aar`.
+  ///
+  /// If [arguments] are provided, they are appended to the end, i.e.:
+  /// ```sh
+  /// flutter build aar [arguments]
+  /// ```
+  ///
+  /// If [androidSdk] is provided, it is used, otherwise defaults to [FakeAndroidSdk].
+  Future<BuildAarCommand> runBuildAar(
+    String target, {
+    AndroidSdk? androidSdk = const _FakeAndroidSdk(),
+    List<String>? arguments,
+  }) async {
     final BuildAarCommand command = BuildAarCommand(
-      androidSdk: FakeAndroidSdk(),
+      androidSdk: androidSdk,
       fileSystem: globals.fs,
       logger: BufferLogger.test(),
       verboseHelp: false,
     );
     final CommandRunner<void> runner = createTestCommandRunner(command);
-    await runner.run(<String>['aar', '--no-pub', ...?arguments, target]);
+    await runner.run(<String>['aar', ...?arguments, target]);
     return command;
+  }
+
+  // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
+  FeatureFlags enableExplicitPackageDependencies() {
+    return TestFeatureFlags(isExplicitPackageDependenciesEnabled: true);
   }
 
   group('Usage', () {
@@ -66,7 +85,7 @@ void main() {
           arguments: <String>['--no-pub', '--template=module'],
         );
 
-        await runCommandIn(projectPath);
+        await runBuildAar(projectPath, arguments: <String>['--no-pub']);
         expect(
           analytics.sentEvents,
           contains(
@@ -80,7 +99,7 @@ void main() {
         );
       },
       overrides: <Type, Generator>{
-        AndroidBuilder: () => FakeAndroidBuilder(),
+        AndroidBuilder: () => _CapturingFakeAndroidBuilder(),
         Analytics: () => analytics,
       },
     );
@@ -93,7 +112,10 @@ void main() {
           arguments: <String>['--no-pub', '--template=module'],
         );
 
-        await runCommandIn(projectPath, arguments: <String>['--target-platform=android-arm']);
+        await runBuildAar(
+          projectPath,
+          arguments: <String>['--no-pub', '--target-platform=android-arm'],
+        );
         expect(
           analytics.sentEvents,
           contains(
@@ -107,8 +129,33 @@ void main() {
         );
       },
       overrides: <Type, Generator>{
-        AndroidBuilder: () => FakeAndroidBuilder(),
+        AndroidBuilder: () => _CapturingFakeAndroidBuilder(),
         Analytics: () => analytics,
+      },
+    );
+
+    // Regression test for https://github.com/flutter/flutter/issues/162649.
+    testUsingContext(
+      'triggers builds even with --pub',
+      () async {
+        final String projectPath = await createProject(
+          tempDir,
+          arguments: <String>['--no-pub', '--template=module'],
+        );
+
+        await runBuildAar(
+          projectPath,
+          arguments: <String>['--target-platform=android-arm'],
+          // If we use --no-pub, it bypasses validation that occurs only on a
+          // build with --pub, which as a consequence means that we aren't
+          // testing every code branch.
+        );
+      },
+      overrides: <Type, Generator>{
+        AndroidBuilder: () => _CapturingFakeAndroidBuilder(),
+        Analytics: () => analytics,
+        FeatureFlags: enableExplicitPackageDependencies,
+        Pub: () => FakePubWithPrimedDeps(allowGet: true),
       },
     );
 
@@ -120,7 +167,10 @@ void main() {
           arguments: <String>['--no-pub', '--template=module'],
         );
 
-        await runCommandIn(projectPath, arguments: <String>['--target-platform=android-arm']);
+        await runBuildAar(
+          projectPath,
+          arguments: <String>['--no-pub', '--target-platform=android-arm'],
+        );
 
         final Iterable<Event> successEvent = analytics.sentEvents.where(
           (Event e) =>
@@ -131,7 +181,7 @@ void main() {
         expect(successEvent, isNotEmpty, reason: 'Tool should send create success event');
       },
       overrides: <Type, Generator>{
-        AndroidBuilder: () => FakeAndroidBuilder(),
+        AndroidBuilder: () => _CapturingFakeAndroidBuilder(),
         Analytics: () => analytics,
       },
     );
@@ -139,10 +189,10 @@ void main() {
 
   group('flag parsing', () {
     late Directory tempDir;
-    late FakeAndroidBuilder fakeAndroidBuilder;
+    late _CapturingFakeAndroidBuilder fakeAndroidBuilder;
 
     setUp(() {
-      fakeAndroidBuilder = FakeAndroidBuilder();
+      fakeAndroidBuilder = _CapturingFakeAndroidBuilder();
       tempDir = globals.fs.systemTempDirectory.createTempSync('flutter_tools_build_aar_test.');
     });
 
@@ -155,13 +205,19 @@ void main() {
         tempDir,
         arguments: <String>['--no-pub', '--template=module'],
       );
-      await runCommandIn(projectPath);
+      await runBuildAar(projectPath, arguments: <String>['--no-pub']);
 
-      expect(fakeAndroidBuilder.buildNumber, '1.0');
-      expect(fakeAndroidBuilder.androidBuildInfo.length, 3);
+      expect(
+        fakeAndroidBuilder.capturedBuildAarCalls,
+        hasLength(1),
+        reason: 'A single call to buildAar was expected.',
+      );
+      final Invocation buildAarCall = fakeAndroidBuilder.capturedBuildAarCalls.single;
+      expect(buildAarCall.namedArguments[#buildNumber], '1.0');
 
       final List<BuildMode> buildModes = <BuildMode>[];
-      for (final AndroidBuildInfo androidBuildInfo in fakeAndroidBuilder.androidBuildInfo) {
+      for (final AndroidBuildInfo androidBuildInfo
+          in buildAarCall.namedArguments[#androidBuildInfo] as Set<AndroidBuildInfo>) {
         final BuildInfo buildInfo = androidBuildInfo.buildInfo;
         buildModes.add(buildInfo.mode);
         if (buildInfo.mode.isPrecompiled) {
@@ -180,7 +236,7 @@ void main() {
           AndroidArch.x86_64,
         ]);
       }
-      expect(buildModes.length, 3);
+      expect(buildModes, hasLength(3));
       expect(
         buildModes,
         containsAll(<BuildMode>[BuildMode.debug, BuildMode.profile, BuildMode.release]),
@@ -192,9 +248,10 @@ void main() {
         tempDir,
         arguments: <String>['--no-pub', '--template=module'],
       );
-      await runCommandIn(
+      await runBuildAar(
         projectPath,
         arguments: <String>[
+          '--no-pub',
           '--no-debug',
           '--no-profile',
           '--target-platform',
@@ -211,9 +268,16 @@ void main() {
         ],
       );
 
-      expect(fakeAndroidBuilder.buildNumber, '200');
+      expect(
+        fakeAndroidBuilder.capturedBuildAarCalls,
+        hasLength(1),
+        reason: 'A single call to buildAar was expected.',
+      );
+      final Invocation buildAarCall = fakeAndroidBuilder.capturedBuildAarCalls.single;
+      expect(buildAarCall.namedArguments[#buildNumber], '200');
 
-      final AndroidBuildInfo androidBuildInfo = fakeAndroidBuilder.androidBuildInfo.single;
+      final AndroidBuildInfo androidBuildInfo =
+          (buildAarCall.namedArguments[#androidBuildInfo] as Set<AndroidBuildInfo>).single;
       expect(androidBuildInfo.targetArchs, <AndroidArch>[AndroidArch.x86]);
 
       final BuildInfo buildInfo = androidBuildInfo.buildInfo;
@@ -229,7 +293,6 @@ void main() {
 
   group('Gradle', () {
     late Directory tempDir;
-    late AndroidSdk mockAndroidSdk;
     late String gradlew;
     late FakeProcessManager processManager;
     late String flutterRoot;
@@ -241,7 +304,6 @@ void main() {
         fs: MemoryFileSystem.test(),
         fakeFlutterVersion: FakeFlutterVersion(),
       );
-      mockAndroidSdk = FakeAndroidSdk();
       gradlew = globals.fs.path.join(
         tempDir.path,
         'flutter_project',
@@ -267,7 +329,7 @@ void main() {
 
           await expectLater(
             () async {
-              await runBuildAarCommand(projectPath, null, arguments: <String>['--no-pub']);
+              await runBuildAar(projectPath, androidSdk: null, arguments: <String>['--no-pub']);
             },
             throwsToolExit(
               message: 'No Android SDK found. Try setting the ANDROID_HOME environment variable',
@@ -284,17 +346,19 @@ void main() {
     group('throws ToolExit', () {
       testUsingContext('main.dart not found', () async {
         await expectLater(() async {
-          await runBuildAarCommand(
+          await runBuildAar(
             'missing_project',
-            mockAndroidSdk,
-            arguments: <String>['--no-pub'],
+            arguments: <String>[
+              '--no-pub',
+              globals.fs.path.join('missing_project', 'lib', 'main.dart'),
+            ],
           );
         }, throwsToolExit(message: 'main.dart does not exist'));
       });
 
       testUsingContext('flutter project not valid', () async {
         await expectLater(() async {
-          await runCommandIn(tempDir.path, arguments: <String>['--no-pub']);
+          await runBuildAar(tempDir.path, arguments: <String>['--no-pub']);
         }, throwsToolExit(message: 'is not a valid flutter project'));
       });
     });
@@ -330,10 +394,10 @@ void main() {
         );
 
         await expectLater(
-          () => runBuildAarCommand(
+          () => runBuildAar(
             projectPath,
-            mockAndroidSdk,
             arguments: <String>[
+              '--no-pub',
               '--no-debug',
               '--no-profile',
               '--extra-front-end-options=foo',
@@ -349,7 +413,7 @@ void main() {
         Java: () => null,
         ProcessManager: () => processManager,
         FeatureFlags: () => TestFeatureFlags(isIOSEnabled: false),
-        AndroidStudio: () => FakeAndroidStudio(),
+        AndroidStudio: () => _FakeAndroidStudio(),
       },
     );
 
@@ -393,7 +457,7 @@ void main() {
             arguments: <String>['--no-pub', '--template=module'],
           );
 
-          await runBuildAarCommand(projectPath, mockAndroidSdk);
+          await runBuildAar(projectPath, arguments: <String>['--no-pub']);
 
           expect(
             fakeAnalytics.sentEvents,
@@ -404,7 +468,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           Analytics: () => fakeAnalytics,
-          AndroidBuilder: () => FakeAndroidBuilder(),
+          AndroidBuilder: () => _CapturingFakeAndroidBuilder(),
           FlutterProjectFactory: () => FakeFlutterProjectFactory(tempDir),
         },
       );
@@ -427,7 +491,7 @@ void main() {
             value: 'true',
           );
 
-          await runBuildAarCommand(projectPath, mockAndroidSdk);
+          await runBuildAar(projectPath, arguments: <String>['--no-pub']);
 
           expect(
             fakeAnalytics.sentEvents,
@@ -438,7 +502,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           Analytics: () => fakeAnalytics,
-          AndroidBuilder: () => FakeAndroidBuilder(),
+          AndroidBuilder: () => _CapturingFakeAndroidBuilder(),
           FlutterProjectFactory: () => FakeFlutterProjectFactory(tempDir),
         },
       );
@@ -461,7 +525,7 @@ void main() {
             value: 'false',
           );
 
-          await runBuildAarCommand(projectPath, mockAndroidSdk);
+          await runBuildAar(projectPath, arguments: <String>['--no-pub']);
 
           expect(
             fakeAnalytics.sentEvents,
@@ -472,7 +536,7 @@ void main() {
         },
         overrides: <Type, Generator>{
           Analytics: () => fakeAnalytics,
-          AndroidBuilder: () => FakeAndroidBuilder(),
+          AndroidBuilder: () => _CapturingFakeAndroidBuilder(),
           FlutterProjectFactory: () => FakeFlutterProjectFactory(tempDir),
         },
       );
@@ -480,53 +544,27 @@ void main() {
   });
 }
 
-Future<BuildAarCommand> runBuildAarCommand(
-  String target,
-  AndroidSdk? androidSdk, {
-  List<String>? arguments,
-}) async {
-  final BuildAarCommand command = BuildAarCommand(
-    androidSdk: androidSdk,
-    fileSystem: globals.fs,
-    logger: BufferLogger.test(),
-    verboseHelp: false,
-  );
-  final CommandRunner<void> runner = createTestCommandRunner(command);
-  await runner.run(<String>[
-    'aar',
-    '--no-pub',
-    ...?arguments,
-    globals.fs.path.join(target, 'lib', 'main.dart'),
-  ]);
-  return command;
-}
-
-class FakeAndroidBuilder extends Fake implements AndroidBuilder {
-  late FlutterProject project;
-  late Set<AndroidBuildInfo> androidBuildInfo;
-  late String target;
-  String? outputDirectoryPath;
-  late String buildNumber;
+/// A fake implementation of [AndroidBuilder] that allows [buildAar] calls.
+///
+/// Calls to [buildAar] are stored as [capturedBuildAarCalls], other calls are rejected.
+final class _CapturingFakeAndroidBuilder extends Fake implements AndroidBuilder {
+  final List<Invocation> capturedBuildAarCalls = <Invocation>[];
 
   @override
-  Future<void> buildAar({
-    required FlutterProject project,
-    required Set<AndroidBuildInfo> androidBuildInfo,
-    required String target,
-    String? outputDirectoryPath,
-    required String buildNumber,
-  }) async {
-    this.project = project;
-    this.androidBuildInfo = androidBuildInfo;
-    this.target = target;
-    this.outputDirectoryPath = outputDirectoryPath;
-    this.buildNumber = buildNumber;
+  Object? noSuchMethod(Invocation invocation) {
+    if (invocation.memberName != #buildAar) {
+      return super.noSuchMethod(invocation);
+    }
+    capturedBuildAarCalls.add(invocation);
+    return Future<void>.value();
   }
 }
 
-class FakeAndroidSdk extends Fake implements AndroidSdk {}
+final class _FakeAndroidSdk with Fake implements AndroidSdk {
+  const _FakeAndroidSdk();
+}
 
-class FakeAndroidStudio extends Fake implements AndroidStudio {
+final class _FakeAndroidStudio extends Fake implements AndroidStudio {
   @override
   String get javaPath => 'java';
 }

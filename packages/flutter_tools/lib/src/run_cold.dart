@@ -144,10 +144,7 @@ class ColdRunner extends ResidentRunner {
   }) async {
     _didAttach = true;
     try {
-      await connectToServiceProtocol(
-        getSkSLMethod: writeSkSL,
-        allowExistingDdsInstance: allowExistingDdsInstance,
-      );
+      await connectToServiceProtocol(allowExistingDdsInstance: allowExistingDdsInstance);
     } on Exception catch (error) {
       globals.printError('Error connecting to the service protocol: $error');
       return 2;

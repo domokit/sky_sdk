@@ -8,6 +8,7 @@
 #include "impeller/geometry/path.h"
 #include "impeller/geometry/rect.h"
 #include "impeller/geometry/round_rect.h"
+#include "impeller/geometry/round_superellipse.h"
 #include "impeller/geometry/scalar.h"
 
 namespace impeller {
@@ -104,6 +105,8 @@ class PathBuilder {
   PathBuilder& SetBounds(Rect bounds);
 
   PathBuilder& AddRoundRect(RoundRect rect);
+
+  PathBuilder& AddRoundSuperellipse(RoundSuperellipse rse);
 
   PathBuilder& AddPath(const Path& path);
 

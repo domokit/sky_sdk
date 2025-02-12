@@ -11,7 +11,6 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-// TODO(mattcarroll): re-evalute docs in this class and add nullability annotations.
 /**
  * Registry of backend textures used with a single {@link io.flutter.embedding.android.FlutterView}
  * instance. Entries may be embedded into the Flutter view using the <a

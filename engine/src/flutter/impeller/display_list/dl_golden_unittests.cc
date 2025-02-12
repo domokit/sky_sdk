@@ -452,5 +452,158 @@ TEST_P(DlGoldenTest, MaintainsSpace) {
     last_space = space;
   }
 }
+
+namespace {
+struct LeftmostIntensity {
+  int32_t x;
+  int32_t value;
+};
+
+/// Returns the highest value in the green channel for leftmost column that
+/// isn't all black.
+LeftmostIntensity CalculateLeftmostIntensity(
+    const impeller::testing::Screenshot* img) {
+  LeftmostIntensity result = {.x = static_cast<int32_t>(img->GetWidth()),
+                              .value = 0};
+  const uint32_t* ptr = reinterpret_cast<const uint32_t*>(img->GetBytes());
+  for (size_t i = 0; i < img->GetHeight(); ++i) {
+    for (int32_t j = 0; j < static_cast<int32_t>(img->GetWidth()); ++j) {
+      if (((*ptr & 0x00ffffff) != 0)) {
+        if (j < result.x) {
+          result.x = j;
+          result.value = (*ptr & 0xff00) >> 8;
+        } else if (j == result.x) {
+          result.value =
+              std::max(static_cast<int32_t>(*ptr & 0xff), result.value);
+        }
+      }
+      ptr++;
+    }
+  }
+  return result;
+}
+}  // namespace
+
+// Checks that the left most edge of the glyph is fading out as we push
+// it to the right by fractional pixels.
+TEST_P(DlGoldenTest, Subpixel) {
+  SetWindowSize(impeller::ISize(1024, 200));
+  impeller::Scalar font_size = 200;
+  auto callback = [&](Scalar offset_x) -> sk_sp<DisplayList> {
+    DisplayListBuilder builder;
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0, 0, 0));
+    builder.DrawPaint(paint);
+    RenderTextInCanvasSkia(&builder, "ui", "Roboto-Regular.ttf",
+                           DlPoint::MakeXY(offset_x, 180),
+                           TextRenderOptions{
+                               .font_size = font_size,
+                               .is_subpixel = true,
+                           });
+    return builder.Build();
+  };
+
+  LeftmostIntensity intensity[5];
+  for (int i = 0; i <= 4; ++i) {
+    Scalar offset = 10 + (i / 4.0);
+    std::unique_ptr<impeller::testing::Screenshot> right =
+        MakeScreenshot(callback(offset));
+    if (!right) {
+      GTEST_SKIP() << "making screenshots not supported.";
+    }
+    intensity[i] = CalculateLeftmostIntensity(right.get());
+    ASSERT_NE(intensity[i].value, 0);
+  }
+  for (int i = 1; i < 5; ++i) {
+    EXPECT_TRUE(intensity[i].x - intensity[i - 1].x == 1 ||
+                intensity[i].value < intensity[i - 1].value)
+        << i;
+  }
+  EXPECT_EQ(intensity[4].x - intensity[0].x, 1);
+}
+
+// Checks that the left most edge of the glyph is fading out as we push
+// it to the right by fractional pixels.
+TEST_P(DlGoldenTest, SubpixelScaled) {
+  SetWindowSize(impeller::ISize(1024, 200));
+  impeller::Scalar font_size = 200;
+  Scalar scalar = 0.75;
+  auto callback = [&](Scalar offset_x) -> sk_sp<DisplayList> {
+    DisplayListBuilder builder;
+    builder.Scale(scalar, scalar);
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0, 0, 0));
+    builder.DrawPaint(paint);
+    RenderTextInCanvasSkia(&builder, "ui", "Roboto-Regular.ttf",
+                           DlPoint::MakeXY(offset_x, 180),
+                           TextRenderOptions{
+                               .font_size = font_size,
+                               .is_subpixel = true,
+                           });
+    return builder.Build();
+  };
+
+  LeftmostIntensity intensity[5];
+  Scalar offset_fraction = 0.25 / scalar;
+  for (int i = 0; i <= 4; ++i) {
+    Scalar offset = 10 + (offset_fraction * i);
+    std::unique_ptr<impeller::testing::Screenshot> right =
+        MakeScreenshot(callback(offset));
+    if (!right) {
+      GTEST_SKIP() << "making screenshots not supported.";
+    }
+    intensity[i] = CalculateLeftmostIntensity(right.get());
+    ASSERT_NE(intensity[i].value, 0);
+  }
+  for (int i = 1; i < 5; ++i) {
+    EXPECT_TRUE(intensity[i].x - intensity[i - 1].x == 1 ||
+                intensity[i].value < intensity[i - 1].value)
+        << i;
+  }
+  EXPECT_EQ(intensity[4].x - intensity[0].x, 1);
+}
+
+// Checks that the left most edge of the glyph is fading out as we push
+// it to the right by fractional pixels.
+TEST_P(DlGoldenTest, SubpixelScaledTranslated) {
+  SetWindowSize(impeller::ISize(1024, 200));
+  impeller::Scalar font_size = 200;
+  Scalar scalar = 0.75;
+  auto callback = [&](Scalar offset_x) -> sk_sp<DisplayList> {
+    DisplayListBuilder builder;
+    builder.Scale(scalar, scalar);
+    DlPaint paint;
+    paint.setColor(DlColor::ARGB(1, 0, 0, 0));
+    builder.DrawPaint(paint);
+    builder.Translate(offset_x, 180);
+    RenderTextInCanvasSkia(&builder, "ui", "Roboto-Regular.ttf",
+                           DlPoint::MakeXY(0, 0),
+                           TextRenderOptions{
+                               .font_size = font_size,
+                               .is_subpixel = true,
+                           });
+    return builder.Build();
+  };
+
+  LeftmostIntensity intensity[5];
+  Scalar offset_fraction = 0.25 / scalar;
+  for (int i = 0; i <= 4; ++i) {
+    Scalar offset = 10 + (offset_fraction * i);
+    std::unique_ptr<impeller::testing::Screenshot> right =
+        MakeScreenshot(callback(offset));
+    if (!right) {
+      GTEST_SKIP() << "making screenshots not supported.";
+    }
+    intensity[i] = CalculateLeftmostIntensity(right.get());
+    ASSERT_NE(intensity[i].value, 0);
+  }
+  for (int i = 1; i < 5; ++i) {
+    EXPECT_TRUE(intensity[i].x - intensity[i - 1].x == 1 ||
+                intensity[i].value < intensity[i - 1].value)
+        << i;
+  }
+  EXPECT_EQ(intensity[4].x - intensity[0].x, 1);
+}
+
 }  // namespace testing
 }  // namespace flutter

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:js_interop';
+
 import 'package:test/bootstrap/browser.dart';
 import 'package:test/test.dart';
 
@@ -67,6 +69,10 @@ class TestViewRasterizer extends ViewRasterizer {
 void testMain() {
   group('Renderer', () {
     setUpCanvasKitTest();
+
+    tearDown(() {
+      CanvasKitRenderer.instance.debugResetRasterizer();
+    });
 
     test('always renders most recent picture and skips intermediate pictures', () async {
       final TestRasterizer testRasterizer = TestRasterizer();
@@ -174,6 +180,26 @@ void testMain() {
       expect(treesRenderedInView3.length, 2);
       expect(treesRenderedInView3.first, treesToRenderInView3.first);
       expect(treesRenderedInView3.last, treesToRenderInView3.last);
+    });
+
+    test(
+      'defaults to OffscreenCanvasRasterizer on Chrome and MultiSurfaceRasterizer on Firefox and Safari',
+      () {
+        if (isChromium) {
+          expect(CanvasKitRenderer.instance.debugGetRasterizer(), isA<OffscreenCanvasRasterizer>());
+        } else {
+          expect(CanvasKitRenderer.instance.debugGetRasterizer(), isA<MultiSurfaceRasterizer>());
+        }
+      },
+    );
+
+    test('can be configured to always use MultiSurfaceRasterizer', () {
+      debugOverrideJsConfiguration(
+        <String, Object?>{'canvasKitForceMultiSurfaceRasterizer': true}.jsify()
+            as JsFlutterConfiguration?,
+      );
+      CanvasKitRenderer.instance.debugResetRasterizer();
+      expect(CanvasKitRenderer.instance.debugGetRasterizer(), isA<MultiSurfaceRasterizer>());
     });
   });
 }

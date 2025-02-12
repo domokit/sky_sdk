@@ -65,6 +65,46 @@ bool EmbedderEngine::CollectShell() {
   return IsValid();
 }
 
+void EmbedderEngine::CollectThreadHost() {
+  if (!thread_host_) {
+    return;
+  }
+
+  // Once the collected, EmbedderThreadHost::RunnerIsValid will return false for
+  // all runners belonging to this thread host. This must be done with UI task
+  // runner blocked to prevent possible raciness that could happen when
+  // destroying the thread host in the middle of UI task runner execution. This
+  // is not an issue for other runners, because raster task runner should not
+  // have anything scheduled after engine shutdown and platform task runner is
+  // where this method is called from.
+  if (thread_host_->GetTaskRunners().GetUITaskRunner() &&
+      !thread_host_->GetTaskRunners()
+           .GetUITaskRunner()
+           ->RunsTasksOnCurrentThread()) {
+    fml::AutoResetWaitableEvent ui_thread_running;
+    fml::AutoResetWaitableEvent ui_thread_block;
+    fml::AutoResetWaitableEvent ui_thread_finished;
+
+    thread_host_->GetTaskRunners().GetUITaskRunner()->PostTask([&] {
+      ui_thread_running.Signal();
+      ui_thread_block.Wait();
+      ui_thread_finished.Signal();
+    });
+
+    // Wait until the task is running on the UI thread.
+    ui_thread_running.Wait();
+    thread_host_->InvalidateActiveRunners();
+    ui_thread_block.Signal();
+
+    // Needed to keep ui_thread_block in scope until the UI thread execution
+    // finishes.
+    ui_thread_finished.Wait();
+  } else {
+    thread_host_->InvalidateActiveRunners();
+  }
+  thread_host_.reset();
+}
+
 bool EmbedderEngine::RunRootIsolate() {
   if (!IsValid() || !run_configuration_.IsValid()) {
     return false;
@@ -96,6 +136,7 @@ bool EmbedderEngine::NotifyDestroyed() {
   }
 
   shell_->GetPlatformView()->NotifyDestroyed();
+
   return true;
 }
 
@@ -243,8 +284,20 @@ bool EmbedderEngine::RunTask(const FlutterTask* task) {
   if (task == nullptr) {
     return false;
   }
-  return thread_host_->PostTask(reinterpret_cast<int64_t>(task->runner),
-                                task->task);
+  auto result = thread_host_->PostTask(reinterpret_cast<intptr_t>(task->runner),
+                                       task->task);
+  // If the UI and platform threads are separate, the microtask queue is
+  // flushed through MessageLoopTaskQueues observer.
+  // If the UI and platform threads are merged, the UI task runner has no
+  // associated task queue, and microtasks need to be flushed manually
+  // after running the task.
+  if (result && shell_ && task_runners_.GetUITaskRunner() &&
+      task_runners_.GetUITaskRunner()->RunsTasksOnCurrentThread() &&
+      !task_runners_.GetUITaskRunner()->GetTaskQueueId().is_valid()) {
+    shell_->FlushMicrotaskQueue();
+  }
+
+  return result;
 }
 
 bool EmbedderEngine::PostTaskOnEngineManagedNativeThreads(

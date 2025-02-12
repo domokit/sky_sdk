@@ -256,7 +256,7 @@ class SemanticsFlag {
 }
 
 // Mirrors engine/src/flutter/lib/ui/semantics.dart
-enum SemanticsRole { none, tab, tabBar, tabPanel }
+enum SemanticsRole { none, tab, tabBar, tabPanel, dialog, alertDialog }
 
 // When adding a new StringAttributeType, the classes in these file must be
 // updated as well.

@@ -14,25 +14,25 @@ void main() {
   test('returns non-deleted files which differ from merge-base with main', () async {
     final Fixture fixture = Fixture(
       processManager: FakeProcessManager(
-        onStart: (List<String> command) {
+        onStart: (FakeCommandLogEntry entry) {
           // Succeed calling "git merge-base --fork-point FETCH_HEAD HEAD".
-          if (command.join(' ').startsWith('git merge-base --fork-point')) {
+          if (entry.command.join(' ').startsWith('git merge-base --fork-point')) {
             return FakeProcess(stdout: fakeShaHash);
           }
 
           // Succeed calling "git fetch upstream main".
-          if (command.join(' ') == 'git fetch upstream main') {
+          if (entry.command.join(' ') == 'git fetch upstream main') {
             return FakeProcess();
           }
 
           // Succeed calling "git diff --name-only --diff-filter=ACMRT fake-sha-hash".
-          if (command.join(' ') ==
+          if (entry.command.join(' ') ==
               'git diff --name-only --diff-filter=ACMRT --relative $fakeShaHash') {
             return FakeProcess(stdout: 'file1\nfile2');
           }
 
           // Otherwise, fail.
-          return FakeProcessManager.unhandledStart(command);
+          return FakeProcessManager.unhandledStart(entry);
         },
       ),
     );
@@ -50,26 +50,26 @@ void main() {
   test('returns non-deleted files which differ from default merge-base', () async {
     final Fixture fixture = Fixture(
       processManager: FakeProcessManager(
-        onStart: (List<String> command) {
-          if (command.join(' ').startsWith('git merge-base --fork-point')) {
+        onStart: (FakeCommandLogEntry entry) {
+          if (entry.command.join(' ').startsWith('git merge-base --fork-point')) {
             return FakeProcess(exitCode: 1);
           }
 
-          if (command.join(' ').startsWith('git merge-base')) {
+          if (entry.command.join(' ').startsWith('git merge-base')) {
             return FakeProcess(stdout: fakeShaHash);
           }
 
-          if (command.join(' ') == 'git fetch upstream main') {
+          if (entry.command.join(' ') == 'git fetch upstream main') {
             return FakeProcess();
           }
 
-          if (command.join(' ') ==
+          if (entry.command.join(' ') ==
               'git diff --name-only --diff-filter=ACMRT --relative $fakeShaHash') {
             return FakeProcess(stdout: 'file1\nfile2');
           }
 
           // Otherwise, fail.
-          return FakeProcessManager.unhandledStart(command);
+          return FakeProcessManager.unhandledStart(entry);
         },
       ),
     );
@@ -87,18 +87,18 @@ void main() {
   test('returns non-deleted files which differ from HEAD', () async {
     final Fixture fixture = Fixture(
       processManager: FakeProcessManager(
-        onStart: (List<String> command) {
-          if (command.join(' ') == 'git fetch upstream main') {
+        onStart: (FakeCommandLogEntry entry) {
+          if (entry.command.join(' ') == 'git fetch upstream main') {
             return FakeProcess();
           }
 
-          if (command.join(' ') ==
+          if (entry.command.join(' ') ==
               'git diff-tree --no-commit-id --name-only --diff-filter=ACMRT --relative -r HEAD') {
             return FakeProcess(stdout: 'file1\nfile2');
           }
 
           // Otherwise, fail.
-          return FakeProcessManager.unhandledStart(command);
+          return FakeProcessManager.unhandledStart(entry);
         },
       ),
     );
@@ -116,26 +116,26 @@ void main() {
   test('returns non-deleted files which differ from HEAD when merge-base fails', () async {
     final Fixture fixture = Fixture(
       processManager: FakeProcessManager(
-        onStart: (List<String> command) {
-          if (command.join(' ') == 'git fetch upstream main') {
+        onStart: (FakeCommandLogEntry entry) {
+          if (entry.command.join(' ') == 'git fetch upstream main') {
             return FakeProcess();
           }
 
-          if (command.join(' ') ==
+          if (entry.command.join(' ') ==
               'git diff-tree --no-commit-id --name-only --diff-filter=ACMRT --relative -r HEAD') {
             return FakeProcess(stdout: 'file1\nfile2');
           }
 
-          if (command.join(' ').startsWith('git merge-base --fork-point')) {
+          if (entry.command.join(' ').startsWith('git merge-base --fork-point')) {
             return FakeProcess(exitCode: 1);
           }
 
-          if (command.join(' ').startsWith('git merge-base')) {
+          if (entry.command.join(' ').startsWith('git merge-base')) {
             return FakeProcess(stdout: fakeShaHash);
           }
 
           // Otherwise, fail.
-          return FakeProcessManager.unhandledStart(command);
+          return FakeProcessManager.unhandledStart(entry);
         },
       ),
     );
@@ -153,26 +153,26 @@ void main() {
   test('verbose output is captured', () async {
     final Fixture fixture = Fixture(
       processManager: FakeProcessManager(
-        onStart: (List<String> command) {
-          if (command.join(' ').startsWith('git merge-base --fork-point')) {
+        onStart: (FakeCommandLogEntry entry) {
+          if (entry.command.join(' ').startsWith('git merge-base --fork-point')) {
             return FakeProcess(exitCode: 1);
           }
 
-          if (command.join(' ').startsWith('git merge-base')) {
+          if (entry.command.join(' ').startsWith('git merge-base')) {
             return FakeProcess(stdout: fakeShaHash);
           }
 
-          if (command.join(' ') == 'git fetch upstream main') {
+          if (entry.command.join(' ') == 'git fetch upstream main') {
             return FakeProcess();
           }
 
-          if (command.join(' ') ==
+          if (entry.command.join(' ') ==
               'git diff --name-only --diff-filter=ACMRT --relative $fakeShaHash') {
             return FakeProcess(stdout: 'file1\nfile2');
           }
 
           // Otherwise, fail.
-          return FakeProcessManager.unhandledStart(command);
+          return FakeProcessManager.unhandledStart(entry);
         },
       ),
       verbose: true,

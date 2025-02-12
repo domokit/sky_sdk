@@ -223,6 +223,7 @@ linter:
     - unnecessary_constructor_name
     # - unnecessary_final # conflicts with prefer_final_locals
     - unnecessary_getters_setters
+    # - unnecessary_ignore # Disabled by default to simplify migrations; should be periodically enabled locally to clean up offenders
     # - unnecessary_lambdas # has false positives: https://github.com/dart-lang/linter/issues/498
     - unnecessary_late
     - unnecessary_library_directive

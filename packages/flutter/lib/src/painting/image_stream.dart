@@ -980,7 +980,8 @@ class MultiFrameImageStreamCompleter extends ImageStreamCompleter {
   /// Immediately starts decoding the first image frame when the codec is ready.
   ///
   /// The `codec` parameter is a future for an initialized [ui.Codec] that will
-  /// be used to decode the image.
+  /// be used to decode the image. This completer takes ownership of the passed
+  /// `codec` and will dispose it once it is no longer needed.
   ///
   /// The `scale` parameter is the linear scale factor for drawing this frames
   /// of this image at their intended size.
@@ -1071,7 +1072,11 @@ class MultiFrameImageStreamCompleter extends ImageStreamCompleter {
       final int completedCycles = _framesEmitted ~/ _codec!.frameCount;
       if (_codec!.repetitionCount == -1 || completedCycles <= _codec!.repetitionCount) {
         _decodeNextFrameAndSchedule();
+        return;
       }
+
+      _codec!.dispose();
+      _codec = null;
       return;
     }
     final Duration delay = _frameDuration! - (timestamp - _shownTimestamp);
@@ -1105,6 +1110,11 @@ class MultiFrameImageStreamCompleter extends ImageStreamCompleter {
       );
       return;
     }
+    if (_codec == null) {
+      // codec was disposed during getNextFrame
+      return;
+    }
+
     if (_codec!.frameCount == 1) {
       // ImageStreamCompleter listeners removed while waiting for next frame to
       // be decoded.
@@ -1119,6 +1129,9 @@ class MultiFrameImageStreamCompleter extends ImageStreamCompleter {
       );
       _nextFrame!.image.dispose();
       _nextFrame = null;
+
+      _codec!.dispose();
+      _codec = null;
       return;
     }
     _scheduleAppFrame();
@@ -1161,6 +1174,9 @@ class MultiFrameImageStreamCompleter extends ImageStreamCompleter {
       _chunkSubscription?.onData(null);
       _chunkSubscription?.cancel();
       _chunkSubscription = null;
+
+      _codec?.dispose();
+      _codec = null;
     }
   }
 }

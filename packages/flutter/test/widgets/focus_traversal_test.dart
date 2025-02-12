@@ -3410,8 +3410,8 @@ void main() {
   });
 
   // This test creates a FocusScopeNode configured to traverse focus in a closed
-  // loop. After traversing one loop, it changes the behavior to leave the
-  // FlutterView, then verifies that the new behavior did indeed take effect.
+  // loop. After traversing one loop, it changes the behavior to `leaveFlutterView` and `stop`,
+  // then verifies that the new behavior did indeed take effect.
   testWidgets('FocusScopeNode.traversalEdgeBehavior takes effect after update', (
     WidgetTester tester,
   ) async {
@@ -3480,6 +3480,18 @@ void main() {
     expect(await nextFocus(), false);
     expect(nodeA.hasFocus, false);
     expect(nodeB.hasFocus, false);
+
+    // Change the behavior and verify that the new behavior is in effect.
+    scope.traversalEdgeBehavior = TraversalEdgeBehavior.stop;
+    expect(scope.traversalEdgeBehavior, TraversalEdgeBehavior.stop);
+
+    // B -> A, but stop at the edge
+    nodeB.requestFocus();
+    await tester.pump();
+    expect(nodeB.hasFocus, true);
+    expect(await nextFocus(), false);
+    expect(nodeA.hasFocus, false);
+    expect(nodeB.hasFocus, true);
 
     // Change the behavior back to closedLoop and verify it's in effect. Also,
     // this time traverse in the opposite direction.
@@ -3557,6 +3569,179 @@ void main() {
     RequestFocusAction().invoke(focusIntentWithCallback);
     await tester.pump();
     expect(calledCallback, isTrue);
+  });
+
+  testWidgets('Edge cases for inDirection', (WidgetTester tester) async {
+    List<bool?> focus = List<bool?>.generate(6, (int _) => null);
+    final List<FocusNode> nodes = List<FocusNode>.generate(
+      6,
+      (int index) => FocusNode(debugLabel: 'Node $index'),
+    );
+    final FocusScopeNode childScope = FocusScopeNode(debugLabel: 'Child Scope');
+    addTearDown(() {
+      for (final FocusNode node in nodes) {
+        node.dispose();
+      }
+      childScope.dispose();
+    });
+
+    Focus makeFocus(int index) {
+      return Focus(
+        debugLabel: '[$index]',
+        focusNode: nodes[index],
+        onFocusChange: (bool isFocused) => focus[index] = isFocused,
+        child: const SizedBox(width: 100, height: 100),
+      );
+    }
+
+    Future<void> pumpApp() async {
+      /// Layout is:
+      ///          [0]
+      /// ---------Child FocusScope---------
+      ///          [1]
+      ///          [2]
+      ///              [3]
+      /// ---------Child FocusScope End---------
+      ///          [4] [5]
+      Widget home = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[makeFocus(0)]),
+          FocusScope(
+            node: childScope,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                makeFocus(1),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    makeFocus(2),
+                    Padding(padding: const EdgeInsets.only(top: 100), child: makeFocus(3)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Row(children: <Widget>[makeFocus(4), makeFocus(5)]),
+        ],
+      );
+      // Prevent the arrow keys from scrolling on the web.
+      if (isBrowser) {
+        home = Shortcuts(
+          shortcuts: const <ShortcutActivator, Intent>{
+            SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(
+              TraversalDirection.up,
+            ),
+            SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(
+              TraversalDirection.down,
+            ),
+          },
+          child: home,
+        );
+      }
+      await tester.pumpWidget(MaterialApp(home: home));
+    }
+
+    await pumpApp();
+
+    void clear() {
+      focus = List<bool?>.generate(focus.length, (int _) => null);
+    }
+
+    Future<void> resetTo(int index) async {
+      nodes[index].requestFocus();
+      await tester.pump();
+      clear();
+    }
+
+    // childScope's directionalTraversalEdgeBehavior is TraversalEdgeBehavior.stop
+    // focus is should not change
+    childScope.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.stop;
+    await resetTo(3);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, null, null, null, null, null]));
+    clear();
+    await resetTo(1);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, null, null, null, null, null]));
+    clear();
+
+    // childScope's directionalTraversalEdgeBehavior is TraversalEdgeBehavior.closedLoop
+    // focus is should change in a loop
+    childScope.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.closedLoop;
+    await resetTo(3);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, true, null, false, null, null]));
+    clear();
+    await resetTo(1);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, false, true, null, null, null]));
+    clear();
+
+    // childScope's directionalTraversalEdgeBehavior is TraversalEdgeBehavior.parentScope
+    // focus can change to the parent scope
+    childScope.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.parentScope;
+    await resetTo(3);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, null, null, false, null, true]));
+    clear();
+    await resetTo(1);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[true, false, null, null, null, null]));
+    clear();
+
+    // childScope's directionalTraversalEdgeBehavior is TraversalEdgeBehavior.leaveFlutterView
+    // focus will be lost
+    childScope.directionalTraversalEdgeBehavior = TraversalEdgeBehavior.leaveFlutterView;
+    await resetTo(3);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, null, null, false, null, null]));
+    clear();
+    await resetTo(1);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focus, orderedEquals(<bool?>[null, false, null, null, null, null]));
+    clear();
+  });
+
+  testWidgets('When there is no focused node, the focus can be set to the FocusScopeNode.', (
+    WidgetTester tester,
+  ) async {
+    final FocusScopeNode scope = FocusScopeNode();
+    final FocusScopeNode childScope = FocusScopeNode();
+    final FocusNode nodeA = FocusNode();
+    addTearDown(() {
+      scope.dispose();
+      childScope.dispose();
+      nodeA.dispose();
+    });
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: FocusScope(
+          node: scope,
+          child: FocusScope(
+            node: childScope,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Focus(focusNode: nodeA, child: const Text('A')),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(scope.focusInDirection(TraversalDirection.down), isTrue);
+    await tester.pump();
+    expect(childScope.hasFocus, isTrue);
+    expect(nodeA.hasFocus, isFalse);
   });
 }
 

@@ -22,11 +22,8 @@ void main() {
   const String checkoutsParentDirectory = '$flutterRoot/dev/conductor';
   const String candidateBranch = 'flutter-1.2-candidate.3';
   const String workingBranch = 'cherrypicks-$candidateBranch';
-  const String remoteUrl = 'https://github.com/org/repo.git';
   const String revision1 = 'd3af60d18e01fcb36e0c0fa06c8502e4935ed095';
-  const String revision2 = 'f99555c1e1392bf2a8135056b9446680c2af4ddf';
   const String revision3 = 'ffffffffffffffffffffffffffffffffffffffff';
-  const String revision4 = '280e23318a0d8341415c66aa32581352a421d974';
   const String releaseVersion = '1.2.0-3.0.pre';
   const String releaseChannel = 'beta';
   const String stateFile = '/state-file.json';
@@ -71,226 +68,6 @@ void main() {
           () async => runner.run(<String>['next', '--$kStateOption', stateFile]),
           throwsExceptionWith('No persistent state file found at $stateFile'),
         );
-      });
-
-      group('APPLY_ENGINE_CHERRYPICKS to VERIFY_ENGINE_CI', () {
-        test('confirms to stdout when all engine cherrypicks were auto-applied', () async {
-          stdio.stdin.add('n');
-          final File ciYaml = fileSystem.file('$checkoutsParentDirectory/engine/.ci.yaml')
-            ..createSync(recursive: true);
-          _initializeCiYamlFile(ciYaml);
-          final FakeProcessManager processManager = FakeProcessManager.empty();
-          final FakePlatform platform = FakePlatform(
-            environment: <String, String>{
-              'HOME': <String>['path', 'to', 'home'].join(localPathSeparator),
-            },
-            operatingSystem: localOperatingSystem,
-            pathSeparator: localPathSeparator,
-          );
-          final pb.ConductorState state =
-              (pb.ConductorState.create()
-                ..releaseChannel = releaseChannel
-                ..engine =
-                    (pb.Repository.create()
-                      ..candidateBranch = candidateBranch
-                      ..cherrypicks.add(
-                        pb.Cherrypick.create()
-                          ..trunkRevision = 'abc123'
-                          ..state = pb.CherrypickState.COMPLETED,
-                      )
-                      ..checkoutPath = fileSystem.path.join(checkoutsParentDirectory, 'engine')
-                      ..workingBranch = workingBranch
-                      ..upstream =
-                          (pb.Remote.create()
-                            ..name = 'upstream'
-                            ..url = remoteUrl)
-                      ..mirror =
-                          (pb.Remote.create()
-                            ..name = 'mirror'
-                            ..url = remoteUrl))
-                ..currentPhase = ReleasePhase.APPLY_ENGINE_CHERRYPICKS);
-          writeStateToFile(fileSystem.file(stateFile), state, <String>[]);
-          final Checkouts checkouts = Checkouts(
-            fileSystem: fileSystem,
-            parentDirectory: fileSystem.directory(checkoutsParentDirectory)
-              ..createSync(recursive: true),
-            platform: platform,
-            processManager: processManager,
-            stdio: stdio,
-          );
-          final CommandRunner<void> runner = createRunner(checkouts: checkouts);
-          await runner.run(<String>['next', '--$kStateOption', stateFile]);
-
-          expect(processManager, hasNoRemainingExpectations);
-          expect(
-            stdio.stdout,
-            contains('All engine cherrypicks have been auto-applied by the conductor'),
-          );
-        });
-
-        test('updates lastPhase if user responds yes', () async {
-          const String remoteUrl = 'https://github.com/org/repo.git';
-          const String releaseChannel = 'beta';
-          stdio.stdin.add('y');
-          final FakeProcessManager processManager = FakeProcessManager.list(<FakeCommand>[
-            const FakeCommand(command: <String>['git', 'fetch', 'upstream']),
-            FakeCommand(
-              command: const <String>['git', 'checkout', workingBranch],
-              onRun: (_) {
-                final File file = fileSystem.file('$checkoutsParentDirectory/engine/.ci.yaml')
-                  ..createSync(recursive: true);
-                _initializeCiYamlFile(file);
-              },
-            ),
-            const FakeCommand(
-              command: <String>['git', 'push', 'mirror', 'HEAD:refs/heads/$workingBranch'],
-            ),
-          ]);
-          final FakePlatform platform = FakePlatform(
-            environment: <String, String>{
-              'HOME': <String>['path', 'to', 'home'].join(localPathSeparator),
-            },
-            operatingSystem: localOperatingSystem,
-            pathSeparator: localPathSeparator,
-          );
-          final pb.ConductorState state =
-              (pb.ConductorState.create()
-                ..currentPhase = ReleasePhase.APPLY_ENGINE_CHERRYPICKS
-                ..engine =
-                    (pb.Repository.create()
-                      ..candidateBranch = candidateBranch
-                      ..checkoutPath = fileSystem.path.join(checkoutsParentDirectory, 'engine')
-                      ..cherrypicks.add(
-                        pb.Cherrypick.create()
-                          ..trunkRevision = revision2
-                          ..state = pb.CherrypickState.PENDING,
-                      )
-                      ..workingBranch = workingBranch
-                      ..upstream =
-                          (pb.Remote.create()
-                            ..name = 'upstream'
-                            ..url = remoteUrl)
-                      ..mirror =
-                          (pb.Remote.create()
-                            ..name = 'mirror'
-                            ..url = remoteUrl))
-                ..releaseChannel = releaseChannel
-                ..releaseVersion = releaseVersion);
-          writeStateToFile(fileSystem.file(stateFile), state, <String>[]);
-          // engine dir is expected to already exist
-          fileSystem
-              .directory(checkoutsParentDirectory)
-              .childDirectory('engine')
-              .createSync(recursive: true);
-          final Checkouts checkouts = Checkouts(
-            fileSystem: fileSystem,
-            parentDirectory: fileSystem.directory(checkoutsParentDirectory),
-            platform: platform,
-            processManager: processManager,
-            stdio: stdio,
-          );
-          final CommandRunner<void> runner = createRunner(checkouts: checkouts);
-          await runner.run(<String>['next', '--$kStateOption', stateFile]);
-
-          final pb.ConductorState finalState = readStateFromFile(fileSystem.file(stateFile));
-
-          expect(processManager, hasNoRemainingExpectations);
-          expect(
-            stdio.stdout,
-            contains(
-              'You must now open a pull request at https://github.com/flutter/engine/compare/flutter-1.2-candidate.3...org:cherrypicks-flutter-1.2-candidate.3?expand=1',
-            ),
-          );
-          expect(
-            stdio.stdout,
-            contains(
-              'Are you ready to push your engine branch to the repository $remoteUrl? (y/n) ',
-            ),
-          );
-          expect(finalState.currentPhase, ReleasePhase.VERIFY_ENGINE_CI);
-          expect(stdio.error, isEmpty);
-        });
-      });
-
-      group('VERIFY_ENGINE_CI to APPLY_FRAMEWORK_CHERRYPICKS', () {
-        late pb.ConductorState state;
-        late FakeProcessManager processManager;
-        late FakePlatform platform;
-
-        setUp(() {
-          state =
-              (pb.ConductorState.create()
-                ..releaseChannel = releaseChannel
-                ..engine =
-                    (pb.Repository.create()
-                      ..cherrypicks.add(
-                        pb.Cherrypick.create()
-                          ..trunkRevision = 'abc123'
-                          ..state = pb.CherrypickState.PENDING,
-                      )
-                      ..candidateBranch = 'flutter-1.0-candidate.0')
-                ..currentPhase = ReleasePhase.VERIFY_ENGINE_CI);
-
-          processManager = FakeProcessManager.empty();
-
-          platform = FakePlatform(
-            environment: <String, String>{
-              'HOME': <String>['path', 'to', 'home'].join(localPathSeparator),
-            },
-            operatingSystem: localOperatingSystem,
-            pathSeparator: localPathSeparator,
-          );
-        });
-
-        test('does not update currentPhase if user responds no', () async {
-          stdio.stdin.add('n');
-          writeStateToFile(fileSystem.file(stateFile), state, <String>[]);
-          final Checkouts checkouts = Checkouts(
-            fileSystem: fileSystem,
-            parentDirectory: fileSystem.directory(checkoutsParentDirectory)
-              ..createSync(recursive: true),
-            platform: platform,
-            processManager: processManager,
-            stdio: stdio,
-          );
-          final CommandRunner<void> runner = createRunner(checkouts: checkouts);
-          await runner.run(<String>['next', '--$kStateOption', stateFile]);
-
-          final pb.ConductorState finalState = readStateFromFile(fileSystem.file(stateFile));
-
-          expect(processManager, hasNoRemainingExpectations);
-          expect(stdio.stdout, contains('Has CI passed for the engine PR?'));
-          expect(finalState.currentPhase, ReleasePhase.VERIFY_ENGINE_CI);
-          expect(stdio.error.contains('Aborting command.'), true);
-        });
-
-        test('updates currentPhase if user responds yes', () async {
-          stdio.stdin.add('y');
-          final FakePlatform platform = FakePlatform(
-            environment: <String, String>{
-              'HOME': <String>['path', 'to', 'home'].join(localPathSeparator),
-            },
-            operatingSystem: localOperatingSystem,
-            pathSeparator: localPathSeparator,
-          );
-          writeStateToFile(fileSystem.file(stateFile), state, <String>[]);
-          final Checkouts checkouts = Checkouts(
-            fileSystem: fileSystem,
-            parentDirectory: fileSystem.directory(checkoutsParentDirectory)
-              ..createSync(recursive: true),
-            platform: platform,
-            processManager: processManager,
-            stdio: stdio,
-          );
-          final CommandRunner<void> runner = createRunner(checkouts: checkouts);
-          await runner.run(<String>['next', '--$kStateOption', stateFile]);
-
-          final pb.ConductorState finalState = readStateFromFile(fileSystem.file(stateFile));
-
-          expect(processManager, hasNoRemainingExpectations);
-          expect(stdio.stdout, contains('Has CI passed for the engine PR?'));
-          expect(finalState.currentPhase, ReleasePhase.APPLY_FRAMEWORK_CHERRYPICKS);
-        });
       });
 
       group('APPLY_FRAMEWORK_CHERRYPICKS to PUBLISH_VERSION', () {
@@ -359,218 +136,9 @@ void main() {
           engineRevisionFile.writeAsStringSync(oldEngineVersion, flush: true);
         });
 
-        test(
-          'with no dart, engine or framework cherrypicks, updates engine revision if version mismatch',
-          () async {
-            stdio.stdin.add('n');
-            processManager.addCommands(<FakeCommand>[
-              const FakeCommand(command: <String>['git', 'fetch', 'upstream']),
-              // we want merged upstream commit, not local working commit
-              const FakeCommand(command: <String>['git', 'checkout', 'upstream/$candidateBranch']),
-              const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision1),
-              const FakeCommand(command: <String>['git', 'fetch', 'upstream']),
-              FakeCommand(
-                command: const <String>['git', 'checkout', workingBranch],
-                onRun: (_) {
-                  final File file = fileSystem.file('$checkoutsParentDirectory/framework/.ci.yaml')
-                    ..createSync();
-                  _initializeCiYamlFile(file);
-                },
-              ),
-              const FakeCommand(
-                command: <String>['git', 'status', '--porcelain'],
-                stdout: 'MM bin/internal/release-candidate-branch.version',
-              ),
-              const FakeCommand(command: <String>['git', 'add', '--all']),
-              const FakeCommand(
-                command: <String>[
-                  'git',
-                  'commit',
-                  '--message',
-                  'Create candidate branch version $candidateBranch for $releaseChannel',
-                ],
-              ),
-              const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision3),
-              const FakeCommand(
-                command: <String>['git', 'status', '--porcelain'],
-                stdout: 'MM bin/internal/engine.version',
-              ),
-              const FakeCommand(command: <String>['git', 'add', '--all']),
-              const FakeCommand(
-                command: <String>[
-                  'git',
-                  'commit',
-                  '--message',
-                  'Update Engine revision to $revision1 for $releaseChannel release $releaseVersion',
-                ],
-              ),
-              const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision4),
-            ]);
-            final pb.ConductorState state =
-                (pb.ConductorState.create()
-                  ..releaseChannel = releaseChannel
-                  ..releaseVersion = releaseVersion
-                  ..currentPhase = ReleasePhase.APPLY_FRAMEWORK_CHERRYPICKS
-                  ..framework =
-                      (pb.Repository.create()
-                        ..candidateBranch = candidateBranch
-                        ..checkoutPath = frameworkCheckoutPath
-                        ..mirror =
-                            (pb.Remote.create()
-                              ..name = 'mirror'
-                              ..url = mirrorRemoteUrl)
-                        ..upstream =
-                            (pb.Remote.create()
-                              ..name = 'upstream'
-                              ..url = upstreamRemoteUrl)
-                        ..workingBranch = workingBranch)
-                  ..engine =
-                      (pb.Repository.create()
-                        ..candidateBranch = candidateBranch
-                        ..checkoutPath = engineCheckoutPath
-                        ..upstream =
-                            (pb.Remote.create()
-                              ..name = 'upstream'
-                              ..url = engineUpstreamRemoteUrl)
-                        ..currentGitHead = revision1));
-            writeStateToFile(fileSystem.file(stateFile), state, <String>[]);
-            final Checkouts checkouts = Checkouts(
-              fileSystem: fileSystem,
-              parentDirectory: fileSystem.directory(checkoutsParentDirectory)
-                ..createSync(recursive: true),
-              platform: platform,
-              processManager: processManager,
-              stdio: stdio,
-            );
-            final CommandRunner<void> runner = createRunner(checkouts: checkouts);
-            await runner.run(<String>['next', '--$kStateOption', stateFile]);
-
-            expect(processManager, hasNoRemainingExpectations);
-            expect(
-              stdio.stdout,
-              contains('release-candidate-branch.version containing $candidateBranch'),
-            );
-            expect(
-              stdio.stdout,
-              contains('Updating engine revision from $oldEngineVersion to $revision1'),
-            );
-            expect(stdio.stdout, contains('Are you ready to push your framework branch'));
-          },
-        );
-
-        test(
-          'with no engine cherrypicks but a dart revision update, updates engine revision',
-          () async {
-            stdio.stdin.add('n');
-            processManager.addCommands(<FakeCommand>[
-              const FakeCommand(command: <String>['git', 'fetch', 'upstream']),
-              // we want merged upstream commit, not local working commit
-              const FakeCommand(command: <String>['git', 'checkout', 'upstream/$candidateBranch']),
-              const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision1),
-              const FakeCommand(command: <String>['git', 'fetch', 'upstream']),
-              FakeCommand(
-                command: const <String>['git', 'checkout', workingBranch],
-                onRun: (_) {
-                  final File file = fileSystem.file('$checkoutsParentDirectory/framework/.ci.yaml')
-                    ..createSync();
-                  _initializeCiYamlFile(file);
-                },
-              ),
-              const FakeCommand(
-                command: <String>['git', 'status', '--porcelain'],
-                stdout: 'MM bin/internal/release-candidate-branch.version',
-              ),
-              const FakeCommand(command: <String>['git', 'add', '--all']),
-              const FakeCommand(
-                command: <String>[
-                  'git',
-                  'commit',
-                  '--message',
-                  'Create candidate branch version $candidateBranch for $releaseChannel',
-                ],
-              ),
-              const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision3),
-              const FakeCommand(
-                command: <String>['git', 'status', '--porcelain'],
-                stdout: 'MM bin/internal/engine.version',
-              ),
-              const FakeCommand(command: <String>['git', 'add', '--all']),
-              const FakeCommand(
-                command: <String>[
-                  'git',
-                  'commit',
-                  '--message',
-                  'Update Engine revision to $revision1 for $releaseChannel release $releaseVersion',
-                ],
-              ),
-              const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision4),
-            ]);
-            final pb.ConductorState state =
-                (pb.ConductorState.create()
-                  ..releaseChannel = releaseChannel
-                  ..releaseVersion = releaseVersion
-                  ..currentPhase = ReleasePhase.APPLY_FRAMEWORK_CHERRYPICKS
-                  ..framework =
-                      (pb.Repository.create()
-                        ..candidateBranch = candidateBranch
-                        ..checkoutPath = frameworkCheckoutPath
-                        ..mirror =
-                            (pb.Remote.create()
-                              ..name = 'mirror'
-                              ..url = mirrorRemoteUrl)
-                        ..upstream =
-                            (pb.Remote.create()
-                              ..name = 'upstream'
-                              ..url = upstreamRemoteUrl)
-                        ..workingBranch = workingBranch)
-                  ..engine =
-                      (pb.Repository.create()
-                        ..candidateBranch = candidateBranch
-                        ..checkoutPath = engineCheckoutPath
-                        ..upstream =
-                            (pb.Remote.create()
-                              ..name = 'upstream'
-                              ..url = engineUpstreamRemoteUrl)
-                        ..dartRevision = 'abc123'));
-            writeStateToFile(fileSystem.file(stateFile), state, <String>[]);
-            final Checkouts checkouts = Checkouts(
-              fileSystem: fileSystem,
-              parentDirectory: fileSystem.directory(checkoutsParentDirectory)
-                ..createSync(recursive: true),
-              platform: platform,
-              processManager: processManager,
-              stdio: stdio,
-            );
-            final CommandRunner<void> runner = createRunner(checkouts: checkouts);
-            await runner.run(<String>['next', '--$kStateOption', stateFile]);
-
-            expect(processManager, hasNoRemainingExpectations);
-            expect(
-              stdio.stdout,
-              contains('release-candidate-branch.version containing $candidateBranch'),
-            );
-            expect(
-              stdio.stdout,
-              contains('Updating engine revision from $oldEngineVersion to $revision1'),
-            );
-            expect(stdio.stdout, contains('Are you ready to push your framework branch'));
-          },
-        );
-
         test('does not update state.currentPhase if user responds no', () async {
           stdio.stdin.add('n');
           processManager.addCommands(<FakeCommand>[
-            const FakeCommand(command: <String>['git', 'fetch', 'upstream']),
-            // we want merged upstream commit, not local working commit
-            FakeCommand(
-              command: const <String>['git', 'checkout', 'upstream/$candidateBranch'],
-              onRun: (_) {
-                final File file = fileSystem.file('$checkoutsParentDirectory/framework/.ci.yaml')
-                  ..createSync();
-                _initializeCiYamlFile(file);
-              },
-            ),
-            const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision1),
             const FakeCommand(command: <String>['git', 'fetch', 'upstream']),
             const FakeCommand(command: <String>['git', 'checkout', workingBranch]),
             const FakeCommand(
@@ -587,20 +155,6 @@ void main() {
               ],
             ),
             const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision3),
-            const FakeCommand(
-              command: <String>['git', 'status', '--porcelain'],
-              stdout: 'MM bin/internal/engine.version',
-            ),
-            const FakeCommand(command: <String>['git', 'add', '--all']),
-            const FakeCommand(
-              command: <String>[
-                'git',
-                'commit',
-                '--message',
-                'Update Engine revision to $revision1 for $releaseChannel release $releaseVersion',
-              ],
-            ),
-            const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision4),
           ]);
           writeStateToFile(fileSystem.file(stateFile), state, <String>[]);
           final Checkouts checkouts = Checkouts(
@@ -616,6 +170,7 @@ void main() {
 
           final pb.ConductorState finalState = readStateFromFile(fileSystem.file(stateFile));
 
+          expect(processManager, hasNoRemainingExpectations);
           expect(
             stdio.stdout,
             contains(
@@ -630,11 +185,6 @@ void main() {
           stdio.stdin.add('y');
           processManager.addCommands(<FakeCommand>[
             // Engine repo
-            const FakeCommand(command: <String>['git', 'fetch', 'upstream']),
-            // we want merged upstream commit, not local working commit
-            const FakeCommand(command: <String>['git', 'checkout', 'upstream/$candidateBranch']),
-            const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision1),
-            // Framework repo
             const FakeCommand(command: <String>['git', 'fetch', 'upstream']),
             FakeCommand(
               command: const <String>['git', 'checkout', workingBranch],
@@ -659,20 +209,6 @@ void main() {
             ),
             const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision3),
             const FakeCommand(
-              command: <String>['git', 'status', '--porcelain'],
-              stdout: 'MM bin/internal/engine.version',
-            ),
-            const FakeCommand(command: <String>['git', 'add', '--all']),
-            const FakeCommand(
-              command: <String>[
-                'git',
-                'commit',
-                '--message',
-                'Update Engine revision to $revision1 for $releaseChannel release $releaseVersion',
-              ],
-            ),
-            const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: revision4),
-            const FakeCommand(
               command: <String>['git', 'push', 'mirror', 'HEAD:refs/heads/$workingBranch'],
             ),
           ]);
@@ -691,10 +227,6 @@ void main() {
           final pb.ConductorState finalState = readStateFromFile(fileSystem.file(stateFile));
 
           expect(finalState.currentPhase, ReleasePhase.PUBLISH_VERSION);
-          expect(
-            stdio.stdout,
-            contains('Rolling new engine hash $revision1 to framework checkout...'),
-          );
           expect(stdio.stdout, contains('There was 1 cherrypick that was not auto-applied'));
           expect(
             stdio.stdout,
@@ -723,10 +255,6 @@ void main() {
                     (pb.Repository.create()
                       ..candidateBranch = candidateBranch
                       ..upstream = (pb.Remote.create()..url = FrameworkRepository.defaultUpstream))
-                ..engine =
-                    (pb.Repository.create()
-                      ..candidateBranch = candidateBranch
-                      ..upstream = (pb.Remote.create()..url = EngineRepository.defaultUpstream))
                 ..releaseVersion = releaseVersion);
         });
 

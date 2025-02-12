@@ -1703,6 +1703,10 @@ typedef struct {
   /// Specify a callback that is used to set the thread priority for embedder
   /// task runners.
   void (*thread_priority_setter)(FlutterThreadPriority);
+  /// Specify the task runner for the thread on which the UI tasks will be run.
+  /// This may be same as platform_task_runner, in which case the Flutter engine
+  /// will run the UI isolate on platform thread.
+  const FlutterTaskRunnerDescription* ui_task_runner;
 } FlutterCustomTaskRunners;
 
 typedef struct {

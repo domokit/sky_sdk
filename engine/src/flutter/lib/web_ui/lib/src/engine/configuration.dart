@@ -275,6 +275,13 @@ class FlutterConfiguration {
     'FLUTTER_WEB_CANVASKIT_FORCE_CPU_ONLY',
   );
 
+  bool get canvasKitForceMultiSurfaceRasterizer =>
+      _configuration?.canvasKitForceMultiSurfaceRasterizer ??
+      _defaultCanvasKitForceMultiSurfaceRasterizer;
+  static const bool _defaultCanvasKitForceMultiSurfaceRasterizer = bool.fromEnvironment(
+    'FLUTTER_WEB_CANVASKIT_FORCE_MULTI_SURFACE_RASTERIZER',
+  );
+
   /// The maximum number of canvases to use when rendering in CanvasKit.
   ///
   /// Limits the amount of overlays that can be created.
@@ -369,6 +376,10 @@ extension JsFlutterConfigurationExtension on JsFlutterConfiguration {
   @JS('canvasKitForceCpuOnly')
   external JSBoolean? get _canvasKitForceCpuOnly;
   bool? get canvasKitForceCpuOnly => _canvasKitForceCpuOnly?.toDart;
+
+  @JS('canvasKitForceMultiSurfaceRasterizer')
+  external JSBoolean? get _canvasKitForceMultiSurfaceRasterizer;
+  bool? get canvasKitForceMultiSurfaceRasterizer => _canvasKitForceMultiSurfaceRasterizer?.toDart;
 
   @JS('canvasKitMaximumSurfaces')
   external JSNumber? get _canvasKitMaximumSurfaces;

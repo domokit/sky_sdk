@@ -2538,6 +2538,231 @@ void main() {
     );
     expect(navBar.preferredSize.height, persistentHeight + bottomHeight);
   });
+
+  testWidgets('CupertinoSliverNavigationBar.search field collapses nav bar on tap', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const CupertinoApp(
+        home: CustomScrollView(
+          slivers: <Widget>[
+            CupertinoSliverNavigationBar.search(
+              leading: Icon(CupertinoIcons.person_2),
+              trailing: Icon(CupertinoIcons.add_circled),
+              largeTitle: Text('Large title'),
+              middle: Text('middle'),
+              searchField: CupertinoSearchTextField(),
+            ),
+            SliverFillRemaining(child: SizedBox(height: 1000.0)),
+          ],
+        ),
+      ),
+    );
+
+    final Finder searchFieldFinder = find.byType(CupertinoSearchTextField);
+    final Finder largeTitleFinder =
+        find.ancestor(of: find.text('Large title').first, matching: find.byType(Padding)).first;
+    final Finder middleFinder =
+        find.ancestor(of: find.text('middle').first, matching: find.byType(Padding)).first;
+
+    // Initially, all widgets are visible.
+    expect(find.byIcon(CupertinoIcons.person_2), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.add_circled), findsOneWidget);
+    expect(largeTitleFinder, findsOneWidget);
+    expect(middleFinder.hitTestable(), findsOneWidget);
+    expect(searchFieldFinder, findsOneWidget);
+    // A decoy 'Cancel' button used in the animation.
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+
+    // Tap the search field.
+    await tester.tap(searchFieldFinder, warnIfMissed: false);
+    await tester.pump();
+    // Pump for the duration of the search field animation.
+    await tester.pump(const Duration(microseconds: 1) + const Duration(milliseconds: 300));
+
+    // After tapping, the leading and trailing widgets are removed from the
+    // widget tree, the large title is collapsed, and middle is hidden
+    // underneath the navigation bar.
+    expect(find.byIcon(CupertinoIcons.person_2), findsNothing);
+    expect(find.byIcon(CupertinoIcons.add_circled), findsNothing);
+    expect(tester.getBottomRight(largeTitleFinder).dy, 0.0);
+    expect(middleFinder.hitTestable(), findsNothing);
+
+    // Search field and 'Cancel' button are visible.
+    expect(searchFieldFinder, findsOneWidget);
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+
+    // Tap the 'Cancel' button to exit the search view.
+    await tester.tap(find.widgetWithText(CupertinoButton, 'Cancel'));
+    await tester.pump();
+    // Pump for the duration of the search field animation.
+    await tester.pump(const Duration(microseconds: 1) + const Duration(milliseconds: 300));
+
+    // All widgets are visible again.
+    expect(find.byIcon(CupertinoIcons.person_2), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.add_circled), findsOneWidget);
+    expect(largeTitleFinder, findsOneWidget);
+    expect(middleFinder.hitTestable(), findsOneWidget);
+    expect(searchFieldFinder, findsOneWidget);
+    // A decoy 'Cancel' button used in the animation.
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+  });
+
+  testWidgets('onSearchableBottomTap callback', (WidgetTester tester) async {
+    const Color activeSearchColor = Color(0x0000000A);
+    const Color inactiveSearchColor = Color(0x0000000B);
+    bool isSearchActive = false;
+    String text = '';
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return CustomScrollView(
+              slivers: <Widget>[
+                CupertinoSliverNavigationBar.search(
+                  searchField: CupertinoSearchTextField(
+                    onChanged: (String value) {
+                      setState(() {
+                        text = 'The text has changed to: $value';
+                      });
+                    },
+                  ),
+                  onSearchableBottomTap: (bool value) {
+                    setState(() {
+                      isSearchActive = value;
+                    });
+                  },
+                  largeTitle: const Text('Large title'),
+                  middle: const Text('middle'),
+                  bottomMode: NavigationBarBottomMode.always,
+                ),
+                SliverFillRemaining(
+                  child: ColoredBox(
+                    color: isSearchActive ? activeSearchColor : inactiveSearchColor,
+                    child: Text(text),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+
+    // Initially, all widgets are visible.
+    expect(find.text('Large title'), findsOneWidget);
+    expect(find.text('middle'), findsOneWidget);
+    expect(find.widgetWithText(CupertinoSearchTextField, 'Search'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((Widget widget) {
+        return widget is ColoredBox && widget.color == inactiveSearchColor;
+      }),
+      findsOneWidget,
+    );
+
+    // Tap the search field.
+    await tester.tap(find.widgetWithText(CupertinoSearchTextField, 'Search'), warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    // Search field and 'Cancel' button should be visible.
+    expect(isSearchActive, true);
+    expect(find.widgetWithText(CupertinoSearchTextField, 'Search'), findsOneWidget);
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((Widget widget) {
+        return widget is ColoredBox && widget.color == activeSearchColor;
+      }),
+      findsOneWidget,
+    );
+
+    // Enter text into search field to search.
+    await tester.enterText(find.widgetWithText(CupertinoSearchTextField, 'Search'), 'aaa');
+    await tester.pumpAndSettle();
+
+    // The entered text is shown in the search view.
+    expect(find.text('The text has changed to: aaa'), findsOne);
+  });
+
+  testWidgets(
+    'CupertinoSliverNavigationBar.search large title and cancel buttons fade during search animation',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const CupertinoApp(
+          home: CustomScrollView(
+            slivers: <Widget>[
+              CupertinoSliverNavigationBar.search(
+                largeTitle: Text('Large title'),
+                middle: Text('Middle'),
+                searchField: CupertinoSearchTextField(),
+              ),
+              SliverFillRemaining(child: SizedBox(height: 1000.0)),
+            ],
+          ),
+        ),
+      );
+
+      // Initially, all widgets are visible.
+      final RenderAnimatedOpacity largeTitleOpacity =
+          tester
+              .element(find.text('Large title'))
+              .findAncestorRenderObjectOfType<RenderAnimatedOpacity>()!;
+      // The opacity of the decoy 'Cancel' button, which is always semi-transparent.
+      final RenderOpacity decoyCancelOpacity =
+          tester
+              .element(find.widgetWithText(CupertinoButton, 'Cancel'))
+              .findAncestorRenderObjectOfType<RenderOpacity>()!;
+
+      expect(largeTitleOpacity.opacity.value, 1.0);
+      expect(decoyCancelOpacity.opacity, 0.4);
+
+      // Tap the search field, and pump up until partway through the animation.
+      await tester.tap(
+        find.widgetWithText(CupertinoSearchTextField, 'Search'),
+        warnIfMissed: false,
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // During the inactive-to-active search animation, the large title fades
+      // out and the 'Cancel' button remains at a constant semi-transparent
+      // value.
+      expect(largeTitleOpacity.opacity.value, lessThan(1.0));
+      expect(largeTitleOpacity.opacity.value, greaterThan(0.0));
+      expect(decoyCancelOpacity.opacity, 0.4);
+
+      // At the end of the animation, the large title has completely faded out.
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(largeTitleOpacity.opacity.value, 0.0);
+      expect(decoyCancelOpacity.opacity, 0.4);
+
+      // The opacity of the tappable 'Cancel' button.
+      final RenderAnimatedOpacity cancelOpacity =
+          tester
+              .element(find.widgetWithText(CupertinoButton, 'Cancel'))
+              .findAncestorRenderObjectOfType<RenderAnimatedOpacity>()!;
+
+      expect(cancelOpacity.opacity.value, 1.0);
+
+      // Tap the 'Cancel' button, and pump up until partway through the animation.
+      await tester.tap(find.widgetWithText(CupertinoButton, 'Cancel'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // During the active-to-inactive search animation, the large title fades
+      // in and the 'Cancel' button fades out.
+      expect(largeTitleOpacity.opacity.value, lessThan(1.0));
+      expect(largeTitleOpacity.opacity.value, greaterThan(0.0));
+      expect(cancelOpacity.opacity.value, lessThan(1.0));
+      expect(cancelOpacity.opacity.value, greaterThan(0.0));
+
+      // At the end of the animation, the large title has completely faded in
+      // and the 'Cancel' button has completely faded out.
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(largeTitleOpacity.opacity.value, 1.0);
+      expect(cancelOpacity.opacity.value, 0.0);
+    },
+  );
 }
 
 class _ExpectStyles extends StatelessWidget {

@@ -627,4 +627,8 @@ void Engine::ShutdownPlatformIsolates() {
   runtime_controller_->ShutdownPlatformIsolates();
 }
 
+void Engine::FlushMicrotaskQueue() {
+  runtime_controller_->FlushMicrotaskQueue();
+}
+
 }  // namespace flutter

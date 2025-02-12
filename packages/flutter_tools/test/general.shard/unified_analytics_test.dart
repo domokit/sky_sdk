@@ -37,14 +37,10 @@ void main() {
 
     testWithoutContext('getEnabledFeatures not null', () {
       config.setValue('cli-animations', true);
-      config.setValue('enable-flutter-preview', true);
 
       final String? enabledFeatures = getEnabledFeatures(config);
       expect(enabledFeatures, isNotNull);
-      expect(
-        enabledFeatures!.split(','),
-        unorderedEquals(<String>['enable-flutter-preview', 'cli-animations']),
-      );
+      expect(enabledFeatures!.split(','), unorderedEquals(<String>['cli-animations']));
     });
   });
 

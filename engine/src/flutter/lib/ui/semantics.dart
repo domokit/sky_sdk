@@ -362,6 +362,12 @@ enum SemanticsRole {
 
   /// The main display for a tab.
   tabPanel,
+
+  /// A pop up dialog.
+  dialog,
+
+  /// An alert dialog.
+  alertDialog,
 }
 
 /// A Boolean value that can be associated with a semantics node.

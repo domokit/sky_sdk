@@ -18,7 +18,6 @@ import '../base/process.dart';
 import '../build_info.dart';
 import '../device.dart';
 import '../resident_runner.dart';
-import '../sksl_writer.dart';
 import '../vmservice.dart';
 import 'web_driver_service.dart';
 
@@ -102,11 +101,7 @@ abstract class DriverService {
   });
 
   /// Stop the running application and uninstall it from the device.
-  ///
-  /// If [writeSkslOnExit] is non-null, will connect to the VM Service
-  /// and write SkSL to the file. This is only supported on mobile and
-  /// desktop devices.
-  Future<void> stop({File? writeSkslOnExit, String? userIdentifier});
+  Future<void> stop({String? userIdentifier});
 }
 
 /// An implementation of the driver service that connects to mobile and desktop
@@ -269,12 +264,7 @@ class FlutterDriverService extends DriverService {
   }
 
   @override
-  Future<void> stop({File? writeSkslOnExit, String? userIdentifier}) async {
-    if (writeSkslOnExit != null) {
-      final FlutterView flutterView = (await _vmService.getFlutterViews()).first;
-      final Map<String, Object?>? result = await _vmService.getSkSLs(viewId: flutterView.id);
-      await sharedSkSlWriter(_device!, result, outputFile: writeSkslOnExit, logger: _logger);
-    }
+  Future<void> stop({String? userIdentifier}) async {
     // If the application package is available, stop and uninstall.
     final ApplicationPackage? package = _applicationPackage;
     if (package != null) {

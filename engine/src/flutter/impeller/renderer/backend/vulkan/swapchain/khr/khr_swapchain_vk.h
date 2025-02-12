@@ -56,6 +56,8 @@ class KHRSwapchainVK final : public SwapchainVK {
   KHRSwapchainVK(const KHRSwapchainVK&) = delete;
 
   KHRSwapchainVK& operator=(const KHRSwapchainVK&) = delete;
+
+  std::unique_ptr<Surface> AcquireNextDrawable(size_t resize_retry_count);
 };
 
 }  // namespace impeller

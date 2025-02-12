@@ -1,0 +1,17 @@
+# Copyright 2013 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//flutter/impeller/tools/impeller.gni")
+
+impeller_component("gles") {
+  public_deps = [ "../../:interop_base" ]
+  sources = [
+    "context_gles.cc",
+    "context_gles.h",
+    "reactor_worker_gles.cc",
+    "reactor_worker_gles.h",
+    "surface_gles.cc",
+    "surface_gles.h",
+  ]
+}

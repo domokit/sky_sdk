@@ -8,7 +8,6 @@
 
 #include "flutter/fml/mapping.h"
 #include "impeller/base/validation.h"
-#include "impeller/core/texture.h"
 #include "impeller/geometry/scalar.h"
 #include "impeller/renderer/backend/gles/context_gles.h"
 #include "impeller/renderer/backend/gles/texture_gles.h"
@@ -31,6 +30,22 @@
 #include "impeller/toolkit/interop/texture.h"
 #include "impeller/toolkit/interop/typography_context.h"
 
+#if IMPELLER_ENABLE_OPENGLES
+#include "impeller/toolkit/interop/backend/gles/context_gles.h"
+#include "impeller/toolkit/interop/backend/gles/surface_gles.h"
+#endif  // IMPELLER_ENABLE_OPENGLES
+
+#if IMPELLER_ENABLE_METAL
+#include "impeller/toolkit/interop/backend/metal/context_mtl.h"
+#include "impeller/toolkit/interop/backend/metal/surface_mtl.h"
+#endif  // IMPELLER_ENABLE_METAL
+
+#if IMPELLER_ENABLE_VULKAN
+#include "impeller/toolkit/interop/backend/vulkan/context_vk.h"
+#include "impeller/toolkit/interop/backend/vulkan/surface_vk.h"
+#include "impeller/toolkit/interop/backend/vulkan/swapchain_vk.h"
+#endif  // IMPELLER_ENABLE_VULKAN
+
 namespace impeller::interop {
 
 #define DEFINE_PEER_GETTER(cxx_type, c_type)    \
@@ -52,6 +67,7 @@ DEFINE_PEER_GETTER(ParagraphStyle, ImpellerParagraphStyle);
 DEFINE_PEER_GETTER(Path, ImpellerPath);
 DEFINE_PEER_GETTER(PathBuilder, ImpellerPathBuilder);
 DEFINE_PEER_GETTER(Surface, ImpellerSurface);
+DEFINE_PEER_GETTER(SwapchainVK, ImpellerVulkanSwapchain);
 DEFINE_PEER_GETTER(Texture, ImpellerTexture);
 DEFINE_PEER_GETTER(TypographyContext, ImpellerTypographyContext);
 
@@ -69,19 +85,27 @@ uint32_t ImpellerGetVersion() {
   return IMPELLER_VERSION;
 }
 
-IMPELLER_EXTERN_C
-ImpellerContext ImpellerContextCreateOpenGLESNew(
-    uint32_t version,
-    ImpellerProcAddressCallback gl_proc_address_callback,
-    void* gl_proc_address_callback_user_data) {
+static bool CheckVersion(uint32_t version) {
   if (version != IMPELLER_VERSION) {
     VALIDATION_LOG << "This version of Impeller ("
                    << GetVersionAsString(ImpellerGetVersion()) << ") "
                    << "doesn't match the version the user expects ("
                    << GetVersionAsString(version) << ").";
+    return false;
+  }
+  return true;
+}
+
+IMPELLER_EXTERN_C
+ImpellerContext ImpellerContextCreateOpenGLESNew(
+    uint32_t version,
+    ImpellerProcAddressCallback gl_proc_address_callback,
+    void* gl_proc_address_callback_user_data) {
+  if (!CheckVersion(version)) {
     return nullptr;
   }
-  auto context = Context::CreateOpenGLES(
+#if IMPELLER_ENABLE_OPENGLES
+  auto context = ContextGLES::Create(
       [gl_proc_address_callback,
        gl_proc_address_callback_user_data](const char* proc_name) -> void* {
         return gl_proc_address_callback(proc_name,
@@ -92,6 +116,47 @@ ImpellerContext ImpellerContextCreateOpenGLESNew(
     return nullptr;
   }
   return context.Leak();
+#else   // IMPELLER_ENABLE_OPENGLES
+  VALIDATION_LOG << "OpenGLES not available.";
+  return nullptr;
+#endif  // IMPELLER_ENABLE_OPENGLES
+}
+
+IMPELLER_EXTERN_C ImpellerContext ImpellerContextCreateMetalNew(
+    uint32_t version) {
+  if (!CheckVersion(version)) {
+    return nullptr;
+  }
+#if IMPELLER_ENABLE_METAL
+  auto context = ContextMTL::Create();
+  if (!context || !context->IsValid()) {
+    VALIDATION_LOG << "Could not create valid context.";
+    return nullptr;
+  }
+  return context.Leak();
+#else   // IMPELLER_ENABLE_METAL
+  VALIDATION_LOG << "Metal not available.";
+  return nullptr;
+#endif  // IMPELLER_ENABLE_METAL
+}
+
+IMPELLER_EXTERN_C ImpellerContext ImpellerContextCreateVulkanNew(
+    uint32_t version,
+    const ImpellerContextVulkanSettings* settings) {
+  if (!CheckVersion(version)) {
+    return nullptr;
+  }
+#if IMPELLER_ENABLE_VULKAN
+  auto context = ContextVK::Create(ContextVK::Settings(*settings));
+  if (!context || !context->IsValid()) {
+    VALIDATION_LOG << "Could not create valid context.";
+    return nullptr;
+  }
+  return context.Leak();
+#else   // IMPELLER_ENABLE_VULKAN
+  VALIDATION_LOG << "Vulkan not available.";
+  return nullptr;
+#endif  // IMPELLER_ENABLE_VULKAN
 }
 
 IMPELLER_EXTERN_C
@@ -105,7 +170,54 @@ void ImpellerContextRelease(ImpellerContext context) {
 }
 
 IMPELLER_EXTERN_C
-ImpellerDisplayListBuilder ImpellerDisplayListBuilderNew(
+bool ImpellerContextGetVulkanInfo(ImpellerContext IMPELLER_NONNULL context,
+                                  ImpellerContextVulkanInfo* out_vulkan_info) {
+#if IMPELLER_ENABLE_VULKAN
+  if (!GetPeer(context)->IsVulkan()) {
+    VALIDATION_LOG << "Not a Vulkan context.";
+    return false;
+  }
+  return reinterpret_cast<ContextVK*>(GetPeer(context))
+      ->GetInfo(*out_vulkan_info);
+#else   // IMPELLER_ENABLE_VULKAN
+  VALIDATION_LOG << "Vulkan not available.";
+  return nullptr;
+#endif  // IMPELLER_ENABLE_VULKAN
+}
+
+IMPELLER_EXTERN_C
+ImpellerVulkanSwapchain ImpellerVulkanSwapchainCreateNew(
+    ImpellerContext context,
+    void* vulkan_surface_khr) {
+#if IMPELLER_ENABLE_VULKAN
+  return Create<SwapchainVK>(
+             *GetPeer(context),                                  //
+             reinterpret_cast<VkSurfaceKHR>(vulkan_surface_khr)  //
+             )
+      .Leak();
+#else   // IMPELLER_ENABLE_VULKAN
+  VALIDATION_LOG << "Vulkan not available.";
+  return nullptr;
+#endif  // IMPELLER_ENABLE_VULKAN
+}
+
+IMPELLER_EXTERN_C
+void ImpellerVulkanSwapchainRetain(ImpellerVulkanSwapchain swapchain) {
+  ObjectBase::SafeRetain(swapchain);
+}
+
+IMPELLER_EXTERN_C
+void ImpellerVulkanSwapchainRelease(ImpellerVulkanSwapchain swapchain) {
+  ObjectBase::SafeRelease(swapchain);
+}
+
+IMPELLER_EXTERN_C
+ImpellerSurface ImpellerVulkanSwapchainAcquireNextSurfaceNew(
+    ImpellerVulkanSwapchain swapchain) {
+  return GetPeer(swapchain)->AcquireNextSurface().Leak();
+}
+
+IMPELLER_EXTERN_C ImpellerDisplayListBuilder ImpellerDisplayListBuilderNew(
     const ImpellerRect* cull_rect) {
   return Create<DisplayListBuilder>(cull_rect).Leak();
 }
@@ -475,7 +587,7 @@ ImpellerTexture ImpellerTextureCreateWithContentsNew(
     const ImpellerMapping* contents,
     void* contents_on_release_user_data) {
   TextureDescriptor desc;
-  desc.storage_mode = StorageMode::kDevicePrivate;
+  desc.storage_mode = StorageMode::kHostVisible;
   desc.type = TextureType::kTexture2D;
   desc.format = ToImpellerType(descriptor->pixel_format);
   desc.size = ToImpellerType(descriptor->size);
@@ -525,7 +637,8 @@ ImpellerTexture ImpellerTextureCreateWithOpenGLTextureHandleNew(
     return nullptr;
   }
 
-  const auto& impeller_context_gl = ContextGLES::Cast(*impeller_context);
+  const auto& impeller_context_gl =
+      impeller::ContextGLES::Cast(*impeller_context);
   const auto& reactor = impeller_context_gl.GetReactor();
 
   TextureDescriptor desc;
@@ -608,15 +721,39 @@ ImpellerSurface ImpellerSurfaceCreateWrappedFBONew(ImpellerContext context,
                                                    uint64_t fbo,
                                                    ImpellerPixelFormat format,
                                                    const ImpellerISize* size) {
-  return Surface::WrapFBO(*GetPeer(context),       //
-                          fbo,                     //
-                          ToImpellerType(format),  //
-                          ToImpellerType(*size))   //
+#if IMPELLER_ENABLE_OPENGLES
+  if (!GetPeer(context)->IsGL()) {
+    VALIDATION_LOG << "Context is not OpenGL.";
+    return nullptr;
+  }
+  return Create<SurfaceGLES>(*GetPeer(context),       //
+                             fbo,                     //
+                             ToImpellerType(format),  //
+                             ToImpellerType(*size))   //
       .Leak();
+#else   // IMPELLER_ENABLE_OPENGLES
+  VALIDATION_LOG << "OpenGL unavailable.";
+  return nullptr;
+#endif  // IMPELLER_ENABLE_OPENGLES
 }
 
 IMPELLER_EXTERN_C
-void ImpellerSurfaceRetain(ImpellerSurface surface) {
+ImpellerSurface ImpellerSurfaceCreateWrappedMetalDrawableNew(
+    ImpellerContext context,
+    void* metal_drawable) {
+#if IMPELLER_ENABLE_METAL
+  if (!GetPeer(context)->IsMetal()) {
+    VALIDATION_LOG << "Context is not Metal.";
+    return nullptr;
+  }
+  return Create<SurfaceMTL>(*GetPeer(context), metal_drawable).Leak();
+#else   // IMPELLER_ENABLE_METAL
+  VALIDATION_LOG << "Metal unavailable.";
+  return nullptr;
+#endif  // IMPELLER_ENABLE_METAL
+}
+
+IMPELLER_EXTERN_C void ImpellerSurfaceRetain(ImpellerSurface surface) {
   ObjectBase::SafeRetain(surface);
 }
 
@@ -629,6 +766,11 @@ IMPELLER_EXTERN_C
 bool ImpellerSurfaceDrawDisplayList(ImpellerSurface surface,
                                     ImpellerDisplayList display_list) {
   return GetPeer(surface)->DrawDisplayList(*GetPeer(display_list));
+}
+
+IMPELLER_EXTERN_C
+bool ImpellerSurfacePresent(ImpellerSurface surface) {
+  return GetPeer(surface)->Present();
 }
 
 IMPELLER_EXTERN_C

@@ -15,6 +15,7 @@
 #include "flutter/shell/gpu/gpu_surface_vulkan_impeller.h"
 #include "flutter/vulkan/vulkan_native_surface_android.h"
 #include "impeller/renderer/backend/vulkan/swapchain/ahb/ahb_swapchain_vk.h"
+#include "impeller/toolkit/android/surface_transaction.h"
 
 namespace flutter {
 
@@ -96,6 +97,9 @@ bool AndroidSurfaceVKImpeller::SetNativeWindow(
 
   impeller::CreateTransactionCB cb = [jni_facade]() {
     ASurfaceTransaction* tx = jni_facade->createTransaction();
+    if (tx == nullptr) {
+      return impeller::android::SurfaceTransaction();
+    }
     return impeller::android::SurfaceTransaction(tx);
   };
 

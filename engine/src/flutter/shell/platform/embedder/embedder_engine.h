@@ -38,6 +38,8 @@ class EmbedderEngine {
 
   bool CollectShell();
 
+  void CollectThreadHost();
+
   const TaskRunners& GetTaskRunners() const;
 
   bool NotifyCreated();
@@ -88,7 +90,7 @@ class EmbedderEngine {
   Shell& GetShell();
 
  private:
-  const std::unique_ptr<EmbedderThreadHost> thread_host_;
+  std::unique_ptr<EmbedderThreadHost> thread_host_;
   TaskRunners task_runners_;
   RunConfiguration run_configuration_;
   std::unique_ptr<ShellArgs> shell_args_;

@@ -120,8 +120,6 @@ class FrameService {
     required ui.VoidCallback beginFrame,
     required ui.VoidCallback drawFrame,
   }) {
-    _isFrameScheduled = true;
-
     // A note from dkwingsmt:
     //
     // We use timers here to ensure that microtasks flush in between.
@@ -133,7 +131,6 @@ class FrameService {
     // https://github.com/flutter/engine/pull/50570#discussion_r1496671676
 
     Timer.run(() {
-      _isFrameScheduled = false;
       _isRenderingFrame = true;
       _debugFrameNumber += 1;
       // TODO(yjbanov): it's funky that if beginFrame crashes, the drawFrame
@@ -142,10 +139,15 @@ class FrameService {
       //                "we did this before so let's continue doing it" excuse
       //                only works so far (referring to the discussion linked
       //                above).
-      beginFrame();
+      try {
+        beginFrame();
+      } finally {
+        _isRenderingFrame = false;
+      }
     });
 
     Timer.run(() {
+      _isRenderingFrame = true;
       try {
         drawFrame();
       } finally {

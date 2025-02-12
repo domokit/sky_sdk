@@ -18,6 +18,11 @@ import 'package:path/path.dart' as path;
 /// adding Flutter to an existing iOS app.
 Future<void> main() async {
   await task(() async {
+    // TODO(matanlurey): Remove after default.
+    // https://github.com/flutter/flutter/issues/160257
+    section('Opt-in to --explicit-package-dependencies');
+    await flutter('config', options: <String>['--explicit-package-dependencies']);
+
     // Update pod repo.
     await eval(
       'pod',
@@ -85,7 +90,7 @@ dependencies:
       section('Build ephemeral host app in release mode without CocoaPods');
 
       await inDirectory(projectDir, () async {
-        await flutter('build', options: <String>['ios', '--no-codesign', '--verbose']);
+        await flutter('build', options: <String>['ios', '--no-codesign']);
       });
 
       // Check the tool is no longer copying to the legacy xcframework location.
@@ -606,7 +611,7 @@ end
       );
 
       if (!xcodebuildOutput.contains(
-            'flutter --verbose --local-engine-src-path=bogus assemble',
+            RegExp('flutter.*--local-engine-src-path=bogus assemble'),
           ) || // Verbose output
           !xcodebuildOutput.contains(
             'Unable to detect a Flutter engine build directory in bogus',
