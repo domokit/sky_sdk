@@ -48,10 +48,33 @@ class CanvasKitRenderer implements Renderer {
   Rasterizer _rasterizer = _createRasterizer();
 
   static Rasterizer _createRasterizer() {
-    if (isSafari || isFirefox) {
-      return MultiSurfaceRasterizer();
+    if (configuration.canvasKitUseOffscreenCanvas) {
+      return OffscreenCanvasRasterizer();
     }
-    return OffscreenCanvasRasterizer();
+    return MultiSurfaceRasterizer();
+  }
+
+  /// Returns the [Rasterizer] used by this renderer.
+  ///
+  /// This should only be used in tests.
+  Rasterizer debugGetRasterizer() {
+    bool assertsEnabled = false;
+    assert(() {
+      assertsEnabled = true;
+      return true;
+    }());
+    if (assertsEnabled) {
+      return _rasterizer;
+    }
+    throw StateError('debugGetRasterizer() can only be called when asserts are enabled');
+  }
+
+  /// Resets the [Rasterizer] to the default value.
+  ///
+  /// This should only be used in tests. This resets the [Rasterizer] if it was
+  /// overridden using [debugOverrideRasterizer].
+  void debugResetRasterizer() {
+    _rasterizer = _createRasterizer();
   }
 
   /// Override the rasterizer with the given [_rasterizer]. Used in tests.
@@ -521,6 +544,7 @@ class CanvasKitRenderer implements Renderer {
     for (final ViewRasterizer rasterizer in _rasterizers.values) {
       rasterizer.debugClear();
     }
+    _rasterizer = _createRasterizer();
   }
 
   @override

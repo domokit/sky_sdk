@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:js_interop';
+
 import 'package:test/bootstrap/browser.dart';
 import 'package:test/test.dart';
 
@@ -44,7 +46,8 @@ class TestViewRasterizer extends ViewRasterizer {
   List<LayerTree> treesRendered = <LayerTree>[];
 
   @override
-  DisplayCanvasFactory<DisplayCanvas> get displayFactory => throw UnimplementedError();
+  DisplayCanvasFactory<DisplayCanvas> get displayFactory =>
+      DisplayCanvasFactory(createCanvas: () => throw UnimplementedError());
 
   @override
   void prepareToDraw() {
@@ -67,6 +70,23 @@ class TestViewRasterizer extends ViewRasterizer {
 void testMain() {
   group('Renderer', () {
     setUpCanvasKitTest();
+
+    tearDown(() {
+      CanvasKitRenderer.instance.debugClear();
+    });
+
+    test('Uses MultiSurfaceRasterizer by default', () {
+      expect(CanvasKitRenderer.instance.debugGetRasterizer(), isA<MultiSurfaceRasterizer>());
+    });
+
+    test('Can be configured to use OffscreenCanvasRasterizer', () {
+      debugOverrideJsConfiguration(
+        <String, Object?>{'canvasKitUseOffscreenCanvas': true}.jsify() as JsFlutterConfiguration?,
+      );
+      addTearDown(() => debugOverrideJsConfiguration(null));
+      CanvasKitRenderer.instance.debugResetRasterizer();
+      expect(CanvasKitRenderer.instance.debugGetRasterizer(), isA<OffscreenCanvasRasterizer>());
+    });
 
     test('always renders most recent picture and skips intermediate pictures', () async {
       final TestRasterizer testRasterizer = TestRasterizer();

@@ -264,6 +264,15 @@ class FlutterConfiguration {
     return CanvasKitVariant.values.byName(variant);
   }
 
+  /// If set to `true`, causes CanvasKit to use a single OffscreenCanvas to
+  /// render instead of multiple on-screen canvases each with their own
+  /// WebGL context.
+  bool get canvasKitUseOffscreenCanvas =>
+      _configuration?.canvasKitUseOffscreenCanvas ?? _defaultCanvasKitUseOffscreenCanvas;
+  static const bool _defaultCanvasKitUseOffscreenCanvas = bool.fromEnvironment(
+    'FLUTTER_WEB_CANVASKIT_USE_OFFSCREENCANVAS',
+  );
+
   /// If set to true, forces CPU-only rendering in CanvasKit (i.e. the engine
   /// won't use WebGL).
   ///
@@ -365,6 +374,10 @@ extension JsFlutterConfigurationExtension on JsFlutterConfiguration {
   @JS('canvasKitVariant')
   external JSString? get _canvasKitVariant;
   String? get canvasKitVariant => _canvasKitVariant?.toDart;
+
+  @JS('canvasKitUseOffscreenCanvas')
+  external JSBoolean? get _canvasKitUseOffscreenCanvas;
+  bool? get canvasKitUseOffscreenCanvas => _canvasKitUseOffscreenCanvas?.toDart;
 
   @JS('canvasKitForceCpuOnly')
   external JSBoolean? get _canvasKitForceCpuOnly;
