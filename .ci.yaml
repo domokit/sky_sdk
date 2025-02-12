@@ -4897,7 +4897,6 @@ targets:
   - name: Mac_arm64_ios imitation_game_swiftui
     recipe: devicelab/devicelab_drone
     presubmit: false
-    bringup: true
     timeout: 60
     properties:
       tags: >
