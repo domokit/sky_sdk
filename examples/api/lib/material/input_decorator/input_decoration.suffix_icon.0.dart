@@ -13,9 +13,8 @@ class SuffixIconExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const Scaffold(body: InputDecoratorExample()),
+    return const MaterialApp(
+      home: Scaffold(body: InputDecoratorExample()),
     );
   }
 }

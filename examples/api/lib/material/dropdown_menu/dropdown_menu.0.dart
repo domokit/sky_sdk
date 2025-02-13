@@ -77,7 +77,7 @@ class _DropdownMenuExampleState extends State<DropdownMenuExample> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.green),
+      theme: ThemeData(colorSchemeSeed: Colors.green),
       home: Scaffold(
         body: SafeArea(
           child: Column(

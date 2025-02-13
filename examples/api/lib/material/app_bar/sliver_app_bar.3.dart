@@ -16,7 +16,7 @@ class AppBarLargeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: const Color(0xff6750A4)),
+      theme: ThemeData(colorSchemeSeed: const Color(0xff6750A4)),
       home: Material(
         child: CustomScrollView(
           slivers: <Widget>[

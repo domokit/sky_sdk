@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('ToggleButtons allows multiple or no selection', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     Finder findButton(String text) {
       return find.descendant(
         of: find.byType(ToggleButtons),
@@ -71,7 +71,7 @@ void main() {
   });
 
   testWidgets('SegmentedButton allows multiple or no selection', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     Finder findButton(String text) {
       return find.descendant(
         of: find.byType(SegmentedButton<example.ShirtSize>),
