@@ -219,7 +219,13 @@ class FixedExtentScrollController extends ScrollController {
   /// Creates a scroll controller for scrollables whose items have the same size.
   ///
   /// [initialItem] defaults to zero.
-  FixedExtentScrollController({this.initialItem = 0, super.keepScrollOffset, super.debugLabel, super.onAttach, super.onDetach});
+  FixedExtentScrollController({
+    this.initialItem = 0,
+    super.keepScrollOffset,
+    super.debugLabel,
+    super.onAttach,
+    super.onDetach,
+  });
 
   /// The page to show when first creating the scroll view.
   ///
