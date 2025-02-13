@@ -117,6 +117,66 @@ void main() {
       expect(detach, 1);
     });
 
+    testWidgets('FixedExtentScrollController keepScrollOffset', (WidgetTester tester) async {
+      final PageStorageBucket bucket = PageStorageBucket();
+
+      Widget buildFrame(ScrollController controller) {
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: PageStorage(
+            bucket: bucket,
+            child: KeyedSubtree(
+              key: const PageStorageKey<String>('ListWheelScrollView'),
+              child: ListWheelScrollView(
+                key: UniqueKey(),
+                itemExtent: 100.0,
+                controller: controller,
+                children:
+                    List<Widget>.generate(100, (int index) {
+                      return SizedBox(height: 100.0, width: 400.0, child: Text('Item $index'));
+                    }).toList(),
+              ),
+            ),
+          ),
+        );
+      }
+
+      FixedExtentScrollController controller = FixedExtentScrollController(initialItem: 2);
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(buildFrame(controller));
+      expect(controller.selectedItem, 2);
+      expect(
+        tester.getTopLeft(find.widgetWithText(SizedBox, 'Item 2')),
+        offsetMoreOrLessEquals(const Offset(200.0, 250.0)),
+      );
+
+      controller.jumpToItem(20);
+      await tester.pump();
+      expect(controller.selectedItem, 20);
+      expect(
+        tester.getTopLeft(find.widgetWithText(SizedBox, 'Item 20')),
+        offsetMoreOrLessEquals(const Offset(200.0, 250.0)),
+      );
+
+      controller = FixedExtentScrollController(initialItem: 25);
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(buildFrame(controller));
+      expect(controller.selectedItem, 20);
+      expect(
+        tester.getTopLeft(find.widgetWithText(SizedBox, 'Item 20')),
+        offsetMoreOrLessEquals(const Offset(200.0, 250.0)),
+      );
+
+      controller = FixedExtentScrollController(keepScrollOffset: false, initialItem: 10);
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(buildFrame(controller));
+      expect(controller.selectedItem, 10);
+      expect(
+        tester.getTopLeft(find.widgetWithText(SizedBox, 'Item 10')),
+        offsetMoreOrLessEquals(const Offset(200.0, 250.0)),
+      );
+    });
+
     testWidgets('ListWheelScrollView needs positive magnification', (WidgetTester tester) async {
       expect(() {
         ListWheelScrollView(
