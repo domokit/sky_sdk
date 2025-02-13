@@ -805,7 +805,7 @@ void main() {
 
     // test for size
     final RenderBox icon = tester.renderObject(find.byKey(iconKey));
-    expect(icon.size, const Size(30.0, 30.0));
+    expect(icon.size, const Size(40.0, 30.0));
 
     // test for enabled color
     final RichText enabledRichText = tester.widget<RichText>(_iconRichText(iconKey));
@@ -1293,5 +1293,30 @@ void main() {
     // When alignedDropdown is true, the content should be at the same position.
     await tester.pumpWidget(buildFrame(alignedDropdown: true, textDirection: TextDirection.rtl));
     expect(tester.getRect(findSelectedValue), contentRectForUnalignedDropdown);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/157074.
+  testWidgets('DropdownButtonFormField icon is aligned with label text', (
+    WidgetTester tester,
+  ) async {
+    const String labelText = 'Label Text';
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: DropdownButtonFormField<String>(
+              decoration: const InputDecoration(labelText: labelText),
+              items:
+                  <String>['One', 'Two'].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(value: value, child: Text(value));
+                  }).toList(),
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.getCenter(find.text(labelText)).dy, tester.getCenter(find.byType(Icon).last).dy);
   });
 }
