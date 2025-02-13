@@ -389,6 +389,16 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
       });
     }
 
+    Color? effectiveIconColor() {
+      return widgetStyle?.iconColor?.resolve(statesController.value) ??
+          themeStyle?.iconColor?.resolve(statesController.value) ??
+          widgetStyle?.foregroundColor?.resolve(statesController.value) ??
+          themeStyle?.foregroundColor?.resolve(statesController.value) ??
+          defaultStyle.iconColor?.resolve(statesController.value) ??
+          // Fallback to foregroundColor if iconColor is null.
+          defaultStyle.foregroundColor?.resolve(statesController.value);
+    }
+
     final double? resolvedElevation = resolve<double?>((ButtonStyle? style) => style?.elevation);
     final TextStyle? resolvedTextStyle = resolve<TextStyle?>(
       (ButtonStyle? style) => style?.textStyle,
@@ -409,7 +419,7 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
     final Size? resolvedMinimumSize = resolve<Size?>((ButtonStyle? style) => style?.minimumSize);
     final Size? resolvedFixedSize = resolve<Size?>((ButtonStyle? style) => style?.fixedSize);
     final Size? resolvedMaximumSize = resolve<Size?>((ButtonStyle? style) => style?.maximumSize);
-    final Color? resolvedIconColor = resolve<Color?>((ButtonStyle? style) => style?.iconColor);
+    final Color? resolvedIconColor = effectiveIconColor();
     final double? resolvedIconSize = resolve<double?>((ButtonStyle? style) => style?.iconSize);
     final BorderSide? resolvedSide = resolve<BorderSide?>((ButtonStyle? style) => style?.side);
     final OutlinedBorder? resolvedShape = resolve<OutlinedBorder?>(
@@ -551,10 +561,7 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
       customBorder: resolvedShape!.copyWith(side: resolvedSide),
       statesController: statesController,
       child: IconTheme.merge(
-        data: IconThemeData(
-          color: resolvedIconColor ?? resolvedForegroundColor,
-          size: resolvedIconSize,
-        ),
+        data: IconThemeData(color: resolvedIconColor, size: resolvedIconSize),
         child: result,
       ),
     );
