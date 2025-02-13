@@ -626,14 +626,6 @@ gboolean fl_renderer_present_layers(FlRenderer* self,
       fl_renderer_get_instance_private(self));
   g_autoptr(FlEngine) engine = FL_ENGINE(g_weak_ref_get(&priv->engine));
 
-  if (engine == nullptr) {
-    // Task runner not available (i.e. test environment), run the callback
-    // synchronously.
-    fl_renderer_present_layers_trampoline(&data);
-    fl_renderer_make_current(self);
-    return data.res;
-  }
-
   FlTaskRunner* task_runner = fl_engine_get_task_runner(engine);
   fl_task_runner_post_callback(task_runner,
                                fl_renderer_present_layers_trampoline, &data);
