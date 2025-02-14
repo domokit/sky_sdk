@@ -1,43 +1,42 @@
 package com.flutter.gradle
-import FlutterTask
-import com.android.build.api.dsl.ApplicationDefaultConfig
-import com.android.build.api.dsl.ApplicationExtension
-import com.flutter.gradle.BaseApplicationNameHandler.GRADLE_BASE_APPLICATION_NAME_PROPERTY
+
+import io.mockk.every
+import io.mockk.mockk
 import org.gradle.api.GradleException
-import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionContainer
-import org.gradle.internal.impldep.org.jsoup.Connection.Base
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.mockito.Mockito
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class BaseFlutterTaskTest {
-    class BaseFlutterTaskForTest : BaseFlutterTask(){
-    }
     @Test
     fun `buildBundle throws a GradleException when sourceDir is null`() {
-        // Using BaseFlutterTask to call buildBundle
-        // Set up mocks.
-        val baseFlutterTask: BaseFlutterTaskForTest = BaseFlutterTaskForTest()
+        val baseFlutterTask = mockk<BaseFlutterTask>()
+        every { baseFlutterTask.sourceDir } returns null
 
+        val helper = BaseFlutterTaskHelper(baseFlutterTask)
 
-//        Mockito.`when`(baseFlutterTask.sourceDir).thenReturn(null)
-//        Mockito.`when`(baseFlutterTask.buildBundle()).thenReturn(GradleException())
+        val gradleException =
+            assertFailsWith<GradleException> { helper.checkPreConditions() }
+        assert(
+            gradleException.message ==
+                    helper.gradleErrorMessage
+        )
+    }
 
-        // Make sure the exception was thrown.
-        assertFailsWith<GradleException> {
-            baseFlutterTask.buildBundle()
-        }
+    @Test
+    fun `buildBundle throws a GradleException when sourceDir is not a directory`() {
+        val baseFlutterTask = mockk<BaseFlutterTask>()
+        val file = mockk<File>()
+        every { baseFlutterTask.sourceDir } returns file
+        every { baseFlutterTask.sourceDir!!.isDirectory } returns false
 
-        // Using FlutterTask to call buildBundle
-//        val flutterTask: FlutterTask = FlutterTask()
-//        // Set up mocks.
-//        Mockito.`when`(flutterTask.sourceDir).thenReturn(null)
-//
-//        // Make sure the exception was thrown.
-//        assertFailsWith<GradleException> {
-//            baseFlutterTask.buildBundle()
-//        }
+        val helper = BaseFlutterTaskHelper(baseFlutterTask)
+
+        val gradleException =
+            assertFailsWith<GradleException> { helper.checkPreConditions() }
+        assert(
+            gradleException.message ==
+                    helper.gradleErrorMessage
+        )
     }
 }

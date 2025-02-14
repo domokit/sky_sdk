@@ -4,24 +4,21 @@
 
 package com.flutter.gradle
 
-import java.nio.file.Paths
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputFiles
 import java.io.File
 
 abstract class BaseFlutterTask : DefaultTask() {
-
     @Internal
     lateinit var flutterRoot: File
 
     @Internal
-    lateinit var flutterExecutable: File
+    var flutterExecutable: File? = null
 
     @Input
     lateinit var buildMode: String
@@ -39,7 +36,7 @@ abstract class BaseFlutterTask : DefaultTask() {
 
     @Optional
     @Input
-    lateinit var localEngineSrcPath:String
+    var localEngineSrcPath: String? = null
 
     @Optional
     @Input
@@ -68,7 +65,7 @@ abstract class BaseFlutterTask : DefaultTask() {
     lateinit var targetPlatformValues: List<String>
 
     @Internal
-    lateinit var sourceDir: File
+    var sourceDir: File? = null
 
     @Internal
     lateinit var intermediateDir: File
@@ -134,95 +131,25 @@ abstract class BaseFlutterTask : DefaultTask() {
         var depfiles: FileCollection = project.files()
 
         // Includes all sources used in the flutter compilation.
-        depfiles += project.files("${intermediateDir}/flutter_build.d")
+        depfiles += project.files("$intermediateDir/flutter_build.d")
         return depfiles
     }
 
+    // base flutter task will have a reference to a the util class (w/ business logic)
+    // in build bundle, there will be something to check preconditions
+    // maybe there's a function called generate args that returns a string
+    //
+    //
     fun buildBundle() {
-        if (!sourceDir.isDirectory) {
-            throw GradleException("Invalid Flutter source directory: $sourceDir")
-        }
+        // might be passing in the Task instead of the parameter
+        // below sourceDir is the parameter
+        val helper: BaseFlutterTaskHelper = BaseFlutterTaskHelper(baseFlutterTask = this)
+        helper.checkPreConditions()
 
         intermediateDir.mkdirs()
 
-        // Compute the rule name for flutter assemble. To speed up builds that contain
-        // multiple ABIs, the target name is used to communicate which ones are required
-        // rather than the TargetPlatform. This allows multiple builds to share the same
-        // cache.
-        val ruleNames: List<String> =
-            when {
-                buildMode == "debug" -> listOf("debug_android_application")
-                deferredComponents -> targetPlatformValues.map {"android_aot_deferred_components_bundle_${buildMode}_$it"}
-                else -> targetPlatformValues.map { "android_aot_bundle_${buildMode}_$it"}
-            }
-        project.exec {
-            logging.captureStandardError(LogLevel.ERROR)
-            executable(flutterExecutable.absolutePath)
-            workingDir(sourceDir)
-            localEngine?.let {
-                args("--local-engine", localEngine)
-                args ("--local-engine-src-path", localEngineSrcPath)
-            }
-            localEngineHost?.let {
-                args ("--local-engine-host", localEngineHost)
-            }
-            if (verbose) {
-                args("--verbose")
-            } else {
-                args("--quiet")
-            }
-            args("assemble")
-            args("--no-version-check")
-            args("--depfile", "${intermediateDir}/flutter_build.d")
-            args("--output", "$intermediateDir")
-            performanceMeasurementFile?.let {
-                args("--performance-measurement-file=${performanceMeasurementFile}")
-            }
-            if (!fastStart || buildMode != "debug") {
-                args("-dTargetFile=${targetPath}")
-            } else {
-                args("-dTargetFile=${Paths.get(flutterRoot.absolutePath, "examples", "splash", "lib", "main.dart")}")
-            }
-            args("-dTargetPlatform=android")
-            args("-dBuildMode=${buildMode}")
-            trackWidgetCreation?.let {
-                args("-dTrackWidgetCreation=${trackWidgetCreation}")
-            }
-            splitDebugInfo?.let {
-                args("-dSplitDebugInfo=${splitDebugInfo}")
-            }
-            if (treeShakeIcons == true) {
-                args("-dTreeShakeIcons=true")
-            }
-            if (dartObfuscation == true) {
-                args("-dDartObfuscation=true")
-            }
-            dartDefines?.let {
-                args("--DartDefines=${dartDefines}")
-            }
-            bundleSkSLPath?.let {
-                args("-dBundleSkSLPath=${bundleSkSLPath}")
-            }
-            codeSizeDirectory?.let {
-                args("-dCodeSizeDirectory=${codeSizeDirectory}")
-            }
-            flavor?.let {
-                args("-dFlavor=${flavor}")
-            }
-            extraGenSnapshotOptions?.let {
-                args("--ExtraGenSnapshotOptions=${extraGenSnapshotOptions}")
-            }
-            frontendServerStarterPath?.let {
-                args("-dFrontendServerStarterPath=${frontendServerStarterPath}")
-            }
-            extraFrontEndOptions?.let {
-                args("--ExtraFrontEndOptions=${extraFrontEndOptions}")
-            }
-
-            args("-dAndroidArchs=${targetPlatformValues.joinToString(" ")}")
-            args("-dMinSdkVersion=${minSdkVersion}")
-            args(ruleNames)
-        }
+        // maybe i can pass in logging...?
+        logging.captureStandardError(LogLevel.ERROR)
+        project.exec(helper.createExecSpecActionFromTask())
     }
-
 }
