@@ -4135,7 +4135,7 @@ class IndexedStack extends StatelessWidget {
   /// See [Stack.fit] for more information.
   final StackFit sizing;
 
-  /// Wether or not [children] in the stack that are not visible should be able to receive focus.
+  /// Whether or not non-visible children can be focused.
   ///
   /// Defaults to true.
   final bool maintainInteractivity;
