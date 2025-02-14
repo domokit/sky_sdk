@@ -706,10 +706,10 @@ class PlatformDispatcher {
   /// Informs the engine whether the framework is generating a semantics tree.
   ///
   /// Only framework knows when semantics tree should be generated. It uses this
-  /// method to notify the engine such event.
+  /// method to notify the engine whether the framework will generate a semantics tree.
   ///
-  /// In the case where platforms want to enable semantics, e.g. when detected running
-  /// assitive technologies, it notifies framework through the
+  /// In the case where platforms want to enable semantics, e.g. when
+  /// assistive technologies are enabled, it notifies framework through
   /// [onSemanticsEnabledChanged].
   ///
   /// After this has been set to true, platforms are expected to prepare for accepting
