@@ -27,6 +27,7 @@ void main() {
   test('TooltipThemeData defaults', () {
     const TooltipThemeData theme = TooltipThemeData();
     expect(theme.height, null);
+    expect(theme.constraints, null);
     expect(theme.padding, null);
     expect(theme.verticalOffset, null);
     expect(theme.preferBelow, null);
@@ -1519,6 +1520,31 @@ void main() {
             .toList();
 
     expect(description, <String>['"message"']);
+  });
+
+  testWidgets('Tooltip respects constraints from the ambient theme', (WidgetTester tester) async {
+    final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
+    const BoxConstraints themeConstraints = BoxConstraints.tightFor(width: 300, height: 150);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(tooltipTheme: const TooltipThemeData(constraints: themeConstraints)),
+        home: Tooltip(
+          key: tooltipKey,
+          message: tooltipText,
+          padding: EdgeInsets.zero,
+          child: const ColoredBox(color: Colors.green),
+        ),
+      ),
+    );
+
+    tooltipKey.currentState?.ensureTooltipVisible();
+    await tester.pump(const Duration(seconds: 2));
+
+    final Finder textAncestors = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byWidgetPredicate((_) => true),
+    );
+    expect(tester.element(textAncestors.first).size, equals(themeConstraints.biggest));
   });
 }
 

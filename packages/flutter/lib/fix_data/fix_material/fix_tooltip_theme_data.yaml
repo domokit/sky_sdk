@@ -1,0 +1,127 @@
+# Copyright 2014 The Flutter Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# For details regarding the *Flutter Fix* feature, see https://flutter.dev/to/flutter-fix
+
+# Please add new fixes to the top of the file, separated by one blank line
+# from other fixes. In a comment, include a link to the PR where the change
+# requiring the fix was made.
+
+# Every fix must be tested. See the flutter/packages/flutter/test_fixes/README.md
+# file for instructions on testing these data driven fixes.
+
+# For documentation about this file format, see https://dart.dev/go/data-driven-fixes.
+
+# * Fixes in this file are for the TooltipThemeData class from the Material library. *
+
+version: 1
+transforms:
+  # Changes made in https://github.com/flutter/flutter/pull/163314
+  - title: "Migrate to 'constraints'"
+    date: 2025-02-14
+    element:
+      uris: ["package:flutter/material.dart"]
+      constructor: ""
+      inClass: "TooltipThemeData"
+    oneOf:
+      - if: "height == 'null'"
+        changes:
+          - kind: "removeParameter"
+            name: "height"
+      - if: "constraints == '' && height != ''"
+        changes:
+          - kind: "addParameter"
+            index: 0
+            name: "constraints"
+            style: "optional_named"
+            argumentValue:
+              expression: "{% BoxConstraints %}(minHeight: {% height %})"
+              requiredIf: "height != '' && height != 'null'"
+          - kind: "removeParameter"
+            name: "height"
+      - if: "constraints == 'null' && height != ''"
+        changes:
+          - kind: "removeParameter"
+            name: "constraints"
+          - kind: "addParameter"
+            index: 0
+            name: "constraints"
+            style: "optional_named"
+            argumentValue:
+              expression: "{% BoxConstraints %}(minHeight: {% height %})"
+              requiredIf: "height != '' && height != 'null'"
+          - kind: "removeParameter"
+            name: "height"
+    variables:
+      constraints:
+        kind: "fragment"
+        value: "arguments[constraints]"
+      height:
+        kind: "fragment"
+        value: "arguments[height]"
+      BoxConstraints:
+        kind: "import"
+        uris: ["package:flutter/rendering.dart"]
+        name: "BoxConstraints"
+
+  # Changes made in https://github.com/flutter/flutter/pull/163314
+  - title: "Migrate to 'constraints'"
+    date: 2025-02-14
+    element:
+      uris: ["package:flutter/material.dart"]
+      getter: "height"
+      inClass: "TooltipThemeData"
+    changes:
+      - kind: "rename"
+        newName: "constraints?.minHeight"
+
+  # Changes made in https://github.com/flutter/flutter/pull/163314
+  - title: "Migrate to 'constraints'"
+    date: 2025-02-14
+    element:
+      uris: ["package:flutter/material.dart"]
+      method: "copyWith"
+      inClass: "TooltipThemeData"
+    oneOf:
+      - if: "height == 'null'"
+        changes:
+          - kind: "removeParameter"
+            name: "height"
+      - if: "constraints == '' && height != ''"
+        changes:
+          - kind: "addParameter"
+            index: 0
+            name: "constraints"
+            style: "optional_named"
+            argumentValue:
+              expression: "{% BoxConstraints %}(minHeight: {% height %})"
+              requiredIf: "height != '' && height != 'null'"
+          - kind: "removeParameter"
+            name: "height"
+      - if: "constraints == 'null' && height != ''"
+        changes:
+          - kind: "removeParameter"
+            name: "constraints"
+          - kind: "addParameter"
+            index: 0
+            name: "constraints"
+            style: "optional_named"
+            argumentValue:
+              expression: "{% BoxConstraints %}(minHeight: {% height %})"
+              requiredIf: "height != '' && height != 'null'"
+          - kind: "removeParameter"
+            name: "height"
+    variables:
+      constraints:
+        kind: "fragment"
+        value: "arguments[constraints]"
+      height:
+        kind: "fragment"
+        value: "arguments[height]"
+      BoxConstraints:
+        kind: "import"
+        uris: ["package:flutter/rendering.dart"]
+        name: "BoxConstraints"
+
+# Before adding a new fix: read instructions at the top of this file.
