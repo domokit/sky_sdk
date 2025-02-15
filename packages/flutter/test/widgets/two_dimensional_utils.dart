@@ -291,7 +291,6 @@ Widget simpleListTest({
   Clip? clipBehavior,
 }) {
   return MaterialApp(
-    theme: ThemeData(useMaterial3: true),
     home: Scaffold(
       body: SimpleListTableView(
         mainAxis: mainAxis,

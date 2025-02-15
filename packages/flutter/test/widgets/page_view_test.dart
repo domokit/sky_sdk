@@ -1249,7 +1249,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Center(
           child: SizedBox(
             width: pixel6EmulatorWidth,
@@ -1300,7 +1299,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Center(
           child: PageView(
             controller: controller,
