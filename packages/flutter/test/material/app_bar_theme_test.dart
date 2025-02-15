@@ -79,7 +79,7 @@ void main() {
   });
 
   testWidgets('Material3 - Passing no AppBarTheme returns defaults', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
@@ -369,14 +369,8 @@ void main() {
   testWidgets('Material3 - ThemeData colorScheme is used when no AppBarTheme is set', (
     WidgetTester tester,
   ) async {
-    final ThemeData lightTheme = ThemeData.from(
-      colorScheme: const ColorScheme.light(),
-      useMaterial3: true,
-    );
-    final ThemeData darkTheme = ThemeData.from(
-      colorScheme: const ColorScheme.dark(),
-      useMaterial3: true,
-    );
+    final ThemeData lightTheme = ThemeData.from(colorScheme: const ColorScheme.light());
+    final ThemeData darkTheme = ThemeData.from(colorScheme: const ColorScheme.dark());
     Widget buildFrame(ThemeData appTheme) {
       return MaterialApp(
         theme: appTheme,
@@ -582,7 +576,6 @@ void main() {
               style: IconButton.styleFrom(foregroundColor: Colors.red),
             ),
             appBarTheme: const AppBarTheme(iconTheme: overallIconTheme),
-            useMaterial3: true,
           ),
           home: Scaffold(
             appBar: AppBar(
@@ -611,7 +604,6 @@ void main() {
           theme: ThemeData(
             iconButtonTheme: IconButtonThemeData(style: IconButton.styleFrom(iconSize: 32.0)),
             appBarTheme: const AppBarTheme(iconTheme: overallIconTheme),
-            useMaterial3: true,
           ),
           home: Scaffold(
             appBar: AppBar(
@@ -644,7 +636,6 @@ void main() {
           theme: ThemeData(
             iconButtonTheme: iconButtonTheme,
             appBarTheme: const AppBarTheme(actionsIconTheme: actionsIconTheme),
-            useMaterial3: true,
           ),
           home: Scaffold(
             appBar: AppBar(
@@ -676,7 +667,6 @@ void main() {
           theme: ThemeData(
             iconButtonTheme: iconButtonTheme,
             appBarTheme: const AppBarTheme(actionsIconTheme: actionsIconTheme),
-            useMaterial3: true,
           ),
           home: Scaffold(
             appBar: AppBar(
@@ -709,7 +699,6 @@ void main() {
       final ThemeData themeData = ThemeData(
         iconButtonTheme: iconButtonTheme,
         appBarTheme: appBarTheme,
-        useMaterial3: true,
       );
 
       await tester.pumpWidget(
@@ -1213,7 +1202,6 @@ void main() {
     'Material3 - AppBarTheme.iconTheme correctly applies custom white color in dark mode',
     (WidgetTester tester) async {
       final ThemeData themeData = ThemeData(
-        useMaterial3: true,
         brightness: Brightness.dark,
         appBarTheme: const AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
       );
