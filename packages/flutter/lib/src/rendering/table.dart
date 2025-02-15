@@ -607,7 +607,48 @@ class RenderTable extends RenderBox {
   void describeSemanticsConfiguration(SemanticsConfiguration config) {
     super.describeSemanticsConfiguration(config);
     config.role = SemanticsRole.table;
+    config.isSemanticBoundary = true;
     config.explicitChildNodes = true;
+  }
+
+  @override
+  void assembleSemanticsNode(
+    SemanticsNode node,
+    SemanticsConfiguration config,
+    Iterable<SemanticsNode> children,
+  ) {
+    assert(_children.length == _rows * _columns);
+    final List<SemanticsNode> rows = <SemanticsNode>[];
+
+    for (int i = 0; i < _rows; i++) {
+      final Rect rowBox = getRowBox(i);
+      // Skip row if it's empty
+      if (rowBox.height == 0) {
+        continue;
+      }
+      final SemanticsNode newRow = SemanticsNode(
+        showOnScreen: () {
+          showOnScreen(descendant: this, rect: rowBox);
+        },
+      );
+
+      final SemanticsConfiguration configuration =
+          SemanticsConfiguration()
+            ..indexInParent = i
+            ..role = SemanticsRole.row;
+      final List<SemanticsNode> cells =
+          children.skip(i * _columns).take(_columns).map((SemanticsNode cell) {
+            cell.rect = cell.rect.shift(Offset(-rowBox.left, -rowBox.top));
+            return cell;
+          }).toList();
+      newRow
+        ..updateWith(config: configuration, childrenInInversePaintOrder: cells)
+        ..rect = rowBox;
+
+      rows.add(newRow);
+    }
+
+    node.updateWith(config: config, childrenInInversePaintOrder: rows);
   }
 
   /// Replaces the children of this table with the given cells.

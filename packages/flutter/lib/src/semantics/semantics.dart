@@ -110,12 +110,12 @@ sealed class _DebugSemanticsRoleChecks {
     SemanticsRole.tab => _semanticsTab,
     SemanticsRole.tabBar => _semanticsTabBar,
     SemanticsRole.tabPanel => _noCheckRequired,
-    SemanticsRole.table => _noCheckRequired,
+    SemanticsRole.table => _semanticsTable,
     SemanticsRole.cell => _semanticsCell,
+    SemanticsRole.row => _semanticsRow,
     SemanticsRole.columnHeader => _semanticsColumnHeader,
     // TODO(chunhtai): add checks when the roles are used in framework.
     // https://github.com/flutter/flutter/issues/159741.
-    SemanticsRole.row => _unimplemented,
     SemanticsRole.searchBox => _unimplemented,
     SemanticsRole.dragHandle => _unimplemented,
     SemanticsRole.spinButton => _unimplemented,
@@ -131,6 +131,7 @@ sealed class _DebugSemanticsRoleChecks {
     SemanticsRole.progressBar => _unimplemented,
     SemanticsRole.hotKey => _unimplemented,
   }(node);
+
 
   static FlutterError? _unimplemented(SemanticsNode node) =>
       FlutterError('Missing checks for role ${node.getSemanticsData().role}');
@@ -164,16 +165,42 @@ sealed class _DebugSemanticsRoleChecks {
     return error;
   }
 
-  static FlutterError? _semanticsCell(SemanticsNode node) {
+  static FlutterError? _semanticsTable(SemanticsNode node) {
+    FlutterError? error;
+    node.visitChildren((SemanticsNode child) {
+      if (child.getSemanticsData().role != SemanticsRole.row) {
+        error = FlutterError('Children of Table must have the row role');
+      }
+      return error == null;
+    });
+    return error;
+  }
+
+  static FlutterError? _semanticsRow(SemanticsNode node) {
     if (node.parent?.role != SemanticsRole.table) {
-      return FlutterError('A cell must be a child of a table');
+      return FlutterError('A row must be a child of a table');
+    }
+    FlutterError? error;
+    node.visitChildren((SemanticsNode child) {
+      if (child.getSemanticsData().role != SemanticsRole.cell &&
+          child.getSemanticsData().role != SemanticsRole.columnHeader) {
+        error = FlutterError('Children of Row must have the cell or columnHeader role');
+      }
+      return error == null;
+    });
+    return error;
+  }
+
+  static FlutterError? _semanticsCell(SemanticsNode node) {
+    if (node.parent?.role != SemanticsRole.row) {
+      return FlutterError('A cell must be a child of a row');
     }
     return null;
   }
 
   static FlutterError? _semanticsColumnHeader(SemanticsNode node) {
-    if (node.parent?.role != SemanticsRole.table) {
-      return FlutterError('A columnHeader must be a child of a table');
+    if (node.parent?.role != SemanticsRole.row) {
+      return FlutterError('A columnHeader must be a child of a row');
     }
     return null;
   }
