@@ -1560,11 +1560,9 @@ void main() {
     await tester.binding.setSurfaceSize(defaultSize);
 
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         title: title,
-        home: const Scaffold(
-          body: Directionality(textDirection: textDirection, child: LicensePage()),
-        ),
+        home: Scaffold(body: Directionality(textDirection: textDirection, child: LicensePage())),
       ),
     );
 
