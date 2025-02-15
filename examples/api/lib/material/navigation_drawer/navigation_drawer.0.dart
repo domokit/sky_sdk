@@ -32,10 +32,7 @@ class NavigationDrawerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: NavigationDrawerExample(),
-    );
+    return const MaterialApp(debugShowCheckedModeBanner: false, home: NavigationDrawerExample());
   }
 }
 

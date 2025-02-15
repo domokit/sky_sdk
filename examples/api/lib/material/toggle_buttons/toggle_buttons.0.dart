@@ -19,9 +19,7 @@ class ToggleButtonsExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ToggleButtonsSample(title: 'ToggleButtons Sample'),
-    );
+    return const MaterialApp(home: ToggleButtonsSample(title: 'ToggleButtons Sample'));
   }
 }
 
