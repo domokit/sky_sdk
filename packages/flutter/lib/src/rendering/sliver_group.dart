@@ -353,57 +353,36 @@ class RenderSliverMainAxisGroup extends RenderSliver
       hasVisualOverflow:
           totalScrollExtent > constraints.remainingPaintExtent || constraints.scrollOffset > 0.0,
     );
+
+    // Update the children's paintOffset based on the direction again, which
+    // must be done after obtaining the `paintExtent`.
+    child = firstChild;
+    while (child != null) {
+      final SliverPhysicalParentData childParentData =
+          child.parentData! as SliverPhysicalParentData;
+      childParentData.paintOffset = switch (constraints.axisDirection) {
+        AxisDirection.up => Offset(
+          0.0,
+          paintExtent - childParentData.paintOffset.dy - child.geometry!.paintExtent,
+        ),
+        AxisDirection.left => Offset(
+          paintExtent - childParentData.paintOffset.dx - child.geometry!.paintExtent,
+          0.0,
+        ),
+        AxisDirection.right || AxisDirection.down => childParentData.paintOffset,
+      };
+      child = childAfter(child);
+    }
   }
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    if (firstChild == null) {
-      return;
-    }
-    // offset is to the top-left corner, regardless of our axis direction.
-    // originOffset gives us the delta from the real origin to the origin in the axis direction.
-    final Offset mainAxisUnit, crossAxisUnit, originOffset;
-    final bool addExtent;
-    switch (applyGrowthDirectionToAxisDirection(
-      constraints.axisDirection,
-      constraints.growthDirection,
-    )) {
-      case AxisDirection.up:
-        mainAxisUnit = const Offset(0.0, -1.0);
-        crossAxisUnit = const Offset(1.0, 0.0);
-        originOffset = offset + Offset(0.0, geometry!.paintExtent);
-        addExtent = true;
-      case AxisDirection.right:
-        mainAxisUnit = const Offset(1.0, 0.0);
-        crossAxisUnit = const Offset(0.0, 1.0);
-        originOffset = offset;
-        addExtent = false;
-      case AxisDirection.down:
-        mainAxisUnit = const Offset(0.0, 1.0);
-        crossAxisUnit = const Offset(1.0, 0.0);
-        originOffset = offset;
-        addExtent = false;
-      case AxisDirection.left:
-        mainAxisUnit = const Offset(-1.0, 0.0);
-        crossAxisUnit = const Offset(0.0, 1.0);
-        originOffset = offset + Offset(geometry!.paintExtent, 0.0);
-        addExtent = true;
-    }
-
     RenderSliver? child = lastChild;
     while (child != null) {
-      final double mainAxisDelta = childMainAxisPosition(child);
-      final double crossAxisDelta = childCrossAxisPosition(child);
-      Offset childOffset = Offset(
-        originOffset.dx + mainAxisUnit.dx * mainAxisDelta + crossAxisUnit.dx * crossAxisDelta,
-        originOffset.dy + mainAxisUnit.dy * mainAxisDelta + crossAxisUnit.dy * crossAxisDelta,
-      );
-      if (addExtent) {
-        childOffset += mainAxisUnit * child.geometry!.paintExtent;
-      }
-
       if (child.geometry!.visible) {
-        context.paintChild(child, childOffset);
+        final SliverPhysicalParentData childParentData =
+            child.parentData! as SliverPhysicalParentData;
+        context.paintChild(child, offset + childParentData.paintOffset);
       }
       child = childBefore(child);
     }

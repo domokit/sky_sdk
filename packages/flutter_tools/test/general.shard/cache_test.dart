@@ -1229,7 +1229,7 @@ void main() {
                 command: <String>[
                   '/bin/cache/flutter_gradle_wrapper.rand0/gradlew',
                   '-b',
-                  'packages/flutter_tools/gradle/resolve_dependencies.gradle',
+                  'packages/flutter_tools/gradle/resolve_dependencies.gradle.kts',
                   '--project-cache-dir',
                   '/bin/cache/flutter_gradle_wrapper.rand0',
                   'resolveDependencies',

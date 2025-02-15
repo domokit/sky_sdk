@@ -14,6 +14,7 @@ import 'package:flutter_tools/src/base/dds.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/platform.dart';
+import 'package:flutter_tools/src/base/terminal.dart';
 import 'package:flutter_tools/src/base/time.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/build_system/tools/scene_importer.dart';
@@ -143,6 +144,9 @@ void main() {
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
       );
@@ -172,6 +176,9 @@ void main() {
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug, startPaused: true),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
       );
@@ -193,6 +200,9 @@ void main() {
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
       );
@@ -204,6 +214,9 @@ void main() {
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.profile),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
       );
@@ -343,6 +356,9 @@ void main() {
         stayResident: false,
         fileSystem: fileSystem,
         logger: logger,
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -371,6 +387,9 @@ void main() {
         stayResident: false,
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -586,6 +605,9 @@ void main() {
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug, startPaused: true),
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -990,14 +1012,46 @@ void main() {
   );
 
   testUsingContext(
-    'printHelp without details shows hot restart help message',
+    'printHelp without details shows only hot restart help message',
     () async {
       final BufferLogger logger = BufferLogger.test();
       final ResidentRunner residentWebRunner = setUpResidentRunner(flutterDevice, logger: logger);
       fakeVmServiceHost = FakeVmServiceHost(requests: <VmServiceExpectation>[]);
       residentWebRunner.printHelp(details: false);
 
-      expect(logger.statusText, contains('To hot restart changes'));
+      expect(logger.statusText, contains('Hot restart'));
+      expect(logger.statusText.contains('Hot reload'), false);
+    },
+    overrides: <Type, Generator>{
+      FileSystem: () => fileSystem,
+      ProcessManager: () => processManager,
+    },
+  );
+
+  testUsingContext(
+    'printHelp without details shows hot restart and hot reload help message '
+    'if using DDC library bundle format',
+    () async {
+      final BufferLogger logger = BufferLogger.test();
+      final ResidentRunner residentWebRunner = setUpResidentRunner(
+        flutterDevice,
+        logger: logger,
+        debuggingOptions: DebuggingOptions.enabled(
+          const BuildInfo(
+            BuildMode.debug,
+            null,
+            trackWidgetCreation: true,
+            treeShakeIcons: false,
+            packageConfigPath: '.dart_tool/package_config.json',
+            extraFrontEndOptions: <String>['--dartdevc-module-format=ddc', '--dartdevc-canary'],
+          ),
+        ),
+      );
+      fakeVmServiceHost = FakeVmServiceHost(requests: <VmServiceExpectation>[]);
+      residentWebRunner.printHelp(details: false);
+
+      expect(logger.statusText, contains('Hot restart'));
+      expect(logger.statusText, contains('Hot reload'));
     },
     overrides: <Type, Generator>{
       FileSystem: () => fileSystem,
@@ -1130,6 +1184,9 @@ void main() {
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
         fileSystem: fileSystem,
         logger: logger,
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -1175,6 +1232,9 @@ void main() {
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
         fileSystem: fileSystem,
         logger: logger,
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -1217,6 +1277,9 @@ void main() {
         stayResident: false,
         fileSystem: fileSystem,
         logger: BufferLogger.test(),
+        terminal: Terminal.test(),
+        platform: FakePlatform(),
+        outputPreferences: OutputPreferences.test(),
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         devtoolsHandler: createNoOpHandler,
@@ -1512,6 +1575,9 @@ ResidentRunner setUpResidentRunner(
     systemClock: systemClock ?? SystemClock.fixed(DateTime.now()),
     fileSystem: globals.fs,
     logger: logger ?? BufferLogger.test(),
+    terminal: Terminal.test(),
+    platform: FakePlatform(),
+    outputPreferences: OutputPreferences.test(),
     devtoolsHandler: createNoOpHandler,
   );
 }
@@ -1532,6 +1598,9 @@ class FakeDevice extends Fake implements Device {
 
   @override
   late DartDevelopmentService dds;
+
+  @override
+  bool get supportsHotRestart => true;
 
   @override
   Future<LaunchResult> startApp(

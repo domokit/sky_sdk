@@ -12,7 +12,6 @@ import 'dart:io' as io;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meta/meta.dart';
 
 /// Compares image pixels against a golden image file on the host system.
 ///
@@ -65,7 +64,6 @@ import 'package:meta/meta.dart';
 /// See also:
 ///
 ///   * [matchesGoldenFile], the function that invokes the comparator.
-@experimental
 final class VmServiceProxyGoldenFileComparator extends GoldenFileComparator {
   VmServiceProxyGoldenFileComparator._() : _postEvent = dev.postEvent {
     dev.registerExtension(_kServiceName, (_, Map<String, String> parameters) {

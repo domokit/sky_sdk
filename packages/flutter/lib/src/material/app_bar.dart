@@ -218,6 +218,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
     this.titleTextStyle,
     this.systemOverlayStyle,
     this.forceMaterialTransparency = false,
+    this.useDefaultSemanticsOrder = true,
     this.clipBehavior,
     this.actionsPadding,
   }) : assert(elevation == null || elevation >= 0.0),
@@ -744,6 +745,24 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final bool forceMaterialTransparency;
 
+  /// {@template flutter.material.appbar.useDefaultSemanticsOrder}
+  /// Whether to use the default semantic ordering for the app bar's children for
+  /// accessibility traversal order.
+  ///
+  /// If this is set to true, the app bar will use the default semantic ordering,
+  /// which places the flexible space after the main content in the semantics tree.
+  /// This affects how screen readers and other assistive technologies navigate the app bar's content.
+  ///
+  /// Set this to false if you want to customize semantics traversal order in the app bar.
+  /// You can then assign [SemanticsSortKey]s to app bar's children to control the order.
+  ///
+  /// Defaults to true.
+  ///
+  /// See also:
+  ///  * [SemanticsSortKey], which are keys used to define the accessibility traversal order.
+  /// {@endtemplate}
+  final bool useDefaultSemanticsOrder;
+
   /// {@macro flutter.material.Material.clipBehavior}
   final Clip? clipBehavior;
 
@@ -1150,12 +1169,12 @@ class _AppBarState extends State<AppBar> {
         fit: StackFit.passthrough,
         children: <Widget>[
           Semantics(
-            sortKey: const OrdinalSortKey(1.0),
+            sortKey: widget.useDefaultSemanticsOrder ? const OrdinalSortKey(1.0) : null,
             explicitChildNodes: true,
             child: widget.flexibleSpace,
           ),
           Semantics(
-            sortKey: const OrdinalSortKey(0.0),
+            sortKey: widget.useDefaultSemanticsOrder ? const OrdinalSortKey(0.0) : null,
             explicitChildNodes: true,
             // Creates a material widget to prevent the flexibleSpace from
             // obscuring the ink splashes produced by appBar children.
@@ -1238,6 +1257,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     required this.titleTextStyle,
     required this.systemOverlayStyle,
     required this.forceMaterialTransparency,
+    required this.useDefaultSemanticsOrder,
     required this.clipBehavior,
     required this.variant,
     required this.accessibleNavigation,
@@ -1277,6 +1297,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final SystemUiOverlayStyle? systemOverlayStyle;
   final double _bottomHeight;
   final bool forceMaterialTransparency;
+  final bool useDefaultSemanticsOrder;
   final Clip? clipBehavior;
   final _SliverAppVariant variant;
   final bool accessibleNavigation;
@@ -1369,6 +1390,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         titleTextStyle: titleTextStyle,
         systemOverlayStyle: systemOverlayStyle,
         forceMaterialTransparency: forceMaterialTransparency,
+        useDefaultSemanticsOrder: useDefaultSemanticsOrder,
         actionsPadding: actionsPadding,
       ),
     );
@@ -1408,6 +1430,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         titleTextStyle != oldDelegate.titleTextStyle ||
         systemOverlayStyle != oldDelegate.systemOverlayStyle ||
         forceMaterialTransparency != oldDelegate.forceMaterialTransparency ||
+        useDefaultSemanticsOrder != oldDelegate.useDefaultSemanticsOrder ||
         accessibleNavigation != oldDelegate.accessibleNavigation ||
         actionsPadding != oldDelegate.actionsPadding;
   }
@@ -1548,6 +1571,7 @@ class SliverAppBar extends StatefulWidget {
     this.titleTextStyle,
     this.systemOverlayStyle,
     this.forceMaterialTransparency = false,
+    this.useDefaultSemanticsOrder = true,
     this.clipBehavior,
     this.actionsPadding,
   }) : assert(floating || !snap, 'The "snap" argument only makes sense for floating app bars.'),
@@ -1617,6 +1641,7 @@ class SliverAppBar extends StatefulWidget {
     this.titleTextStyle,
     this.systemOverlayStyle,
     this.forceMaterialTransparency = false,
+    this.useDefaultSemanticsOrder = true,
     this.clipBehavior,
     this.actionsPadding,
   }) : assert(floating || !snap, 'The "snap" argument only makes sense for floating app bars.'),
@@ -1686,6 +1711,7 @@ class SliverAppBar extends StatefulWidget {
     this.titleTextStyle,
     this.systemOverlayStyle,
     this.forceMaterialTransparency = false,
+    this.useDefaultSemanticsOrder = true,
     this.clipBehavior,
     this.actionsPadding,
   }) : assert(floating || !snap, 'The "snap" argument only makes sense for floating app bars.'),
@@ -1948,6 +1974,11 @@ class SliverAppBar extends StatefulWidget {
   /// This property is used to configure an [AppBar].
   final bool forceMaterialTransparency;
 
+  /// {@macro flutter.material.appbar.useDefaultSemanticsOrder}
+  ///
+  /// This property is used to configure an [AppBar].
+  final bool useDefaultSemanticsOrder;
+
   /// {@macro flutter.material.Material.clipBehavior}
   final Clip? clipBehavior;
 
@@ -2107,6 +2138,7 @@ class _SliverAppBarState extends State<SliverAppBar> with TickerProviderStateMix
           titleTextStyle: widget.titleTextStyle,
           systemOverlayStyle: widget.systemOverlayStyle,
           forceMaterialTransparency: widget.forceMaterialTransparency,
+          useDefaultSemanticsOrder: widget.useDefaultSemanticsOrder,
           clipBehavior: widget.clipBehavior,
           variant: widget._variant,
           accessibleNavigation: MediaQuery.of(context).accessibleNavigation,

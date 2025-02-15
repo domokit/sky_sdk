@@ -23,16 +23,24 @@ INSTANTIATE_PLAYGROUND_SUITE(TextContentsTest);
 using ::testing::Return;
 
 namespace {
+struct TextOptions {
+  Scalar font_size = 50;
+  bool is_subpixel = false;
+};
+
 std::shared_ptr<TextFrame> MakeTextFrame(const std::string& text,
                                          const std::string_view& font_fixture,
-                                         Scalar font_size) {
+                                         const TextOptions& options) {
   auto c_font_fixture = std::string(font_fixture);
   auto mapping = flutter::testing::OpenFixtureAsSkData(c_font_fixture.c_str());
   if (!mapping) {
     return nullptr;
   }
   sk_sp<SkFontMgr> font_mgr = txt::GetDefaultFontManager();
-  SkFont sk_font(font_mgr->makeFromData(mapping), font_size);
+  SkFont sk_font(font_mgr->makeFromData(mapping), options.font_size);
+  if (options.is_subpixel) {
+    sk_font.setSubpixel(true);
+  }
   auto blob = SkTextBlob::MakeFromString(text.c_str(), sk_font);
   if (!blob) {
     return nullptr;
@@ -48,9 +56,10 @@ std::shared_ptr<GlyphAtlas> CreateGlyphAtlas(
     GlyphAtlas::Type type,
     Scalar scale,
     const std::shared_ptr<GlyphAtlasContext>& atlas_context,
-    const std::shared_ptr<TextFrame>& frame) {
-  frame->SetPerFrameData(scale, /*offset=*/Point(0, 0),
-                         /*transform=*/Matrix(), /*properties=*/std::nullopt);
+    const std::shared_ptr<TextFrame>& frame,
+    Point offset) {
+  frame->SetPerFrameData(scale, /*offset=*/offset, /*transform=*/Matrix(),
+                         /*properties=*/std::nullopt);
   return typographer_context->CreateGlyphAtlas(context, type, host_buffer,
                                                atlas_context, {frame});
 }
@@ -101,7 +110,7 @@ TEST_P(TextContentsTest, SimpleComputeVertexData) {
   GlyphAtlasPipeline::VertexShader::PerVertexData data[6];
 
   std::shared_ptr<TextFrame> text_frame =
-      MakeTextFrame("1", "ahem.ttf", /*font_size=*/50);
+      MakeTextFrame("1", "ahem.ttf", TextOptions{.font_size = 50});
 
   std::shared_ptr<TypographerContext> context = TypographerContextSkia::Make();
   std::shared_ptr<GlyphAtlasContext> atlas_context =
@@ -112,7 +121,7 @@ TEST_P(TextContentsTest, SimpleComputeVertexData) {
   std::shared_ptr<GlyphAtlas> atlas =
       CreateGlyphAtlas(*GetContext(), context.get(), *host_buffer,
                        GlyphAtlas::Type::kAlphaBitmap, /*scale=*/1.0f,
-                       atlas_context, text_frame);
+                       atlas_context, text_frame, /*offset=*/{0, 0});
 
   ISize texture_size = atlas->GetTexture()->GetSize();
   TextContents::ComputeVertexData(data, text_frame, /*scale=*/1.0,
@@ -137,7 +146,7 @@ TEST_P(TextContentsTest, SimpleComputeVertexData2x) {
   GlyphAtlasPipeline::VertexShader::PerVertexData data[6];
 
   std::shared_ptr<TextFrame> text_frame =
-      MakeTextFrame("1", "ahem.ttf", /*font_size=*/50);
+      MakeTextFrame("1", "ahem.ttf", TextOptions{.font_size = 50});
 
   std::shared_ptr<TypographerContext> context = TypographerContextSkia::Make();
   std::shared_ptr<GlyphAtlasContext> atlas_context =
@@ -146,9 +155,10 @@ TEST_P(TextContentsTest, SimpleComputeVertexData2x) {
       GetContext()->GetResourceAllocator(), GetContext()->GetIdleWaiter());
   ASSERT_TRUE(context && context->IsValid());
   Scalar font_scale = 2.f;
-  std::shared_ptr<GlyphAtlas> atlas = CreateGlyphAtlas(
-      *GetContext(), context.get(), *host_buffer,
-      GlyphAtlas::Type::kAlphaBitmap, font_scale, atlas_context, text_frame);
+  std::shared_ptr<GlyphAtlas> atlas =
+      CreateGlyphAtlas(*GetContext(), context.get(), *host_buffer,
+                       GlyphAtlas::Type::kAlphaBitmap, font_scale,
+                       atlas_context, text_frame, /*offset=*/{0, 0});
 
   ISize texture_size = atlas->GetTexture()->GetSize();
   TextContents::ComputeVertexData(
@@ -165,7 +175,7 @@ TEST_P(TextContentsTest, SimpleComputeVertexData2x) {
 
 TEST_P(TextContentsTest, MaintainsShape) {
   std::shared_ptr<TextFrame> text_frame =
-      MakeTextFrame("th", "ahem.ttf", /*font_size=*/50);
+      MakeTextFrame("th", "ahem.ttf", TextOptions{.font_size = 50});
 
   std::shared_ptr<TypographerContext> context = TypographerContextSkia::Make();
   std::shared_ptr<GlyphAtlasContext> atlas_context =
@@ -183,7 +193,7 @@ TEST_P(TextContentsTest, MaintainsShape) {
       std::shared_ptr<GlyphAtlas> atlas =
           CreateGlyphAtlas(*GetContext(), context.get(), *host_buffer,
                            GlyphAtlas::Type::kAlphaBitmap, font_scale,
-                           atlas_context, text_frame);
+                           atlas_context, text_frame, /*offset=*/{0, 0});
       ISize texture_size = atlas->GetTexture()->GetSize();
 
       TextContents::ComputeVertexData(
@@ -200,6 +210,160 @@ TEST_P(TextContentsTest, MaintainsShape) {
                 0.001)
         << i;
   }
+}
+
+TEST_P(TextContentsTest, SimpleSubpixel) {
+#ifndef FML_OS_MACOSX
+  GTEST_SKIP() << "Results aren't stable across linux and macos.";
+#endif
+
+  GlyphAtlasPipeline::VertexShader::PerVertexData data[6];
+
+  std::shared_ptr<TextFrame> text_frame = MakeTextFrame(
+      "1", "ahem.ttf", TextOptions{.font_size = 50, .is_subpixel = true});
+
+  std::shared_ptr<TypographerContext> context = TypographerContextSkia::Make();
+  std::shared_ptr<GlyphAtlasContext> atlas_context =
+      context->CreateGlyphAtlasContext(GlyphAtlas::Type::kAlphaBitmap);
+  std::shared_ptr<HostBuffer> host_buffer = HostBuffer::Create(
+      GetContext()->GetResourceAllocator(), GetContext()->GetIdleWaiter());
+  ASSERT_TRUE(context && context->IsValid());
+  Point offset = Point(0.5, 0);
+  std::shared_ptr<GlyphAtlas> atlas =
+      CreateGlyphAtlas(*GetContext(), context.get(), *host_buffer,
+                       GlyphAtlas::Type::kAlphaBitmap, /*scale=*/1.0f,
+                       atlas_context, text_frame, offset);
+
+  ISize texture_size = atlas->GetTexture()->GetSize();
+  TextContents::ComputeVertexData(
+      data, text_frame, /*scale=*/1.0,
+      /*entity_transform=*/Matrix::MakeTranslation(offset), offset,
+      /*glyph_properties=*/std::nullopt, atlas);
+
+  Rect position_rect = PerVertexDataPositionToRect(data);
+  Rect uv_rect = PerVertexDataUVToRect(data, texture_size);
+  // The values at Point(0, 0).
+  // EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-1, -41, 52, 52));
+  // EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 52, 52));
+  EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-2, -41, 54, 52));
+  EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 54, 52));
+}
+
+TEST_P(TextContentsTest, SimpleSubpixel3x) {
+#ifndef FML_OS_MACOSX
+  GTEST_SKIP() << "Results aren't stable across linux and macos.";
+#endif
+
+  GlyphAtlasPipeline::VertexShader::PerVertexData data[6];
+
+  std::shared_ptr<TextFrame> text_frame = MakeTextFrame(
+      "1", "ahem.ttf", TextOptions{.font_size = 50, .is_subpixel = true});
+
+  std::shared_ptr<TypographerContext> context = TypographerContextSkia::Make();
+  std::shared_ptr<GlyphAtlasContext> atlas_context =
+      context->CreateGlyphAtlasContext(GlyphAtlas::Type::kAlphaBitmap);
+  std::shared_ptr<HostBuffer> host_buffer = HostBuffer::Create(
+      GetContext()->GetResourceAllocator(), GetContext()->GetIdleWaiter());
+  ASSERT_TRUE(context && context->IsValid());
+  Scalar font_scale = 3.f;
+  Point offset = {0.16667, 0};
+  std::shared_ptr<GlyphAtlas> atlas =
+      CreateGlyphAtlas(*GetContext(), context.get(), *host_buffer,
+                       GlyphAtlas::Type::kAlphaBitmap, font_scale,
+                       atlas_context, text_frame, offset);
+
+  ISize texture_size = atlas->GetTexture()->GetSize();
+  TextContents::ComputeVertexData(
+      data, text_frame, font_scale,
+      /*entity_transform=*/
+      Matrix::MakeTranslation(offset) *
+          Matrix::MakeScale({font_scale, font_scale, 1}),
+      offset,
+      /*glyph_properties=*/std::nullopt, atlas);
+
+  Rect position_rect = PerVertexDataPositionToRect(data);
+  Rect uv_rect = PerVertexDataUVToRect(data, texture_size);
+  // Values at Point(0, 0)
+  // EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-1, -121, 152, 152));
+  // EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 152, 152));
+  EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-2, -121, 154, 152))
+      << "position size:" << position_rect.GetSize();
+  EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 154, 152))
+      << "position size:" << position_rect.GetSize();
+}
+
+TEST_P(TextContentsTest, SimpleSubpixel26) {
+#ifndef FML_OS_MACOSX
+  GTEST_SKIP() << "Results aren't stable across linux and macos.";
+#endif
+
+  GlyphAtlasPipeline::VertexShader::PerVertexData data[6];
+
+  std::shared_ptr<TextFrame> text_frame = MakeTextFrame(
+      "1", "ahem.ttf", TextOptions{.font_size = 50, .is_subpixel = true});
+
+  std::shared_ptr<TypographerContext> context = TypographerContextSkia::Make();
+  std::shared_ptr<GlyphAtlasContext> atlas_context =
+      context->CreateGlyphAtlasContext(GlyphAtlas::Type::kAlphaBitmap);
+  std::shared_ptr<HostBuffer> host_buffer = HostBuffer::Create(
+      GetContext()->GetResourceAllocator(), GetContext()->GetIdleWaiter());
+  ASSERT_TRUE(context && context->IsValid());
+  Point offset = Point(0.26, 0);
+  std::shared_ptr<GlyphAtlas> atlas =
+      CreateGlyphAtlas(*GetContext(), context.get(), *host_buffer,
+                       GlyphAtlas::Type::kAlphaBitmap, /*scale=*/1.0f,
+                       atlas_context, text_frame, offset);
+
+  ISize texture_size = atlas->GetTexture()->GetSize();
+  TextContents::ComputeVertexData(
+      data, text_frame, /*scale=*/1.0,
+      /*entity_transform=*/Matrix::MakeTranslation(offset), offset,
+      /*glyph_properties=*/std::nullopt, atlas);
+
+  Rect position_rect = PerVertexDataPositionToRect(data);
+  Rect uv_rect = PerVertexDataUVToRect(data, texture_size);
+  // The values without subpixel.
+  // EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-1, -41, 52, 52));
+  // EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 52, 52));
+  EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-2, -41, 54, 52));
+  EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 54, 52));
+}
+
+TEST_P(TextContentsTest, SimpleSubpixel80) {
+#ifndef FML_OS_MACOSX
+  GTEST_SKIP() << "Results aren't stable across linux and macos.";
+#endif
+
+  GlyphAtlasPipeline::VertexShader::PerVertexData data[6];
+
+  std::shared_ptr<TextFrame> text_frame = MakeTextFrame(
+      "1", "ahem.ttf", TextOptions{.font_size = 50, .is_subpixel = true});
+
+  std::shared_ptr<TypographerContext> context = TypographerContextSkia::Make();
+  std::shared_ptr<GlyphAtlasContext> atlas_context =
+      context->CreateGlyphAtlasContext(GlyphAtlas::Type::kAlphaBitmap);
+  std::shared_ptr<HostBuffer> host_buffer = HostBuffer::Create(
+      GetContext()->GetResourceAllocator(), GetContext()->GetIdleWaiter());
+  ASSERT_TRUE(context && context->IsValid());
+  Point offset = Point(0.80, 0);
+  std::shared_ptr<GlyphAtlas> atlas =
+      CreateGlyphAtlas(*GetContext(), context.get(), *host_buffer,
+                       GlyphAtlas::Type::kAlphaBitmap, /*scale=*/1.0f,
+                       atlas_context, text_frame, offset);
+
+  ISize texture_size = atlas->GetTexture()->GetSize();
+  TextContents::ComputeVertexData(
+      data, text_frame, /*scale=*/1.0,
+      /*entity_transform=*/Matrix::MakeTranslation(offset), offset,
+      /*glyph_properties=*/std::nullopt, atlas);
+
+  Rect position_rect = PerVertexDataPositionToRect(data);
+  Rect uv_rect = PerVertexDataUVToRect(data, texture_size);
+  // The values without subpixel.
+  // EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-1, -41, 52, 52));
+  // EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 52, 52));
+  EXPECT_RECT_NEAR(position_rect, Rect::MakeXYWH(-2, -41, 54, 52));
+  EXPECT_RECT_NEAR(uv_rect, Rect::MakeXYWH(1.0, 1.0, 54, 52));
 }
 
 }  // namespace testing

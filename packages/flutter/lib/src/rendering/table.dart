@@ -4,8 +4,10 @@
 
 import 'dart:collection';
 import 'dart:math' as math;
+import 'dart:ui' show SemanticsRole;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/semantics.dart';
 
 import 'box.dart';
 import 'object.dart';
@@ -599,6 +601,13 @@ class RenderTable extends RenderBox {
     if (child.parentData is! TableCellParentData) {
       child.parentData = TableCellParentData();
     }
+  }
+
+  @override
+  void describeSemanticsConfiguration(SemanticsConfiguration config) {
+    super.describeSemanticsConfiguration(config);
+    config.role = SemanticsRole.table;
+    config.explicitChildNodes = true;
   }
 
   /// Replaces the children of this table with the given cells.

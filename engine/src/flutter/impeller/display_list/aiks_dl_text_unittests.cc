@@ -155,6 +155,28 @@ TEST_P(AiksTest, CanRenderTextFrameWithHalfScaling) {
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
 
+// This is a test that looks for glyph artifacts we've see.
+TEST_P(AiksTest, ScaledK) {
+  DisplayListBuilder builder;
+  DlPaint paint;
+  paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
+  builder.DrawPaint(paint);
+  for (int i = 0; i < 6; ++i) {
+    builder.Save();
+    builder.Translate(300 * i, 0);
+    Scalar scale = 0.445 - (i / 1000.f);
+    builder.Scale(scale, scale);
+    RenderTextInCanvasSkia(
+        GetContext(), builder, "k", "Roboto-Regular.ttf",
+        TextRenderOptions{.font_size = 600, .position = DlPoint(10, 500)});
+    RenderTextInCanvasSkia(
+        GetContext(), builder, "k", "Roboto-Regular.ttf",
+        TextRenderOptions{.font_size = 300, .position = DlPoint(10, 800)});
+    builder.Restore();
+  }
+  ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
+}
+
 TEST_P(AiksTest, CanRenderTextFrameWithFractionScaling) {
   Scalar fine_scale = 0.f;
   bool is_subpixel = false;

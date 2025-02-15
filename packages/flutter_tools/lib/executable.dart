@@ -218,6 +218,8 @@ List<FlutterCommand> generateCommands({required bool verboseHelp, required bool 
         fileSystem: globals.fs,
         logger: globals.logger,
         platform: globals.platform,
+        terminal: globals.terminal,
+        outputPreferences: globals.outputPreferences,
         signals: globals.signals,
       ),
       EmulatorsCommand(),

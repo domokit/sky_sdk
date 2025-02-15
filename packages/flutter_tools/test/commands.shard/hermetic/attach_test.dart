@@ -1515,7 +1515,7 @@ class FakeHotRunner extends Fake implements HotRunner {
   bool stayResident = true;
 
   @override
-  void printHelp({required bool details}) {}
+  void printHelp({required bool details, bool reloadIsRestart = false}) {}
 }
 
 class FakeHotRunnerFactory extends Fake implements HotRunnerFactory {

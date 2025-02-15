@@ -140,12 +140,12 @@ void main() {
     expect(find.text('Group 0 Tile 19'), findsOneWidget);
     expect(
       tester.getRect(find.text('Group 0 Tile 19')),
-      const Rect.fromLTRB(0.0, 0.0, 300.0, 300.0),
+      const Rect.fromLTRB(0.0, 300.0, 300.0, 600.0),
     );
     expect(find.text('Group 1 Tile 0'), findsOneWidget);
     expect(
       tester.getRect(find.text('Group 1 Tile 0')),
-      const Rect.fromLTRB(0.0, 400.0, 300.0, 600.0),
+      const Rect.fromLTRB(0.0, 100.0, 300.0, 300.0),
     );
 
     final List<RenderSliverList> renderSlivers =
@@ -158,9 +158,9 @@ void main() {
     expect(first.geometry!.scrollExtent, equals(20 * 300.0));
     expect(second.geometry!.scrollExtent, equals(20 * 200.0));
 
-    expect((first.parentData! as SliverPhysicalParentData).paintOffset.dy, equals(0.0));
+    expect((first.parentData! as SliverPhysicalParentData).paintOffset.dy, equals(300.0));
     expect(first.constraints.scrollOffset, equals(19 * 300.0));
-    expect((second.parentData! as SliverPhysicalParentData).paintOffset.dy, equals(1 * 300.0));
+    expect((second.parentData! as SliverPhysicalParentData).paintOffset.dy, equals(0.0));
 
     final RenderSliverMainAxisGroup renderGroup = tester.renderObject<RenderSliverMainAxisGroup>(
       find.byType(SliverMainAxisGroup),
@@ -935,6 +935,25 @@ void main() {
     );
     expect(find.text('1'), findsNothing);
     expect(find.text('1', skipOffstage: false), findsOneWidget);
+  });
+
+  testWidgets("The localToGlobal of SliverMainAxisGroup's children works in reverse.", (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildSliverMainAxisGroup(
+        viewportHeight: 400,
+        reverse: true,
+        slivers: <Widget>[
+          const SliverToBoxAdapter(child: SizedBox(height: 70)),
+          const SliverToBoxAdapter(child: SizedBox(height: 20, child: Text('1'))),
+          const SliverToBoxAdapter(child: SizedBox(height: 700)),
+        ],
+      ),
+    );
+    final RenderBox renderBox = tester.renderObject(find.text('1')) as RenderBox;
+    expect(renderBox.localToGlobal(Offset.zero), const Offset(0.0, 310.0));
+    expect(tester.getTopLeft(find.text('1')), const Offset(0.0, 310.0));
   });
 }
 

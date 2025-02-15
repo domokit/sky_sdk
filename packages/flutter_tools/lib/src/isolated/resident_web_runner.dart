@@ -12,11 +12,13 @@ import 'package:webkit_inspection_protocol/webkit_inspection_protocol.dart' hide
 
 import '../application_package.dart';
 import '../base/async_guard.dart';
+import '../base/command_help.dart';
 import '../base/common.dart';
 import '../base/file_system.dart';
 import '../base/io.dart';
 import '../base/logger.dart';
 import '../base/net.dart';
+import '../base/platform.dart';
 import '../base/terminal.dart';
 import '../base/time.dart';
 import '../base/utils.dart';
@@ -52,6 +54,9 @@ class DwdsWebRunnerFactory extends WebRunnerFactory {
     required DebuggingOptions debuggingOptions,
     UrlTunneller? urlTunneller,
     required Logger logger,
+    required Terminal terminal,
+    required Platform platform,
+    required OutputPreferences outputPreferences,
     required FileSystem fileSystem,
     required SystemClock systemClock,
     required Analytics analytics,
@@ -69,6 +74,9 @@ class DwdsWebRunnerFactory extends WebRunnerFactory {
       systemClock: systemClock,
       fileSystem: fileSystem,
       logger: logger,
+      terminal: terminal,
+      platform: platform,
+      outputPreferences: outputPreferences,
     );
   }
 }
@@ -88,6 +96,9 @@ class ResidentWebRunner extends ResidentRunner {
     required DebuggingOptions debuggingOptions,
     required FileSystem fileSystem,
     required Logger logger,
+    required Terminal terminal,
+    required Platform platform,
+    required OutputPreferences outputPreferences,
     required SystemClock systemClock,
     required Analytics analytics,
     UrlTunneller? urlTunneller,
@@ -95,6 +106,7 @@ class ResidentWebRunner extends ResidentRunner {
     ResidentDevtoolsHandlerFactory devtoolsHandler = createDefaultHandler,
   }) : _fileSystem = fileSystem,
        _logger = logger,
+       _platform = platform,
        _systemClock = systemClock,
        _analytics = analytics,
        _urlTunneller = urlTunneller,
@@ -105,10 +117,17 @@ class ResidentWebRunner extends ResidentRunner {
          stayResident: stayResident,
          machine: machine,
          devtoolsHandler: devtoolsHandler,
+         commandHelp: CommandHelp(
+           logger: logger,
+           terminal: terminal,
+           platform: platform,
+           outputPreferences: outputPreferences,
+         ),
        );
 
   final FileSystem _fileSystem;
   final Logger _logger;
+  final Platform _platform;
   final SystemClock _systemClock;
   final Analytics _analytics;
   final UrlTunneller? _urlTunneller;
@@ -145,6 +164,20 @@ class ResidentWebRunner extends ResidentRunner {
   bool get generateDartPluginRegistry => false;
 
   bool get _enableDwds => debuggingEnabled;
+
+  @override
+  bool get reloadIsRestart =>
+      // Web behavior when not using the DDC library bundle format is to restart
+      // when a reload is issued. We can't use `canHotReload` to signal this
+      // since we still want a reload command to succeed, but to do a hot
+      // restart.
+      debuggingOptions.buildInfo.ddcModuleFormat != DdcModuleFormat.ddc ||
+      debuggingOptions.buildInfo.canaryFeatures != true;
+
+  // TODO(srujzs): Return true when web supports detaching.
+  // https://github.com/flutter/flutter/issues/163329
+  @override
+  bool get supportsDetach => false;
 
   ConnectionResult? _connectionResult;
   StreamSubscription<vmservice.Event>? _stdOutSub;
@@ -203,24 +236,6 @@ class ResidentWebRunner extends ResidentRunner {
   Future<void> _cleanupAndExit() async {
     await _cleanup();
     appFinished();
-  }
-
-  @override
-  void printHelp({bool details = true}) {
-    if (details) {
-      return printHelpDetails();
-    }
-    const String fire = '🔥';
-    const String rawMessage = '  To hot restart changes while running, press "r" or "R".';
-    final String message = _logger.terminal.color(
-      fire + _logger.terminal.bolden(rawMessage),
-      TerminalColor.red,
-    );
-    _logger.printStatus(message);
-    const String quitMessage = 'To quit, press "q".';
-    _logger.printStatus('For a more detailed help message, press "h". $quitMessage');
-    _logger.printStatus('');
-    printDebuggerList();
   }
 
   @override
@@ -310,7 +325,7 @@ Please provide a valid TCP port (an integer between 0 and 65535, inclusive).
           isWasm: debuggingOptions.webUseWasm,
           useLocalCanvasKit: debuggingOptions.buildInfo.useLocalCanvasKit,
           rootDirectory: fileSystem.directory(projectRootPath),
-          isWindows: globals.platform.isWindows,
+          isWindows: _platform.isWindows,
         );
         Uri url = await device!.devFS!.create();
         if (debuggingOptions.tlsCertKeyPath != null && debuggingOptions.tlsCertPath != null) {
@@ -475,10 +490,10 @@ Please provide a valid TCP port (an integer between 0 and 65535, inclusive).
             // has some internal error, we should still surface it to make
             // debugging easier.
             String reloadFailedMessage = 'Hot reload failed:';
-            globals.printError(reloadFailedMessage);
+            _logger.printError(reloadFailedMessage);
             for (final ReasonForCancelling reason in contents.notices) {
               reloadFailedMessage += reason.toString();
-              globals.printError(reason.toString());
+              _logger.printError(reason.toString());
             }
             return OperationResult(1, reloadFailedMessage);
           }

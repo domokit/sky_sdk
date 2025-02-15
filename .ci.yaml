@@ -58,7 +58,9 @@ platform_properties:
       cores: "8"
       device_type: none
       kvm: "1"
-  linux_android_emu_34:
+  # linux_android_emu_unstable is intended to be how flutter-android proves the stability
+  # of new combinations of dependencies.
+  linux_android_emu_unstable:
     properties:
       contexts: >-
         [
@@ -67,8 +69,8 @@ platform_properties:
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:35v1"},
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"},
+          {"dependency": "android_virtual_device", "version": "android_35_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "build_id:8723189955818532721"},
           {"dependency": "open_jdk", "version": "version:17"}
         ]
       os: Ubuntu
@@ -417,14 +419,6 @@ targets:
         ["framework","hostonly","linux"]
       task_name: android_views
       presubmit_max_attempts: "2"
-    timeout: 60
-
-  - name: Linux_android_emu_34 android views
-    recipe: devicelab/devicelab_drone
-    properties:
-      tags: >
-        ["framework","hostonly","linux"]
-      task_name: android_views
     timeout: 60
 
   - name: Linux build_aar_module_test
@@ -2177,9 +2171,10 @@ targets:
       task_name: android_defines_test
       presubmit_max_attempts: "2"
 
-  - name: Linux_android_emu_34 android_defines_test
+  - name: Linux_android_emu_unstable android_defines_test
     recipe: devicelab/devicelab_drone
     timeout: 60
+    bringup: true
     properties:
       tags: >
         ["devicelab", "linux"]
@@ -2597,21 +2592,6 @@ targets:
       task_name: external_textures_integration_test
       presubmit_max_attempts: "2"
 
-  - name: Linux_android_emu_34 external_textures_integration_test
-    recipe: devicelab/devicelab_drone
-    timeout: 60
-    # Functionally the same as "presubmit: false", except that we will run on
-    # presubmit during engine rolls. This test is the *only* automated e2e
-    # test for external textures for the engine, it should never break.
-    runIf:
-      - engine/**
-      - DEPS
-      - .ci.yaml
-    properties:
-      tags: >
-        ["devicelab", "linux"]
-      task_name: external_textures_integration_test
-
   # linux mokey benchmark
   - name: Linux_mokey fading_child_animation_perf__timeline_summary
     recipe: devicelab/devicelab_drone
@@ -2758,15 +2738,6 @@ targets:
       tags: >
         ["devicelab", "android", "linux", "mokey"]
       task_name: flutter_view__start_up
-
-  - name: Linux_pixel_7pro frame_policy_delay_test_android
-    recipe: devicelab/devicelab_drone
-    presubmit: false
-    timeout: 60
-    properties:
-      tags: >
-        ["devicelab", "android", "linux", "pixel", "7pro"]
-      task_name: frame_policy_delay_test_android
 
   # linux mokey benchmark
   - name: Linux_mokey fullscreen_textfield_perf

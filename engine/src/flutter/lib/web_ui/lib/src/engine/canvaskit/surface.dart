@@ -149,17 +149,18 @@ class Surface extends DisplayCanvas {
 
     if (browserSupportsCreateImageBitmap) {
       JSObject bitmapSource;
+      DomImageBitmap bitmap;
       if (useOffscreenCanvas) {
-        bitmapSource = _offscreenCanvas! as JSObject;
+        bitmap = _offscreenCanvas!.transferToImageBitmap();
       } else {
         bitmapSource = _canvasElement! as JSObject;
+        bitmap = await createImageBitmap(bitmapSource, (
+          x: 0,
+          y: _pixelHeight - bitmapSize.height,
+          width: bitmapSize.width,
+          height: bitmapSize.height,
+        ));
       }
-      final DomImageBitmap bitmap = await createImageBitmap(bitmapSource, (
-        x: 0,
-        y: _pixelHeight - bitmapSize.height,
-        width: bitmapSize.width,
-        height: bitmapSize.height,
-      ));
       canvas.render(bitmap);
     } else {
       // If the browser doesn't support `createImageBitmap` (e.g. Safari 14)
@@ -402,6 +403,8 @@ class Surface extends DisplayCanvas {
       if (_glContext != 0) {
         _grContext = canvasKit.MakeGrContext(glContext.toDouble());
         if (_grContext == null) {
+          // TODO(harryterkelsen): Make this error message more descriptive by
+          // reporting the number of currently live Surfaces, https://github.com/flutter/flutter/issues/162868.
           throw CanvasKitError(
             'Failed to initialize CanvasKit. '
             'CanvasKit.MakeGrContext returned null.',

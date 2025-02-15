@@ -684,7 +684,7 @@ class CupertinoPopupSurface extends StatelessWidget {
       isVibrancePainted = debugIsVibrancePainted;
       return true;
     }());
-    if ((kIsWeb && !isSkiaWeb) || !isVibrancePainted) {
+    if (!isVibrancePainted) {
       if (blurSigma == 0) {
         return null;
       }

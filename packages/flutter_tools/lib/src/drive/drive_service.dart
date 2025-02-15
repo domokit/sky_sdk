@@ -15,6 +15,7 @@ import '../base/dds.dart';
 import '../base/logger.dart';
 import '../base/platform.dart';
 import '../base/process.dart';
+import '../base/terminal.dart';
 import '../build_info.dart';
 import '../device.dart';
 import '../resident_runner.dart';
@@ -26,12 +27,16 @@ class FlutterDriverFactory {
     required ApplicationPackageFactory applicationPackageFactory,
     required Platform platform,
     required Logger logger,
+    required Terminal terminal,
+    required OutputPreferences outputPreferences,
     required ProcessUtils processUtils,
     required String dartSdkPath,
     required DevtoolsLauncher devtoolsLauncher,
   }) : _applicationPackageFactory = applicationPackageFactory,
        _platform = platform,
        _logger = logger,
+       _terminal = terminal,
+       _outputPreferences = outputPreferences,
        _processUtils = processUtils,
        _dartSdkPath = dartSdkPath,
        _devtoolsLauncher = devtoolsLauncher;
@@ -39,6 +44,8 @@ class FlutterDriverFactory {
   final ApplicationPackageFactory _applicationPackageFactory;
   final Platform _platform;
   final Logger _logger;
+  final Terminal _terminal;
+  final OutputPreferences _outputPreferences;
   final ProcessUtils _processUtils;
   final String _dartSdkPath;
   final DevtoolsLauncher _devtoolsLauncher;
@@ -48,7 +55,9 @@ class FlutterDriverFactory {
     if (web) {
       return WebDriverService(
         logger: _logger,
+        terminal: _terminal,
         platform: _platform,
+        outputPreferences: _outputPreferences,
         processUtils: _processUtils,
         dartSdkPath: _dartSdkPath,
       );

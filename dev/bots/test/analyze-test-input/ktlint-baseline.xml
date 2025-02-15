@@ -15,9 +15,6 @@
     <file name="dev/integration_tests/deferred_components_test/android/app/src/main/kotlin/io/flutter/integration/deferred_components_test/MainActivity.kt">
         <error line="1" column="9" source="standard:package-name" />
     </file>
-    <file name="dev/integration_tests/non_nullable/android/app/src/main/kotlin/com/example/non_nullable/MainActivity.kt">
-        <error line="1" column="9" source="standard:package-name" />
-    </file>
     <file name="dev/integration_tests/spell_check/android/app/src/main/kotlin/com/example/sc_int_test/MainActivity.kt">
         <error line="1" column="9" source="standard:package-name" />
     </file>

@@ -28,6 +28,8 @@ class FlutterMain {
 
   static bool IsDeviceEmulator(std::string_view product_model);
 
+  static bool IsKnownBadSOC(std::string_view hardware);
+
  private:
   const flutter::Settings settings_;
   DartServiceIsolate::CallbackHandle vm_service_uri_callback_ = 0;

@@ -6,6 +6,7 @@
 
 #include <android/log.h>
 #include <sys/system_properties.h>
+#include <cstring>
 #include <optional>
 #include <string>
 #include <vector>
@@ -47,6 +48,23 @@ extern const intptr_t kPlatformStrongDillSize;
 namespace {
 
 fml::jni::ScopedJavaGlobalRef<jclass>* g_flutter_jni_class = nullptr;
+
+/// These are SoCs that crash when using AHB imports.
+static constexpr const char* kBLC[] = {
+    // Most Exynos Series SoC
+    "exynos7870",  //
+    "exynos7880",  //
+    "exynos7872",  //
+    "exynos7884",  //
+    "exynos7885",  //
+    "exynos8890",  //
+    "exynos8895",  //
+    "exynos7904",  //
+    "exynos9609",  //
+    "exynos9610",  //
+    "exynos9611",  //
+    "exynos9810"   //
+};
 
 }  // anonymous namespace
 
@@ -238,6 +256,18 @@ bool FlutterMain::IsDeviceEmulator(std::string_view product_model) {
 }
 
 // static
+bool FlutterMain::IsKnownBadSOC(std::string_view hardware) {
+  // TODO(jonahwilliams): if the list gets too long (> 16), convert
+  // to a hash map first.
+  for (const auto& board : kBLC) {
+    if (strcmp(board, hardware.data()) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// static
 AndroidRenderingAPI FlutterMain::SelectedRenderingAPI(
     const flutter::Settings& settings) {
   if (settings.enable_software_rendering) {
@@ -277,6 +307,12 @@ AndroidRenderingAPI FlutterMain::SelectedRenderingAPI(
     __system_property_get("ro.product.model", product_model);
     if (IsDeviceEmulator(product_model)) {
       // Avoid using Vulkan on known emulators.
+      return kVulkanUnsupportedFallback;
+    }
+
+    __system_property_get("ro.product.board", product_model);
+    if (IsKnownBadSOC(product_model)) {
+      // Avoid using Vulkan on known bad SoCs.
       return kVulkanUnsupportedFallback;
     }
 

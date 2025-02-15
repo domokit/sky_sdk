@@ -287,6 +287,57 @@ void testMain() {
       skip: !Surface.offscreenCanvasSupported,
     );
 
+    test('uses transferToImageBitmap for bitmap creation', () async {
+      final Surface surface = Surface();
+      surface.ensureSurface(const BitmapSize(10, 10));
+      final DomOffscreenCanvas offscreenCanvas = surface.debugGetOffscreenCanvas()!;
+      final Object originalTransferToImageBitmap = js_util.getProperty(
+        offscreenCanvas,
+        'transferToImageBitmap',
+      );
+      js_util.setProperty(
+        offscreenCanvas,
+        'originalTransferToImageBitmap',
+        originalTransferToImageBitmap,
+      );
+      int transferToImageBitmapCalls = 0;
+      js_util.setProperty(
+        offscreenCanvas,
+        'transferToImageBitmap',
+        js_util.allowInterop(() {
+          transferToImageBitmapCalls++;
+          return js_util.callMethod<Object>(offscreenCanvas, 'originalTransferToImageBitmap', []);
+        }),
+      );
+      final RenderCanvas renderCanvas = RenderCanvas();
+      final CkPictureRecorder recorder = CkPictureRecorder();
+      final CkCanvas canvas = recorder.beginRecording(const ui.Rect.fromLTRB(0, 0, 10, 10));
+      canvas.drawCircle(
+        const ui.Offset(5, 5),
+        3,
+        CkPaint()..color = const ui.Color.fromARGB(255, 255, 0, 0),
+      );
+      final CkPicture picture = recorder.endRecording();
+      await surface.rasterizeToCanvas(const BitmapSize(10, 10), renderCanvas, <CkPicture>[picture]);
+      expect(transferToImageBitmapCalls, 1);
+    }, skip: !Surface.offscreenCanvasSupported);
+
+    test('throws error if CanvasKit.MakeGrContext returns null', () async {
+      final Object originalMakeGrContext = js_util.getProperty(canvasKit, 'MakeGrContext');
+      js_util.setProperty(canvasKit, 'originalMakeGrContext', originalMakeGrContext);
+      js_util.setProperty(
+        canvasKit,
+        'MakeGrContext',
+        js_util.allowInterop((int glContext) {
+          return null;
+        }),
+      );
+      final Surface surface = Surface();
+      expect(() => surface.ensureSurface(const BitmapSize(10, 10)), throwsA(isA<CanvasKitError>()));
+      js_util.setProperty(canvasKit, 'MakeGrContext', originalMakeGrContext);
+      // Skipping on Firefox for now since Firefox headless doesn't support WebGL
+    }, skip: isFirefox);
+
     test('can recover from MakeSWCanvasSurface failure', () async {
       debugOverrideJsConfiguration(
         <String, Object?>{'canvasKitForceCpuOnly': true}.jsify() as JsFlutterConfiguration?,

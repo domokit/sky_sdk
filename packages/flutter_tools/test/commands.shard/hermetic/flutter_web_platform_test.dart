@@ -53,12 +53,8 @@ void main() {
     tempDir = fileSystem.systemTempDirectory.createTempSync('flutter_web_platform_test.');
 
     for (final HostArtifact artifact in <HostArtifact>[
-      HostArtifact.webPrecompiledAmdCanvaskitAndHtmlSdk,
       HostArtifact.webPrecompiledAmdCanvaskitSdk,
-      HostArtifact.webPrecompiledAmdSdk,
-      HostArtifact.webPrecompiledDdcLibraryBundleCanvaskitAndHtmlSdk,
       HostArtifact.webPrecompiledDdcLibraryBundleCanvaskitSdk,
-      HostArtifact.webPrecompiledDdcLibraryBundleSdk,
     ]) {
       final File artifactFile = artifacts.getHostArtifact(artifact) as File;
       artifactFile.createSync();

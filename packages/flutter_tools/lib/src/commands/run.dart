@@ -672,10 +672,6 @@ class RunCommand extends RunCommandBase {
       throwToolExit('--wasm is only supported on the web platform');
     }
 
-    if (webRenderer.isDeprecated) {
-      globals.logger.printWarning(webRenderer.deprecationWarning);
-    }
-
     if (webRenderer == WebRendererMode.skwasm && !useWasm) {
       throwToolExit('Skwasm renderer requires --wasm');
     }
@@ -724,6 +720,9 @@ class RunCommand extends RunCommandBase {
         fileSystem: globals.fs,
         analytics: globals.analytics,
         logger: globals.logger,
+        terminal: globals.terminal,
+        platform: globals.platform,
+        outputPreferences: globals.outputPreferences,
         systemClock: globals.systemClock,
       );
     }

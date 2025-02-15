@@ -169,9 +169,6 @@ class BuildWebCommand extends BuildSubCommand {
     final bool sourceMaps = boolArg('source-maps');
 
     final List<WebCompilerConfig> compilerConfigs;
-    if (webRenderer.isDeprecated) {
-      globals.logger.printWarning(webRenderer.deprecationWarning);
-    }
 
     if (useWasm) {
       if (webRenderer != WebRendererMode.getDefault(useWasm: true)) {

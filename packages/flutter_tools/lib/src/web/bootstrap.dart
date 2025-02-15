@@ -523,39 +523,27 @@ String generateDDCLibraryBundleMainModule({
   dartDevEmbedder.debugger.registerDevtoolsFormatter();
 
   // Set up a final script that lets us know when all scripts have been loaded.
+  // Only then can we call the main method.
   let onLoadEndSrc = '$onLoadEndBootstrap';
   window.\$dartLoader.loadConfig.bootstrapScript = {
     src: onLoadEndSrc,
     id: onLoadEndSrc,
   };
   window.\$dartLoader.loadConfig.tryLoadBootstrapScript = true;
-  let dwdsCalledMain = false;
-  let dartSrcsLoaded = false;
-  let runMainWhenBoth = function() {
-    // Only run once both all the scripts are loaded and DWDS triggers main.
-    if (dwdsCalledMain && dartSrcsLoaded) {
+  // Should be called by $onLoadEndBootstrap once all the scripts have been
+  // loaded.
+  window.$_onLoadEndCallback = function() {
+    let child = {};
+    child.main = function() {
       let sdkOptions = {
         nonNullAsserts: $nullAssertions,
         nativeNonNullAsserts: $nativeNullAssertions,
       };
       dartDevEmbedder.runMain(appName, sdkOptions);
     }
+    /* MAIN_EXTENSION_MARKER */
+    child.main();
   }
-  // DWDS expects the main function to be lowercase.
-  // TODO(srujzs): DWDS should be more robust to not have to require that.
-  dwdsmain = function() {
-    dwdsCalledMain = true;
-    runMainWhenBoth();
-  }
-  // Should be called by $onLoadEndBootstrap once all the scripts have been
-  // loaded.
-  window.$_onLoadEndCallback = function() {
-    dartSrcsLoaded = true;
-    runMainWhenBoth();
-  }
-
-  /* MAIN_EXTENSION_MARKER */
-  dwdsmain();
 })();
 ''';
 }

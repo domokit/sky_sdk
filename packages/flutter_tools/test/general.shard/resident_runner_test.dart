@@ -1390,7 +1390,7 @@ flutter:
             commandHelp.hWithDetails,
             commandHelp.c,
             commandHelp.q,
-            '',
+            '\n',
           ].join('\n'),
         ),
       );
@@ -1425,7 +1425,7 @@ flutter:
             commandHelp.hWithoutDetails,
             commandHelp.c,
             commandHelp.q,
-            '',
+            '\n',
           ].join('\n'),
         ),
       );

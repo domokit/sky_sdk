@@ -56,7 +56,6 @@
 /dev/devicelab/bin/tasks/flutter_gallery_v2_chrome_run_test.dart @yjbanov @flutter/web
 /dev/devicelab/bin/tasks/flutter_gallery_v2_web_compile_test.dart @yjbanov @flutter/web
 /dev/devicelab/bin/tasks/flutter_test_performance.dart @jtmcdole @flutter/engine
-/dev/devicelab/bin/tasks/frame_policy_delay_test_android.dart @jtmcdole @flutter/engine
 /dev/devicelab/bin/tasks/fullscreen_textfield_perf.dart @jtmcdole @flutter/engine
 /dev/devicelab/bin/tasks/fullscreen_textfield_perf__e2e_summary.dart @jtmcdole @flutter/engine
 /dev/devicelab/bin/tasks/gradient_consistent_perf__e2e_summary.dart @flar @flutter/engine

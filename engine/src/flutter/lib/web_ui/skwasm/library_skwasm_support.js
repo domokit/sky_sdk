@@ -113,14 +113,13 @@ mergeInto(LibraryManager.library, {
       canvas.width = width;
       canvas.height = height;
     };
-    _skwasm_captureImageBitmap = function(contextHandle, width, height, imagePromises) {
-      if (!imagePromises) imagePromises = Array();
+    _skwasm_captureImageBitmap = function(contextHandle, images) {
+      if (!images) images = Array();
       const canvas = handleToCanvasMap.get(contextHandle);
-      imagePromises.push(createImageBitmap(canvas, 0, 0, width, height));
-      return imagePromises;
+      images.push(canvas.transferToImageBitmap());
+      return images;
     };
-    _skwasm_resolveAndPostImages = async function(surfaceHandle, imagePromises, rasterStart, callbackId) {
-      const imageBitmaps = imagePromises ? await Promise.all(imagePromises) : [];
+    _skwasm_postImages = async function(surfaceHandle, imageBitmaps, rasterStart, callbackId) {
       const rasterEnd = skwasm_getCurrentTimestamp();
       skwasm_postMessage({
         skwasmMessage: 'onRenderComplete',
@@ -136,7 +135,7 @@ mergeInto(LibraryManager.library, {
       const newTexture = glCtx.createTexture();
       glCtx.bindTexture(glCtx.TEXTURE_2D, newTexture);
       glCtx.pixelStorei(glCtx.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-      
+
       glCtx.texImage2D(glCtx.TEXTURE_2D, 0, glCtx.RGBA, width, height, 0, glCtx.RGBA, glCtx.UNSIGNED_BYTE, textureSource);
 
       glCtx.pixelStorei(glCtx.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
@@ -193,8 +192,8 @@ mergeInto(LibraryManager.library, {
   skwasm_resizeCanvas__deps: ['$skwasm_support_setup'],
   skwasm_captureImageBitmap: function () {},
   skwasm_captureImageBitmap__deps: ['$skwasm_support_setup'],
-  skwasm_resolveAndPostImages: function () {},
-  skwasm_resolveAndPostImages__deps: ['$skwasm_support_setup'],
+  skwasm_postImages: function () {},
+  skwasm_postImages__deps: ['$skwasm_support_setup'],
   skwasm_createGlTextureFromTextureSource: function () {},
   skwasm_createGlTextureFromTextureSource__deps: ['$skwasm_support_setup'],
   skwasm_dispatchDisposeSurface: function() {},
@@ -204,4 +203,3 @@ mergeInto(LibraryManager.library, {
   skwasm_postRasterizeResult: function() {},
   skwasm_postRasterizeResult__deps: ['$skwasm_support_setup'],
 });
-  

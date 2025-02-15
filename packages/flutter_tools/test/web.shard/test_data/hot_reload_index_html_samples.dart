@@ -63,7 +63,7 @@ String indexHtmlFlutterJsLoad = _generateFlutterJsIndexHtml('''
         builds: [
           {
             "compileTarget": "dartdevc",
-            "renderer": "html",
+            "renderer": "canvaskit",
             "mainJsPath": "main.dart.js",
           }
         ]

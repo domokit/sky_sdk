@@ -1528,9 +1528,7 @@ class TextPainter {
     final _TextPainterLayoutCacheWithOffset cachedLayout = _layoutCache!;
     // If nothing is laid out, top start is the only reasonable place to place
     // the cursor.
-    // The HTML renderer reports numberOfLines == 1 when the text is empty:
-    // https://github.com/flutter/flutter/issues/143331
-    if (cachedLayout.paragraph.numberOfLines < 1 || plainText.isEmpty) {
+    if (cachedLayout.paragraph.numberOfLines < 1) {
       // TODO(LongCatIsLooong): assert when an invalid position is given.
       return null;
     }
@@ -1588,31 +1586,16 @@ class TextPainter {
       boxHeightStyle: ui.BoxHeightStyle.strut,
     );
 
-    if (boxes.isNotEmpty) {
-      final bool anchorToLeft = switch (glyphInfo.writingDirection) {
-        TextDirection.ltr => anchorToLeadingEdge,
-        TextDirection.rtl => !anchorToLeadingEdge,
-      };
-      final TextBox box = anchorToLeft ? boxes.first : boxes.last;
-      metrics = _LineCaretMetrics(
-        offset: Offset(anchorToLeft ? box.left : box.right, box.top),
-        writingDirection: box.direction,
-        height: box.bottom - box.top,
-      );
-    } else {
-      // Fall back to glyphInfo. This should only happen when using the HTML renderer.
-      assert(kIsWeb && !isSkiaWeb);
-      final Rect graphemeBounds = glyphInfo.graphemeClusterLayoutBounds;
-      final double dx = switch (glyphInfo.writingDirection) {
-        TextDirection.ltr => anchorToLeadingEdge ? graphemeBounds.left : graphemeBounds.right,
-        TextDirection.rtl => anchorToLeadingEdge ? graphemeBounds.right : graphemeBounds.left,
-      };
-      metrics = _LineCaretMetrics(
-        offset: Offset(dx, graphemeBounds.top),
-        writingDirection: glyphInfo.writingDirection,
-        height: graphemeBounds.height,
-      );
-    }
+    final bool anchorToLeft = switch (glyphInfo.writingDirection) {
+      TextDirection.ltr => anchorToLeadingEdge,
+      TextDirection.rtl => !anchorToLeadingEdge,
+    };
+    final TextBox box = anchorToLeft ? boxes.first : boxes.last;
+    metrics = _LineCaretMetrics(
+      offset: Offset(anchorToLeft ? box.left : box.right, box.top),
+      writingDirection: box.direction,
+      height: box.bottom - box.top,
+    );
 
     cachedLayout._previousCaretPositionKey = caretPositionCacheKey;
     return _caretMetrics = metrics;
