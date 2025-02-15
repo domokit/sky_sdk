@@ -4138,6 +4138,7 @@ class IndexedStack extends StatelessWidget {
   /// Whether or not non-visible children can be focused.
   ///
   /// Defaults to true.
+  // TODO: Added to avoid a breaking change, should be removed and set to false someday.
   final bool maintainInteractivity;
 
   /// The index of the child to show.
