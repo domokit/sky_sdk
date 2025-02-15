@@ -19,7 +19,6 @@ void main() {
   testWidgets('Material3 has sentence case labels', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         builder: (BuildContext context, Widget? child) {
           return MediaQuery(
             // Display has a vertical hinge down the middle
@@ -127,7 +126,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         title: 'Pirate app',
         home: Scaffold(
           appBar: AppBar(title: const Text('Home')),
@@ -362,7 +360,6 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
           textTheme: const TextTheme(titleLarge: titleTextStyle, titleSmall: subtitleTextStyle),
         ),
         home: const Center(child: LicensePage()),
@@ -462,9 +459,8 @@ void main() {
     });
 
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: const MediaQuery(
+      const MaterialApp(
+        home: MediaQuery(
           data: MediaQueryData(padding: EdgeInsets.all(safeareaPadding)),
           child: LicensePage(),
         ),
@@ -1097,9 +1093,10 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.light(
-          useMaterial3: true,
-        ).copyWith(scaffoldBackgroundColor: scaffoldColor, cardColor: cardColor),
+        theme: ThemeData.light().copyWith(
+          scaffoldBackgroundColor: scaffoldColor,
+          cardColor: cardColor,
+        ),
         home: Scaffold(
           body: Center(
             child: Builder(
@@ -1347,12 +1344,7 @@ void main() {
 
   testWidgets('Material3 - Error handling test', (WidgetTester tester) async {
     LicenseRegistry.addLicense(() => Stream<LicenseEntry>.error(Exception('Injected failure')));
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: const Material(child: AboutListTile()),
-      ),
-    );
+    await tester.pumpWidget(const MaterialApp(home: Material(child: AboutListTile())));
     await tester.tap(find.byType(ListTile));
     await tester.pump();
     await tester.pump(const Duration(seconds: 2));
@@ -1450,12 +1442,9 @@ void main() {
     await tester.binding.setSurfaceSize(defaultSize);
 
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
+      const MaterialApp(
         title: title,
-        home: const Scaffold(
-          body: Directionality(textDirection: textDirection, child: LicensePage()),
-        ),
+        home: Scaffold(body: Directionality(textDirection: textDirection, child: LicensePage())),
       ),
     );
 
@@ -1572,7 +1561,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         title: title,
         home: const Scaffold(
           body: Directionality(textDirection: textDirection, child: LicensePage()),
@@ -1618,7 +1606,6 @@ void main() {
     // This is a regression test for https://github.com/flutter/flutter/issues/108991
     final ThemeData theme = ThemeData(
       appBarTheme: const AppBarTheme(foregroundColor: Color(0xFFFFFFFF)),
-      useMaterial3: true,
     );
     const String title = 'License ABC';
     LicenseRegistry.addLicense(() {
@@ -1654,7 +1641,7 @@ void main() {
     WidgetTester tester,
   ) async {
     // This is a regression test for https://github.com/flutter/flutter/issues/108991
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     const String title = 'License ABC';
     LicenseRegistry.addLicense(() {
       return Stream<LicenseEntry>.fromIterable(<LicenseEntry>[
