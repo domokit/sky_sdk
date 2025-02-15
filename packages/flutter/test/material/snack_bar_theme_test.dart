@@ -139,7 +139,7 @@ void main() {
     WidgetTester tester,
   ) async {
     const String text = 'I am a snack bar.';
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,

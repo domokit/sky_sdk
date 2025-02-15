@@ -119,7 +119,7 @@ void main() {
     late BuildContext capturedContextM3;
     await tester.pumpWidget(
       Theme(
-        data: ThemeData(useMaterial3: true),
+        data: ThemeData(),
         child: Builder(
           builder: (BuildContext context) {
             capturedContextM3 = context;
@@ -131,7 +131,7 @@ void main() {
 
     expect(
       Theme.of(capturedContextM3),
-      equals(ThemeData.localize(ThemeData.fallback(useMaterial3: true), defaultGeometryThemeM3)),
+      equals(ThemeData.localize(ThemeData.fallback(), defaultGeometryThemeM3)),
     );
   });
 
@@ -168,7 +168,7 @@ void main() {
   testWidgets('Material3 - ThemeData with null typography uses proper defaults', (
     WidgetTester tester,
   ) async {
-    final ThemeData m3Theme = ThemeData(useMaterial3: true);
+    final ThemeData m3Theme = ThemeData();
     expect(m3Theme.typography, Typography.material2021(colorScheme: m3Theme.colorScheme));
   });
 
@@ -510,7 +510,7 @@ void main() {
     late ThemeData theme;
     await tester.pumpWidget(
       Theme(
-        data: ThemeData(useMaterial3: true),
+        data: ThemeData(),
         child: Directionality(
           textDirection: TextDirection.ltr,
           child: Builder(
@@ -610,7 +610,7 @@ void main() {
     });
 
     testWidgets('Material3 - Default light theme has defaults', (WidgetTester tester) async {
-      final CupertinoThemeData themeM3 = await testTheme(tester, ThemeData(useMaterial3: true));
+      final CupertinoThemeData themeM3 = await testTheme(tester, ThemeData());
 
       expect(themeM3.brightness, Brightness.light);
       expect(themeM3.primaryColor, const Color(0xff6750a4));
@@ -635,10 +635,7 @@ void main() {
     });
 
     testWidgets('Material3 - Dark theme has defaults', (WidgetTester tester) async {
-      final CupertinoThemeData themeM3 = await testTheme(
-        tester,
-        ThemeData.dark(useMaterial3: true),
-      );
+      final CupertinoThemeData themeM3 = await testTheme(tester, ThemeData.dark());
 
       expect(themeM3.brightness, Brightness.dark);
       expect(themeM3.primaryColor, const Color(0xffd0bcff));
@@ -703,7 +700,6 @@ void main() {
           cupertinoOverrideTheme: const CupertinoThemeData(
             scaffoldBackgroundColor: CupertinoColors.lightBackgroundGray,
           ),
-          useMaterial3: true,
         ),
       );
 
@@ -746,7 +742,6 @@ void main() {
             // The bar colors ignore all things material except brightness.
             barBackgroundColor: CupertinoColors.black,
           ),
-          useMaterial3: true,
         ),
       );
 
@@ -780,7 +775,7 @@ void main() {
     ) async {
       CupertinoThemeData themeM3 = await testTheme(
         tester,
-        ThemeData(useMaterial3: true, colorScheme: const ColorScheme.light(primary: Colors.red)),
+        ThemeData(colorScheme: const ColorScheme.light(primary: Colors.red)),
       );
 
       expect(buildCount, 1);
@@ -788,7 +783,7 @@ void main() {
 
       themeM3 = await testTheme(
         tester,
-        ThemeData(useMaterial3: true, colorScheme: const ColorScheme.light(primary: Colors.orange)),
+        ThemeData(colorScheme: const ColorScheme.light(primary: Colors.orange)),
       );
 
       expect(buildCount, 2);
@@ -912,7 +907,6 @@ void main() {
         CupertinoThemeData theme = await testTheme(
           tester,
           ThemeData(
-            useMaterial3: true,
             colorScheme: const ColorScheme.light(primary: Colors.purple),
             cupertinoOverrideTheme: const CupertinoThemeData(
               primaryContrastingColor: CupertinoColors.destructiveRed,
@@ -927,7 +921,6 @@ void main() {
         theme = await testTheme(
           tester,
           ThemeData(
-            useMaterial3: true,
             colorScheme: const ColorScheme.light(primary: Colors.green),
             cupertinoOverrideTheme: const CupertinoThemeData(
               primaryContrastingColor: CupertinoColors.destructiveRed,
@@ -980,7 +973,6 @@ void main() {
         final CupertinoThemeData originalTheme = await testTheme(
           tester,
           ThemeData(
-            useMaterial3: true,
             colorScheme: const ColorScheme.light(primary: Colors.purple),
             cupertinoOverrideTheme: const CupertinoThemeData(
               primaryContrastingColor: CupertinoColors.activeOrange,
@@ -995,7 +987,6 @@ void main() {
         final CupertinoThemeData theme = await testTheme(
           tester,
           ThemeData(
-            useMaterial3: true,
             colorScheme: const ColorScheme.light(primary: Colors.blue),
             cupertinoOverrideTheme: copiedTheme,
           ),
@@ -1037,7 +1028,7 @@ void main() {
     ) async {
       final CupertinoThemeData originalTheme = await testTheme(
         tester,
-        ThemeData(useMaterial3: true, colorScheme: const ColorScheme.light(primary: Colors.purple)),
+        ThemeData(colorScheme: const ColorScheme.light(primary: Colors.purple)),
       );
 
       final CupertinoThemeData copiedTheme = originalTheme.copyWith(
@@ -1047,7 +1038,6 @@ void main() {
       final CupertinoThemeData theme = await testTheme(
         tester,
         ThemeData(
-          useMaterial3: true,
           colorScheme: const ColorScheme.light(primary: Colors.blue),
           cupertinoOverrideTheme: copiedTheme,
         ),

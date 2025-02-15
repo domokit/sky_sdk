@@ -136,7 +136,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true, bottomAppBarTheme: theme),
+          theme: ThemeData(bottomAppBarTheme: theme),
           home: const Scaffold(
             body: BottomAppBar(color: babColor, surfaceTintColor: Colors.transparent),
           ),
@@ -153,7 +153,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true, bottomAppBarTheme: theme),
+          theme: ThemeData(bottomAppBarTheme: theme),
           home: const Scaffold(body: BottomAppBar(surfaceTintColor: Colors.transparent)),
         ),
       );
@@ -163,7 +163,7 @@ void main() {
     });
 
     testWidgets('Material3 - BAB theme does not affect defaults', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData(useMaterial3: true);
+      final ThemeData theme = ThemeData();
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
@@ -210,7 +210,7 @@ void main() {
       const BottomAppBarTheme theme = BottomAppBarTheme(surfaceTintColor: babThemeSurfaceTintColor);
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true, bottomAppBarTheme: theme),
+          theme: ThemeData(bottomAppBarTheme: theme),
           home: const Scaffold(
             body: BottomAppBar(color: color, surfaceTintColor: babSurfaceTintColor),
           ),
@@ -228,7 +228,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true, bottomAppBarTheme: theme),
+          theme: ThemeData(bottomAppBarTheme: theme),
           home: const Scaffold(body: BottomAppBar(color: color)),
         ),
       );

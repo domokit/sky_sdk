@@ -481,7 +481,6 @@ void main() {
     testWidgets('Material3 - currentDate is highlighted', (WidgetTester tester) async {
       await tester.pumpWidget(
         calendarDatePicker(
-          useMaterial3: true,
           initialDate: DateTime(2016, DateTime.january, 15),
           currentDate: DateTime(2016, 1, 2),
         ),
@@ -519,7 +518,6 @@ void main() {
     ) async {
       await tester.pumpWidget(
         calendarDatePicker(
-          useMaterial3: true,
           firstDate: DateTime(2016, 1, 3),
           lastDate: DateTime(2016, 1, 31),
           currentDate: DateTime(2016, 1, 2), // not between first and last

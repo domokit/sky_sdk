@@ -399,7 +399,7 @@ void main() {
   });
 
   test('Default M3 light textTheme styles all use onSurface', () {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final TextTheme textTheme = theme.textTheme;
     final Color dark = theme.colorScheme.onSurface;
     expect(textTheme.displayLarge!.color, dark);
@@ -420,7 +420,7 @@ void main() {
   });
 
   test('Default M3 dark textTheme styles all use onSurface', () {
-    final ThemeData theme = ThemeData(useMaterial3: true, brightness: Brightness.dark);
+    final ThemeData theme = ThemeData(brightness: Brightness.dark);
     final TextTheme textTheme = theme.textTheme;
     final Color light = theme.colorScheme.onSurface;
     expect(textTheme.displayLarge!.color, light);

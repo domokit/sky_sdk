@@ -470,7 +470,7 @@ void main() {
   });
 
   testWidgets('Material3 - Light theme SnackBar has dark background', (WidgetTester tester) async {
-    final ThemeData lightTheme = ThemeData.light(useMaterial3: true);
+    final ThemeData lightTheme = ThemeData.light();
     await tester.pumpWidget(
       MaterialApp(
         theme: lightTheme,
@@ -586,7 +586,7 @@ void main() {
   testWidgets('Material3 - Dark theme SnackBar has primary text buttons', (
     WidgetTester tester,
   ) async {
-    final ThemeData darkTheme = ThemeData.dark(useMaterial3: true);
+    final ThemeData darkTheme = ThemeData.dark();
     await tester.pumpWidget(
       MaterialApp(
         theme: darkTheme,
@@ -975,7 +975,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           body: Builder(
             builder: (BuildContext context) {
@@ -1027,7 +1026,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           body: Builder(
             builder: (BuildContext context) {
@@ -1128,7 +1126,6 @@ void main() {
   testWidgets('Material3 - SnackBar button text alignment', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: MediaQuery(
           data: const MediaQueryData(
             padding: EdgeInsets.only(left: 10.0, top: 20.0, right: 30.0, bottom: 40.0),
@@ -1245,7 +1242,6 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true),
           home: MediaQuery(
             data: const MediaQueryData(
               padding: EdgeInsets.only(left: 10.0, top: 20.0, right: 30.0, bottom: 40.0),
@@ -1416,7 +1412,6 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
           snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
         ),
         home: MediaQuery(
@@ -1539,7 +1534,6 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(
-            useMaterial3: true,
             snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
           ),
           home: MediaQuery(
@@ -2469,9 +2463,8 @@ void main() {
       (WidgetTester tester) async {
         // Regression test for https://github.com/flutter/flutter/issues/84263
         await tester.pumpWidget(
-          MaterialApp(
-            theme: ThemeData(useMaterial3: true),
-            home: const Scaffold(persistentFooterButtons: <Widget>[SizedBox(height: 1000)]),
+          const MaterialApp(
+            home: Scaffold(persistentFooterButtons: <Widget>[SizedBox(height: 1000)]),
           ),
         );
 
@@ -2512,10 +2505,7 @@ void main() {
       (WidgetTester tester) async {
         // Regression test for https://github.com/flutter/flutter/issues/84263
         await tester.pumpWidget(
-          MaterialApp(
-            theme: ThemeData(useMaterial3: true),
-            home: const Scaffold(bottomNavigationBar: SizedBox(height: 1000)),
-          ),
+          const MaterialApp(home: Scaffold(bottomNavigationBar: SizedBox(height: 1000))),
         );
 
         final FlutterExceptionHandler? handler = FlutterError.onError;
@@ -2882,10 +2872,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
+      const MaterialApp(
         debugShowCheckedModeBanner: false, // https://github.com/flutter/flutter/issues/143616
-        home: const Scaffold(
+        home: Scaffold(
           bottomSheet: SizedBox(width: 200, height: 50, child: ColoredBox(color: Colors.pink)),
         ),
       ),
@@ -3014,7 +3003,6 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true),
           debugShowCheckedModeBanner: false, // https://github.com/flutter/flutter/issues/143616
           home: Scaffold(
             body: const Scaffold(),
@@ -3256,7 +3244,6 @@ void main() {
     // Regression test for https://github.com/flutter/flutter/issues/98205
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         debugShowCheckedModeBanner: false, // https://github.com/flutter/flutter/issues/143616
         home: Scaffold(
           body: const Scaffold(),
@@ -3390,10 +3377,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
+      const MaterialApp(
         debugShowCheckedModeBanner: false, // https://github.com/flutter/flutter/issues/143616
-        home: const Scaffold(
+        home: Scaffold(
           bottomSheet: SizedBox(width: 200, height: 50, child: ColoredBox(color: Colors.pink)),
         ),
       ),
@@ -3455,10 +3441,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
+      const MaterialApp(
         debugShowCheckedModeBanner: false, // https://github.com/flutter/flutter/issues/143616
-        home: const Scaffold(
+        home: Scaffold(
           bottomSheet: SizedBox(width: 200, height: 50, child: ColoredBox(color: Colors.pink)),
         ),
       ),
@@ -3519,10 +3504,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
+      const MaterialApp(
         debugShowCheckedModeBanner: false, // https://github.com/flutter/flutter/issues/143616
-        home: const Scaffold(
+        home: Scaffold(
           bottomSheet: SizedBox(width: 200, height: 50, child: ColoredBox(color: Colors.pink)),
         ),
       ),
@@ -3585,10 +3569,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
+      const MaterialApp(
         debugShowCheckedModeBanner: false, // https://github.com/flutter/flutter/issues/143616
-        home: const Scaffold(
+        home: Scaffold(
           bottomSheet: SizedBox(width: 200, height: 50, child: ColoredBox(color: Colors.pink)),
         ),
       ),
@@ -3657,10 +3640,9 @@ void main() {
     'Material3 - Floating multi-line snackbar with icon and actionOverflowThreshold=1 is aligned correctly',
     (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(useMaterial3: true),
+        const MaterialApp(
           debugShowCheckedModeBanner: false, // https://github.com/flutter/flutter/issues/143616
-          home: const Scaffold(
+          home: Scaffold(
             bottomSheet: SizedBox(width: 200, height: 50, child: ColoredBox(color: Colors.pink)),
           ),
         ),

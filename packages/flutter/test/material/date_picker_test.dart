@@ -177,7 +177,7 @@ void main() {
     });
 
     testWidgets('Default dialog properties', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData(useMaterial3: true);
+      final ThemeData theme = ThemeData();
       await prepareDatePicker(tester, (Future<DateTime?> date) async {
         final Material dialogMaterial = tester.widget<Material>(
           find.descendant(of: find.byType(Dialog), matching: find.byType(Material)).first,
@@ -846,7 +846,6 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true),
           home: Material(
             child: DatePickerDialog(
               initialDate: initialDate,
@@ -948,7 +947,6 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true),
           home: Material(
             child: DatePickerDialog(
               initialDate: initialDate,

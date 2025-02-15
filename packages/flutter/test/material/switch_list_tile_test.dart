@@ -196,7 +196,7 @@ void main() {
       MediaQuery(
         data: const MediaQueryData(padding: EdgeInsets.all(8.0)),
         child: Theme(
-          data: ThemeData(useMaterial3: true),
+          data: ThemeData(),
           child: Directionality(
             textDirection: TextDirection.ltr,
             child: StatefulBuilder(
@@ -844,7 +844,6 @@ void main() {
 
     Widget buildSwitchListTile({required bool enabled, required bool selected}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -990,7 +989,6 @@ void main() {
 
     Widget buildSwitchListTile() {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -1156,7 +1154,6 @@ void main() {
       Icon? inactiveIcon,
     }) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: wrap(
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -1280,7 +1277,6 @@ void main() {
   ) async {
     Widget buildSwitchListTile(MaterialTapTargetSize materialTapTargetSize) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -1353,7 +1349,7 @@ void main() {
   ) async {
     Widget buildSwitchListTile(bool applyCupertinoTheme, TargetPlatform platform) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true, platform: platform),
+        theme: ThemeData(platform: platform),
         home: Material(
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -1426,7 +1422,6 @@ void main() {
   ) async {
     Widget buildSwitchListTile(MaterialTapTargetSize materialTapTargetSize) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
