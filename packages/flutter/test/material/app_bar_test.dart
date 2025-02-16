@@ -1267,6 +1267,163 @@ void main() {
 
     semantics.dispose();
   });
+  testWidgets('AppBar has default semantics order', (WidgetTester tester) async {
+    final SemanticsTester semantics = SemanticsTester(tester);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: AppBar(
+            leading: Semantics(sortKey: const OrdinalSortKey(0), child: const Text('Leading')),
+            title: Semantics(sortKey: const OrdinalSortKey(2), child: const Text('Title')),
+            flexibleSpace: Semantics(
+              sortKey: const OrdinalSortKey(1),
+              child: const Text('Flexible Space'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics(
+              id: 1,
+              textDirection: TextDirection.ltr,
+              children: <TestSemantics>[
+                TestSemantics(
+                  id: 2,
+                  children: <TestSemantics>[
+                    TestSemantics(
+                      id: 3,
+                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
+                      children: <TestSemantics>[
+                        TestSemantics(
+                          id: 4,
+                          children: <TestSemantics>[
+                            TestSemantics(
+                              id: 7,
+                              children: <TestSemantics>[
+                                TestSemantics(
+                                  id: 8,
+                                  label: 'Leading',
+                                  textDirection: TextDirection.ltr,
+                                ),
+                                TestSemantics(
+                                  id: 9,
+                                  flags: <SemanticsFlag>[
+                                    SemanticsFlag.isHeader,
+                                    SemanticsFlag.namesRoute,
+                                  ],
+                                  label: 'Title',
+                                  textDirection: TextDirection.ltr,
+                                ),
+                              ],
+                            ),
+                            TestSemantics(
+                              id: 5,
+                              children: <TestSemantics>[
+                                TestSemantics(
+                                  id: 6,
+                                  label: 'Flexible Space',
+                                  textDirection: TextDirection.ltr,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        ignoreRect: true,
+        ignoreTransform: true,
+      ),
+    );
+
+    semantics.dispose();
+  });
+  testWidgets('AppBar can customize sort keys for flexible space', (WidgetTester tester) async {
+    final SemanticsTester semantics = SemanticsTester(tester);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: AppBar(
+            leading: Semantics(sortKey: const OrdinalSortKey(0), child: const Text('Leading')),
+            title: Semantics(sortKey: const OrdinalSortKey(2), child: const Text('Title')),
+            flexibleSpace: Semantics(
+              sortKey: const OrdinalSortKey(1),
+              child: const Text('Flexible Space'),
+            ),
+            useDefaultSemanticsOrder: false,
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      semantics,
+      hasSemantics(
+        TestSemantics.root(
+          children: <TestSemantics>[
+            TestSemantics(
+              id: 1,
+              textDirection: TextDirection.ltr,
+              children: <TestSemantics>[
+                TestSemantics(
+                  id: 2,
+                  children: <TestSemantics>[
+                    TestSemantics(
+                      id: 3,
+                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
+                      children: <TestSemantics>[
+                        TestSemantics(
+                          id: 4,
+                          children: <TestSemantics>[
+                            TestSemantics(
+                              id: 6,
+                              label: 'Leading',
+                              textDirection: TextDirection.ltr,
+                            ),
+                            TestSemantics(
+                              id: 5,
+                              label: 'Flexible Space',
+                              textDirection: TextDirection.ltr,
+                            ),
+                            TestSemantics(
+                              id: 7,
+                              flags: <SemanticsFlag>[
+                                SemanticsFlag.isHeader,
+                                SemanticsFlag.namesRoute,
+                              ],
+                              label: 'Title',
+                              textDirection: TextDirection.ltr,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        ignoreRect: true,
+        ignoreTransform: true,
+      ),
+    );
+
+    semantics.dispose();
+  });
 
   testWidgets('Material3 - AppBar draws a light system bar for a dark background', (
     WidgetTester tester,

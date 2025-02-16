@@ -163,6 +163,15 @@ void EmbedderConfigBuilder::SetPlatformTaskRunner(
   project_args_.custom_task_runners = &custom_task_runners_;
 }
 
+void EmbedderConfigBuilder::SetUITaskRunner(
+    const FlutterTaskRunnerDescription* runner) {
+  if (runner == nullptr) {
+    return;
+  }
+  custom_task_runners_.ui_task_runner = runner;
+  project_args_.custom_task_runners = &custom_task_runners_;
+}
+
 void EmbedderConfigBuilder::SetupVsyncCallback() {
   project_args_.vsync_callback = [](void* user_data, intptr_t baton) {
     auto context = reinterpret_cast<EmbedderTestContext*>(user_data);

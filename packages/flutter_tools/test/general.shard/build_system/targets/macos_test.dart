@@ -10,7 +10,6 @@ import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/build_system/build_system.dart';
 import 'package:flutter_tools/src/build_system/targets/macos.dart';
-import 'package:flutter_tools/src/convert.dart';
 import 'package:unified_analytics/unified_analytics.dart';
 
 import '../../../src/common.dart';
@@ -413,7 +412,6 @@ void main() {
             artifacts.getArtifactPath(Artifact.flutterMacOSFramework, mode: BuildMode.debug),
           )
           .createSync();
-      environment.defines[kBundleSkSLPath] = 'bundle.sksl';
       fileSystem
           .file(
             artifacts.getArtifactPath(
@@ -433,16 +431,6 @@ void main() {
           )
           .createSync(recursive: true);
       fileSystem.file('${environment.buildDir.path}/App.framework/App').createSync(recursive: true);
-      // sksl bundle
-      fileSystem
-          .file('bundle.sksl')
-          .writeAsStringSync(
-            json.encode(<String, Object>{
-              'engineRevision': '2',
-              'platform': 'ios',
-              'data': <String, Object>{'A': 'B'},
-            }),
-          );
 
       final String inputKernel = '${environment.buildDir.path}/app.dill';
       fileSystem.file(inputKernel)
@@ -470,13 +458,6 @@ void main() {
         fileSystem.file('App.framework/Versions/A/Resources/flutter_assets/isolate_snapshot_data'),
         exists,
       );
-
-      final File skslFile = fileSystem.file(
-        'App.framework/Versions/A/Resources/flutter_assets/io.flutter.shaders.json',
-      );
-
-      expect(skslFile, exists);
-      expect(skslFile.readAsStringSync(), '{"data":{"A":"B"}}');
     },
     overrides: <Type, Generator>{
       FileSystem: () => fileSystem,

@@ -185,11 +185,22 @@ class PageController extends ScrollController {
     return position.page;
   }
 
+  bool _debugCheckPageControllerAttached() {
+    assert(positions.isNotEmpty, 'PageController is not attached to a PageView.');
+    assert(
+      positions.length == 1,
+      'Multiple PageViews are attached to '
+      'the same PageController.',
+    );
+    return true;
+  }
+
   /// Animates the controlled [PageView] from the current page to the given page.
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> animateToPage(int page, {required Duration duration, required Curve curve}) {
+    assert(_debugCheckPageControllerAttached());
     final _PagePosition position = this.position as _PagePosition;
     if (position._cachedPage != null) {
       position._cachedPage = page.toDouble();
@@ -213,6 +224,7 @@ class PageController extends ScrollController {
   /// Jumps the page position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
   void jumpToPage(int page) {
+    assert(_debugCheckPageControllerAttached());
     final _PagePosition position = this.position as _PagePosition;
     if (position._cachedPage != null) {
       position._cachedPage = page.toDouble();
@@ -332,6 +344,7 @@ class _PagePosition extends ScrollPositionWithSingleContext implements PageMetri
 
   final int initialPage;
   double _pageToUseOnStartup;
+
   // When the viewport has a zero-size, the `page` can not
   // be retrieved by `getPageFromPixels`, so we need to cache the page
   // for use when resizing the viewport to non-zero next time.
@@ -362,6 +375,7 @@ class _PagePosition extends ScrollPositionWithSingleContext implements PageMetri
   @override
   double get viewportFraction => _viewportFraction;
   double _viewportFraction;
+
   set viewportFraction(double value) {
     if (_viewportFraction == value) {
       return;

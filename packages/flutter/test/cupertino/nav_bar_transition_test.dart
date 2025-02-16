@@ -343,6 +343,53 @@ void main() {
     expect(() => flying(tester, find.text('Page 2')), throwsAssertionError);
   });
 
+  testWidgets('Navigation bars in a CupertinoSheetRoute have no hero transitions', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      CupertinoApp(
+        builder: (BuildContext context, Widget? navigator) {
+          return navigator!;
+        },
+        home: const Placeholder(),
+      ),
+    );
+
+    tester
+        .state<NavigatorState>(find.byType(Navigator))
+        .push(
+          CupertinoSheetRoute<void>(
+            builder:
+                (BuildContext context) =>
+                    scaffoldForNavBar(const CupertinoNavigationBar(middle: Text('Page 1')))!,
+          ),
+        );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    tester
+        .state<NavigatorState>(find.byType(Navigator))
+        .push(
+          CupertinoSheetRoute<void>(
+            builder:
+                (BuildContext context) =>
+                    scaffoldForNavBar(
+                      const CupertinoSliverNavigationBar(largeTitle: Text('Page 2')),
+                    )!,
+          ),
+        );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.byType(Hero), findsNothing);
+
+    // No Hero transition happened.
+    expect(() => flying(tester, find.text('Page 1')), throwsAssertionError);
+    expect(() => flying(tester, find.text('Page 2')), throwsAssertionError);
+  });
+
   testWidgets('Popping mid-transition is symmetrical', (WidgetTester tester) async {
     await startTransitionBetween(tester, fromTitle: 'Page 1');
 

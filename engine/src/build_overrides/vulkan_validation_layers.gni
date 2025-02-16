@@ -2,6 +2,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# This file is a temporary shim needed during the elimination of the buildroot.
-# See: https://github.com/flutter/flutter/issues/67373
-import("//flutter/build_overrides/vulkan_validation_layers.gni")
+vulkan_headers_dir = "//flutter/third_party/vulkan-deps/vulkan-headers/src"
+vulkan_utility_libraries_dir =
+    "//flutter/third_party/vulkan-deps/vulkan-utility-libraries/src"
+vvl_spirv_tools_dir = "//flutter/third_party/vulkan-deps/spirv-tools/src"
+vvl_glslang_dir = "//flutter/third_party/vulkan-deps/spirv-tools/src"
+
+# robin_hood_headers_dir = "//external/robin-hood-hashing/src/include"
+
+# Subdirectories for generated files
+vulkan_data_subdir = "vulkan-data"
+vulkan_gen_subdir = ""

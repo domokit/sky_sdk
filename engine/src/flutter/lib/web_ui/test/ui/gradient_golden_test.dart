@@ -6,7 +6,6 @@ import 'dart:math' as math;
 
 import 'package:test/bootstrap/browser.dart';
 import 'package:test/test.dart';
-import 'package:ui/src/engine/browser_detection.dart';
 import 'package:ui/ui.dart';
 import 'package:web_engine_tester/golden_tester.dart';
 
@@ -104,5 +103,5 @@ Future<void> testMain() async {
 
       await matchGoldenFile('sweep_gradient_paint.png', region: region);
     });
-  }, skip: isFirefox && isHtml); // https://github.com/flutter/flutter/issues/86623
+  });
 }

@@ -154,12 +154,16 @@ void VsyncWaiter::FireCallback(fml::TimePoint frame_start_time,
 void VsyncWaiter::PauseDartEventLoopTasks() {
   auto ui_task_queue_id = task_runners_.GetUITaskRunner()->GetTaskQueueId();
   auto task_queues = fml::MessageLoopTaskQueues::GetInstance();
-  task_queues->PauseSecondarySource(ui_task_queue_id);
+  if (ui_task_queue_id.is_valid()) {
+    task_queues->PauseSecondarySource(ui_task_queue_id);
+  }
 }
 
 void VsyncWaiter::ResumeDartEventLoopTasks(fml::TaskQueueId ui_task_queue_id) {
   auto task_queues = fml::MessageLoopTaskQueues::GetInstance();
-  task_queues->ResumeSecondarySource(ui_task_queue_id);
+  if (ui_task_queue_id.is_valid()) {
+    task_queues->ResumeSecondarySource(ui_task_queue_id);
+  }
 }
 
 }  // namespace flutter

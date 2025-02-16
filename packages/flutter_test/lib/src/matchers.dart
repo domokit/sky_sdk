@@ -675,6 +675,7 @@ Matcher matchesSemantics({
   bool isCheckStateMixed = false,
   bool isSelected = false,
   bool isButton = false,
+  bool hasSelectedState = false,
   bool isSlider = false,
   bool isKeyboardKey = false,
   bool isLink = false,

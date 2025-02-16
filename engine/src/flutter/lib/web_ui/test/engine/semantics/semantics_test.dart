@@ -112,6 +112,7 @@ void runSemanticsTests() {
   });
   group('route', () {
     _testRoute();
+    _testDialogs();
   });
   group('focusable', () {
     _testFocusable();
@@ -121,6 +122,9 @@ void runSemanticsTests() {
   });
   group('tabs', () {
     _testTabs();
+  });
+  group('table', () {
+    _testTables();
   });
 }
 
@@ -3352,6 +3356,99 @@ void _testRoute() {
   });
 }
 
+void _testDialogs() {
+  test('nodes with dialog role', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    SemanticsObject pumpSemantics() {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.dialog,
+        rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+      );
+      tester.apply();
+      return tester.getSemanticsObject(0);
+    }
+
+    final SemanticsObject object = pumpSemantics();
+    expect(object.semanticRole?.kind, EngineSemanticsRole.dialog);
+    expect(object.element.getAttribute('role'), 'dialog');
+  });
+
+  test('nodes with alertdialog role', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    SemanticsObject pumpSemantics() {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.alertDialog,
+        rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+      );
+      tester.apply();
+      return tester.getSemanticsObject(0);
+    }
+
+    final SemanticsObject object = pumpSemantics();
+    expect(object.semanticRole?.kind, EngineSemanticsRole.alertDialog);
+    expect(object.element.getAttribute('role'), 'alertdialog');
+  });
+
+  test('dialog can be described by a descendant', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    void pumpSemantics({required String label}) {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.dialog,
+        transform: Matrix4.identity().toFloat64(),
+        children: <SemanticsNodeUpdate>[
+          tester.updateNode(
+            id: 1,
+            children: <SemanticsNodeUpdate>[
+              tester.updateNode(id: 2, namesRoute: true, label: label),
+            ],
+          ),
+        ],
+      );
+      tester.apply();
+
+      expectSemanticsTree(owner(), '''
+        <sem role="dialog" aria-describedby="flt-semantic-node-2">
+          <sem-c>
+            <sem>
+              <sem-c>
+                <sem><span>$label</span></sem>
+              </sem-c>
+            </sem>
+          </sem-c>
+        </sem>
+      ''');
+    }
+
+    pumpSemantics(label: 'Route label');
+
+    expect(owner().debugSemanticsTree![0]!.semanticRole?.kind, EngineSemanticsRole.dialog);
+    expect(owner().debugSemanticsTree![2]!.semanticRole?.kind, EngineSemanticsRole.generic);
+    expect(
+      owner().debugSemanticsTree![2]!.semanticRole?.debugSemanticBehaviorTypes,
+      contains(RouteName),
+    );
+
+    pumpSemantics(label: 'Updated route label');
+
+    semantics().semanticsEnabled = false;
+  });
+}
+
 typedef CapturedAction = (int nodeId, ui.SemanticsAction action, Object? args);
 
 void _testFocusable() {
@@ -3627,6 +3724,94 @@ void _testTabs() {
     expect(object.semanticRole?.kind, EngineSemanticsRole.tabList);
     expect(object.element.getAttribute('role'), 'tablist');
   });
+}
+
+void _testTables() {
+  test('nodes with table role', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    SemanticsObject pumpSemantics() {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.table,
+        rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+      );
+      tester.apply();
+      return tester.getSemanticsObject(0);
+    }
+
+    final SemanticsObject object = pumpSemantics();
+    expect(object.semanticRole?.kind, EngineSemanticsRole.table);
+    expect(object.element.getAttribute('role'), 'table');
+  });
+
+  test('nodes with cell role', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    SemanticsObject pumpSemantics() {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.cell,
+        rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+      );
+      tester.apply();
+      return tester.getSemanticsObject(0);
+    }
+
+    final SemanticsObject object = pumpSemantics();
+    expect(object.semanticRole?.kind, EngineSemanticsRole.cell);
+    expect(object.element.getAttribute('role'), 'cell');
+  });
+
+  test('nodes with row role', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    SemanticsObject pumpSemantics() {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.row,
+        rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+      );
+      tester.apply();
+      return tester.getSemanticsObject(0);
+    }
+
+    final SemanticsObject object = pumpSemantics();
+    expect(object.semanticRole?.kind, EngineSemanticsRole.row);
+    expect(object.element.getAttribute('role'), 'row');
+  });
+
+  test('nodes with column header  role', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    SemanticsObject pumpSemantics() {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.columnHeader,
+        rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+      );
+      tester.apply();
+      return tester.getSemanticsObject(0);
+    }
+
+    final SemanticsObject object = pumpSemantics();
+    expect(object.semanticRole?.kind, EngineSemanticsRole.columnHeader);
+    expect(object.element.getAttribute('role'), 'columnheader');
+  });
+
+  semantics().semanticsEnabled = false;
 }
 
 /// A facade in front of [ui.SemanticsUpdateBuilder.updateNode] that

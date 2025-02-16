@@ -58,7 +58,9 @@ platform_properties:
       cores: "8"
       device_type: none
       kvm: "1"
-  linux_android_emu_34:
+  # linux_android_emu_unstable is intended to be how flutter-android proves the stability
+  # of new combinations of dependencies.
+  linux_android_emu_unstable:
     properties:
       contexts: >-
         [
@@ -67,8 +69,8 @@ platform_properties:
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:35v1"},
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"},
+          {"dependency": "android_virtual_device", "version": "android_35_google_apis_x64.textpb"},
+          {"dependency": "avd_cipd_version", "version": "build_id:8723189955818532721"},
           {"dependency": "open_jdk", "version": "version:17"}
         ]
       os: Ubuntu
@@ -419,14 +421,6 @@ targets:
       presubmit_max_attempts: "2"
     timeout: 60
 
-  - name: Linux_android_emu_34 android views
-    recipe: devicelab/devicelab_drone
-    properties:
-      tags: >
-        ["framework","hostonly","linux"]
-      task_name: android_views
-    timeout: 60
-
   - name: Linux build_aar_module_test
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -684,10 +678,12 @@ targets:
     presubmit: false
     enabled_branches:
       - master
+    timeout: 60 # TODO(https://github.com/flutter/flutter/issues/162654)
     properties:
       task_name: flutter_packaging
       tags: >
         ["framework", "hostonly", "shard", "linux"]
+      test_timeout_secs: "3600" # TODO(https://github.com/flutter/flutter/issues/162654)
     runIf:
       - .ci.yaml
       - engine/**
@@ -1126,6 +1122,16 @@ targets:
         ["devicelab", "hostonly", "linux"]
       task_name: linux_desktop_impeller
 
+  - name: Linux_android_emu android_display_cutout
+    recipe: devicelab/devicelab_drone
+    timeout: 60
+    bringup: true
+    properties:
+      tags: >
+        ["devicelab", "linux"]
+      task_name: android_display_cutout
+      presubmit_max_attempts: "2"
+
   - name: Linux android_release_builds_exclude_dev_dependencies_test
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -1495,7 +1501,10 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:35v1"},
-          {"dependency": "open_jdk", "version": "version:17"}
+          {"dependency": "open_jdk", "version": "version:17"},
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"}
         ]
       shard: tool_tests
       subshard: commands
@@ -1533,6 +1542,20 @@ targets:
 
   - name: Linux_android_emu android_engine_vulkan_tests
     recipe: flutter/flutter_drone
+    timeout: 60
+    properties:
+      shard: android_engine_vulkan_tests
+      tags: >
+         ["framework", "hostonly", "shard", "linux"]
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
+
+  - name: Linux_mokey android_engine_vulkan_tests
+    recipe: flutter/flutter_drone
+    # TODO(matanlurey): https://github.com/flutter/flutter/issues/163025.
+    bringup: true
     timeout: 60
     properties:
       shard: android_engine_vulkan_tests
@@ -2130,6 +2153,7 @@ targets:
         ["framework", "hostonly", "shard", "linux"]
       # Retry for flakes caused by https://github.com/flutter/flutter/issues/132654
       presubmit_max_attempts: "2"
+      test_timeout_secs: "3600" # https://github.com/flutter/flutter/issues/162714
     runIf:
       - dev/**
       - packages/flutter_tools/**
@@ -2147,9 +2171,10 @@ targets:
       task_name: android_defines_test
       presubmit_max_attempts: "2"
 
-  - name: Linux_android_emu_34 android_defines_test
+  - name: Linux_android_emu_unstable android_defines_test
     recipe: devicelab/devicelab_drone
     timeout: 60
+    bringup: true
     properties:
       tags: >
         ["devicelab", "linux"]
@@ -2567,21 +2592,6 @@ targets:
       task_name: external_textures_integration_test
       presubmit_max_attempts: "2"
 
-  - name: Linux_android_emu_34 external_textures_integration_test
-    recipe: devicelab/devicelab_drone
-    timeout: 60
-    # Functionally the same as "presubmit: false", except that we will run on
-    # presubmit during engine rolls. This test is the *only* automated e2e
-    # test for external textures for the engine, it should never break.
-    runIf:
-      - engine/**
-      - DEPS
-      - .ci.yaml
-    properties:
-      tags: >
-        ["devicelab", "linux"]
-      task_name: external_textures_integration_test
-
   # linux mokey benchmark
   - name: Linux_mokey fading_child_animation_perf__timeline_summary
     recipe: devicelab/devicelab_drone
@@ -2728,15 +2738,6 @@ targets:
       tags: >
         ["devicelab", "android", "linux", "mokey"]
       task_name: flutter_view__start_up
-
-  - name: Linux_pixel_7pro frame_policy_delay_test_android
-    recipe: devicelab/devicelab_drone
-    presubmit: false
-    timeout: 60
-    properties:
-      tags: >
-        ["devicelab", "android", "linux", "pixel", "7pro"]
-      task_name: frame_policy_delay_test_android
 
   # linux mokey benchmark
   - name: Linux_mokey fullscreen_textfield_perf
@@ -3190,6 +3191,16 @@ targets:
         ["devicelab", "android", "linux", "pixel", "7pro"]
       task_name: platform_views_scroll_perf_impeller__timeline_summary
 
+  - name: Linux_pixel_7pro platform_views_hcpp_scroll_perf__timeline_summary
+    recipe: devicelab/devicelab_drone
+    presubmit: false
+    bringup: true
+    timeout: 60
+    properties:
+      tags: >
+        ["devicelab", "android", "linux", "pixel", "7pro"]
+      task_name: platform_views_hcpp_scroll_perf__timeline_summary
+
   # linux mokey benchmark
   - name: Linux_mokey platform_view__start_up
     recipe: devicelab/devicelab_drone
@@ -3527,6 +3538,7 @@ targets:
       task_name: animated_complex_opacity_perf_macos__e2e_summary
 
   - name: Mac_benchmark basic_material_app_macos__compile
+    bringup: true # Flaky https://github.com/flutter/flutter/issues/162364
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -3536,8 +3548,6 @@ targets:
   - name: Mac build_ios_framework_module_test
     recipe: devicelab/devicelab_drone
     timeout: 60
-    # Flake rate of >3.5% in presubmit
-    presubmit: false # https://github.com/flutter/flutter/issues/150642
     properties:
       add_recipes_cq: "true"
       dependencies: >-
@@ -3792,7 +3802,6 @@ targets:
       task_name: flavors_test_macos
 
   - name: Mac_benchmark flutter_gallery_macos__compile
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/160495
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -3932,7 +3941,7 @@ targets:
     recipe: flutter/flutter_drone
     timeout: 60
     properties:
-      os: Mac-13
+      os: Mac-14
       dependencies: >-
         [
           {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"},
@@ -3940,6 +3949,11 @@ targets:
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "android_sdk", "version": "version:35v1"}
         ]
+      # TODO(vashworth): Remove once Xcode 16 is used by all tests
+      $flutter/osx_sdk : >-
+        {
+          "sdk_version": "16c5032a"
+        }
       shard: framework_tests
       subshard: misc
       tags: >
@@ -4111,8 +4125,6 @@ targets:
   - name: Mac_arm64 module_test_ios
     recipe: devicelab/devicelab_drone
     timeout: 60
-    # Flake rate of >10% in presubmit
-    presubmit: false # https://github.com/flutter/flutter/issues/150642
     properties:
       dependencies: >-
         [
@@ -4851,6 +4863,26 @@ targets:
       tags: >
         ["devicelab", "ios", "mac", "arm64"]
       task_name: hello_world_ios__compile
+
+  - name: Mac_arm64_ios imitation_game_flutter
+    recipe: devicelab/devicelab_drone
+    presubmit: false
+    bringup: true
+    timeout: 60
+    properties:
+      tags: >
+        ["devicelab", "ios", "mac", "arm64"]
+      task_name: imitation_game_swiftui__compile
+
+  - name: Mac_arm64_ios imitation_game_swiftui
+    recipe: devicelab/devicelab_drone
+    presubmit: false
+    bringup: true
+    timeout: 60
+    properties:
+      tags: >
+        ["devicelab", "ios", "mac", "arm64"]
+      task_name: imitation_game_flutter__compile
 
   - name: Mac_x64 hot_mode_dev_cycle_macos_target__benchmark
     recipe: devicelab/devicelab_drone
@@ -5838,6 +5870,7 @@ targets:
       tags: >
         ["devicelab", "hostonly", "windows"]
       task_name: build_android_host_app_with_module_aar
+      test_timeout_secs: "2700" # Allows 45 minutes (up from 30 default)
     runIf:
       - dev/**
       - packages/flutter_tools/**
@@ -6299,7 +6332,8 @@ targets:
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:35v1"},
-          {"dependency": "open_jdk", "version": "version:17"}
+          {"dependency": "open_jdk", "version": "version:17"},
+          {"dependency": "vs_build", "version": "version:vs2019"}
         ]
       shard: tool_tests
       subshard: commands

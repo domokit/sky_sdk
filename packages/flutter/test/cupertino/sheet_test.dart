@@ -7,6 +7,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../widgets/navigator_utils.dart';
 
+// Matches _kTopGapRatio in cupertino/sheet.dart.
+const double _kTopGapRatio = 0.08;
+
 void main() {
   testWidgets('Sheet route does not cover the whole screen', (WidgetTester tester) async {
     final GlobalKey scaffoldKey = GlobalKey();
@@ -647,6 +650,99 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Page: /next'), findsOneWidget);
+  });
+
+  testWidgets('content does not go below the bottom of the screen', (WidgetTester tester) async {
+    final GlobalKey scaffoldKey = GlobalKey();
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoPageScaffold(
+          key: scaffoldKey,
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                const Text('Page 1'),
+                CupertinoButton(
+                  onPressed: () {
+                    Navigator.push<void>(
+                      scaffoldKey.currentContext!,
+                      CupertinoSheetRoute<void>(
+                        builder: (BuildContext context) {
+                          return CupertinoPageScaffold(child: Container());
+                        },
+                      ),
+                    );
+                  },
+                  child: const Text('Push Page 2'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Push Page 2'));
+    await tester.pumpAndSettle();
+
+    expect(tester.getSize(find.byType(Container)).height, 600.0 - (600.0 * _kTopGapRatio));
+  });
+
+  testWidgets('nested navbars remove MediaQuery top padding', (WidgetTester tester) async {
+    final GlobalKey scaffoldKey = GlobalKey();
+    final GlobalKey appBarKey = GlobalKey();
+    final GlobalKey sheetBarKey = GlobalKey();
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: MediaQuery(
+          data: const MediaQueryData(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
+          child: CupertinoPageScaffold(
+            key: scaffoldKey,
+            navigationBar: CupertinoNavigationBar(
+              key: appBarKey,
+              middle: const Text('Navbar'),
+              backgroundColor: const Color(0xFFF8F8F8),
+            ),
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  const Text('Page 1'),
+                  CupertinoButton(
+                    onPressed: () {
+                      Navigator.push<void>(
+                        scaffoldKey.currentContext!,
+                        CupertinoSheetRoute<void>(
+                          builder: (BuildContext context) {
+                            return CupertinoPageScaffold(
+                              navigationBar: CupertinoNavigationBar(
+                                key: sheetBarKey,
+                                middle: const Text('Navbar'),
+                              ),
+                              child: Container(),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: const Text('Push Page 2'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    final double homeNavBardHeight = tester.getSize(find.byKey(appBarKey)).height;
+
+    await tester.tap(find.text('Push Page 2'));
+    await tester.pumpAndSettle();
+
+    final double sheetNavBarHeight = tester.getSize(find.byKey(sheetBarKey)).height;
+
+    expect(sheetNavBarHeight, lessThan(homeNavBardHeight));
   });
 
   group('drag dismiss gesture', () {

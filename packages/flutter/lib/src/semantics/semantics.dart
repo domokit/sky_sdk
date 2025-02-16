@@ -101,31 +101,39 @@ final int _kUnblockedUserActions =
     SemanticsAction.didGainAccessibilityFocus.index |
     SemanticsAction.didLoseAccessibilityFocus.index;
 
-/// Function signature for checks in [DebugSemanticsRoleChecks.kChecks].
-///
-/// The check is run against any `node` that is sent to the platform.
-///
-/// To access the flags and properties, one should call the
-/// [SemanticsNode.getSemanticsData].
-@visibleForTesting
-typedef DebugSemanticsRoleCheck = FlutterError? Function(SemanticsNode node);
-
 /// A static class to conduct semantics role checks.
-///
-/// When adding a new [SemanticsRole], one must also add a corresponding check
-/// to [kChecks].
-@visibleForTesting
-sealed class DebugSemanticsRoleChecks {
-  /// A map to map each [SemanticsRole] to its check.
-  static const Map<SemanticsRole, DebugSemanticsRoleCheck> kChecks =
-      <SemanticsRole, DebugSemanticsRoleCheck>{
-        SemanticsRole.none: _noCheckRequired,
-        SemanticsRole.tab: _semanticsTab,
-        SemanticsRole.tabBar: _semanticsTabBar,
-        SemanticsRole.tabPanel: _noCheckRequired,
-      };
+sealed class _DebugSemanticsRoleChecks {
+  static FlutterError? _checkSemanticsData(SemanticsNode node) => switch (node.role) {
+    SemanticsRole.alertDialog => _noCheckRequired,
+    SemanticsRole.dialog => _noCheckRequired,
+    SemanticsRole.none => _noCheckRequired,
+    SemanticsRole.tab => _semanticsTab,
+    SemanticsRole.tabBar => _semanticsTabBar,
+    SemanticsRole.tabPanel => _noCheckRequired,
+    SemanticsRole.table => _noCheckRequired,
+    SemanticsRole.cell => _semanticsCell,
+    SemanticsRole.columnHeader => _semanticsColumnHeader,
+    // TODO(chunhtai): add checks when the roles are used in framework.
+    // https://github.com/flutter/flutter/issues/159741.
+    SemanticsRole.row => _unimplemented,
+    SemanticsRole.searchBox => _unimplemented,
+    SemanticsRole.dragHandle => _unimplemented,
+    SemanticsRole.spinButton => _unimplemented,
+    SemanticsRole.comboBox => _unimplemented,
+    SemanticsRole.menuBar => _unimplemented,
+    SemanticsRole.menu => _unimplemented,
+    SemanticsRole.menuItem => _unimplemented,
+    SemanticsRole.list => _unimplemented,
+    SemanticsRole.listItem => _unimplemented,
+    SemanticsRole.form => _unimplemented,
+    SemanticsRole.tooltip => _unimplemented,
+    SemanticsRole.loadingSpinner => _unimplemented,
+    SemanticsRole.progressBar => _unimplemented,
+    SemanticsRole.hotKey => _unimplemented,
+  }(node);
 
-  static FlutterError? _checkSemanticsData(SemanticsNode node) => kChecks[node.role]!(node);
+  static FlutterError? _unimplemented(SemanticsNode node) =>
+      FlutterError('Missing checks for role ${node.getSemanticsData().role}');
 
   static FlutterError? _noCheckRequired(SemanticsNode node) => null;
 
@@ -154,6 +162,20 @@ sealed class DebugSemanticsRoleChecks {
       return error == null;
     });
     return error;
+  }
+
+  static FlutterError? _semanticsCell(SemanticsNode node) {
+    if (node.parent?.role != SemanticsRole.table) {
+      return FlutterError('A cell must be a child of a table');
+    }
+    return null;
+  }
+
+  static FlutterError? _semanticsColumnHeader(SemanticsNode node) {
+    if (node.parent?.role != SemanticsRole.table) {
+      return FlutterError('A columnHeader must be a child of a table');
+    }
+    return null;
   }
 }
 
@@ -1541,14 +1563,29 @@ class SemanticsProperties extends DiagnosticableTree {
   /// a level 3 is a subsection of that, and so on.
   final int? headingLevel;
 
-  /// Provides hint values which override the default hints on supported
-  /// platforms.
+  /// Overrides the default accessibility hints provided by the platform.
   ///
-  /// On Android, If no hint overrides are used then default [hint] will be
-  /// combined with the [label]. Otherwise, the [hint] will be ignored as long
-  /// as there as at least one non-null hint override.
+  /// This [hintOverrides] property does not affect how the platform processes hints;
+  /// it only sets the custom text that will be read by assistive technology.
   ///
-  /// On iOS, these are always ignored and the default [hint] is used instead.
+  /// On Android, these overrides replace the default hints for semantics nodes
+  /// with tap or long-press actions. For example, if [SemanticsHintOverrides.onTapHint]
+  /// is provided, instead of saying `Double tap to activate`, the screen reader
+  /// will say `Double tap to <onTapHint>`.
+  ///
+  /// On iOS, this property is ignored, and default platform behavior applies.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// const Semantics.fromProperties(
+  ///  properties: SemanticsProperties(
+  ///    hintOverrides: SemanticsHintOverrides(
+  ///      onTapHint: 'open settings',
+  ///    ),
+  ///  ),
+  ///  child: Text('button'),
+  /// )
+  /// ```
   final SemanticsHintOverrides? hintOverrides;
 
   /// The reading direction of the [label], [value], [increasedValue],
@@ -2066,6 +2103,10 @@ class SemanticsNode with DiagnosticableTreeMixin {
   /// See also:
   ///
   ///  * [elevation], the actual elevation of this [SemanticsNode].
+  @Deprecated(
+    'This was a cache for internal calculations and is no longer needed. '
+    'This feature was deprecated after v3.29.0-0.0.pre.',
+  )
   double? elevationAdjustment;
 
   /// The index of this node within the parent's list of semantic children.
@@ -2086,7 +2127,7 @@ class SemanticsNode with DiagnosticableTreeMixin {
   /// An invisible node can be safely dropped from the semantic tree without
   /// losing semantic information that is relevant for describing the content
   /// currently shown on screen.
-  bool get isInvisible => !isMergedIntoParent && rect.isEmpty;
+  bool get isInvisible => !isMergedIntoParent && (rect.isEmpty || (transform?.isZero() ?? false));
 
   // MERGING
 
@@ -2094,8 +2135,15 @@ class SemanticsNode with DiagnosticableTreeMixin {
   ///
   /// This value indicates whether this node has any ancestors with
   /// [mergeAllDescendantsIntoThisNode] set to true.
-  bool get isMergedIntoParent => parent != null && _isMergedIntoParent;
+  bool get isMergedIntoParent => _isMergedIntoParent;
   bool _isMergedIntoParent = false;
+  set isMergedIntoParent(bool value) {
+    if (_isMergedIntoParent == value) {
+      return;
+    }
+    _isMergedIntoParent = value;
+    parent?._markDirty();
+  }
 
   /// Whether the user can interact with this node in assistive technologies.
   ///
@@ -2339,12 +2387,11 @@ class SemanticsNode with DiagnosticableTreeMixin {
     assert(child.owner == owner);
     final bool childShouldMergeToParent = isPartOfNodeMerging;
 
-    if (childShouldMergeToParent == child._isMergedIntoParent) {
+    if (childShouldMergeToParent == child.isMergedIntoParent) {
       return;
     }
 
-    child._isMergedIntoParent = childShouldMergeToParent;
-    _markDirty();
+    child.isMergedIntoParent = childShouldMergeToParent;
 
     if (child.mergeAllDescendantsIntoThisNode) {
       // No need to update the descendants since `child` has the merge flag set.
@@ -2372,6 +2419,11 @@ class SemanticsNode with DiagnosticableTreeMixin {
       child.attach(_owner!);
     }
     _redepthChild(child);
+    // In most cases, child should have up to date `isMergedIntoParent` since
+    // it was set during _RenderObjectSemantics.buildSemantics. However, it is
+    // still possible that this child was an extra node introduced in
+    // RenderObject.assembleSemanticsNode. We have to make sure their
+    // `isMergedIntoParent` is updated correctly.
     _updateChildMergeFlagRecursively(child);
   }
 
@@ -2446,6 +2498,22 @@ class SemanticsNode with DiagnosticableTreeMixin {
     }
   }
 
+  /// When asserts are enabled, returns whether node is marked as dirty.
+  ///
+  /// Otherwise, returns null.
+  ///
+  /// This getter is intended for use in framework unit tests. Applications must
+  /// not depend on its value.
+  @visibleForTesting
+  bool? get debugIsDirty {
+    bool? isDirty;
+    assert(() {
+      isDirty = _dirty;
+      return true;
+    }());
+    return isDirty;
+  }
+
   bool _isDifferentFromCurrentSemanticAnnotation(SemanticsConfiguration config) {
     return _attributedLabel != config.attributedLabel ||
         _attributedHint != config.attributedHint ||
@@ -2471,7 +2539,7 @@ class SemanticsNode with DiagnosticableTreeMixin {
         _areUserActionsBlocked != config.isBlockingUserActions ||
         _headingLevel != config._headingLevel ||
         _linkUrl != config._linkUrl ||
-        _linkUrl != config._linkUrl;
+        _role != config.role;
   }
 
   // TAGS, LABELS, ACTIONS
@@ -2613,6 +2681,10 @@ class SemanticsNode with DiagnosticableTreeMixin {
   ///  * [thickness], which describes how much space in z-direction this
   ///    [SemanticsNode] occupies starting at this [elevation].
   ///  * [elevationAdjustment], which has been used to calculate this value.
+  @Deprecated(
+    'This was a feature added for 3D rendering, but the feature was deprecated. '
+    'This feature was deprecated after v3.29.0-0.0.pre.',
+  )
   double get elevation => _elevation;
   double _elevation = _kEmptyConfig.elevation;
 
@@ -3060,7 +3132,7 @@ class SemanticsNode with DiagnosticableTreeMixin {
     assert(_dirty);
     final SemanticsData data = getSemanticsData();
     assert(() {
-      final FlutterError? error = DebugSemanticsRoleChecks._checkSemanticsData(this);
+      final FlutterError? error = _DebugSemanticsRoleChecks._checkSemanticsData(this);
       if (error != null) {
         throw error;
       }
@@ -4891,6 +4963,10 @@ class SemanticsConfiguration {
 
   /// The elevation in z-direction at which the owning [RenderObject] is
   /// located relative to its parent.
+  @Deprecated(
+    'This was a feature added for 3D rendering, but the feature was deprecated. '
+    'This feature was deprecated after v3.29.0-0.0.pre.',
+  )
   double get elevation => _elevation;
   double _elevation = 0.0;
   set elevation(double value) {
@@ -5443,7 +5519,7 @@ class SemanticsConfiguration {
 
     _thickness = math.max(_thickness, child._thickness + child._elevation);
 
-    _hasBeenAnnotated = _hasBeenAnnotated || child._hasBeenAnnotated;
+    _hasBeenAnnotated = hasBeenAnnotated || child.hasBeenAnnotated;
   }
 
   /// Returns an exact copy of this configuration.
@@ -5452,7 +5528,7 @@ class SemanticsConfiguration {
       .._isSemanticBoundary = _isSemanticBoundary
       ..explicitChildNodes = explicitChildNodes
       ..isBlockingSemanticsOfPreviouslyPaintedNodes = isBlockingSemanticsOfPreviouslyPaintedNodes
-      .._hasBeenAnnotated = _hasBeenAnnotated
+      .._hasBeenAnnotated = hasBeenAnnotated
       .._isMergingSemanticsOfDescendants = _isMergingSemanticsOfDescendants
       .._textDirection = _textDirection
       .._sortKey = _sortKey

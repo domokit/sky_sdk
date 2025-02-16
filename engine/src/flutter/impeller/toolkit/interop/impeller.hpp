@@ -25,7 +25,7 @@
 
 // Tripping this assertion means that the C++ wrapper needs to be updated to
 // account for impeller.h changes as necessary.
-static_assert(IMPELLER_VERSION == IMPELLER_MAKE_VERSION(1, 1, 2, 0),
+static_assert(IMPELLER_VERSION == IMPELLER_MAKE_VERSION(1, 1, 3, 0),
               "C++ bindings must be for the same version as the C API.");
 
 namespace IMPELLER_HPP_NAMESPACE {
@@ -56,7 +56,10 @@ struct Proc {
   PROC(ImpellerColorSourceCreateSweepGradientNew)           \
   PROC(ImpellerColorSourceRelease)                          \
   PROC(ImpellerColorSourceRetain)                           \
+  PROC(ImpellerContextCreateMetalNew)                       \
   PROC(ImpellerContextCreateOpenGLESNew)                    \
+  PROC(ImpellerContextCreateVulkanNew)                      \
+  PROC(ImpellerContextGetVulkanInfo)                        \
   PROC(ImpellerContextRelease)                              \
   PROC(ImpellerContextRetain)                               \
   PROC(ImpellerDisplayListBuilderClipOval)                  \
@@ -166,7 +169,9 @@ struct Proc {
   PROC(ImpellerPathRelease)                                 \
   PROC(ImpellerPathRetain)                                  \
   PROC(ImpellerSurfaceCreateWrappedFBONew)                  \
+  PROC(ImpellerSurfaceCreateWrappedMetalDrawableNew)        \
   PROC(ImpellerSurfaceDrawDisplayList)                      \
+  PROC(ImpellerSurfacePresent)                              \
   PROC(ImpellerSurfaceRelease)                              \
   PROC(ImpellerSurfaceRetain)                               \
   PROC(ImpellerTextureCreateWithContentsNew)                \
@@ -177,7 +182,11 @@ struct Proc {
   PROC(ImpellerTypographyContextNew)                        \
   PROC(ImpellerTypographyContextRegisterFont)               \
   PROC(ImpellerTypographyContextRelease)                    \
-  PROC(ImpellerTypographyContextRetain)
+  PROC(ImpellerTypographyContextRetain)                     \
+  PROC(ImpellerVulkanSwapchainAcquireNextSurfaceNew)        \
+  PROC(ImpellerVulkanSwapchainCreateNew)                    \
+  PROC(ImpellerVulkanSwapchainRelease)                      \
+  PROC(ImpellerVulkanSwapchainRetain)
 
 struct ProcTable {
   bool Initialize(
@@ -285,6 +294,7 @@ IMPELLER_HPP_DEFINE_TRAITS(ImpellerPathBuilder);
 IMPELLER_HPP_DEFINE_TRAITS(ImpellerSurface);
 IMPELLER_HPP_DEFINE_TRAITS(ImpellerTexture);
 IMPELLER_HPP_DEFINE_TRAITS(ImpellerTypographyContext);
+IMPELLER_HPP_DEFINE_TRAITS(ImpellerVulkanSwapchain);
 
 #undef IMPELLER_HPP_DEFINE_TRAITS
 
@@ -334,6 +344,13 @@ class Context final : public Object<ImpellerContext, ImpellerContextTraits> {
                                                           &user_data         //
                                                           ),
         AdoptTag::kAdopt);
+  }
+
+  //----------------------------------------------------------------------------
+  /// @see      ImpellerContextGetVulkanInfo
+  ///
+  bool GetVulkanInfo(ImpellerContextVulkanInfo& info) const {
+    return gGlobalProcTable.ImpellerContextGetVulkanInfo(Get(), &info);
   }
 };
 
@@ -1133,11 +1150,58 @@ class Surface final : public Object<ImpellerSurface, ImpellerSurfaceTraits> {
   }
 
   //----------------------------------------------------------------------------
+  /// @see      ImpellerSurfaceCreateWrappedMetalDrawableNew
+  ///
+  static Surface WrapMetalDrawable(const Context& context,
+                                   void* metal_drawable) {
+    return Surface(
+        gGlobalProcTable.ImpellerSurfaceCreateWrappedMetalDrawableNew(
+            context.Get(), metal_drawable),
+        AdoptTag::kAdopt);
+  }
+
+  //----------------------------------------------------------------------------
   /// @see      ImpellerSurfaceDrawDisplayList
   ///
-  bool Draw(const DisplayList& display_list) {
+  bool Draw(const DisplayList& display_list) const {
     return gGlobalProcTable.ImpellerSurfaceDrawDisplayList(Get(),
                                                            display_list.Get());
+  }
+
+  //----------------------------------------------------------------------------
+  /// @see      ImpellerSurfacePresent
+  ///
+  bool Present() const {
+    return gGlobalProcTable.ImpellerSurfacePresent(Get());
+  }
+};
+
+//------------------------------------------------------------------------------
+/// @see      ImpellerVulkanSwapchain
+///
+class VulkanSwapchain final
+    : public Object<ImpellerVulkanSwapchain, ImpellerVulkanSwapchainTraits> {
+ public:
+  VulkanSwapchain(ImpellerVulkanSwapchain swapchain, AdoptTag tag)
+      : Object(swapchain, tag) {}
+
+  //----------------------------------------------------------------------------
+  /// @see      ImpellerVulkanSwapchainCreateNew
+  ///
+  static VulkanSwapchain Create(const Context& context,
+                                void* vulkan_surface_khr) {
+    return VulkanSwapchain(gGlobalProcTable.ImpellerVulkanSwapchainCreateNew(
+                               context.Get(), vulkan_surface_khr),
+                           AdoptTag::kAdopt);
+  }
+
+  //----------------------------------------------------------------------------
+  /// @see      ImpellerVulkanSwapchainAcquireNextSurfaceNew
+  ///
+  Surface AcquireNextSurface() const {
+    return Surface(
+        gGlobalProcTable.ImpellerVulkanSwapchainAcquireNextSurfaceNew(Get()),
+        AdoptTag::kAdopt);
   }
 };
 

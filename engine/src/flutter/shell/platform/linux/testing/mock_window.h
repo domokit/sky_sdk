@@ -15,6 +15,7 @@ namespace testing {
 class MockWindow {
  public:
   MockWindow();
+  ~MockWindow();
 
   MOCK_METHOD(GdkWindowState, gdk_window_get_state, (GdkWindow * window));
 };

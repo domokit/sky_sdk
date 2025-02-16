@@ -629,7 +629,6 @@ class ReleaseIosApplicationBundle extends _IosAssetBundleWithDSYM {
     try {
       await super.build(environment);
     } catch (_) {
-      // ignore: avoid_catches_without_on_clauses
       buildSuccess = false;
       rethrow;
     } finally {

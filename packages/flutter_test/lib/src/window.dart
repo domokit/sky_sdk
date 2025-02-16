@@ -391,7 +391,6 @@ class TestPlatformDispatcher implements PlatformDispatcher {
   bool get supportsShowingSystemContextMenu =>
       _supportsShowingSystemContextMenu ?? _platformDispatcher.supportsShowingSystemContextMenu;
   bool? _supportsShowingSystemContextMenu;
-  // ignore: avoid_setters_without_getters
   set supportsShowingSystemContextMenu(bool value) {
     _supportsShowingSystemContextMenu = value;
   }

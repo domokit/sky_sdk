@@ -6,6 +6,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' show SemanticsRole;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_math/vector_math_64.dart' show Matrix3;
 
+import '../widgets/semantics_tester.dart';
 import 'data_table_test_utils.dart';
 
 void main() {
@@ -2210,6 +2212,78 @@ void main() {
     expect(table.columnWidths![0], const FlexColumnWidth());
     expect(table.columnWidths![1], const IntrinsicColumnWidth());
     expect(table.columnWidths![2], const IntrinsicColumnWidth(flex: 1));
+  });
+
+  testWidgets('DataTable has correct roles in semantics', (WidgetTester tester) async {
+    final SemanticsTester semantics = SemanticsTester(tester);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DataTable(
+            columns: const <DataColumn>[
+              DataColumn(label: Text('Column 1')),
+              DataColumn(label: Text('Column 2')),
+            ],
+            rows: const <DataRow>[
+              DataRow(
+                cells: <DataCell>[DataCell(Text('Data Cell 1')), DataCell(Text('Data Cell 2'))],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final TestSemantics expectedSemantics = TestSemantics.root(
+      children: <TestSemantics>[
+        TestSemantics(
+          textDirection: TextDirection.ltr,
+          children: <TestSemantics>[
+            TestSemantics(
+              children: <TestSemantics>[
+                TestSemantics(
+                  flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
+                  children: <TestSemantics>[
+                    TestSemantics(
+                      role: SemanticsRole.table,
+                      children: <TestSemantics>[
+                        TestSemantics(
+                          label: 'Column 1',
+                          textDirection: TextDirection.ltr,
+                          role: SemanticsRole.columnHeader,
+                        ),
+                        TestSemantics(
+                          label: 'Column 2',
+                          textDirection: TextDirection.ltr,
+                          role: SemanticsRole.columnHeader,
+                        ),
+                        TestSemantics(
+                          label: 'Data Cell 1',
+                          textDirection: TextDirection.ltr,
+                          role: SemanticsRole.cell,
+                        ),
+                        TestSemantics(
+                          label: 'Data Cell 2',
+                          textDirection: TextDirection.ltr,
+                          role: SemanticsRole.cell,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+
+    expect(
+      semantics,
+      hasSemantics(expectedSemantics, ignoreTransform: true, ignoreId: true, ignoreRect: true),
+    );
+
+    semantics.dispose();
   });
 }
 

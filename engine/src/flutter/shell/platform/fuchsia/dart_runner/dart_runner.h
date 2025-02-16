@@ -19,6 +19,9 @@ class DartRunner : public fuchsia::component::runner::ComponentRunner {
   explicit DartRunner(sys::ComponentContext* context);
   ~DartRunner() override;
 
+  void handle_unknown_method(uint64_t ordinal,
+                             bool method_has_response) override;
+
  private:
   // |fuchsia::component::runner::ComponentRunner| implementation:
   void Start(

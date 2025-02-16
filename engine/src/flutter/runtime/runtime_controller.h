@@ -655,6 +655,12 @@ class RuntimeController : public PlatformConfigurationClient,
     return root_isolate_;
   }
 
+  void FlushMicrotaskQueue() {
+    if (auto isolate = root_isolate_.lock()) {
+      isolate->FlushMicrotasksNow();
+    }
+  }
+
   std::shared_ptr<PlatformIsolateManager> GetPlatformIsolateManager() override {
     return platform_isolate_manager_;
   }

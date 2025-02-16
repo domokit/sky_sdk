@@ -12,7 +12,6 @@ This is a very low level API and is not suitable for beginners.
     * The binary is not stripped and contains debug information. Embedders are advised to strip the binary before deployment.
   * The Windows buildbot uploads the artifacts to a known location. Access it here [`https://storage.googleapis.com/flutter_infra_release/flutter/FLUTTER_HASH/windows-x64/windows-x64-embedder.zip`](https://storage.googleapis.com/flutter_infra_release/flutter/e672b006cb34c921db85b8e2f482ed3144a4574b/windows-x64/windows-x64-embedder.zip)
     * Replace `FLUTTER_HASH` with the SHA of the Flutter commit you wish to use.
-  * You can also obtain that SHA from the [`engine.version`](https://github.com/flutter/flutter/blob/main/bin/internal/engine.version) file in your Flutter framework checkout. This allows you to exactly match the engine version with the Flutter framework version.
 * The Flutter engine API has no platform specific dependencies, has a stable ABI and is available in its entirety in a [single C header file available here](https://github.com/flutter/engine/blob/master/engine/src/flutter/shell/platform/embedder/embedder.h).
 * To use as a guide, you may use [this example embedder that uses GLFW](https://github.com/flutter/engine/blob/master/engine/src/flutter/examples/glfw/FlutterEmbedderGLFW.cc) for window management and rendering.
 

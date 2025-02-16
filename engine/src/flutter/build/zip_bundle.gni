@@ -4,6 +4,7 @@
 
 import("//flutter/common/config.gni")
 import("//flutter/shell/version/version.gni")
+import("$dart_src/runtime/runtime_args.gni")
 
 if (flutter_runtime_mode == "jit_release") {
   android_zip_archive_dir = "android-$target_cpu-jit-release"
@@ -11,6 +12,9 @@ if (flutter_runtime_mode == "jit_release") {
   android_zip_archive_dir = "android-$target_cpu"
   if (flutter_runtime_mode != "debug") {
     android_zip_archive_dir += "-$flutter_runtime_mode"
+  }
+  if (dart_dynamic_modules) {
+    android_zip_archive_dir += "-ddm"
   }
 }
 

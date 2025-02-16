@@ -45,14 +45,14 @@ vec4 IPSampleLinear(sampler2D texture_sampler,
 /// returned. In all other cases, a value between 0 and 1 is returned by tiling
 /// `t`.
 /// When `t` is between [0 to 1), the original unchanged `t` is always returned.
-float IPFloatTile(float t, float tile_mode) {
+highp float IPFloatTile(highp float t, float tile_mode) {
   if (tile_mode == kTileModeClamp) {
     t = clamp(t, 0.0, 1.0);
   } else if (tile_mode == kTileModeRepeat) {
     t = fract(t);
   } else if (tile_mode == kTileModeMirror) {
-    float t1 = t - 1;
-    float t2 = t1 - 2 * floor(t1 * 0.5) - 1;
+    highp float t1 = t - 1;
+    highp float t2 = t1 - 2 * floor(t1 * 0.5) - 1;
     t = abs(t2);
   }
   return t;

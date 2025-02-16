@@ -1526,7 +1526,9 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
     }
 
     final EdgeInsetsGeometry padding =
-        ButtonTheme.of(context).alignedDropdown ? _kAlignedButtonPadding : _kUnalignedButtonPadding;
+        ButtonTheme.of(context).alignedDropdown && widget._inputDecoration == null
+            ? _kAlignedButtonPadding
+            : _kUnalignedButtonPadding;
 
     // If value is null (then _selectedIndex is null) then we
     // display the hint or nothing at all.

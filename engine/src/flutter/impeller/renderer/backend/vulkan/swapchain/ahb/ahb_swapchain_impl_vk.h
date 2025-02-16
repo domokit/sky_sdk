@@ -16,9 +16,12 @@
 #include "impeller/renderer/surface.h"
 #include "impeller/toolkit/android/hardware_buffer.h"
 #include "impeller/toolkit/android/surface_control.h"
+#include "impeller/toolkit/android/surface_transaction.h"
 #include "vulkan/vulkan_handles.hpp"
 
 namespace impeller {
+
+using CreateTransactionCB = std::function<android::SurfaceTransaction()>;
 
 static constexpr const size_t kMaxPendingPresents = 2u;
 
@@ -68,6 +71,7 @@ class AHBSwapchainImplVK final
   static std::shared_ptr<AHBSwapchainImplVK> Create(
       const std::weak_ptr<Context>& context,
       std::weak_ptr<android::SurfaceControl> surface_control,
+      const CreateTransactionCB& cb,
       const ISize& size,
       bool enable_msaa,
       size_t swapchain_image_count);
@@ -125,11 +129,13 @@ class AHBSwapchainImplVK final
 
   std::vector<std::unique_ptr<AHBFrameSynchronizerVK>> frame_data_;
   size_t frame_index_ = 0;
+  CreateTransactionCB cb_;
   bool is_valid_ = false;
 
   explicit AHBSwapchainImplVK(
       const std::weak_ptr<Context>& context,
       std::weak_ptr<android::SurfaceControl> surface_control,
+      const CreateTransactionCB& cb,
       const ISize& size,
       bool enable_msaa,
       size_t swapchain_image_count);

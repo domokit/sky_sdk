@@ -71,4 +71,9 @@ Playground::GLProcAddressResolver PlaygroundImpl::CreateGLProcAddressResolver()
   return nullptr;
 }
 
+Playground::VKProcAddressResolver PlaygroundImpl::CreateVKProcAddressResolver()
+    const {
+  return nullptr;
+}
+
 }  // namespace impeller

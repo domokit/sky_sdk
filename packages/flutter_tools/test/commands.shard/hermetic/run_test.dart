@@ -24,7 +24,6 @@ import 'package:flutter_tools/src/device.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/ios/devices.dart';
 import 'package:flutter_tools/src/project.dart';
-import 'package:flutter_tools/src/reporting/reporting.dart';
 import 'package:flutter_tools/src/resident_runner.dart';
 import 'package:flutter_tools/src/runner/flutter_command.dart';
 import 'package:flutter_tools/src/web/compile.dart';
@@ -101,35 +100,6 @@ void main() {
         FileSystem: () => fileSystem,
         ProcessManager: () => FakeProcessManager.any(),
         Logger: () => logger,
-      },
-    );
-
-    testUsingContext(
-      'supports --no-sound-null-safety with an overridden NonNullSafeBuilds',
-      () async {
-        fileSystem.file('lib/main.dart').createSync(recursive: true);
-        fileSystem.file('pubspec.yaml').createSync();
-        fileSystem.file('.dart_tool/package_config.json').createSync(recursive: true);
-
-        final FakeDevice device = FakeDevice(
-          isLocalEmulator: true,
-          platformType: PlatformType.android,
-        );
-
-        testDeviceManager.devices = <Device>[device];
-        final TestRunCommandThatOnlyValidates command = TestRunCommandThatOnlyValidates();
-        await createTestCommandRunner(command).run(const <String>[
-          'run',
-          '--use-application-binary=app/bar/faz',
-          '--no-sound-null-safety',
-        ]);
-      },
-      overrides: <Type, Generator>{
-        DeviceManager: () => testDeviceManager,
-        FileSystem: () => fileSystem,
-        Logger: () => logger,
-        NonNullSafeBuilds: () => NonNullSafeBuilds.allowed,
-        ProcessManager: () => FakeProcessManager.any(),
       },
     );
 
@@ -220,7 +190,6 @@ void main() {
     group('run app', () {
       late MemoryFileSystem fs;
       late Artifacts artifacts;
-      late TestUsage usage;
       late FakeAnsiTerminal fakeTerminal;
       late analytics.FakeAnalytics fakeAnalytics;
 
@@ -231,7 +200,6 @@ void main() {
       setUp(() {
         fakeTerminal = FakeAnsiTerminal();
         artifacts = Artifacts.test();
-        usage = TestUsage();
         fs = MemoryFileSystem.test();
 
         fs.currentDirectory.childFile('pubspec.yaml').writeAsStringSync('name: flutter_app');
@@ -474,7 +442,6 @@ void main() {
           DeviceManager: () => testDeviceManager,
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
-          Usage: () => usage,
         },
       );
 
@@ -524,7 +491,6 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           Stdio: () => FakeStdio(),
-          Usage: () => usage,
           analytics.Analytics: () => fakeAnalytics,
         },
       );
@@ -579,7 +545,6 @@ void main() {
           FileSystem: () => fs,
           ProcessManager: () => FakeProcessManager.any(),
           Stdio: () => FakeStdio(),
-          Usage: () => usage,
           analytics.Analytics: () => fakeAnalytics,
         },
       );
@@ -612,7 +577,6 @@ void main() {
             DeviceManager: () => testDeviceManager,
             FileSystem: () => fs,
             ProcessManager: () => FakeProcessManager.any(),
-            Usage: () => usage,
             Stdio: () => FakeStdio(),
             Logger: () => AppRunLogger(parent: logger),
           },
@@ -639,7 +603,6 @@ void main() {
             DeviceManager: () => testDeviceManager,
             FileSystem: () => fs,
             ProcessManager: () => FakeProcessManager.any(),
-            Usage: () => usage,
             Stdio: () => FakeStdio(),
             Logger: () => AppRunLogger(parent: logger),
           },
@@ -819,18 +782,22 @@ void main() {
             );
           }
 
-          final CustomDimensions dimensions = await command.usageValues;
+          final analytics.Event usageValues = await command.unifiedAnalyticsUsageValues('run');
 
           expect(
-            dimensions,
-            const CustomDimensions(
-              commandRunIsEmulator: false,
-              commandRunTargetName: 'android-arm',
-              commandRunTargetOsVersion: '',
-              commandRunModeName: 'debug',
-              commandRunProjectModule: false,
-              commandRunProjectHostLanguage: '',
-              commandRunIsTest: false,
+            usageValues,
+            equals(
+              analytics.Event.commandUsageValues(
+                workflow: 'run',
+                commandHasTerminal: false,
+                runIsEmulator: false,
+                runTargetName: 'android-arm',
+                runTargetOsVersion: '',
+                runModeName: 'debug',
+                runProjectModule: false,
+                runProjectHostLanguage: '',
+                runIsTest: false,
+              ),
             ),
           );
         },
@@ -866,19 +833,23 @@ void main() {
             );
           }
 
-          final CustomDimensions dimensions = await command.usageValues;
+          final analytics.Event usageValues = await command.unifiedAnalyticsUsageValues('run');
 
           expect(
-            dimensions,
-            const CustomDimensions(
-              commandRunIsEmulator: false,
-              commandRunTargetName: 'ios',
-              commandRunTargetOsVersion: 'iOS 16.2',
-              commandRunModeName: 'debug',
-              commandRunProjectModule: false,
-              commandRunProjectHostLanguage: '',
-              commandRunIOSInterfaceType: 'usb',
-              commandRunIsTest: false,
+            usageValues,
+            equals(
+              analytics.Event.commandUsageValues(
+                workflow: 'run',
+                commandHasTerminal: false,
+                runIsEmulator: false,
+                runTargetName: 'ios',
+                runTargetOsVersion: 'iOS 16.2',
+                runModeName: 'debug',
+                runProjectModule: false,
+                runProjectHostLanguage: '',
+                runIOSInterfaceType: 'usb',
+                runIsTest: false,
+              ),
             ),
           );
         },
@@ -919,19 +890,23 @@ void main() {
             );
           }
 
-          final CustomDimensions dimensions = await command.usageValues;
+          final analytics.Event usageValues = await command.unifiedAnalyticsUsageValues('run');
 
           expect(
-            dimensions,
-            const CustomDimensions(
-              commandRunIsEmulator: false,
-              commandRunTargetName: 'ios',
-              commandRunTargetOsVersion: 'iOS 16.2',
-              commandRunModeName: 'debug',
-              commandRunProjectModule: false,
-              commandRunProjectHostLanguage: '',
-              commandRunIOSInterfaceType: 'wireless',
-              commandRunIsTest: false,
+            usageValues,
+            equals(
+              analytics.Event.commandUsageValues(
+                workflow: 'run',
+                commandHasTerminal: false,
+                runIsEmulator: false,
+                runTargetName: 'ios',
+                runTargetOsVersion: 'iOS 16.2',
+                runModeName: 'debug',
+                runProjectModule: false,
+                runProjectHostLanguage: '',
+                runIOSInterfaceType: 'wireless',
+                runIsTest: false,
+              ),
             ),
           );
         },
@@ -972,19 +947,24 @@ void main() {
               ),
             );
           }
-          final CustomDimensions dimensions = await command.usageValues;
+
+          final analytics.Event usageValues = await command.unifiedAnalyticsUsageValues('run');
 
           expect(
-            dimensions,
-            const CustomDimensions(
-              commandRunIsEmulator: false,
-              commandRunTargetName: 'multiple',
-              commandRunTargetOsVersion: 'multiple',
-              commandRunModeName: 'debug',
-              commandRunProjectModule: false,
-              commandRunProjectHostLanguage: '',
-              commandRunIOSInterfaceType: 'wireless',
-              commandRunIsTest: false,
+            usageValues,
+            equals(
+              analytics.Event.commandUsageValues(
+                workflow: 'run',
+                commandHasTerminal: false,
+                runIsEmulator: false,
+                runTargetName: 'multiple',
+                runTargetOsVersion: 'multiple',
+                runModeName: 'debug',
+                runProjectModule: false,
+                runProjectHostLanguage: '',
+                runIOSInterfaceType: 'wireless',
+                runIsTest: false,
+              ),
             ),
           );
         },
@@ -1127,39 +1107,6 @@ void main() {
         },
       );
 
-      // Tests whether using a deprecated webRenderer toggles a warningText.
-      Future<void> testWebRendererDeprecationMessage(WebRendererMode webRenderer) async {
-        testUsingContext(
-          'Using the "${webRenderer.name}" renderer triggers a warningText.',
-          () async {
-            // Run the command so it parses the renderer, but ignore all errors.
-            // We only care about the logger.
-            try {
-              await createTestCommandRunner(
-                RunCommand(),
-              ).run(<String>['run', '--no-pub', ...webRenderer.toCliDartDefines]);
-            } on ToolExit catch (error) {
-              expect(error, isA<ToolExit>());
-            }
-            expect(
-              logger.warningText,
-              contains('See: https://docs.flutter.dev/to/web-html-renderer-deprecation'),
-            );
-          },
-          overrides: <Type, Generator>{
-            FileSystem: () => fileSystem,
-            ProcessManager: () => FakeProcessManager.any(),
-            Logger: () => logger,
-            DeviceManager: () => testDeviceManager,
-          },
-        );
-      }
-
-      /// Do test all the deprecated WebRendererModes
-      WebRendererMode.values
-          .where((WebRendererMode mode) => mode.isDeprecated)
-          .forEach(testWebRendererDeprecationMessage);
-
       testUsingContext(
         'accepts headers with commas in them',
         () async {
@@ -1228,7 +1175,6 @@ void main() {
         try {
           await createTestCommandRunner(command).run(<String>['run', '--no-pub']);
         } catch (err) {
-          // ignore: avoid_catches_without_on_clauses
           fail('Expected no error, got $err');
         }
         expect(fakeTerminal.setSingleCharModeHistory, isEmpty);
@@ -1292,25 +1238,6 @@ void main() {
       await expectLater(
         () => createTestCommandRunner(command).run(<String>['run', '--no-pub']),
         throwsA(isA<RPCError>()),
-      );
-    },
-    overrides: <Type, Generator>{
-      Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-      FileSystem: () => MemoryFileSystem.test(),
-      ProcessManager: () => FakeProcessManager.any(),
-    },
-  );
-
-  testUsingContext(
-    'Passes sksl bundle info the build options',
-    () async {
-      final TestRunCommandWithFakeResidentRunner command = TestRunCommandWithFakeResidentRunner();
-
-      await expectLater(
-        () => createTestCommandRunner(
-          command,
-        ).run(<String>['run', '--no-pub', '--bundle-sksl-path=foo.json']),
-        throwsToolExit(message: 'No SkSL shader bundle found at foo.json'),
       );
     },
     overrides: <Type, Generator>{

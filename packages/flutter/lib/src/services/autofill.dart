@@ -737,6 +737,45 @@ class AutofillConfiguration {
         }
         : null;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is AutofillConfiguration &&
+        other.enabled == enabled &&
+        other.uniqueIdentifier == uniqueIdentifier &&
+        listEquals(other.autofillHints, autofillHints) &&
+        other.currentEditingValue == currentEditingValue &&
+        other.hintText == hintText;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      enabled,
+      uniqueIdentifier,
+      Object.hashAll(autofillHints),
+      currentEditingValue,
+      hintText,
+    );
+  }
+
+  @override
+  String toString() {
+    final List<String> description = <String>[
+      'enabled: $enabled',
+      'uniqueIdentifier: $uniqueIdentifier',
+      'autofillHints: $autofillHints',
+      'currentEditingValue: $currentEditingValue',
+      if (hintText != null) 'hintText: $hintText',
+    ];
+    return 'AutofillConfiguration(${description.join(', ')})';
+  }
 }
 
 /// An object that represents an autofillable input field in the autofill workflow.

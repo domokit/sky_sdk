@@ -667,4 +667,12 @@ void DartTestComponentController::OnIdleTimer(async_dispatcher_t* dispatcher,
   wait->Begin(dispatcher);  // ignore errors
 }
 
+void DartTestComponentController::handle_unknown_method(
+    uint64_t ordinal,
+    bool method_has_response) {
+  FML_LOG(ERROR) << "Unknown method called on DartTestComponentController. "
+                    "Ordinal: "
+                 << ordinal;
+}
+
 }  // namespace dart_runner

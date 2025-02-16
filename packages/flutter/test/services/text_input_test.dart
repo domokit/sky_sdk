@@ -321,8 +321,227 @@ void main() {
   });
 
   group('TextInputConfiguration', () {
+    late TextInputConfiguration fakeTextInputConfiguration;
+    late TextInputConfiguration fakeTextInputConfiguration2;
+
+    setUp(() {
+      // If you create two objects with `const` with the same values, the second object will be equal to the first one by reference.
+      // This means that even without overriding the `equals` method, the test will pass.
+      // ignore: prefer_const_constructors
+      fakeTextInputConfiguration = TextInputConfiguration(
+        viewId: 1,
+        actionLabel: 'label1',
+        smartDashesType: SmartDashesType.enabled,
+        smartQuotesType: SmartQuotesType.enabled,
+        // ignore: prefer_const_literals_to_create_immutables
+        allowedMimeTypes: <String>['text/plain', 'application/pdf'],
+      );
+      fakeTextInputConfiguration2 = fakeTextInputConfiguration.copyWith();
+    });
+
     tearDown(() {
       TextInputConnection.debugResetId();
+    });
+
+    test('equality operator works correctly', () {
+      expect(fakeTextInputConfiguration, equals(fakeTextInputConfiguration2));
+      expect(fakeTextInputConfiguration.viewId, equals(fakeTextInputConfiguration2.viewId));
+      expect(fakeTextInputConfiguration.inputType, equals(fakeTextInputConfiguration2.inputType));
+      expect(
+        fakeTextInputConfiguration.inputAction,
+        equals(fakeTextInputConfiguration2.inputAction),
+      );
+      expect(
+        fakeTextInputConfiguration.autocorrect,
+        equals(fakeTextInputConfiguration2.autocorrect),
+      );
+      expect(
+        fakeTextInputConfiguration.enableSuggestions,
+        equals(fakeTextInputConfiguration2.enableSuggestions),
+      );
+      expect(
+        fakeTextInputConfiguration.obscureText,
+        equals(fakeTextInputConfiguration2.obscureText),
+      );
+      expect(fakeTextInputConfiguration.readOnly, equals(fakeTextInputConfiguration2.readOnly));
+      expect(
+        fakeTextInputConfiguration.smartDashesType,
+        equals(fakeTextInputConfiguration2.smartDashesType),
+      );
+      expect(
+        fakeTextInputConfiguration.smartQuotesType,
+        equals(fakeTextInputConfiguration2.smartQuotesType),
+      );
+      expect(
+        fakeTextInputConfiguration.enableInteractiveSelection,
+        equals(fakeTextInputConfiguration2.enableInteractiveSelection),
+      );
+      expect(
+        fakeTextInputConfiguration.actionLabel,
+        equals(fakeTextInputConfiguration2.actionLabel),
+      );
+      expect(
+        fakeTextInputConfiguration.keyboardAppearance,
+        equals(fakeTextInputConfiguration2.keyboardAppearance),
+      );
+      expect(
+        fakeTextInputConfiguration.textCapitalization,
+        equals(fakeTextInputConfiguration2.textCapitalization),
+      );
+      expect(
+        fakeTextInputConfiguration.autofillConfiguration,
+        equals(fakeTextInputConfiguration2.autofillConfiguration),
+      );
+      expect(
+        fakeTextInputConfiguration.enableIMEPersonalizedLearning,
+        equals(fakeTextInputConfiguration2.enableIMEPersonalizedLearning),
+      );
+      expect(
+        fakeTextInputConfiguration.allowedMimeTypes,
+        equals(fakeTextInputConfiguration2.allowedMimeTypes),
+      );
+      expect(
+        fakeTextInputConfiguration.enableDeltaModel,
+        equals(fakeTextInputConfiguration2.enableDeltaModel),
+      );
+    });
+
+    test('copyWith method works correctly', () {
+      fakeTextInputConfiguration2 = fakeTextInputConfiguration.copyWith();
+
+      expect(fakeTextInputConfiguration, equals(fakeTextInputConfiguration2));
+      expect(fakeTextInputConfiguration.viewId, equals(fakeTextInputConfiguration2.viewId));
+      expect(fakeTextInputConfiguration.inputType, equals(fakeTextInputConfiguration2.inputType));
+      expect(
+        fakeTextInputConfiguration.inputAction,
+        equals(fakeTextInputConfiguration2.inputAction),
+      );
+      expect(
+        fakeTextInputConfiguration.autocorrect,
+        equals(fakeTextInputConfiguration2.autocorrect),
+      );
+      expect(
+        fakeTextInputConfiguration.enableSuggestions,
+        equals(fakeTextInputConfiguration2.enableSuggestions),
+      );
+      expect(
+        fakeTextInputConfiguration.obscureText,
+        equals(fakeTextInputConfiguration2.obscureText),
+      );
+      expect(fakeTextInputConfiguration.readOnly, equals(fakeTextInputConfiguration2.readOnly));
+      expect(
+        fakeTextInputConfiguration.smartDashesType,
+        equals(fakeTextInputConfiguration2.smartDashesType),
+      );
+      expect(
+        fakeTextInputConfiguration.smartQuotesType,
+        equals(fakeTextInputConfiguration2.smartQuotesType),
+      );
+      expect(
+        fakeTextInputConfiguration.enableInteractiveSelection,
+        equals(fakeTextInputConfiguration2.enableInteractiveSelection),
+      );
+      expect(
+        fakeTextInputConfiguration.actionLabel,
+        equals(fakeTextInputConfiguration2.actionLabel),
+      );
+      expect(
+        fakeTextInputConfiguration.keyboardAppearance,
+        equals(fakeTextInputConfiguration2.keyboardAppearance),
+      );
+      expect(
+        fakeTextInputConfiguration.textCapitalization,
+        equals(fakeTextInputConfiguration2.textCapitalization),
+      );
+      expect(
+        fakeTextInputConfiguration.autofillConfiguration,
+        equals(fakeTextInputConfiguration2.autofillConfiguration),
+      );
+      expect(
+        fakeTextInputConfiguration.enableIMEPersonalizedLearning,
+        equals(fakeTextInputConfiguration2.enableIMEPersonalizedLearning),
+      );
+      expect(
+        fakeTextInputConfiguration.allowedMimeTypes,
+        equals(fakeTextInputConfiguration2.allowedMimeTypes),
+      );
+      expect(
+        fakeTextInputConfiguration.enableDeltaModel,
+        equals(fakeTextInputConfiguration2.enableDeltaModel),
+      );
+    });
+
+    test('hashCode works correctly', () {
+      expect(fakeTextInputConfiguration.hashCode, equals(fakeTextInputConfiguration2.hashCode));
+
+      expect(
+        fakeTextInputConfiguration.viewId.hashCode,
+        equals(fakeTextInputConfiguration2.viewId.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.inputType.hashCode,
+        equals(fakeTextInputConfiguration2.inputType.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.inputAction.hashCode,
+        equals(fakeTextInputConfiguration2.inputAction.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.autocorrect.hashCode,
+        equals(fakeTextInputConfiguration2.autocorrect.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.enableSuggestions.hashCode,
+        equals(fakeTextInputConfiguration2.enableSuggestions.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.obscureText.hashCode,
+        equals(fakeTextInputConfiguration2.obscureText.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.readOnly.hashCode,
+        equals(fakeTextInputConfiguration2.readOnly.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.smartDashesType.hashCode,
+        equals(fakeTextInputConfiguration2.smartDashesType.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.smartQuotesType.hashCode,
+        equals(fakeTextInputConfiguration2.smartQuotesType.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.enableInteractiveSelection.hashCode,
+        equals(fakeTextInputConfiguration2.enableInteractiveSelection.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.actionLabel.hashCode,
+        equals(fakeTextInputConfiguration2.actionLabel.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.keyboardAppearance.hashCode,
+        equals(fakeTextInputConfiguration2.keyboardAppearance.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.textCapitalization.hashCode,
+        equals(fakeTextInputConfiguration2.textCapitalization.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.autofillConfiguration.hashCode,
+        equals(fakeTextInputConfiguration2.autofillConfiguration.hashCode),
+      );
+      expect(
+        fakeTextInputConfiguration.enableIMEPersonalizedLearning.hashCode,
+        equals(fakeTextInputConfiguration2.enableIMEPersonalizedLearning.hashCode),
+      );
+      expect(
+        Object.hashAll(fakeTextInputConfiguration.allowedMimeTypes),
+        equals(Object.hashAll(fakeTextInputConfiguration2.allowedMimeTypes)),
+      );
+      expect(
+        fakeTextInputConfiguration.enableDeltaModel.hashCode,
+        equals(fakeTextInputConfiguration2.enableDeltaModel.hashCode),
+      );
     });
 
     test('sets expected defaults', () {

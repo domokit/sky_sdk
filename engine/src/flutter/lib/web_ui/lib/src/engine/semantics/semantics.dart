@@ -32,6 +32,7 @@ import 'platform_view.dart';
 import 'route.dart';
 import 'scrollable.dart';
 import 'semantics_helper.dart';
+import 'table.dart';
 import 'tabs.dart';
 import 'tappable.dart';
 import 'text_field.dart';
@@ -415,6 +416,24 @@ enum EngineSemanticsRole {
 
   /// A main content for a tab.
   tabPanel,
+
+  /// A popup dialog.
+  dialog,
+
+  /// An alert dialog.
+  alertDialog,
+
+  /// A table structure containing data arranged in rows and columns.
+  table,
+
+  /// A cell in a [table] that does not contain column or row header information.
+  cell,
+
+  /// A row of [cell]s or or [columnHeader]s in a [table].
+  row,
+
+  /// A cell in a [table] contains header information for a column.
+  columnHeader,
 
   /// A role used when a more specific role cannot be assigend to
   /// a [SemanticsObject].
@@ -1745,6 +1764,34 @@ class SemanticsObject {
         return EngineSemanticsRole.tabPanel;
       case ui.SemanticsRole.tabBar:
         return EngineSemanticsRole.tabList;
+      case ui.SemanticsRole.dialog:
+        return EngineSemanticsRole.dialog;
+      case ui.SemanticsRole.alertDialog:
+        return EngineSemanticsRole.alertDialog;
+      case ui.SemanticsRole.table:
+        return EngineSemanticsRole.table;
+      case ui.SemanticsRole.cell:
+        return EngineSemanticsRole.cell;
+      case ui.SemanticsRole.row:
+        return EngineSemanticsRole.row;
+      case ui.SemanticsRole.columnHeader:
+        return EngineSemanticsRole.columnHeader;
+      // TODO(chunhtai): implement these roles.
+      // https://github.com/flutter/flutter/issues/159741.
+      case ui.SemanticsRole.searchBox:
+      case ui.SemanticsRole.dragHandle:
+      case ui.SemanticsRole.spinButton:
+      case ui.SemanticsRole.comboBox:
+      case ui.SemanticsRole.menuBar:
+      case ui.SemanticsRole.menu:
+      case ui.SemanticsRole.menuItem:
+      case ui.SemanticsRole.list:
+      case ui.SemanticsRole.listItem:
+      case ui.SemanticsRole.form:
+      case ui.SemanticsRole.tooltip:
+      case ui.SemanticsRole.loadingSpinner:
+      case ui.SemanticsRole.progressBar:
+      case ui.SemanticsRole.hotKey:
       case ui.SemanticsRole.none:
       // fallback to checking semantics properties.
     }
@@ -1794,6 +1841,12 @@ class SemanticsObject {
       EngineSemanticsRole.tab => SemanticTab(this),
       EngineSemanticsRole.tabList => SemanticTabList(this),
       EngineSemanticsRole.tabPanel => SemanticTabPanel(this),
+      EngineSemanticsRole.dialog => SemanticDialog(this),
+      EngineSemanticsRole.alertDialog => SemanticAlertDialog(this),
+      EngineSemanticsRole.table => SemanticTable(this),
+      EngineSemanticsRole.cell => SemanticCell(this),
+      EngineSemanticsRole.row => SemanticRow(this),
+      EngineSemanticsRole.columnHeader => SemanticColumnHeader(this),
       EngineSemanticsRole.generic => GenericRole(this),
     };
   }

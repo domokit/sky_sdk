@@ -267,10 +267,12 @@ class _TimePickerHeader extends StatelessWidget {
               ),
             ),
             Row(
+              textDirection:
+                  timeOfDayFormat == TimeOfDayFormat.a_space_h_colon_mm
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+              spacing: 12,
               children: <Widget>[
-                if (hourDialType == _HourDialType.twelveHour &&
-                    timeOfDayFormat == TimeOfDayFormat.a_space_h_colon_mm)
-                  const _DayPeriodControl(),
                 Expanded(
                   child: Row(
                     // Hour/minutes should not change positions in RTL locales.
@@ -282,11 +284,7 @@ class _TimePickerHeader extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (hourDialType == _HourDialType.twelveHour &&
-                    timeOfDayFormat != TimeOfDayFormat.a_space_h_colon_mm) ...<Widget>[
-                  const SizedBox(width: 12),
-                  const _DayPeriodControl(),
-                ],
+                if (hourDialType == _HourDialType.twelveHour) const _DayPeriodControl(),
               ],
             ),
           ],
@@ -303,29 +301,24 @@ class _TimePickerHeader extends StatelessWidget {
                     _TimePickerModel.defaultThemeOf(context).helpTextStyle,
               ),
               Column(
+                verticalDirection:
+                    timeOfDayFormat == TimeOfDayFormat.a_space_h_colon_mm
+                        ? VerticalDirection.up
+                        : VerticalDirection.down,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 12,
                 children: <Widget>[
-                  if (hourDialType == _HourDialType.twelveHour &&
-                      timeOfDayFormat == TimeOfDayFormat.a_space_h_colon_mm)
-                    const _DayPeriodControl(),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      bottom: hourDialType == _HourDialType.twelveHour ? 12 : 0,
-                    ),
-                    child: Row(
-                      // Hour/minutes should not change positions in RTL locales.
-                      textDirection: TextDirection.ltr,
-                      children: <Widget>[
-                        const Expanded(child: _HourControl()),
-                        _TimeSelectorSeparator(timeOfDayFormat: timeOfDayFormat),
-                        const Expanded(child: _MinuteControl()),
-                      ],
-                    ),
+                  Row(
+                    // Hour/minutes should not change positions in RTL locales.
+                    textDirection: TextDirection.ltr,
+                    children: <Widget>[
+                      const Expanded(child: _HourControl()),
+                      _TimeSelectorSeparator(timeOfDayFormat: timeOfDayFormat),
+                      const Expanded(child: _MinuteControl()),
+                    ],
                   ),
-                  if (hourDialType == _HourDialType.twelveHour &&
-                      timeOfDayFormat != TimeOfDayFormat.a_space_h_colon_mm)
-                    const _DayPeriodControl(),
+                  if (hourDialType == _HourDialType.twelveHour) const _DayPeriodControl(),
                 ],
               ),
             ],

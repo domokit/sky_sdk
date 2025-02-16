@@ -83,9 +83,10 @@ void main(List<String> arguments) {
   final Set<String> exclusionSet;
   if (useExclusion) {
     exclusionSet = HashSet<String>.from(
-      (loadYaml(exclusionFile.readAsStringSync()) as YamlList).toList().cast<String>().map(
-        (String s) => '${repoRoot.path}/$s',
-      ),
+      ((loadYaml(exclusionFile.readAsStringSync()) ?? YamlList()) as YamlList)
+          .toList()
+          .cast<String>()
+          .map((String s) => '${repoRoot.path}/$s'),
     );
     print('Loaded exclusion file from ${exclusionFile.path}.');
   } else {
@@ -164,11 +165,6 @@ void main(List<String> arguments) {
       continue;
     }
 
-    if (androidDirectory.path.contains('ios/.symlinks')) {
-      print('${rootBuildGradle.path} is in the ios subdirectory, skipping');
-      continue;
-    }
-
     print('Processing ${androidDirectory.path}');
 
     try {
@@ -178,8 +174,19 @@ void main(List<String> arguments) {
     }
 
     if (gradleGeneration) {
-      rootBuildGradle.writeAsStringSync(rootGradleFileContent);
-      settingsGradle.writeAsStringSync(settingGradleFile);
+      // Write file content corresponding to original file language.
+      if (rootBuildGradle.basename.endsWith('.kts')) {
+        rootBuildGradle.writeAsStringSync(rootGradleKtsFileContent);
+      } else {
+        rootBuildGradle.writeAsStringSync(rootGradleFileContent);
+      }
+
+      if (settingsGradle.basename.endsWith('.kts')) {
+        settingsGradle.writeAsStringSync(settingsGradleKtsFileContent);
+      } else {
+        settingsGradle.writeAsStringSync(settingGradleFileContent);
+      }
+
       wrapperGradle.writeAsStringSync(wrapperGradleFileContent);
     }
 
@@ -250,7 +257,7 @@ tasks.register("clean", Delete) {
 }
 ''';
 
-const String settingGradleFile = r'''
+const String settingGradleFileContent = r'''
 // Copyright 2014 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -294,6 +301,93 @@ plugins {
 include ":app"
 ''';
 
+// Consider updating this file to reflect the latest updates to app templates
+// when performing batch updates (this file is modeled after
+// root_app/android/build.gradle.kts).
+const String rootGradleKtsFileContent = r'''
+// Copyright 2014 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This file is auto generated.
+// To update all the settings.gradle files in the Flutter repo,
+// See dev/tools/bin/generate_gradle_lockfiles.dart.
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.layout.buildDirectory.value(rootProject.layout.buildDirectory.dir("../../build").get())
+
+subprojects {
+    project.layout.buildDirectory.value(rootProject.layout.buildDirectory.dir(project.name).get())
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+    dependencyLocking {
+        ignoredDependencies.add("io.flutter:*")
+        lockFile = file("${rootProject.projectDir}/project-${project.name}.lockfile")
+        if (!project.hasProperty("local-engine-repo")) {
+            lockAllConfigurations()
+        }
+    }
+}
+
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
+}
+''';
+
+// Consider updating this file to reflect the latest updates to app templates
+// when performing batch updates (this file is modeled after
+// root_app/android/settings.gradle.kts).
+const String settingsGradleKtsFileContent = r'''
+// Copyright 2014 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This file is auto generated.
+// To update all the settings.gradle files in the Flutter repo,
+// See dev/tools/bin/generate_gradle_lockfiles.dart.
+
+pluginManagement {
+    val flutterSdkPath =
+        run {
+            val properties = java.util.Properties()
+            file("local.properties").inputStream().use { properties.load(it) }
+            val flutterSdkPath = properties.getProperty("flutter.sdk")
+            require(flutterSdkPath != null) { "flutter.sdk not set in local.properties" }
+            flutterSdkPath
+        }
+
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+buildscript {
+    dependencyLocking {
+        lockFile = file("${rootProject.projectDir}/buildscript-gradle.lockfile")
+        lockAllConfigurations()
+    }
+}
+
+plugins {
+    id("dev.flutter.flutter-plugin-loader") version "1.0.0"
+    id("com.android.application") version "8.7.0" apply false
+    id("org.jetbrains.kotlin.android") version "1.8.22" apply false
+}
+
+include(":app")
+''';
+
 const String wrapperGradleFileContent = r'''
 distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
@@ -309,8 +403,13 @@ Iterable<Directory> discoverAndroidDirectories(Directory repoRoot) {
       // Exclude the top-level "engine/" directory, which is not covered by the the tool.
       .where((Directory directory) => directory.basename != 'engine')
       // ... and then recurse into every directory (other than the excluded directory).
-      .expand((Directory d) => d.listSync(recursive: true))
+      .expand((Directory directory) => directory.listSync(recursive: true))
       .whereType<Directory>()
+      // These directories are build artifacts which are not part of source control.
+      .where(
+        (Directory directory) =>
+            !directory.path.contains('/build/') && !directory.path.contains('.symlinks'),
+      )
       // ... where the directory ultimately is named "android".
       .where((FileSystemEntity entity) => entity.basename == 'android');
 }

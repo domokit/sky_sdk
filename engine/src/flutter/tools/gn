@@ -666,7 +666,12 @@ def to_gn_args(args):
   if args.build_embedder_examples is not None:
     gn_args['build_embedder_examples'] = args.build_embedder_examples
 
-  gn_args['stripped_symbols'] = args.stripped
+  if args.stripped is True:
+    gn_args['stripped_symbols'] = True
+  elif args.stripped is False:
+    gn_args['stripped_symbols'] = False
+  else:
+    gn_args['stripped_symbols'] = args.target_os != 'android'
 
   if args.msan:
     gn_args['is_msan'] = True
@@ -1113,7 +1118,6 @@ def parse_args(args):
 
   parser.add_argument(
       '--stripped',
-      default=True,
       action='store_true',
       help='Strip debug symbols from the output. This defaults to true and has no effect on iOS.'
   )

@@ -154,7 +154,6 @@ TEST_P(DlGoldenTest, ShimmerTest) {
 
 TEST_P(DlGoldenTest, StrokedRRectFastBlur) {
   impeller::Point content_scale = GetContentScale();
-
   DlRect rect = DlRect::MakeXYWH(50, 50, 100, 100);
   DlRoundRect rrect = DlRoundRect::MakeRectRadius(rect, 10.0f);
   DlPaint fill = DlPaint().setColor(DlColor::kBlue());
@@ -172,6 +171,38 @@ TEST_P(DlGoldenTest, StrokedRRectFastBlur) {
   builder.DrawRoundRect(rrect.Shift(150, 0), stroke);
   builder.DrawRoundRect(rrect.Shift(0, 150), blur);
   builder.DrawRoundRect(rrect.Shift(150, 150), blur_stroke);
+
+  ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
+}
+
+// Top left and bottom right circles are expected to be comparable (not exactly
+// equal).
+// See also: https://github.com/flutter/flutter/issues/152778
+TEST_P(DlGoldenTest, LargeDownscaleRrect) {
+  impeller::Point content_scale = GetContentScale();
+  auto draw = [&](DlCanvas* canvas, const std::vector<sk_sp<DlImage>>& images) {
+    canvas->Scale(content_scale.x, content_scale.y);
+    canvas->DrawColor(DlColor(0xff111111));
+    {
+      canvas->Save();
+      canvas->Scale(0.25, 0.25);
+      DlPaint paint;
+      paint.setColor(DlColor::kYellow());
+      paint.setMaskFilter(
+          DlBlurMaskFilter::Make(DlBlurStyle::kNormal, /*sigma=*/1000));
+      canvas->DrawCircle(SkPoint::Make(0, 0), 1200, paint);
+      canvas->Restore();
+    }
+
+    DlPaint paint;
+    paint.setColor(DlColor::kYellow());
+    paint.setMaskFilter(
+        DlBlurMaskFilter::Make(DlBlurStyle::kNormal, /*sigma=*/250));
+    canvas->DrawCircle(SkPoint::Make(1024, 768), 300, paint);
+  };
+
+  DisplayListBuilder builder;
+  draw(&builder, /*images=*/{});
 
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }

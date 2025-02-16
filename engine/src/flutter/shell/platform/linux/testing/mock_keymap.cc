@@ -28,6 +28,12 @@ MockKeymap::MockKeymap() {
   mock = this;
 }
 
+MockKeymap::~MockKeymap() {
+  if (mock == this) {
+    mock = nullptr;
+  }
+}
+
 GdkKeymap* gdk_keymap_get_for_display(GdkDisplay* display) {
   FlMockKeymap* keymap =
       FL_MOCK_KEYMAP(g_object_new(fl_mock_keymap_get_type(), nullptr));

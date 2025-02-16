@@ -978,6 +978,11 @@ class Engine final : public RuntimeDelegate, PointerDataDispatcher::Delegate {
   ///
   void ShutdownPlatformIsolates();
 
+  //--------------------------------------------------------------------------
+  /// @brief      Flushes the microtask queue of the root isolate.
+  ///
+  void FlushMicrotaskQueue();
+
  private:
   // |RuntimeDelegate|
   std::string DefaultRouteName() override;

@@ -195,6 +195,21 @@ class Daemon {
     );
   }
 
+  factory Daemon.createMachineDaemon() {
+    final Daemon daemon = Daemon(
+      DaemonConnection(
+        daemonStreams: DaemonStreams.fromStdio(globals.stdio, logger: globals.logger),
+        logger: globals.logger,
+      ),
+      notifyingLogger:
+          (globals.logger is NotifyingLogger)
+              ? globals.logger as NotifyingLogger
+              : NotifyingLogger(verbose: globals.logger.isVerbose, parent: globals.logger),
+      logToStdout: true,
+    );
+    return daemon;
+  }
+
   final DaemonConnection connection;
 
   late DaemonDomain daemonDomain;
@@ -570,23 +585,6 @@ class DaemonDomain extends Domain {
                 'fixCode': _ReasonCode.config.name,
               });
             }
-          case PlatformType.windowsPreview:
-            // TODO(fujino): detect if there any plugins with native code
-            if (!featureFlags.isPreviewDeviceEnabled) {
-              reasons.add(<String, Object>{
-                'reasonText': 'the Preview Device feature is not enabled',
-                'fixText': 'Run "flutter config --enable-flutter-preview',
-                'fixCode': _ReasonCode.config.name,
-              });
-            }
-            if (!supportedPlatforms.contains(SupportedPlatform.windows)) {
-              reasons.add(<String, Object>{
-                'reasonText': 'the Windows platform is not enabled for this project',
-                'fixText':
-                    'Run "flutter create --platforms=windows ." in your application directory',
-                'fixCode': _ReasonCode.create.name,
-              });
-            }
         }
 
         if (reasons.isEmpty) {
@@ -712,6 +710,9 @@ class AppDomain extends Domain {
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         logger: globals.logger,
+        terminal: globals.terminal,
+        platform: globals.platform,
+        outputPreferences: globals.outputPreferences,
         fileSystem: globals.fs,
       );
     } else if (enableHotReload) {
@@ -809,15 +810,11 @@ class AppDomain extends Domain {
       );
     }
     final Completer<void> appStartedCompleter = Completer<void>();
-    // We don't want to wait for this future to complete, and callbacks won't fail,
-    // as it just writes to stdout.
-    unawaited(
-      appStartedCompleter.future.then<void>((void value) {
-        _sendAppEvent(app, 'started');
-      }),
-    );
 
-    await app._runInZone<void>(this, () async {
+    // This future won't complete until the application has shutdown, so we don't want to
+    // await it. However, we do need to listen to the future in order to handle possible
+    // tool exits
+    final Future<void> appRunFuture = app._runInZone<void>(this, () async {
       try {
         await runOrAttach(
           connectionInfoCompleter: connectionInfoCompleter,
@@ -836,6 +833,13 @@ class AppDomain extends Domain {
         _apps.remove(app);
       }
     });
+
+    await Future.any(<Future<void>>[
+      appStartedCompleter.future.then<void>((void value) {
+        _sendAppEvent(app, 'started');
+      }),
+      appRunFuture,
+    ]);
     return app;
   }
 

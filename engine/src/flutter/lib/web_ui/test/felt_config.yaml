@@ -1,10 +1,6 @@
 # See the `README.md` in this directory for documentation on the structure of
 # this file.
 compile-configs:
-  - name: dart2js-html
-    compiler: dart2js
-    renderer: html
-
   - name: dart2js-canvaskit
     compiler: dart2js
     renderer: canvaskit
@@ -30,10 +26,6 @@ test-sets:
   - name: canvaskit
     directory: canvaskit
 
-  # Tests for html-renderer-specific functionality
-  - name: html
-    directory: html
-
   # Tests for renderer functionality that can be run on any renderer
   - name: ui
     directory: ui
@@ -43,14 +35,6 @@ test-sets:
     directory: fallbacks
 
 test-bundles:
-  - name: dart2js-html-html
-    test-set: html
-    compile-configs: dart2js-html
-
-  - name: dart2js-html-ui
-    test-set: ui
-    compile-configs: dart2js-html
-
   - name: dart2js-canvaskit-engine
     test-set: engine
     compile-configs: dart2js-canvaskit
@@ -114,14 +98,6 @@ run-configs:
     canvaskit-variant: full
 
 test-suites:
-  - name: chrome-dart2js-html-html
-    test-bundle: dart2js-html-html
-    run-config: chrome
-
-  - name: chrome-dart2js-html-ui
-    test-bundle: dart2js-html-ui
-    run-config: chrome
-
   - name: chrome-dart2js-canvaskit-engine
     test-bundle: dart2js-canvaskit-engine
     run-config: chrome
@@ -146,14 +122,6 @@ test-suites:
     test-bundle: dart2js-canvaskit-ui
     run-config: chrome-full
     artifact-deps: [ canvaskit ]
-
-  - name: edge-dart2js-html-html
-    test-bundle: dart2js-html-html
-    run-config: edge
-
-  - name: edge-dart2js-html-ui
-    test-bundle: dart2js-html-ui
-    run-config: edge
 
   - name: edge-dart2js-canvaskit-engine
     test-bundle: dart2js-canvaskit-engine
@@ -180,14 +148,6 @@ test-suites:
     run-config: edge-full
     artifact-deps: [ canvaskit ]
 
-  - name: firefox-dart2js-html-html
-    test-bundle: dart2js-html-html
-    run-config: firefox
-
-  - name: firefox-dart2js-html-ui
-    test-bundle: dart2js-html-ui
-    run-config: firefox
-
   - name: firefox-dart2js-canvaskit-engine
     test-bundle: dart2js-canvaskit-engine
     run-config: firefox
@@ -202,14 +162,6 @@ test-suites:
     test-bundle: dart2js-canvaskit-ui
     run-config: firefox
     artifact-deps: [ canvaskit ]
-
-  - name: safari-dart2js-html-html
-    test-bundle: dart2js-html-html
-    run-config: safari
-
-  - name: safari-dart2js-html-ui
-    test-bundle: dart2js-html-ui
-    run-config: safari
 
   - name: safari-dart2js-canvaskit-engine
     test-bundle: dart2js-canvaskit-engine

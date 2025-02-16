@@ -16,10 +16,15 @@ final class FakePubWithPrimedDeps implements Pub {
   /// dev-dependencies ([dependencies]) of any package to a set of any other
   /// packages. A resulting valid `dart pub deps --json` response is implicitly
   /// created.
+  ///
+  /// If [allowGet] is `true`, [Pub.get] can be invoked (all the parameters are
+  /// ignored and it is considered a success); otherwise an error is thrown to
+  /// reject an unexpected call.
   factory FakePubWithPrimedDeps({
     String rootPackageName = 'app_name',
     Set<String> devDependencies = const <String>{},
     Map<String, Set<String>> dependencies = const <String, Set<String>>{},
+    bool allowGet = false,
   }) {
     // Start the packages: [ ... ] list with the root package.
     final List<Object?> packages = <Object?>[
@@ -56,11 +61,34 @@ final class FakePubWithPrimedDeps implements Pub {
     return FakePubWithPrimedDeps._(<String, Object?>{
       'root': rootPackageName,
       'packages': packages,
-    });
+    }, allowGetToSucceed: allowGet);
   }
 
-  const FakePubWithPrimedDeps._(this._deps);
+  const FakePubWithPrimedDeps._(this._deps, {required bool allowGetToSucceed})
+    : _allowGetToSucceed = allowGetToSucceed;
   final Map<String, Object?> _deps;
+  final bool _allowGetToSucceed;
+
+  @override
+  Future<void> get({
+    required PubContext context,
+    required FlutterProject project,
+    bool upgrade = false,
+    bool offline = false,
+    String? flutterRootOverride,
+    bool checkUpToDate = false,
+    bool shouldSkipThirdPartyGenerator = true,
+    PubOutputMode outputMode = PubOutputMode.all,
+  }) async {
+    if (_allowGetToSucceed) {
+      return;
+    }
+    throw UnsupportedError(
+      'Instance did not expect <Pub>.get to be invoked. If this was intentional, '
+      'change the constructor of FakePubWithPrimeDeps to include the parameter '
+      'allowGet: true.',
+    );
+  }
 
   @override
   Future<Map<String, Object?>> deps(FlutterProject project) async => _deps;

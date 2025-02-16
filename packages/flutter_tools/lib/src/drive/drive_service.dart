@@ -15,10 +15,10 @@ import '../base/dds.dart';
 import '../base/logger.dart';
 import '../base/platform.dart';
 import '../base/process.dart';
+import '../base/terminal.dart';
 import '../build_info.dart';
 import '../device.dart';
 import '../resident_runner.dart';
-import '../sksl_writer.dart';
 import '../vmservice.dart';
 import 'web_driver_service.dart';
 
@@ -27,12 +27,16 @@ class FlutterDriverFactory {
     required ApplicationPackageFactory applicationPackageFactory,
     required Platform platform,
     required Logger logger,
+    required Terminal terminal,
+    required OutputPreferences outputPreferences,
     required ProcessUtils processUtils,
     required String dartSdkPath,
     required DevtoolsLauncher devtoolsLauncher,
   }) : _applicationPackageFactory = applicationPackageFactory,
        _platform = platform,
        _logger = logger,
+       _terminal = terminal,
+       _outputPreferences = outputPreferences,
        _processUtils = processUtils,
        _dartSdkPath = dartSdkPath,
        _devtoolsLauncher = devtoolsLauncher;
@@ -40,6 +44,8 @@ class FlutterDriverFactory {
   final ApplicationPackageFactory _applicationPackageFactory;
   final Platform _platform;
   final Logger _logger;
+  final Terminal _terminal;
+  final OutputPreferences _outputPreferences;
   final ProcessUtils _processUtils;
   final String _dartSdkPath;
   final DevtoolsLauncher _devtoolsLauncher;
@@ -49,7 +55,9 @@ class FlutterDriverFactory {
     if (web) {
       return WebDriverService(
         logger: _logger,
+        terminal: _terminal,
         platform: _platform,
+        outputPreferences: _outputPreferences,
         processUtils: _processUtils,
         dartSdkPath: _dartSdkPath,
       );
@@ -102,11 +110,7 @@ abstract class DriverService {
   });
 
   /// Stop the running application and uninstall it from the device.
-  ///
-  /// If [writeSkslOnExit] is non-null, will connect to the VM Service
-  /// and write SkSL to the file. This is only supported on mobile and
-  /// desktop devices.
-  Future<void> stop({File? writeSkslOnExit, String? userIdentifier});
+  Future<void> stop({String? userIdentifier});
 }
 
 /// An implementation of the driver service that connects to mobile and desktop
@@ -269,12 +273,7 @@ class FlutterDriverService extends DriverService {
   }
 
   @override
-  Future<void> stop({File? writeSkslOnExit, String? userIdentifier}) async {
-    if (writeSkslOnExit != null) {
-      final FlutterView flutterView = (await _vmService.getFlutterViews()).first;
-      final Map<String, Object?>? result = await _vmService.getSkSLs(viewId: flutterView.id);
-      await sharedSkSlWriter(_device!, result, outputFile: writeSkslOnExit, logger: _logger);
-    }
+  Future<void> stop({String? userIdentifier}) async {
     // If the application package is available, stop and uninstall.
     final ApplicationPackage? package = _applicationPackage;
     if (package != null) {

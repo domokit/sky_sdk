@@ -90,7 +90,7 @@ class Size extends OffsetBase {
   const Size(super.width, super.height);
   // Used by the rendering library's _DebugSize hack.
   Size.copy(Size source) : super(source.width, source.height);
-  const Size.square(double dimension) : super(dimension, dimension); // ignore: use_super_parameters
+  const Size.square(double dimension) : super(dimension, dimension);
   const Size.fromWidth(double width) : super(width, double.infinity);
   const Size.fromHeight(double height) : super(double.infinity, height);
   const Size.fromRadius(double radius) : super(radius * 2.0, radius * 2.0);

@@ -2,9 +2,8 @@
 # Each exclusion must have an associated reason. Please avoid adding to this list unless necessary,
 # as each exclusion must be updated by hand.
 
-# hello_world uses a Kotlin Gradle settings file (settings.gradle.kts). We don't have a template
-# Kotlin Gradle settings file (only a groovy one), so we currently can't generate it.
-- examples/hello_world/android
+# There are currently no entries :) but if you wanted to add one, the format would be
+# - made/up/path/flutter_create_name/android
 
 # The following files must also be manually updated at the moment, because they don't use a
 # lib/main.dart (but they don't need exclusion, as we already skip that case).

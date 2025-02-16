@@ -404,4 +404,28 @@ transforms:
       fillColor:
         kind: fragment
         value: 'arguments[fillColor]'
+
+  # Changes made in https://github.com/flutter/flutter/pull/161295
+  - title: "Migrate 'minSize' to 'minimumSize'"
+    date: 2025-01-09
+    element:
+      uris: [ 'cupertino.dart' ]
+      constructor: ''
+      inClass: 'CupertinoButton'
+    oneOf:
+      - if: "minSize != ''"
+        changes:
+          - kind: 'addParameter'
+            index: 7
+            name: 'minimumSize'
+            style: optional_named
+            argumentValue:
+              expression: 'Size({% minSize %}, {% minSize %})'
+              requiredIf: "minSize != ''"
+          - kind: 'removeParameter'
+            name: 'minSize'
+    variables:
+      minSize:
+        kind: fragment
+        value: 'arguments[minSize]'
 # Before adding a new fix: read instructions at the top of this file.

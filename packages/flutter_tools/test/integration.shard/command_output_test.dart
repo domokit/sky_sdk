@@ -192,24 +192,6 @@ void main() {
     }
   });
 
-  testWithoutContext('Providing sksl bundle with missing file with tool exit', () async {
-    final String helloWorld = fileSystem.path.join(getFlutterRoot(), 'examples', 'hello_world');
-    final ProcessResult result = await processManager.run(<String>[
-      flutterBin,
-      'build',
-      'apk',
-      '--bundle-sksl-path=foo/bar/baz.json', // This file does not exist.
-    ], workingDirectory: helloWorld);
-
-    expect(
-      result,
-      const ProcessResultMatcher(
-        exitCode: 1,
-        stderrPattern: 'No SkSL shader bundle found at foo/bar/baz.json',
-      ),
-    );
-  });
-
   testWithoutContext('flutter attach does not support --release', () async {
     final String helloWorld = fileSystem.path.join(getFlutterRoot(), 'examples', 'hello_world');
     final ProcessResult result = await processManager.run(<String>[

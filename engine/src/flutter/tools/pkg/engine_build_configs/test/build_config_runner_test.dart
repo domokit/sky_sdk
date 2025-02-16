@@ -827,11 +827,11 @@ FakeProcessManager _fakeProcessManager({
   return FakeProcessManager(
     canRun: canRun ?? (Object? exe, {String? workingDirectory}) => true,
     onRun:
-        (List<String> cmd) => switch (cmd) {
+        (FakeCommandLogEntry entry) => switch (entry.command) {
           _ => failUnknown ? io.ProcessResult(1, 1, '', '') : success,
         },
     onStart:
-        (List<String> cmd) => switch (cmd) {
+        (FakeCommandLogEntry entry) => switch (entry.command) {
           [final String exe, ...] when exe.endsWith('gn') => fakeProcess(gnResult),
           [final String exe, ...] when exe.endsWith('bootstrap') => fakeProcess(bootstrapResult),
           [final String exe, ...] when exe.endsWith('ninja') => fakeProcess(ninjaResult),

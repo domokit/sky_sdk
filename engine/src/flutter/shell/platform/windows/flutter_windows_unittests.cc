@@ -31,7 +31,7 @@ namespace {
 // An EGL manager that initializes EGL but fails to create surfaces.
 class HalfBrokenEGLManager : public egl::Manager {
  public:
-  HalfBrokenEGLManager() : egl::Manager() {}
+  HalfBrokenEGLManager() : egl::Manager(egl::GpuPreference::NoPreference) {}
 
   std::unique_ptr<egl::WindowSurface>
   CreateWindowSurface(HWND hwnd, size_t width, size_t height) override {
@@ -420,6 +420,28 @@ TEST_F(WindowsTest, GetGraphicsAdapter) {
   ASSERT_NE(dxgi_adapter, nullptr);
   DXGI_ADAPTER_DESC desc{};
   ASSERT_TRUE(SUCCEEDED(dxgi_adapter->GetDesc(&desc)));
+}
+
+TEST_F(WindowsTest, GetGraphicsAdapterWithLowPowerPreference) {
+  std::optional<LUID> luid = egl::Manager::GetLowPowerGpuLuid();
+  if (!luid) {
+    GTEST_SKIP() << "Not able to find low power GPU, nothing to check.";
+  }
+
+  auto& context = GetContext();
+  WindowsConfigBuilder builder(context);
+  builder.SetGpuPreference(FlutterDesktopGpuPreference::LowPowerPreference);
+  ViewControllerPtr controller{builder.Run()};
+  ASSERT_NE(controller, nullptr);
+  auto view = FlutterDesktopViewControllerGetView(controller.get());
+
+  Microsoft::WRL::ComPtr<IDXGIAdapter> dxgi_adapter;
+  dxgi_adapter = FlutterDesktopViewGetGraphicsAdapter(view);
+  ASSERT_NE(dxgi_adapter, nullptr);
+  DXGI_ADAPTER_DESC desc{};
+  ASSERT_TRUE(SUCCEEDED(dxgi_adapter->GetDesc(&desc)));
+  ASSERT_EQ(desc.AdapterLuid.HighPart, luid->HighPart);
+  ASSERT_EQ(desc.AdapterLuid.LowPart, luid->LowPart);
 }
 
 // Implicit view has the implicit view ID.

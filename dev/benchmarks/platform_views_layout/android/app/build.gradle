@@ -57,6 +57,10 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    packagingOptions {
+        doNotStrip '**/*.so'
+    }
 }
 
 flutter {

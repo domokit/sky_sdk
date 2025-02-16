@@ -3,50 +3,6 @@
   "_comment2": "See `generate_builder_json.dart` for the generator code",
   "builds": [
     {
-      "name": "web_tests/test_bundles/dart2js-html-html",
-      "drone_dimensions": [
-        "device_type=none",
-        "os=Linux"
-      ],
-      "generators": {
-        "tasks": [
-          {
-            "name": "compile bundle dart2js-html-html",
-            "parameters": [
-              "test",
-              "--compile",
-              "--bundle=dart2js-html-html"
-            ],
-            "scripts": [
-              "flutter/lib/web_ui/dev/felt"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "name": "web_tests/test_bundles/dart2js-html-ui",
-      "drone_dimensions": [
-        "device_type=none",
-        "os=Linux"
-      ],
-      "generators": {
-        "tasks": [
-          {
-            "name": "compile bundle dart2js-html-ui",
-            "parameters": [
-              "test",
-              "--compile",
-              "--bundle=dart2js-html-ui"
-            ],
-            "scripts": [
-              "flutter/lib/web_ui/dev/felt"
-            ]
-          }
-        ]
-      }
-    },
-    {
       "name": "web_tests/test_bundles/dart2js-canvaskit-engine",
       "drone_dimensions": [
         "device_type=none",
@@ -209,8 +165,6 @@
         "download_jdk": false
       },
       "dependencies": [
-        "web_tests/test_bundles/dart2js-html-html",
-        "web_tests/test_bundles/dart2js-html-ui",
         "web_tests/test_bundles/dart2js-canvaskit-engine",
         "web_tests/test_bundles/dart2js-canvaskit-canvaskit",
         "web_tests/test_bundles/dart2js-canvaskit-ui",
@@ -234,27 +188,19 @@
           "parameters": [
             "test",
             "--copy-artifacts",
-            "--suite=chrome-dart2js-html-html",
-            "--suite=chrome-dart2js-html-ui",
             "--suite=chrome-dart2js-canvaskit-engine",
             "--suite=chrome-dart2js-canvaskit-canvaskit",
             "--suite=chrome-dart2js-canvaskit-ui",
             "--suite=chrome-full-dart2js-canvaskit-canvaskit",
             "--suite=chrome-full-dart2js-canvaskit-ui",
-            "--suite=edge-dart2js-html-html",
-            "--suite=edge-dart2js-html-ui",
             "--suite=edge-dart2js-canvaskit-engine",
             "--suite=edge-dart2js-canvaskit-canvaskit",
             "--suite=edge-dart2js-canvaskit-ui",
             "--suite=edge-full-dart2js-canvaskit-canvaskit",
             "--suite=edge-full-dart2js-canvaskit-ui",
-            "--suite=firefox-dart2js-html-html",
-            "--suite=firefox-dart2js-html-ui",
             "--suite=firefox-dart2js-canvaskit-engine",
             "--suite=firefox-dart2js-canvaskit-canvaskit",
             "--suite=firefox-dart2js-canvaskit-ui",
-            "--suite=safari-dart2js-html-html",
-            "--suite=safari-dart2js-html-ui",
             "--suite=safari-dart2js-canvaskit-engine",
             "--suite=safari-dart2js-canvaskit-canvaskit",
             "--suite=safari-dart2js-canvaskit-ui",
@@ -266,24 +212,6 @@
             "--suite=chrome-force-st-fallbacks",
             "--suite=firefox-fallbacks",
             "--suite=safari-fallbacks"
-          ],
-          "script": "flutter/lib/web_ui/dev/felt"
-        },
-        {
-          "name": "run suite chrome-dart2js-html-html",
-          "parameters": [
-            "test",
-            "--run",
-            "--suite=chrome-dart2js-html-html"
-          ],
-          "script": "flutter/lib/web_ui/dev/felt"
-        },
-        {
-          "name": "run suite chrome-dart2js-html-ui",
-          "parameters": [
-            "test",
-            "--run",
-            "--suite=chrome-dart2js-html-ui"
           ],
           "script": "flutter/lib/web_ui/dev/felt"
         },
@@ -400,8 +328,6 @@
         "download_jdk": false
       },
       "dependencies": [
-        "web_tests/test_bundles/dart2js-html-html",
-        "web_tests/test_bundles/dart2js-html-ui",
         "web_tests/test_bundles/dart2js-canvaskit-engine",
         "web_tests/test_bundles/dart2js-canvaskit-canvaskit",
         "web_tests/test_bundles/dart2js-canvaskit-ui",
@@ -423,27 +349,19 @@
           "parameters": [
             "test",
             "--copy-artifacts",
-            "--suite=chrome-dart2js-html-html",
-            "--suite=chrome-dart2js-html-ui",
             "--suite=chrome-dart2js-canvaskit-engine",
             "--suite=chrome-dart2js-canvaskit-canvaskit",
             "--suite=chrome-dart2js-canvaskit-ui",
             "--suite=chrome-full-dart2js-canvaskit-canvaskit",
             "--suite=chrome-full-dart2js-canvaskit-ui",
-            "--suite=edge-dart2js-html-html",
-            "--suite=edge-dart2js-html-ui",
             "--suite=edge-dart2js-canvaskit-engine",
             "--suite=edge-dart2js-canvaskit-canvaskit",
             "--suite=edge-dart2js-canvaskit-ui",
             "--suite=edge-full-dart2js-canvaskit-canvaskit",
             "--suite=edge-full-dart2js-canvaskit-ui",
-            "--suite=firefox-dart2js-html-html",
-            "--suite=firefox-dart2js-html-ui",
             "--suite=firefox-dart2js-canvaskit-engine",
             "--suite=firefox-dart2js-canvaskit-canvaskit",
             "--suite=firefox-dart2js-canvaskit-ui",
-            "--suite=safari-dart2js-html-html",
-            "--suite=safari-dart2js-html-ui",
             "--suite=safari-dart2js-canvaskit-engine",
             "--suite=safari-dart2js-canvaskit-canvaskit",
             "--suite=safari-dart2js-canvaskit-ui",
@@ -455,24 +373,6 @@
             "--suite=chrome-force-st-fallbacks",
             "--suite=firefox-fallbacks",
             "--suite=safari-fallbacks"
-          ],
-          "script": "flutter/lib/web_ui/dev/felt"
-        },
-        {
-          "name": "run suite firefox-dart2js-html-html",
-          "parameters": [
-            "test",
-            "--run",
-            "--suite=firefox-dart2js-html-html"
-          ],
-          "script": "flutter/lib/web_ui/dev/felt"
-        },
-        {
-          "name": "run suite firefox-dart2js-html-ui",
-          "parameters": [
-            "test",
-            "--run",
-            "--suite=firefox-dart2js-html-ui"
           ],
           "script": "flutter/lib/web_ui/dev/felt"
         },
@@ -527,8 +427,6 @@
         "download_jdk": false
       },
       "dependencies": [
-        "web_tests/test_bundles/dart2js-html-html",
-        "web_tests/test_bundles/dart2js-html-ui",
         "web_tests/test_bundles/dart2js-canvaskit-engine",
         "web_tests/test_bundles/dart2js-canvaskit-canvaskit",
         "web_tests/test_bundles/dart2js-canvaskit-ui",
@@ -546,27 +444,19 @@
           "parameters": [
             "test",
             "--copy-artifacts",
-            "--suite=chrome-dart2js-html-html",
-            "--suite=chrome-dart2js-html-ui",
             "--suite=chrome-dart2js-canvaskit-engine",
             "--suite=chrome-dart2js-canvaskit-canvaskit",
             "--suite=chrome-dart2js-canvaskit-ui",
             "--suite=chrome-full-dart2js-canvaskit-canvaskit",
             "--suite=chrome-full-dart2js-canvaskit-ui",
-            "--suite=edge-dart2js-html-html",
-            "--suite=edge-dart2js-html-ui",
             "--suite=edge-dart2js-canvaskit-engine",
             "--suite=edge-dart2js-canvaskit-canvaskit",
             "--suite=edge-dart2js-canvaskit-ui",
             "--suite=edge-full-dart2js-canvaskit-canvaskit",
             "--suite=edge-full-dart2js-canvaskit-ui",
-            "--suite=firefox-dart2js-html-html",
-            "--suite=firefox-dart2js-html-ui",
             "--suite=firefox-dart2js-canvaskit-engine",
             "--suite=firefox-dart2js-canvaskit-canvaskit",
             "--suite=firefox-dart2js-canvaskit-ui",
-            "--suite=safari-dart2js-html-html",
-            "--suite=safari-dart2js-html-ui",
             "--suite=safari-dart2js-canvaskit-engine",
             "--suite=safari-dart2js-canvaskit-canvaskit",
             "--suite=safari-dart2js-canvaskit-ui",
@@ -578,24 +468,6 @@
             "--suite=chrome-force-st-fallbacks",
             "--suite=firefox-fallbacks",
             "--suite=safari-fallbacks"
-          ],
-          "script": "flutter/lib/web_ui/dev/felt"
-        },
-        {
-          "name": "run suite safari-dart2js-html-html",
-          "parameters": [
-            "test",
-            "--run",
-            "--suite=safari-dart2js-html-html"
-          ],
-          "script": "flutter/lib/web_ui/dev/felt"
-        },
-        {
-          "name": "run suite safari-dart2js-html-ui",
-          "parameters": [
-            "test",
-            "--run",
-            "--suite=safari-dart2js-html-ui"
           ],
           "script": "flutter/lib/web_ui/dev/felt"
         },

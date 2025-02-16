@@ -3829,6 +3829,92 @@ void main() {
     await tester.pump();
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('SearchAnchor viewOnClose function test', (WidgetTester tester) async {
+    String name = 'silva';
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: SearchAnchor(
+              viewOnClose: () {
+                name = 'Pedro';
+              },
+              builder: (BuildContext context, SearchController controller) {
+                return IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    controller.openView();
+                  },
+                );
+              },
+              suggestionsBuilder: (BuildContext context, SearchController controller) {
+                return List<Widget>.generate(5, (int index) {
+                  final String item = 'item $index';
+                  return ListTile(
+                    leading: const Icon(Icons.history),
+                    title: Text(item),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {},
+                  );
+                });
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Open search view
+    await tester.tap(find.byIcon(Icons.search));
+    await tester.pumpAndSettle();
+    expect(name, 'silva');
+
+    // Pop search view route
+    await tester.tap(find.backButton());
+    await tester.pumpAndSettle();
+    expect(name, 'Pedro');
+
+    // No exception.
+  });
+
+  testWidgets('SearchAnchor.bar viewOnClose function test', (WidgetTester tester) async {
+    String name = 'silva';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: SearchAnchor.bar(
+            onClose: () {
+              name = 'Pedro';
+            },
+            suggestionsBuilder: (BuildContext context, SearchController controller) {
+              return <Widget>[
+                ListTile(
+                  title: const Text('item 0'),
+                  onTap: () {
+                    controller.closeView('item 0');
+                  },
+                ),
+              ];
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Open search view
+    await tester.tap(find.byType(SearchBar));
+    await tester.pumpAndSettle();
+    expect(name, 'silva');
+
+    // Pop search view route
+    await tester.tap(find.backButton());
+    await tester.pumpAndSettle();
+    expect(name, 'Pedro');
+
+    // No exception.
+  });
 }
 
 Future<void> checkSearchBarDefaults(

@@ -4,12 +4,11 @@
 
 import 'dart:async';
 
-// ignore: implementation_imports
-import 'package:_fe_analyzer_shared/src/base/syntactic_entity.dart';
 import 'package:analyzer/dart/analysis/analysis_context.dart';
 import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:watcher/watcher.dart';
 
@@ -18,7 +17,36 @@ import '../base/logger.dart';
 import '../base/utils.dart';
 import 'preview_code_generator.dart';
 
-typedef PreviewMapping = Map<String, List<String>>;
+/// A path / URI pair used to map previews to a file.
+///
+/// We don't just use a path or a URI as the file watcher doesn't report URIs
+/// (e.g., package:*) but the analyzer APIs do, and the code generator emits
+/// package URIs for preview imports.
+typedef PreviewPath = ({String path, Uri uri});
+
+/// Represents a set of previews for a given file.
+typedef PreviewMapping = Map<PreviewPath, List<String>>;
+
+extension on Token {
+  /// Convenience getter to identify tokens for private fields and functions.
+  bool get isPrivate => toString().startsWith('_');
+}
+
+extension on Annotation {
+  /// Convenience getter to identify `@Preview` annotations
+  bool get isPreview => name.name == 'Preview';
+}
+
+/// Convenience getters for examining [String] paths.
+extension on String {
+  bool get isDartFile => endsWith('.dart');
+  bool get isGeneratedPreviewFile => endsWith(PreviewCodeGenerator.generatedPreviewFilePath);
+}
+
+extension on ParsedUnitResult {
+  /// Convenience method to package [path] and [uri] into a [PreviewPath]
+  PreviewPath toPreviewPath() => (path: path, uri: uri);
+}
 
 class PreviewDetector {
   PreviewDetector({required this.fs, required this.logger, required this.onChangeDetected});
@@ -38,18 +66,19 @@ class PreviewDetector {
     final Watcher watcher = Watcher(projectRoot.path);
     // TODO(bkonyi): watch for changes to pubspec.yaml
     _fileWatcher = watcher.events.listen((WatchEvent event) async {
-      final String eventPath = Uri.file(event.path).toString();
+      final String eventPath = event.path;
       // Only trigger a reload when changes to Dart sources are detected. We
       // ignore the generated preview file to avoid getting stuck in a loop.
-      if (!eventPath.endsWith('.dart') ||
-          eventPath.endsWith(PreviewCodeGenerator.generatedPreviewFilePath)) {
+      if (!eventPath.isDartFile || eventPath.isGeneratedPreviewFile) {
         return;
       }
       logger.printStatus('Detected change in $eventPath.');
       final PreviewMapping filePreviewsMapping = findPreviewFunctions(
         fs.file(Uri.file(event.path)),
       );
-      if (filePreviewsMapping.isEmpty && !_pathToPreviews.containsKey(eventPath)) {
+      final bool hasExistingPreviews =
+          _pathToPreviews.keys.where((PreviewPath e) => e.path == event.path).isNotEmpty;
+      if (filePreviewsMapping.isEmpty && !hasExistingPreviews) {
         // No previews found or removed, nothing to do.
         return;
       }
@@ -59,20 +88,21 @@ class PreviewDetector {
       }
       if (filePreviewsMapping.isNotEmpty) {
         // The set of previews has changed, but there are still previews in the file.
-        final MapEntry<String, List<String>>(key: String uri, value: List<String> filePreviews) =
-            filePreviewsMapping.entries.first;
-        assert(uri == eventPath);
-        logger.printStatus('Updated previews for $eventPath: $filePreviews');
+        final MapEntry<PreviewPath, List<String>>(
+          key: PreviewPath location,
+          value: List<String> filePreviews,
+        ) = filePreviewsMapping.entries.first;
+        logger.printStatus('Updated previews for ${location.uri}: $filePreviews');
         if (filePreviews.isNotEmpty) {
-          final List<String>? currentPreviewsForFile = _pathToPreviews[eventPath];
+          final List<String>? currentPreviewsForFile = _pathToPreviews[location];
           if (filePreviews != currentPreviewsForFile) {
-            _pathToPreviews[eventPath] = filePreviews;
+            _pathToPreviews[location] = filePreviews;
           }
         }
       } else {
         // The file previously had previews that were removed.
         logger.printStatus('Previews removed from $eventPath');
-        _pathToPreviews.remove(eventPath);
+        _pathToPreviews.removeWhere((PreviewPath e, _) => e.path == eventPath);
       }
       onChangeDetected(_pathToPreviews);
     });
@@ -99,19 +129,19 @@ class PreviewDetector {
 
       for (final String filePath in context.contextRoot.analyzedFiles()) {
         logger.printTrace('Checking file: $filePath');
-        if (!filePath.endsWith('.dart')) {
+        if (!filePath.isDartFile) {
           continue;
         }
 
         final SomeParsedLibraryResult lib = context.currentSession.getParsedLibrary(filePath);
         if (lib is ParsedLibraryResult) {
-          for (final ParsedUnitResult unit in lib.units) {
-            final List<String> previewEntries = previews[unit.uri.toString()] ?? <String>[];
-            for (final SyntacticEntity entity in unit.unit.childEntities) {
-              if (entity is FunctionDeclaration && !entity.name.toString().startsWith('_')) {
+          for (final ParsedUnitResult libUnit in lib.units) {
+            final List<String> previewEntries = previews[libUnit.toPreviewPath()] ?? <String>[];
+            for (final CompilationUnitMember entity in libUnit.unit.declarations) {
+              if (entity is FunctionDeclaration && !entity.name.isPrivate) {
                 bool foundPreview = false;
                 for (final Annotation annotation in entity.metadata) {
-                  if (annotation.name.name == 'Preview') {
+                  if (annotation.isPreview) {
                     // What happens if the annotation is applied multiple times?
                     foundPreview = true;
                     break;
@@ -119,7 +149,7 @@ class PreviewDetector {
                 }
                 if (foundPreview) {
                   logger.printStatus('Found preview at:');
-                  logger.printStatus('File path: ${unit.uri}');
+                  logger.printStatus('File path: ${libUnit.uri}');
                   logger.printStatus('Preview function: ${entity.name}');
                   logger.printStatus('');
                   previewEntries.add(entity.name.toString());
@@ -127,7 +157,7 @@ class PreviewDetector {
               }
             }
             if (previewEntries.isNotEmpty) {
-              previews[unit.uri.toString()] = previewEntries;
+              previews[libUnit.toPreviewPath()] = previewEntries;
             }
           }
         } else {

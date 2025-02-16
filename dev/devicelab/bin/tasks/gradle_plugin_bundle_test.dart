@@ -39,6 +39,8 @@ Future<void> main() async {
           'base/lib/arm64-v8a/libflutter.so',
           'base/lib/armeabi-v7a/libapp.so',
           'base/lib/armeabi-v7a/libflutter.so',
+          'BUNDLE-METADATA/com.android.tools.build.debugsymbols/arm64-v8a/libflutter.so.sym',
+          'BUNDLE-METADATA/com.android.tools.build.debugsymbols/armeabi-v7a/libflutter.so.sym',
         ], await getFilesInAppBundle(releaseBundle));
       });
 
@@ -72,15 +74,14 @@ Future<void> main() async {
           'base/lib/arm64-v8a/libflutter.so',
           'base/lib/armeabi-v7a/libapp.so',
           'base/lib/armeabi-v7a/libflutter.so',
+          'BUNDLE-METADATA/com.android.tools.build.debugsymbols/arm64-v8a/libflutter.so.sym',
+          'BUNDLE-METADATA/com.android.tools.build.debugsymbols/armeabi-v7a/libflutter.so.sym',
         ], await getFilesInAppBundle(bundleFromGradlePath));
 
         section('Build app bundle using the flutter tool - flavor: flavor_underscore');
 
         int exitCode = await inDirectory(project.rootPath, () {
-          return flutter(
-            'build',
-            options: <String>['appbundle', '--flavor=flavor_underscore', '--verbose'],
-          );
+          return flutter('build', options: <String>['appbundle', '--flavor=flavor_underscore']);
         });
 
         if (exitCode != 0) {
@@ -103,15 +104,14 @@ Future<void> main() async {
           'base/lib/arm64-v8a/libflutter.so',
           'base/lib/armeabi-v7a/libapp.so',
           'base/lib/armeabi-v7a/libflutter.so',
+          'BUNDLE-METADATA/com.android.tools.build.debugsymbols/arm64-v8a/libflutter.so.sym',
+          'BUNDLE-METADATA/com.android.tools.build.debugsymbols/armeabi-v7a/libflutter.so.sym',
         ], await getFilesInAppBundle(flavorUnderscoreBundlePath));
 
         section('Build app bundle using the flutter tool - flavor: production');
 
         exitCode = await inDirectory(project.rootPath, () {
-          return flutter(
-            'build',
-            options: <String>['appbundle', '--flavor=production', '--verbose'],
-          );
+          return flutter('build', options: <String>['appbundle', '--flavor=production']);
         });
 
         if (exitCode != 0) {
@@ -134,6 +134,8 @@ Future<void> main() async {
           'base/lib/arm64-v8a/libflutter.so',
           'base/lib/armeabi-v7a/libapp.so',
           'base/lib/armeabi-v7a/libflutter.so',
+          'BUNDLE-METADATA/com.android.tools.build.debugsymbols/arm64-v8a/libflutter.so.sym',
+          'BUNDLE-METADATA/com.android.tools.build.debugsymbols/armeabi-v7a/libflutter.so.sym',
         ], await getFilesInAppBundle(productionBundlePath));
       });
 

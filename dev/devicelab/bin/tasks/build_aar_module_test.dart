@@ -21,6 +21,11 @@ Future<void> main() async {
     }
     print('\nUsing JAVA_HOME=$javaHome');
 
+    // TODO(matanlurey): Remove after default.
+    // https://github.com/flutter/flutter/issues/160257
+    section('Opt-in to --explicit-package-dependencies');
+    await flutter('config', options: <String>['--explicit-package-dependencies']);
+
     final Directory tempDir = Directory.systemTemp.createTempSync('flutter_module_test.');
     final Directory projectDir = Directory(path.join(tempDir.path, 'hello'));
     try {
@@ -88,7 +93,7 @@ Future<void> main() async {
       section('Build release AAR');
 
       await inDirectory(projectDir, () async {
-        await flutter('build', options: <String>['aar', '--verbose']);
+        await flutter('build', options: <String>['aar']);
       });
 
       final String repoPath = path.join(projectDir.path, 'build', 'host', 'outputs', 'repo');

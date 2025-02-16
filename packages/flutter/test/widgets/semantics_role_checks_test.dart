@@ -4,15 +4,10 @@
 
 import 'dart:ui';
 
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('All semantics roles has checks', () {
-    expect(SemanticsRole.values.toSet(), DebugSemanticsRoleChecks.kChecks.keys.toSet());
-  });
-
   group('tab', () {
     testWidgets('failure case, empty', (WidgetTester tester) async {
       await tester.pumpWidget(

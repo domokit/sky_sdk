@@ -42,5 +42,13 @@ TEST(AndroidPlatformView, FallsBackToGLESonEmulator) {
   EXPECT_FALSE(FlutterMain::IsDeviceEmulator(device_product));
 }
 
+TEST(AndroidPlatformView, FallsBackToGLESonMostExynos) {
+  std::string exynos_board = "exynos7870";
+  std::string snap_board = "smg1234";
+
+  EXPECT_TRUE(FlutterMain::IsKnownBadSOC(exynos_board));
+  EXPECT_FALSE(FlutterMain::IsKnownBadSOC(snap_board));
+}
+
 }  // namespace testing
 }  // namespace flutter

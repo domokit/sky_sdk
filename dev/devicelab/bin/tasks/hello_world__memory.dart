@@ -21,7 +21,7 @@ class HelloWorldMemoryTest extends MemoryTest {
     print('launching $project$test on device...');
     await flutter(
       'run',
-      options: <String>['--verbose', '--release', '--no-resident', '-d', device!.deviceId, test],
+      options: <String>['--release', '--no-resident', '-d', device!.deviceId, test],
     );
     await Future<void>.delayed(const Duration(milliseconds: 1500));
     await recordStart();

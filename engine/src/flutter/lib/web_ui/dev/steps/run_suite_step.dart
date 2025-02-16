@@ -10,10 +10,8 @@ import 'package:path/path.dart' as pathlib;
 //                https://github.com/dart-lang/test/issues/1521
 import 'package:skia_gold_client/skia_gold_client.dart';
 import 'package:test_api/backend.dart' as hack;
-// TODO(ditman): Fix ignores when https://github.com/flutter/flutter/issues/143599 is resolved.
-import 'package:test_core/src/executable.dart' as test; // ignore: implementation_imports
-import 'package:test_core/src/runner/hack_register_platform.dart'
-    as hack; // ignore: implementation_imports
+import 'package:test_core/src/executable.dart' as test;
+import 'package:test_core/src/runner/hack_register_platform.dart' as hack;
 
 import '../browser.dart';
 import '../common.dart';

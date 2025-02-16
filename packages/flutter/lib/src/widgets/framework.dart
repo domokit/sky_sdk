@@ -34,9 +34,9 @@ export 'package:flutter/foundation.dart'
         visibleForTesting;
 export 'package:flutter/foundation.dart'
     show ErrorDescription, ErrorHint, ErrorSummary, FlutterError, debugPrint, debugPrintStack;
-export 'package:flutter/foundation.dart' show ValueChanged, ValueGetter, ValueSetter, VoidCallback;
 export 'package:flutter/foundation.dart' show DiagnosticLevel, DiagnosticsNode;
 export 'package:flutter/foundation.dart' show Key, LocalKey, ValueKey;
+export 'package:flutter/foundation.dart' show ValueChanged, ValueGetter, ValueSetter, VoidCallback;
 export 'package:flutter/rendering.dart'
     show RenderBox, RenderObject, debugDumpLayerTree, debugDumpRenderTree;
 
@@ -6947,7 +6947,6 @@ mixin RootElementMixin on Element {
   /// to [runApp]. The binding is responsible for driving the build pipeline by
   /// calling the build owner's [BuildOwner.buildScope] method. See
   /// [WidgetsBinding.drawFrame].
-  // ignore: use_setters_to_change_properties, (API predates enforcing the lint)
   void assignOwner(BuildOwner owner) {
     _owner = owner;
     _parentBuildScope = BuildScope();

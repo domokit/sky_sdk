@@ -19,7 +19,7 @@ class PreviewCodeGenerator {
   /// project.
   final FlutterProject widgetPreviewScaffoldProject;
 
-  static const String generatedPreviewFilePath = 'lib/generated_preview.dart';
+  static const String generatedPreviewFilePath = 'lib/src/generated_preview.dart';
 
   /// Generates code used by the widget preview scaffold based on the preview instances listed in
   /// [previews].
@@ -43,22 +43,19 @@ class PreviewCodeGenerator {
   void populatePreviewsInGeneratedPreviewScaffold(PreviewMapping previews) {
     final Library lib = Library(
       (LibraryBuilder b) => b.body.addAll(<Spec>[
-        Directive.import(
-          // TODO(bkonyi): update with actual location in the framework
-          'package:widget_preview/widget_preview.dart',
-        ),
+        Directive.import('package:flutter/widgets.dart'),
         Method(
           (MethodBuilder b) =>
               b
                 ..body =
                     literalList(<Object?>[
-                      for (final MapEntry<String, List<String>>(
-                            key: String path,
+                      for (final MapEntry<PreviewPath, List<String>>(
+                            key: (path: String _, :Uri uri),
                             value: List<String> previewMethods,
                           )
                           in previews.entries) ...<Object?>[
                         for (final String method in previewMethods)
-                          refer(method, path).call(<Expression>[]),
+                          refer(method, uri.toString()).call(<Expression>[]),
                       ],
                     ]).code
                 ..name = 'previews'

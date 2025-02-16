@@ -496,7 +496,6 @@ flutter:
         final PackagesCommand command = await runCommandIn(projectPath, 'get');
         final PackagesGetCommand getCommand = command.subcommands['get']! as PackagesGetCommand;
 
-        expect((await getCommand.usageValues).commandPackagesNumberPlugins, 0);
         expect(
           (await getCommand.unifiedAnalyticsUsageValues(
             'pub/get',
@@ -535,7 +534,6 @@ flutter:
         final PackagesGetCommand getCommand = command.subcommands['get']! as PackagesGetCommand;
 
         // A plugin example depends on the plugin itself, and integration_test.
-        expect((await getCommand.usageValues).commandPackagesNumberPlugins, 2);
         expect(
           (await getCommand.unifiedAnalyticsUsageValues(
             'pub/get',
@@ -566,7 +564,6 @@ flutter:
         final PackagesCommand command = await runCommandIn(projectPath, 'get');
         final PackagesGetCommand getCommand = command.subcommands['get']! as PackagesGetCommand;
 
-        expect((await getCommand.usageValues).commandPackagesProjectModule, false);
         expect(
           (await getCommand.unifiedAnalyticsUsageValues(
             'pub/get',
@@ -600,7 +597,6 @@ flutter:
         final PackagesCommand command = await runCommandIn(projectPath, 'get');
         final PackagesGetCommand getCommand = command.subcommands['get']! as PackagesGetCommand;
 
-        expect((await getCommand.usageValues).commandPackagesProjectModule, true);
         expect(
           (await getCommand.unifiedAnalyticsUsageValues(
             'pub/get',
@@ -631,7 +627,6 @@ flutter:
         final PackagesCommand command = await runCommandIn(projectPath, 'get');
         final PackagesGetCommand getCommand = command.subcommands['get']! as PackagesGetCommand;
 
-        expect((await getCommand.usageValues).commandPackagesAndroidEmbeddingVersion, 'v2');
         expect(
           (await getCommand.unifiedAnalyticsUsageValues(
             'pub/get',

@@ -48,6 +48,17 @@ void main() {
     );
   });
 
+  testWidgets('Minimum size minimumSize parameter', (WidgetTester tester) async {
+    const Size size = Size(60.0, 100.0);
+    await tester.pumpWidget(
+      boilerplate(
+        child: const CupertinoButton(onPressed: null, minimumSize: size, child: SizedBox.shrink()),
+      ),
+    );
+    final RenderBox buttonBox = tester.renderObject(find.byType(CupertinoButton));
+    expect(buttonBox.size, size);
+  });
+
   testWidgets('Size grows with text', (WidgetTester tester) async {
     await tester.pumpWidget(
       boilerplate(
@@ -584,6 +595,33 @@ void main() {
                 .decoration
             as BoxDecoration;
     expect(decoration.color, isSameColorAs(CupertinoColors.systemBlue.darkColor));
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoButton.filled(
+          color: CupertinoColors.systemRed,
+          onPressed: () {},
+          child: Builder(
+            builder: (BuildContext context) {
+              textStyle = DefaultTextStyle.of(context).style;
+              return const Placeholder();
+            },
+          ),
+        ),
+      ),
+    );
+
+    decoration =
+        tester
+                .widget<DecoratedBox>(
+                  find.descendant(
+                    of: find.byType(CupertinoButton),
+                    matching: find.byType(DecoratedBox),
+                  ),
+                )
+                .decoration
+            as BoxDecoration;
+    expect(decoration.color, isSameColorAs(CupertinoColors.systemRed));
   });
 
   testWidgets("All CupertinoButton const maps keys' match the available style sizes", (

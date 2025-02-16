@@ -4,11 +4,169 @@
 
 #include "path_builder.h"
 
+#include <array>
 #include <cmath>
 
 #include "impeller/geometry/path_component.h"
+#include "impeller/geometry/round_superellipse_param.h"
 
 namespace impeller {
+
+namespace {
+
+// Utility functions used to build a rounded superellipse.
+class RoundSuperellipseBuilder {
+ public:
+  typedef std::function<
+      void(const Point&, const Point&, const Point&, const Point&)>
+      CubicAdder;
+
+  // Create a builder.
+  //
+  // The resulting curves, which consists of cubic curves, are added by calling
+  // `cubic_adder`.
+  explicit RoundSuperellipseBuilder(CubicAdder cubic_adder)
+      : cubic_adder_(std::move(cubic_adder)) {}
+
+  // Draws an arc representing 1/4 of a rounded superellipse.
+  //
+  // If `reverse` is false, the resulting arc spans from 0 to pi/2, moving
+  // clockwise starting from the positive Y-axis. Otherwise it moves from pi/2
+  // to 0.
+  void AddQuadrant(const RoundSuperellipseParam::Quadrant& param,
+                   bool reverse) {
+    auto transform =
+        Matrix::MakeTranslateScale(param.signed_scale, param.offset);
+    if (!reverse) {
+      AddOctant(param.top, /*reverse=*/false, /*flip=*/false, transform);
+      AddOctant(param.right, /*reverse=*/true, /*flip=*/true, transform);
+    } else {
+      AddOctant(param.right, /*reverse=*/false, /*flip=*/true, transform);
+      AddOctant(param.top, /*reverse=*/true, /*flip=*/false, transform);
+    }
+  }
+
+ private:
+  std::array<Point, 4> SuperellipseArcPoints(
+      const RoundSuperellipseParam::Octant& param) {
+    Point start = {param.se_center.x, param.edge_mid.y};
+    const Point& end = param.circle_start;
+    constexpr Point start_tangent = {1, 0};
+    Point circle_start_vector = param.circle_start - param.circle_center;
+    Point end_tangent =
+        Point{-circle_start_vector.y, circle_start_vector.x}.Normalize();
+
+    std::array<Scalar, 2> factors = SuperellipseBezierFactors(param.se_n);
+
+    return std::array<Point, 4>{
+        start, start + start_tangent * factors[0] * param.se_a,
+        end + end_tangent * factors[1] * param.se_a, end};
+  };
+
+  std::array<Point, 4> CircularArcPoints(
+      const RoundSuperellipseParam::Octant& param) {
+    Point start_vector = param.circle_start - param.circle_center;
+    Point end_vector =
+        start_vector.Rotate(Radians(-param.circle_max_angle.radians));
+    Point circle_end = param.circle_center + end_vector;
+    Point start_tangent = Point{start_vector.y, -start_vector.x}.Normalize();
+    Point end_tangent = Point{-end_vector.y, end_vector.x}.Normalize();
+    Scalar bezier_factor = std::tan(param.circle_max_angle.radians / 4) * 4 / 3;
+    Scalar radius = start_vector.GetLength();
+
+    return std::array<Point, 4>{
+        param.circle_start,
+        param.circle_start + start_tangent * bezier_factor * radius,
+        circle_end + end_tangent * bezier_factor * radius, circle_end};
+  };
+
+  // Draws an arc representing 1/8 of a rounded superellipse.
+  //
+  // If `reverse` is false, the resulting arc spans from 0 to pi/4, moving
+  // clockwise starting from the positive Y-axis. Otherwise it moves from pi/4
+  // to 0.
+  //
+  // If `flip` is true, all points have their X and Y coordinates swapped,
+  // effectively mirrowing each point by the y=x line.
+  //
+  // All points are transformed by `external_transform` after the optional
+  // flipping before being used as control points for the cubic curves.
+  void AddOctant(const RoundSuperellipseParam::Octant& param,
+                 bool reverse,
+                 bool flip,
+                 const Matrix& external_transform) {
+    Matrix transform =
+        external_transform * Matrix::MakeTranslation(param.offset);
+    if (flip) {
+      transform = transform * kFlip;
+    }
+
+    auto circle_points = CircularArcPoints(param);
+    auto se_points = SuperellipseArcPoints(param);
+
+    if (!reverse) {
+      cubic_adder_(transform * se_points[0], transform * se_points[1],
+                   transform * se_points[2], transform * se_points[3]);
+      cubic_adder_(transform * circle_points[0], transform * circle_points[1],
+                   transform * circle_points[2], transform * circle_points[3]);
+    } else {
+      cubic_adder_(transform * circle_points[3], transform * circle_points[2],
+                   transform * circle_points[1], transform * circle_points[0]);
+      cubic_adder_(transform * se_points[3], transform * se_points[2],
+                   transform * se_points[1], transform * se_points[0]);
+    }
+  };
+
+  // Get the Bezier factor for the superellipse arc in a rounded superellipse.
+  //
+  // The result will be assigned to output, where [0] will be the factor for the
+  // starting tangent and [1] for the ending tangent.
+  //
+  // These values are computed by brute-force searching for the minimal distance
+  // on a rounded superellipse and are not for general purpose superellipses.
+  std::array<Scalar, 2> SuperellipseBezierFactors(Scalar n) {
+    constexpr Scalar kPrecomputedVariables[][2] = {
+        /*n=2.000*/ {0.02927797, 0.05200645},
+        /*n=2.050*/ {0.02927797, 0.05200645},
+        /*n=2.100*/ {0.03288032, 0.06051731},
+        /*n=2.150*/ {0.03719241, 0.06818433},
+        /*n=2.200*/ {0.04009513, 0.07196947},
+        /*n=2.250*/ {0.04504750, 0.07860258},
+        /*n=2.300*/ {0.05038706, 0.08498836},
+        /*n=2.350*/ {0.05580771, 0.09071105},
+        /*n=2.400*/ {0.06002306, 0.09363976},
+        /*n=2.450*/ {0.06630048, 0.09946086},
+        /*n=2.500*/ {0.07200351, 0.10384857}};
+    constexpr Scalar kNStepInverse = 20;  // = 1 / 0.05
+    constexpr size_t kNumRecords =
+        sizeof(kPrecomputedVariables) / sizeof(kPrecomputedVariables[0]);
+    constexpr Scalar kMinN = 2.00f;
+
+    Scalar steps =
+        std::clamp<Scalar>((n - kMinN) * kNStepInverse, 0, kNumRecords - 1);
+    size_t left = std::clamp<size_t>(static_cast<size_t>(std::floor(steps)), 0,
+                                     kNumRecords - 2);
+    Scalar frac = steps - left;
+
+    return std::array<Scalar, 2>{(1 - frac) * kPrecomputedVariables[left][0] +
+                                     frac * kPrecomputedVariables[left + 1][0],
+                                 (1 - frac) * kPrecomputedVariables[left][1] +
+                                     frac * kPrecomputedVariables[left + 1][1]};
+  }
+
+  CubicAdder cubic_adder_;
+
+  // A matrix that swaps the coordinates of a point.
+  // clang-format off
+  static constexpr Matrix kFlip = Matrix(
+    0.0f, 1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f);
+  // clang-format on
+};
+
+}  // namespace
 
 PathBuilder::PathBuilder() {
   AddContourComponent({});
@@ -213,6 +371,46 @@ PathBuilder& PathBuilder::AddRoundRect(RoundRect round_rect) {
   // Top left arc.
   //
   AddRoundedRectTopLeft(rect, radii);
+
+  Close();
+
+  return *this;
+}
+
+PathBuilder& PathBuilder::AddRoundSuperellipse(RoundSuperellipse rse) {
+  if (rse.IsRect()) {
+    return AddRect(rse.GetBounds());
+  }
+
+  RoundSuperellipseBuilder builder(
+      [this](const Point& a, const Point& b, const Point& c, const Point& d) {
+        AddCubicComponent(a, b, c, d);
+      });
+
+  auto param =
+      RoundSuperellipseParam::MakeBoundsRadii(rse.GetBounds(), rse.GetRadii());
+  Point start = param.top_right.offset +
+                param.top_right.signed_scale *
+                    (param.top_right.top.offset + param.top_right.top.edge_mid);
+  MoveTo(start);
+
+  if (param.all_corners_same) {
+    auto* quadrant = &param.top_right;
+    builder.AddQuadrant(*quadrant, /*reverse=*/false);
+    quadrant->signed_scale.y *= -1;
+    builder.AddQuadrant(*quadrant, /*reverse=*/true);
+    quadrant->signed_scale.x *= -1;
+    builder.AddQuadrant(*quadrant, /*reverse=*/false);
+    quadrant->signed_scale.y *= -1;
+    builder.AddQuadrant(*quadrant, /*reverse=*/true);
+  } else {
+    builder.AddQuadrant(param.top_right, /*reverse=*/false);
+    builder.AddQuadrant(param.bottom_right, /*reverse=*/true);
+    builder.AddQuadrant(param.bottom_left, /*reverse=*/false);
+    builder.AddQuadrant(param.top_left, /*reverse=*/true);
+  }
+
+  LineTo(start);
 
   Close();
 

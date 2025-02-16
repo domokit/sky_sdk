@@ -5,6 +5,8 @@
 #ifndef FLUTTER_IMPELLER_TOOLKIT_INTEROP_IMPELLER_H_
 #define FLUTTER_IMPELLER_TOOLKIT_INTEROP_IMPELLER_H_
 
+// NOLINTBEGIN(google-objc-function-naming)
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -80,7 +82,7 @@ IMPELLER_EXTERN_C_BEGIN
 
 #define IMPELLER_VERSION_VARIANT 1
 #define IMPELLER_VERSION_MAJOR 1
-#define IMPELLER_VERSION_MINOR 2
+#define IMPELLER_VERSION_MINOR 3
 #define IMPELLER_VERSION_PATCH 0
 
 //------------------------------------------------------------------------------
@@ -289,6 +291,18 @@ IMPELLER_DEFINE_HANDLE(ImpellerSurface);
 IMPELLER_DEFINE_HANDLE(ImpellerTexture);
 
 //------------------------------------------------------------------------------
+/// The primary form of WSI when using a Vulkan context, these swapchains use
+/// the `VK_KHR_surface` Vulkan extension.
+///
+/// Creating a swapchain is extremely expensive. One must be created at
+/// application startup and re-used throughout the application lifecycle.
+///
+/// Swapchains are resilient to the underlying surfaces being resized. The
+/// swapchain images will be re-created as necessary on-demand.
+///
+IMPELLER_DEFINE_HANDLE(ImpellerVulkanSwapchain);
+
+//------------------------------------------------------------------------------
 // Signatures
 //------------------------------------------------------------------------------
 
@@ -309,6 +323,16 @@ typedef void (*ImpellerCallback)(void* IMPELLER_NULLABLE user_data);
 ///
 typedef void* IMPELLER_NULLABLE (*ImpellerProcAddressCallback)(
     const char* IMPELLER_NONNULL proc_name,
+    void* IMPELLER_NULLABLE user_data);
+
+//------------------------------------------------------------------------------
+/// A callback used by Impeller to allow the user to resolve Vulkan function
+/// pointers. A user supplied baton that is uninterpreted by Impeller is passed
+/// back to the user in the callback.
+///
+typedef void* IMPELLER_NULLABLE (*ImpellerVulkanProcAddressCallback)(
+    void* IMPELLER_NULLABLE vulkan_instance,
+    const char* IMPELLER_NONNULL vulkan_proc_name,
     void* IMPELLER_NULLABLE user_data);
 
 //------------------------------------------------------------------------------
@@ -562,6 +586,20 @@ typedef struct ImpellerMapping {
   ImpellerCallback IMPELLER_NULLABLE on_release;
 } ImpellerMapping;
 
+typedef struct ImpellerContextVulkanSettings {
+  void* IMPELLER_NULLABLE user_data;
+  ImpellerVulkanProcAddressCallback IMPELLER_NONNULL proc_address_callback;
+  bool enable_vulkan_validation;
+} ImpellerContextVulkanSettings;
+
+typedef struct ImpellerContextVulkanInfo {
+  void* IMPELLER_NULLABLE vk_instance;
+  void* IMPELLER_NULLABLE vk_physical_device;
+  void* IMPELLER_NULLABLE vk_logical_device;
+  uint32_t graphics_queue_family_index;
+  uint32_t graphics_queue_index;
+} ImpellerContextVulkanInfo;
+
 //------------------------------------------------------------------------------
 // Version
 //------------------------------------------------------------------------------
@@ -626,6 +664,29 @@ ImpellerContextCreateOpenGLESNew(
     void* IMPELLER_NULLABLE gl_proc_address_callback_user_data);
 
 //------------------------------------------------------------------------------
+/// @brief      Create a Metal context using the system default Metal device.
+///
+/// @param[in]  version  The version specified in the IMPELLER_VERSION macro.
+///
+/// @return     The Metal context or NULL if one cannot be created.
+///
+IMPELLER_EXPORT IMPELLER_NODISCARD ImpellerContext IMPELLER_NULLABLE
+ImpellerContextCreateMetalNew(uint32_t version);
+
+//------------------------------------------------------------------------------
+/// @brief      Create a Vulkan context using the provided Vulkan Settings.
+///
+/// @param[in]  version   The version specified in the IMPELLER_VERSION macro.
+/// @param[in]  settings  The Vulkan settings.
+///
+/// @return     The Vulkan context or NULL if one cannot be created.
+///
+IMPELLER_EXPORT IMPELLER_NODISCARD ImpellerContext IMPELLER_NULLABLE
+ImpellerContextCreateVulkanNew(
+    uint32_t version,
+    const ImpellerContextVulkanSettings* IMPELLER_NONNULL settings);
+
+//------------------------------------------------------------------------------
 /// @brief      Retain a strong reference to the object. The object can be NULL
 ///             in which case this method is a no-op.
 ///
@@ -642,6 +703,80 @@ void ImpellerContextRetain(ImpellerContext IMPELLER_NULLABLE context);
 ///
 IMPELLER_EXPORT
 void ImpellerContextRelease(ImpellerContext IMPELLER_NULLABLE context);
+
+//------------------------------------------------------------------------------
+/// @brief      Get internal Vulkan handles managed by the given Vulkan context.
+///             Ownership of the handles is still maintained by Impeller. This
+///             accessor is just available so embedders can create resources
+///             using the same device and instance as Impeller for interop.
+///
+/// @warning    If the context is not a Vulkan context, False is returned with
+///             the [out] argument unaffected.
+///
+/// @param[in]  context          The context
+/// @param[out]  out_vulkan_info  The out vulkan information
+///
+/// @return     If the Vulkan info could be fetched from the context.
+///
+IMPELLER_EXPORT
+bool ImpellerContextGetVulkanInfo(
+    ImpellerContext IMPELLER_NONNULL context,
+    ImpellerContextVulkanInfo* IMPELLER_NONNULL out_vulkan_info);
+
+//------------------------------------------------------------------------------
+// Vulkan Swapchain
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+/// @brief      Create a new Vulkan swapchain using a VkSurfaceKHR instance.
+///             Ownership of the surface is transferred over to Impeller. The
+///             Vulkan instance the surface is created from must the same as the
+///             context provided.
+///
+/// @param[in]  context             The context. Must be a Vulkan context whose
+///                                 instance is the same used to create the
+///                                 surface passed into the next argument.
+/// @param      vulkan_surface_khr  The vulkan surface.
+///
+/// @return     The vulkan swapchain.
+///
+IMPELLER_EXPORT IMPELLER_NODISCARD ImpellerVulkanSwapchain IMPELLER_NULLABLE
+ImpellerVulkanSwapchainCreateNew(ImpellerContext IMPELLER_NONNULL context,
+                                 void* IMPELLER_NONNULL vulkan_surface_khr);
+
+//------------------------------------------------------------------------------
+/// @brief      Retain a strong reference to the object. The object can be NULL
+///             in which case this method is a no-op.
+///
+/// @param[in]  swapchain  The swapchain.
+///
+IMPELLER_EXPORT
+void ImpellerVulkanSwapchainRetain(
+    ImpellerVulkanSwapchain IMPELLER_NULLABLE swapchain);
+
+//------------------------------------------------------------------------------
+/// @brief      Release a previously retained reference to the object. The
+///             object can be NULL in which case this method is a no-op.
+///
+/// @param[in]  swapchain  The swapchain.
+///
+IMPELLER_EXPORT
+void ImpellerVulkanSwapchainRelease(
+    ImpellerVulkanSwapchain IMPELLER_NULLABLE swapchain);
+
+//------------------------------------------------------------------------------
+/// @brief      A potentially blocking operation, acquires the next surface to
+///             render to. Since this may block, surface acquisition must be
+///             delayed for as long as possible to avoid an idle wait on the
+///             CPU.
+///
+/// @param[in]  swapchain  The swapchain.
+///
+/// @return     The surface if one could be obtained, NULL otherwise.
+///
+IMPELLER_EXPORT IMPELLER_NODISCARD ImpellerSurface IMPELLER_NULLABLE
+ImpellerVulkanSwapchainAcquireNextSurfaceNew(
+    ImpellerVulkanSwapchain IMPELLER_NONNULL swapchain);
 
 //------------------------------------------------------------------------------
 // Surface
@@ -662,10 +797,30 @@ void ImpellerContextRelease(ImpellerContext IMPELLER_NULLABLE context);
 /// @return     The surface if once can be created, NULL otherwise.
 ///
 IMPELLER_EXPORT IMPELLER_NODISCARD ImpellerSurface IMPELLER_NULLABLE
-ImpellerSurfaceCreateWrappedFBONew(ImpellerContext IMPELLER_NULLABLE context,
+ImpellerSurfaceCreateWrappedFBONew(ImpellerContext IMPELLER_NONNULL context,
                                    uint64_t fbo,
                                    ImpellerPixelFormat format,
-                                   const ImpellerISize* IMPELLER_NULLABLE size);
+                                   const ImpellerISize* IMPELLER_NONNULL size);
+
+//------------------------------------------------------------------------------
+/// @brief      Create a surface by wrapping a Metal drawable. This is useful
+///             during WSI when the drawable is the backing store of the Metal
+///             layer being drawn to.
+///
+///             The Metal layer must be using the same device managed by the
+///             underlying context.
+///
+/// @param[in]  context         The context. The Metal device managed by this
+///                             context must be the same used to create the
+///                             drawable that is being wrapped.
+/// @param      metal_drawable  The drawable to wrap as a surface.
+///
+/// @return     The surface if one could be wrapped, NULL otherwise.
+///
+IMPELLER_EXPORT IMPELLER_NODISCARD ImpellerSurface IMPELLER_NULLABLE
+ImpellerSurfaceCreateWrappedMetalDrawableNew(
+    ImpellerContext IMPELLER_NONNULL context,
+    void* IMPELLER_NONNULL metal_drawable);
 
 //------------------------------------------------------------------------------
 /// @brief      Retain a strong reference to the object. The object can be NULL
@@ -704,8 +859,18 @@ void ImpellerSurfaceRelease(ImpellerSurface IMPELLER_NULLABLE surface);
 ///
 IMPELLER_EXPORT
 bool ImpellerSurfaceDrawDisplayList(
-    ImpellerSurface IMPELLER_NULLABLE surface,
+    ImpellerSurface IMPELLER_NONNULL surface,
     ImpellerDisplayList IMPELLER_NONNULL display_list);
+
+//------------------------------------------------------------------------------
+/// @brief      Present the surface to the underlying window system.
+///
+/// @param[in]  surface  The surface to present.
+///
+/// @return     True if the surface could be presented.
+///
+IMPELLER_EXPORT
+bool ImpellerSurfacePresent(ImpellerSurface IMPELLER_NONNULL surface);
 
 //------------------------------------------------------------------------------
 // Path
@@ -2422,5 +2587,7 @@ uint32_t ImpellerParagraphGetLineCount(
     ImpellerParagraph IMPELLER_NONNULL paragraph);
 
 IMPELLER_EXTERN_C_END
+
+// NOLINTEND(google-objc-function-naming)
 
 #endif  // FLUTTER_IMPELLER_TOOLKIT_INTEROP_IMPELLER_H_

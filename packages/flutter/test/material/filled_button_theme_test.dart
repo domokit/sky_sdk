@@ -6,6 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TextStyle iconStyle(WidgetTester tester, IconData icon) {
+    final RichText iconRichText = tester.widget<RichText>(
+      find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)),
+    );
+    return iconRichText.text.style!;
+  }
+
   test('FilledButtonThemeData lerp special cases', () {
     expect(FilledButtonThemeData.lerp(null, null, 0), null);
     const FilledButtonThemeData data = FilledButtonThemeData();
@@ -360,4 +367,43 @@ void main() {
 
     expect(buttonTopRight.dx, iconTopRight.dx + 24.0);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/162839.
+  testWidgets(
+    'FilledButton icon uses provided FilledButtonTheme foregroundColor over default icon color',
+    (WidgetTester tester) async {
+      const Color foregroundColor = Color(0xFFFFA500);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            filledButtonTheme: FilledButtonThemeData(
+              style: FilledButton.styleFrom(foregroundColor: foregroundColor),
+            ),
+          ),
+          home: Material(
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  FilledButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.add),
+                    label: const Text('Button'),
+                  ),
+                  FilledButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.mail),
+                    label: const Text('Button'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(iconStyle(tester, Icons.add).color, foregroundColor);
+      expect(iconStyle(tester, Icons.mail).color, foregroundColor);
+    },
+  );
 }

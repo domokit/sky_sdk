@@ -280,7 +280,7 @@ public class DummyPluginAClass {
         section('Build plugin A example iOS app');
 
         await inDirectory(exampleApp, () async {
-          await evalFlutter('build', options: <String>['ios', '--no-codesign', '--verbose']);
+          await evalFlutter('build', options: <String>['ios', '--no-codesign']);
         });
 
         final Directory appBundle = Directory(

@@ -551,6 +551,10 @@ class DevFS {
   /// Updates files on the device.
   ///
   /// Returns the number of bytes synced.
+  ///
+  /// If [fullRestart] is true, assumes this is a hot restart instead of a hot
+  /// reload. If [resetCompiler] is true, sends a `reset` instruction to the
+  /// frontend server.
   Future<UpdateFSReport> update({
     required Uri mainUri,
     required ResidentCompiler generator,
@@ -566,6 +570,7 @@ class DevFS {
     AssetBundle? bundle,
     bool bundleFirstUpload = false,
     bool fullRestart = false,
+    bool resetCompiler = false,
     File? dartPluginRegistrant,
   }) async {
     final DateTime candidateCompileTime = DateTime.now();
@@ -577,7 +582,7 @@ class DevFS {
     final List<Future<void>> pendingAssetBuilds = <Future<void>>[];
     bool assetBuildFailed = false;
     int syncedBytes = 0;
-    if (fullRestart) {
+    if (resetCompiler) {
       generator.reset();
     }
     // On a full restart, or on an initial compile for the attach based workflow,

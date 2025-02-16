@@ -8,7 +8,7 @@
 //
 // @dart = 2.12
 
-// ignore_for_file: annotate_overrides, camel_case_types
+// ignore_for_file: annotate_overrides, camel_case_types, comment_references
 // ignore_for_file: constant_identifier_names, library_prefixes
 // ignore_for_file: non_constant_identifier_names, prefer_final_fields
 // ignore_for_file: unnecessary_import, unnecessary_this, unused_import
@@ -21,24 +21,17 @@ import 'dart:typed_data' as $typed_data;
 const ReleasePhase$json = {
   '1': 'ReleasePhase',
   '2': [
-    {'1': 'APPLY_ENGINE_CHERRYPICKS', '2': 0},
-    {'1': 'VERIFY_ENGINE_CI', '2': 1},
-    {'1': 'APPLY_FRAMEWORK_CHERRYPICKS', '2': 2},
-    {'1': 'PUBLISH_VERSION', '2': 3},
-    {'1': 'VERIFY_RELEASE', '2': 5},
-    {'1': 'RELEASE_COMPLETED', '2': 6},
-  ],
-  '4': [
-    {'1': 4, '2': 4},
+    {'1': 'APPLY_FRAMEWORK_CHERRYPICKS', '2': 0},
+    {'1': 'PUBLISH_VERSION', '2': 1},
+    {'1': 'VERIFY_RELEASE', '2': 2},
+    {'1': 'RELEASE_COMPLETED', '2': 3},
   ],
 };
 
 /// Descriptor for `ReleasePhase`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List releasePhaseDescriptor = $convert
-    .base64Decode('CgxSZWxlYXNlUGhhc2USHAoYQVBQTFlfRU5HSU5FX0NIRVJSWVBJQ0tTEAASFAoQVkVSSUZZX0'
-        'VOR0lORV9DSRABEh8KG0FQUExZX0ZSQU1FV09SS19DSEVSUllQSUNLUxACEhMKD1BVQkxJU0hf'
-        'VkVSU0lPThADEhIKDlZFUklGWV9SRUxFQVNFEAUSFQoRUkVMRUFTRV9DT01QTEVURUQQBiIECA'
-        'QQBA==');
+    .base64Decode('CgxSZWxlYXNlUGhhc2USHwobQVBQTFlfRlJBTUVXT1JLX0NIRVJSWVBJQ0tTEAASEwoPUFVCTE'
+        'lTSF9WRVJTSU9OEAESEgoOVkVSSUZZX1JFTEVBU0UQAhIVChFSRUxFQVNFX0NPTVBMRVRFRBAD');
 
 @$core.Deprecated('Use cherrypickStateDescriptor instead')
 const CherrypickState$json = {

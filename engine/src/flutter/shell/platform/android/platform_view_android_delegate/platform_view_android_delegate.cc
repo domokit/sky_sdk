@@ -44,12 +44,6 @@ PlatformViewAndroidDelegate::PlatformViewAndroidDelegate(
 void PlatformViewAndroidDelegate::UpdateSemantics(
     const flutter::SemanticsNodeUpdates& update,
     const flutter::CustomAccessibilityActionUpdates& actions) {
-  constexpr size_t kBytesPerNode = 48 * sizeof(int32_t);
-  constexpr size_t kBytesPerChild = sizeof(int32_t);
-  constexpr size_t kBytesPerCustomAction = sizeof(int32_t);
-  constexpr size_t kBytesPerAction = 4 * sizeof(int32_t);
-  constexpr size_t kBytesPerStringAttribute = 4 * sizeof(int32_t);
-
   {
     size_t num_bytes = 0;
     for (const auto& value : update) {
@@ -163,6 +157,13 @@ void PlatformViewAndroidDelegate::UpdateSemantics(
       } else {
         buffer_int32[position++] = strings.size();
         strings.push_back(node.tooltip);
+      }
+
+      if (node.linkUrl.empty()) {
+        buffer_int32[position++] = -1;
+      } else {
+        buffer_int32[position++] = strings.size();
+        strings.push_back(node.linkUrl);
       }
 
       buffer_int32[position++] = node.textDirection;

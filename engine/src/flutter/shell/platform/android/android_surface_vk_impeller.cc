@@ -14,6 +14,8 @@
 #include "flutter/impeller/renderer/backend/vulkan/swapchain/swapchain_vk.h"
 #include "flutter/shell/gpu/gpu_surface_vulkan_impeller.h"
 #include "flutter/vulkan/vulkan_native_surface_android.h"
+#include "impeller/renderer/backend/vulkan/swapchain/ahb/ahb_swapchain_vk.h"
+#include "impeller/toolkit/android/surface_transaction.h"
 
 namespace flutter {
 
@@ -93,10 +95,19 @@ bool AndroidSurfaceVKImpeller::SetNativeWindow(
     return false;
   }
 
+  impeller::CreateTransactionCB cb = [jni_facade = jni_facade]() {
+    FML_CHECK(jni_facade) << "JNI was nullptr";
+    ASurfaceTransaction* tx = jni_facade->createTransaction();
+    if (tx == nullptr) {
+      return impeller::android::SurfaceTransaction();
+    }
+    return impeller::android::SurfaceTransaction(tx);
+  };
+
   auto swapchain = impeller::SwapchainVK::Create(
       std::reinterpret_pointer_cast<impeller::Context>(
           surface_context_vk_->GetParent()),
-      window->handle());
+      window->handle(), cb);
 
   if (surface_context_vk_->SetSwapchain(std::move(swapchain))) {
     native_window_ = std::move(window);

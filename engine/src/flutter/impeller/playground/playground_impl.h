@@ -38,6 +38,8 @@ class PlaygroundImpl {
 
   virtual Playground::GLProcAddressResolver CreateGLProcAddressResolver() const;
 
+  virtual Playground::VKProcAddressResolver CreateVKProcAddressResolver() const;
+
  protected:
   const PlaygroundSwitches switches_;
 

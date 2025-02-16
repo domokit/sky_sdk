@@ -348,6 +348,7 @@ class RenderMarkSemanticsDirtySpy extends RenderProxyBox {
     Iterable<SemanticsNode> children,
   ) {
     hasRebuildSemantics = true;
+    super.assembleSemanticsNode(node, config, children);
   }
 }
 

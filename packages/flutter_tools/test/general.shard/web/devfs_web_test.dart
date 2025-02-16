@@ -30,70 +30,14 @@ import '../../src/common.dart';
 import '../../src/testbed.dart';
 
 const List<int> kTransparentImage = <int>[
-  0x89,
-  0x50,
-  0x4E,
-  0x47,
-  0x0D,
-  0x0A,
-  0x1A,
-  0x0A,
-  0x00,
-  0x00,
-  0x00,
-  0x0D,
-  0x49,
-  0x48,
-  0x44,
-  0x52,
-  0x00,
-  0x00,
-  0x00,
-  0x01,
-  0x00,
-  0x00,
-  0x00,
-  0x01,
-  0x08,
-  0x06,
-  0x00,
-  0x00,
-  0x00,
-  0x1F,
-  0x15,
-  0xC4,
-  0x89,
-  0x00,
-  0x00,
-  0x00,
-  0x0A,
-  0x49,
-  0x44,
-  0x41,
-  0x54,
-  0x78,
-  0x9C,
-  0x63,
-  0x00,
-  0x01,
-  0x00,
-  0x00,
-  0x05,
-  0x00,
-  0x01,
-  0x0D,
-  0x0A,
-  0x2D,
-  0xB4,
-  0x00,
-  0x00,
-  0x00,
-  0x00,
-  0x49,
-  0x45,
-  0x4E,
-  0x44,
-  0xAE,
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, //
+  0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+  0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+  0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+  0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41,
+  0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
+  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
+  0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
 ];
 
 void main() {
@@ -127,7 +71,6 @@ void main() {
           InternetAddress.loopbackIPv4,
           <String, String>{},
           <String, String>{},
-          NullSafetyMode.unsound,
           usesDdcModuleSystem,
           canaryFeatures,
           webRenderer: WebRendererMode.canvaskit,
@@ -395,7 +338,6 @@ void main() {
         InternetAddress.loopbackIPv4,
         <String, String>{},
         <String, String>{},
-        NullSafetyMode.unsound,
         usesDdcModuleSystem,
         canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -419,7 +361,6 @@ void main() {
         InternetAddress.loopbackIPv4,
         <String, String>{},
         <String, String>{},
-        NullSafetyMode.unsound,
         usesDdcModuleSystem,
         canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -446,7 +387,6 @@ void main() {
           InternetAddress.loopbackIPv4,
           <String, String>{},
           <String, String>{},
-          NullSafetyMode.unsound,
           usesDdcModuleSystem,
           canaryFeatures,
           webRenderer: WebRendererMode.canvaskit,
@@ -472,7 +412,6 @@ void main() {
           InternetAddress.loopbackIPv4,
           <String, String>{},
           <String, String>{},
-          NullSafetyMode.unsound,
           usesDdcModuleSystem,
           canaryFeatures,
           webRenderer: WebRendererMode.canvaskit,
@@ -545,7 +484,6 @@ void main() {
         InternetAddress.loopbackIPv4,
         <String, String>{},
         <String, String>{},
-        NullSafetyMode.unsound,
         usesDdcModuleSystem,
         canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -978,7 +916,6 @@ void main() {
           BuildMode.debug,
           '',
           treeShakeIcons: false,
-          nullSafetyMode: NullSafetyMode.unsound,
           packageConfigPath: '.dart_tool/package_config.json',
         ),
         enableDwds: false,
@@ -988,10 +925,9 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.unsound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
-        webRenderer: WebRendererMode.html,
+        webRenderer: WebRendererMode.canvaskit,
         isWasm: false,
         useLocalCanvasKit: false,
         rootDirectory: globals.fs.currentDirectory,
@@ -1003,10 +939,6 @@ void main() {
 
       final Uri uri = await webDevFS.create();
       webDevFS.webAssetServer.entrypointCacheDirectory = globals.fs.currentDirectory;
-      final String webPrecompiledSdk =
-          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSdk).path;
-      final String webPrecompiledSdkSourcemaps =
-          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSdkSourcemaps).path;
       final String webPrecompiledCanvaskitSdk =
           globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSdk).path;
       final String webPrecompiledCanvaskitSdkSourcemaps =
@@ -1016,18 +948,12 @@ void main() {
       globals.fs.currentDirectory.childDirectory('lib').childFile('web_entrypoint.dart')
         ..createSync(recursive: true)
         ..writeAsStringSync('GENERATED');
-      globals.fs.file(webPrecompiledSdk)
-        ..createSync(recursive: true)
-        ..writeAsStringSync('HELLO');
-      globals.fs.file(webPrecompiledSdkSourcemaps)
-        ..createSync(recursive: true)
-        ..writeAsStringSync('THERE');
       globals.fs.file(webPrecompiledCanvaskitSdk)
         ..createSync(recursive: true)
-        ..writeAsStringSync('OL');
+        ..writeAsStringSync('HELLO');
       globals.fs.file(webPrecompiledCanvaskitSdkSourcemaps)
         ..createSync(recursive: true)
-        ..writeAsStringSync('CHUM');
+        ..writeAsStringSync('THERE');
 
       await webDevFS.update(
         mainUri: globals.fs.file(globals.fs.path.join('lib', 'main.dart')).uri,
@@ -1052,7 +978,7 @@ void main() {
       expect(await webDevFS.webAssetServer.dartSourceContents('dart_sdk.js.map'), 'THERE');
 
       // Update to the SDK.
-      globals.fs.file(webPrecompiledSdk).writeAsStringSync('BELLOW');
+      globals.fs.file(webPrecompiledCanvaskitSdk).writeAsStringSync('BELLOW');
 
       // New SDK should be visible..
       expect(await webDevFS.webAssetServer.dartSourceContents('dart_sdk.js'), 'BELLOW');
@@ -1108,10 +1034,9 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.sound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
-        webRenderer: WebRendererMode.html,
+        webRenderer: WebRendererMode.canvaskit,
         isWasm: false,
         useLocalCanvasKit: false,
         rootDirectory: globals.fs.currentDirectory,
@@ -1126,32 +1051,22 @@ void main() {
       globals.fs.currentDirectory.childDirectory('lib').childFile('web_entrypoint.dart')
         ..createSync(recursive: true)
         ..writeAsStringSync('GENERATED');
-      final String webPrecompiledSdk =
-          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSoundSdk).path;
-      final String webPrecompiledSdkSourcemaps =
-          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdSoundSdkSourcemaps).path;
       final String webPrecompiledCanvaskitSdk =
-          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSoundSdk).path;
+          globals.artifacts!.getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSdk).path;
       final String webPrecompiledCanvaskitSdkSourcemaps =
           globals.artifacts!
-              .getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSoundSdkSourcemaps)
+              .getHostArtifact(HostArtifact.webPrecompiledAmdCanvaskitSdkSourcemaps)
               .path;
       final String flutterJs = globals.fs.path.join(
         globals.artifacts!.getHostArtifact(HostArtifact.flutterJsDirectory).path,
         'flutter.js',
       );
-      globals.fs.file(webPrecompiledSdk)
-        ..createSync(recursive: true)
-        ..writeAsStringSync('HELLO');
-      globals.fs.file(webPrecompiledSdkSourcemaps)
-        ..createSync(recursive: true)
-        ..writeAsStringSync('THERE');
       globals.fs.file(webPrecompiledCanvaskitSdk)
         ..createSync(recursive: true)
-        ..writeAsStringSync('OL');
+        ..writeAsStringSync('HELLO');
       globals.fs.file(webPrecompiledCanvaskitSdkSourcemaps)
         ..createSync(recursive: true)
-        ..writeAsStringSync('CHUM');
+        ..writeAsStringSync('THERE');
       globals.fs.file(flutterJs)
         ..createSync(recursive: true)
         ..writeAsStringSync('(flutter.js content)');
@@ -1179,7 +1094,7 @@ void main() {
       expect(await webDevFS.webAssetServer.dartSourceContents('dart_sdk.js.map'), 'THERE');
 
       // Update to the SDK.
-      globals.fs.file(webPrecompiledSdk).writeAsStringSync('BELLOW');
+      globals.fs.file(webPrecompiledCanvaskitSdk).writeAsStringSync('BELLOW');
 
       // New SDK should be visible..
       expect(await webDevFS.webAssetServer.dartSourceContents('dart_sdk.js'), 'BELLOW');
@@ -1234,7 +1149,6 @@ void main() {
           expressionCompiler: null,
           extraHeaders: const <String, String>{},
           chromiumLauncher: null,
-          nullSafetyMode: NullSafetyMode.sound,
           ddcModuleSystem: usesDdcModuleSystem,
           canaryFeatures: canaryFeatures,
           webRenderer: WebRendererMode.canvaskit,
@@ -1313,7 +1227,6 @@ void main() {
         chromiumLauncher: null,
         nullAssertions: true,
         nativeNullAssertions: true,
-        nullSafetyMode: NullSafetyMode.sound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -1367,7 +1280,6 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.sound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -1382,61 +1294,6 @@ void main() {
       await webDevFS.create();
 
       expect(webDevFS.webAssetServer.webRenderer, WebRendererMode.canvaskit);
-
-      await webDevFS.destroy();
-    }),
-  );
-
-  test(
-    'Can start web server with auto detect enabled',
-    () => testbed.run(() async {
-      final File outputFile = globals.fs.file(globals.fs.path.join('lib', 'main.dart'))
-        ..createSync(recursive: true);
-      outputFile.parent.childFile('a.sources').writeAsStringSync('');
-      outputFile.parent.childFile('a.json').writeAsStringSync('{}');
-      outputFile.parent.childFile('a.map').writeAsStringSync('{}');
-
-      final WebDevFS webDevFS = WebDevFS(
-        hostname: 'localhost',
-        port: 0,
-        tlsCertPath: null,
-        tlsCertKeyPath: null,
-        packagesFilePath: '.dart_tool/package_config.json',
-        urlTunneller: null,
-        useSseForDebugProxy: true,
-        useSseForDebugBackend: true,
-        useSseForInjectedClient: true,
-        nullAssertions: true,
-        nativeNullAssertions: true,
-        buildInfo: const BuildInfo(
-          BuildMode.debug,
-          '',
-          treeShakeIcons: false,
-          dartDefines: <String>['FLUTTER_WEB_AUTO_DETECT=true'],
-          packageConfigPath: '.dart_tool/package_config.json',
-        ),
-        enableDwds: false,
-        enableDds: false,
-        entrypoint: Uri.base,
-        testMode: true,
-        expressionCompiler: null,
-        extraHeaders: const <String, String>{},
-        chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.sound,
-        ddcModuleSystem: usesDdcModuleSystem,
-        canaryFeatures: canaryFeatures,
-        webRenderer: WebRendererMode.auto,
-        isWasm: false,
-        useLocalCanvasKit: false,
-        rootDirectory: globals.fs.currentDirectory,
-        isWindows: false,
-      );
-      webDevFS.requireJS.createSync(recursive: true);
-      webDevFS.stackTraceMapper.createSync(recursive: true);
-
-      await webDevFS.create();
-
-      expect(webDevFS.webAssetServer.webRenderer, WebRendererMode.auto);
 
       await webDevFS.destroy();
     }),
@@ -1477,7 +1334,6 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.unsound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -1520,7 +1376,6 @@ void main() {
       Uri.base,
       null,
       const <String, String>{},
-      NullSafetyMode.unsound,
       webRenderer: WebRendererMode.canvaskit,
       isWasm: false,
       useLocalCanvasKit: false,
@@ -1555,7 +1410,6 @@ void main() {
       Uri.base,
       null,
       const <String, String>{extraHeaderKey: extraHeaderValue},
-      NullSafetyMode.unsound,
       webRenderer: WebRendererMode.canvaskit,
       isWasm: false,
       useLocalCanvasKit: false,
@@ -1601,7 +1455,6 @@ void main() {
         InternetAddress.anyIPv4,
         <String, String>{},
         <String, String>{},
-        NullSafetyMode.sound,
         usesDdcModuleSystem,
         canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -1652,7 +1505,6 @@ void main() {
         expressionCompiler: null,
         extraHeaders: const <String, String>{},
         chromiumLauncher: null,
-        nullSafetyMode: NullSafetyMode.unsound,
         ddcModuleSystem: usesDdcModuleSystem,
         canaryFeatures: canaryFeatures,
         webRenderer: WebRendererMode.canvaskit,
@@ -1703,6 +1555,7 @@ class FakeResidentCompiler extends Fake implements ResidentCompiler {
     bool checkDartPluginRegistry = false,
     File? dartPluginRegistrant,
     Uri? nativeAssetsYaml,
+    bool recompileRestart = false,
   }) async {
     return output;
   }

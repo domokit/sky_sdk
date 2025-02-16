@@ -596,4 +596,15 @@ void main() {
     expect(localizations.copyButtonLabel, '복사');
     expect(localizations.pasteButtonLabel, '붙여넣기');
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/156954
+  testWidgets('Italian translation for dateHelpText', (WidgetTester tester) async {
+    const Locale locale = Locale('it');
+    expect(GlobalCupertinoLocalizations.delegate.isSupported(locale), isTrue);
+    final MaterialLocalizations localizations = await GlobalMaterialLocalizations.delegate.load(
+      locale,
+    );
+    expect(localizations, isA<MaterialLocalizationIt>());
+    expect(localizations.dateHelpText, 'gg/mm/aaaa');
+  });
 }

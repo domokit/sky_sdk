@@ -353,6 +353,10 @@
     "templates/plugin_swift_package_manager/macos.tmpl/projectName.tmpl/Sources/projectName.tmpl/PrivacyInfo.xcprivacy",
 
     "templates/widget_preview_scaffold/lib/main.dart.tmpl",
+    "templates/widget_preview_scaffold/lib/src/widget_preview_rendering.dart.tmpl",
+    "templates/widget_preview_scaffold/lib/src/controls.dart.tmpl",
+    "templates/widget_preview_scaffold/lib/src/generated_preview.dart.tmpl",
+    "templates/widget_preview_scaffold/lib/src/utils.dart.tmpl",
     "templates/widget_preview_scaffold/pubspec.yaml.tmpl",
     "templates/widget_preview_scaffold/README.md.tmpl",
 

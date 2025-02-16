@@ -31,6 +31,7 @@ struct TextRenderOptions {
   DlColor color = DlColor::kYellow();
   DlPoint position = DlPoint(100, 200);
   std::shared_ptr<DlMaskFilter> filter;
+  bool is_subpixel = false;
 };
 
 bool RenderTextInCanvasSkia(const std::shared_ptr<Context>& context,
@@ -57,6 +58,9 @@ bool RenderTextInCanvasSkia(const std::shared_ptr<Context>& context,
   }
   sk_sp<SkFontMgr> font_mgr = txt::GetDefaultFontManager();
   SkFont sk_font(font_mgr->makeFromData(mapping), options.font_size);
+  if (options.is_subpixel) {
+    sk_font.setSubpixel(true);
+  }
   auto blob = SkTextBlob::MakeFromString(text.c_str(), sk_font);
   if (!blob) {
     return false;
@@ -151,12 +155,36 @@ TEST_P(AiksTest, CanRenderTextFrameWithHalfScaling) {
   ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
 }
 
+// This is a test that looks for glyph artifacts we've see.
+TEST_P(AiksTest, ScaledK) {
+  DisplayListBuilder builder;
+  DlPaint paint;
+  paint.setColor(DlColor::ARGB(1, 0.1, 0.1, 0.1));
+  builder.DrawPaint(paint);
+  for (int i = 0; i < 6; ++i) {
+    builder.Save();
+    builder.Translate(300 * i, 0);
+    Scalar scale = 0.445 - (i / 1000.f);
+    builder.Scale(scale, scale);
+    RenderTextInCanvasSkia(
+        GetContext(), builder, "k", "Roboto-Regular.ttf",
+        TextRenderOptions{.font_size = 600, .position = DlPoint(10, 500)});
+    RenderTextInCanvasSkia(
+        GetContext(), builder, "k", "Roboto-Regular.ttf",
+        TextRenderOptions{.font_size = 300, .position = DlPoint(10, 800)});
+    builder.Restore();
+  }
+  ASSERT_TRUE(OpenPlaygroundHere(builder.Build()));
+}
+
 TEST_P(AiksTest, CanRenderTextFrameWithFractionScaling) {
   Scalar fine_scale = 0.f;
+  bool is_subpixel = false;
   auto callback = [&]() -> sk_sp<DisplayList> {
     if (AiksTest::ImGuiBegin("Controls", nullptr,
                              ImGuiWindowFlags_AlwaysAutoResize)) {
       ImGui::SliderFloat("Fine Scale", &fine_scale, -1, 1);
+      ImGui::Checkbox("subpixel", &is_subpixel);
       ImGui::End();
     }
 
@@ -168,7 +196,8 @@ TEST_P(AiksTest, CanRenderTextFrameWithFractionScaling) {
     builder.Scale(scale, scale);
     RenderTextInCanvasSkia(GetContext(), builder,
                            "the quick brown fox jumped over the lazy dog!.?",
-                           "Roboto-Regular.ttf");
+                           "Roboto-Regular.ttf",
+                           TextRenderOptions{.is_subpixel = is_subpixel});
     return builder.Build();
   };
 

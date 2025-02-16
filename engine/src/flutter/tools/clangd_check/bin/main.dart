@@ -51,9 +51,30 @@ void main(List<String> args) {
   }
 
   String? clangd = results['clangd'] as String?;
-  final Map<String, Object?> entry = compileCommands.first! as Map<String, Object?>;
+  // To improve determinism, check the first clangd item that matches the asset fixture file.
+  Map<String, Object?>? selectedEntry;
+  for (final Object? entry in compileCommands) {
+    if (entry is Map<String, Object?>) {
+      final String? file = entry['file'] as String?;
+      if (file != null && file.endsWith('_fl__fl_assets_fixtures.cc')) {
+        selectedEntry = entry;
+        break;
+      }
+    } else {
+      io.stderr.writeln('Unexpected: compile_commands.json has an unexpected format');
+      io.stderr.writeln('First entry: ${const JsonEncoder.withIndent('  ').convert(entry)}');
+      io.exitCode = 1;
+      return;
+    }
+  }
+  if (selectedEntry == null) {
+    io.stderr.writeln('No compile_commands.json entry found for _fl__fl_assets_fixtures.cc');
+    io.exitCode = 1;
+    return;
+  }
+
   final String checkFile;
-  if (entry case {
+  if (selectedEntry case {
     'command': final String command,
     'directory': final String directory,
     'file': final String file,
@@ -94,7 +115,7 @@ void main(List<String> args) {
     }
   } else {
     io.stderr.writeln('Unexpected: compile_commands.json has an unexpected format');
-    io.stderr.writeln('First entry: ${const JsonEncoder.withIndent('  ').convert(entry)}');
+    io.stderr.writeln('First entry: ${const JsonEncoder.withIndent('  ').convert(selectedEntry)}');
     io.exitCode = 1;
     return;
   }
@@ -134,7 +155,7 @@ void main(List<String> args) {
     }
   } on io.ProcessException catch (e) {
     io.stderr.writeln('Failed to run clangd: $e');
-    io.stderr.writeln(const JsonEncoder.withIndent('  ').convert(entry));
+    io.stderr.writeln(const JsonEncoder.withIndent('  ').convert(selectedEntry));
     io.exitCode = 1;
   } finally {
     // Remove the copied .clangd file from the engine root directory.

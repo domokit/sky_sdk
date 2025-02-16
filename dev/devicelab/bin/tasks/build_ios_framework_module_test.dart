@@ -13,6 +13,11 @@ import 'package:path/path.dart' as path;
 /// Tests that iOS and macOS .xcframeworks can be built.
 Future<void> main() async {
   await task(() async {
+    // TODO(matanlurey): Remove after default.
+    // https://github.com/flutter/flutter/issues/160257
+    section('Opt-in to --explicit-package-dependencies');
+    await flutter('config', options: <String>['--explicit-package-dependencies']);
+
     section('Create module project');
 
     final Directory tempDir = Directory.systemTemp.createTempSync('flutter_module_test.');
@@ -85,7 +90,6 @@ Future<void> _testBuildIosFramework(Directory projectDir, {bool isModule = false
       'build',
       options: <String>[
         'ios-framework',
-        '--verbose',
         '--output=$outputDirectoryName',
         '--obfuscate',
         '--split-debug-info=symbols',
@@ -470,7 +474,6 @@ Future<void> _testBuildMacOSFramework(Directory projectDir) async {
       'build',
       options: <String>[
         'macos-framework',
-        '--verbose',
         '--output=$outputDirectoryName',
         '--obfuscate',
         '--split-debug-info=symbols',

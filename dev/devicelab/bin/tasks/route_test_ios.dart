@@ -20,14 +20,7 @@ void main() {
     await inDirectory(appDir, () async {
       return flutter(
         'drive',
-        options: <String>[
-          '--verbose',
-          '-d',
-          device.deviceId,
-          '--route',
-          '/smuggle-it',
-          'lib/route.dart',
-        ],
+        options: <String>['-d', device.deviceId, '--route', '/smuggle-it', 'lib/route.dart'],
       );
     });
     return TaskResult.success(null);

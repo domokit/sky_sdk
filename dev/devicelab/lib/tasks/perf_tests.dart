@@ -107,6 +107,19 @@ TaskFunction createAndroidTextureScrollPerfTest({bool? enableImpeller}) {
   ).run;
 }
 
+TaskFunction createAndroidHCPPScrollPerfTest() {
+  return PerfTest(
+    '${flutterDirectory.path}/dev/benchmarks/platform_views_layout',
+    'test_driver/scroll_perf_hcpp.dart',
+    'platform_views_hcpp_scroll_perf',
+    testDriver: 'test_driver/scroll_perf_hcpp_test.dart',
+    needsFullTimeline: false,
+    enableImpeller: true,
+    enableSurfaceControl: true,
+    enableMergedPlatformThread: true,
+  ).run;
+}
+
 TaskFunction createAndroidViewScrollPerfTest() {
   return PerfTest(
     '${flutterDirectory.path}/dev/benchmarks/platform_views_layout_hybrid_composition',
@@ -276,6 +289,28 @@ TaskFunction createFlutterGalleryCompileTest() {
 TaskFunction createHelloWorldCompileTest() {
   return CompileTest(
     '${flutterDirectory.path}/examples/hello_world',
+    reportPackageContentSizes: true,
+  ).run;
+}
+
+TaskFunction createImitationGameSwiftUITest() {
+  return CompileTest(
+    '${flutterDirectory.path}/dev/benchmarks/imitation_game_swiftui',
+    reportPackageContentSizes: true,
+  ).runSwiftUIApp;
+}
+
+TaskFunction createImitationGameFlutterTest() {
+  flutter(
+    'create',
+    options: <String>[
+      '--platforms=ios',
+      '${flutterDirectory.path}/dev/benchmarks/imitation_game_flutter',
+      '--no-overwrite',
+    ],
+  );
+  return CompileTest(
+    '${flutterDirectory.path}/dev/benchmarks/imitation_game_flutter',
     reportPackageContentSizes: true,
   ).run;
 }
@@ -495,51 +530,6 @@ TaskFunction createsScrollSmoothnessPerfTest() {
       addResult(data['resample off with 59Hz input'], '_without_resampler_59Hz');
 
       return TaskResult.success(result, benchmarkScoreKeys: result.keys.toList());
-    });
-  };
-}
-
-TaskFunction createFramePolicyIntegrationTest() {
-  final String testDirectory = '${flutterDirectory.path}/dev/benchmarks/macrobenchmarks';
-  const String testTarget = 'test/frame_policy.dart';
-  return () {
-    return inDirectory<TaskResult>(testDirectory, () async {
-      final Device device = await devices.workingDevice;
-      await device.unlock();
-      final String deviceId = device.deviceId;
-      await flutter('packages', options: <String>['get']);
-
-      await flutter(
-        'drive',
-        options: <String>[
-          '--no-android-gradle-daemon',
-          '-v',
-          '--verbose-system-logs',
-          '--profile',
-          '-t',
-          testTarget,
-          '-d',
-          deviceId,
-        ],
-      );
-      final Map<String, dynamic> data =
-          json.decode(
-                file(
-                  '${testOutputDirectory(testDirectory)}/frame_policy_event_delay.json',
-                ).readAsStringSync(),
-              )
-              as Map<String, dynamic>;
-      final Map<String, dynamic> fullLiveData = data['fullyLive'] as Map<String, dynamic>;
-      final Map<String, dynamic> benchmarkLiveData = data['benchmarkLive'] as Map<String, dynamic>;
-      final Map<String, dynamic> dataFormatted = <String, dynamic>{
-        'average_delay_fullyLive_millis': fullLiveData['average_delay_millis'],
-        'average_delay_benchmarkLive_millis': benchmarkLiveData['average_delay_millis'],
-        '90th_percentile_delay_fullyLive_millis': fullLiveData['90th_percentile_delay_millis'],
-        '90th_percentile_delay_benchmarkLive_millis':
-            benchmarkLiveData['90th_percentile_delay_millis'],
-      };
-
-      return TaskResult.success(dataFormatted, benchmarkScoreKeys: dataFormatted.keys.toList());
     });
   };
 }
@@ -823,6 +813,13 @@ void _addMetadataToManifest(String testDirectory, List<(String, String)> keyPair
   }
 
   file.writeAsStringSync(xmlDoc.toXmlString(pretty: true, indent: '    '));
+}
+
+void _addSurfaceControlSupportToManifest(String testDirectory) {
+  final List<(String, String)> keyPairs = <(String, String)>[
+    ('io.flutter.embedding.android.EnableSurfaceControl', 'true'),
+  ];
+  _addMetadataToManifest(testDirectory, keyPairs);
 }
 
 void _addMergedPlatformThreadSupportToManifest(String testDirectory) {
@@ -1182,6 +1179,7 @@ class PerfTest {
     this.forceOpenGLES,
     this.disablePartialRepaint = false,
     this.enableMergedPlatformThread = false,
+    this.enableSurfaceControl = false,
     this.createPlatforms = const <String>[],
   }) : _resultFilename = resultFilename;
 
@@ -1203,6 +1201,7 @@ class PerfTest {
     this.forceOpenGLES,
     this.disablePartialRepaint = false,
     this.enableMergedPlatformThread = false,
+    this.enableSurfaceControl = false,
     this.createPlatforms = const <String>[],
   }) : saveTraceFile = false,
        timelineFileName = null,
@@ -1258,6 +1257,9 @@ class PerfTest {
 
   /// Whether the UI thread should be the platform thread.
   final bool enableMergedPlatformThread;
+
+  /// Whether to enable SurfaceControl swapchain.
+  final bool enableSurfaceControl;
 
   /// Number of seconds to time out the test after, allowing debug callbacks to run.
   final int? timeoutSeconds;
@@ -1354,6 +1356,9 @@ class PerfTest {
           if (enableMergedPlatformThread) {
             _addMergedPlatformThreadSupportToManifest(testDirectory);
           }
+          if (enableSurfaceControl) {
+            _addSurfaceControlSupportToManifest(testDirectory);
+          }
         }
         if (disablePartialRepaint || enableMergedPlatformThread) {
           changedPlist = true;
@@ -1428,8 +1433,6 @@ class PerfTest {
           recordGPU = false;
       }
 
-      // TODO(liyuqian): Remove isAndroid restriction once
-      // https://github.com/flutter/flutter/issues/61567 is fixed.
       final bool isAndroid = deviceOperatingSystem == DeviceOperatingSystem.android;
       return TaskResult.success(
         data,
@@ -1684,6 +1687,50 @@ class CompileTest {
       }
 
       return TaskResult.success(metrics, benchmarkScoreKeys: metrics.keys.toList());
+    });
+  }
+
+  Future<TaskResult> runSwiftUIApp() async {
+    return inDirectory<TaskResult>(testDirectory, () async {
+      await Process.run('xcodebuild', <String>['clean', '-allTargets']);
+
+      int releaseSizeInBytes = 0;
+      final Stopwatch watch = Stopwatch();
+
+      watch.start();
+      await Process.run(workingDirectory: testDirectory, 'xcodebuild', <String>[
+        '-scheme',
+        'hello_world_swiftui',
+        '-target',
+        'hello_world_swiftui',
+        '-sdk',
+        'iphoneos',
+        '-configuration',
+        'Release',
+        '-archivePath',
+        '$testDirectory/hello_world_swiftui',
+        'archive',
+      ]).then((ProcessResult results) {
+        watch.stop();
+        print(results.stdout);
+        if (results.exitCode != 0) {
+          print(results.stderr);
+        }
+      });
+
+      final String appPath =
+          '$testDirectory/hello_world_swiftui.xcarchive/Products/Applications/hello_world_swiftui.app';
+
+      // Zip up the .app file to get an approximation of the .ipa size.
+      await exec('tar', <String>['-zcf', 'app.tar.gz', appPath]);
+      releaseSizeInBytes = await file('$testDirectory/app.tar.gz').length();
+
+      final Map<String, dynamic> metrics = <String, dynamic>{};
+      metrics.addAll(<String, dynamic>{
+        'release_swiftui_compile_millis': watch.elapsedMilliseconds,
+        'release_swiftui_size_bytes': releaseSizeInBytes,
+      });
+      return TaskResult.success(metrics);
     });
   }
 

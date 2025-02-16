@@ -24,7 +24,7 @@
 namespace impeller::interop::testing {
 
 using InteropPlaygroundTest = PlaygroundTest;
-INSTANTIATE_OPENGLES_PLAYGROUND_SUITE(InteropPlaygroundTest);
+INSTANTIATE_PLAYGROUND_SUITE(InteropPlaygroundTest);
 
 TEST_P(InteropPlaygroundTest, CanCreateContext) {
   auto context = CreateContext();
@@ -43,6 +43,11 @@ TEST_P(InteropPlaygroundTest, CanCreateDisplayListBuilder) {
 }
 
 TEST_P(InteropPlaygroundTest, CanCreateSurface) {
+  if (GetBackend() != PlaygroundBackend::kOpenGLES) {
+    GTEST_SKIP()
+        << "This test checks wrapping FBOs which is an OpenGL ES only call.";
+    return;
+  }
   auto context = CreateContext();
   ASSERT_TRUE(context);
   const auto window_size = GetWindowSize();

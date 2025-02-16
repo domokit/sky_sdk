@@ -144,6 +144,7 @@ void ContextVK::Setup(Settings settings) {
   TRACE_EVENT0("impeller", "ContextVK::Setup");
 
   if (!settings.proc_address_callback) {
+    VALIDATION_LOG << "Missing proc address callback.";
     return;
   }
 
@@ -155,7 +156,7 @@ void ContextVK::Setup(Settings settings) {
     fml::RequestAffinity(fml::CpuAffinity::kNotPerformance);
 #ifdef FML_OS_ANDROID
     if (::setpriority(PRIO_PROCESS, gettid(), -5) != 0) {
-      FML_LOG(ERROR) << "Failed to set Workers task runner priority";
+      VALIDATION_LOG << "Failed to set Workers task runner priority";
     }
 #endif  // FML_OS_ANDROID
   });

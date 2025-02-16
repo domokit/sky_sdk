@@ -14,7 +14,6 @@ import '../build_info.dart';
 import '../cache.dart';
 import '../globals.dart' as globals;
 import '../project.dart';
-import '../reporting/reporting.dart';
 import '../runner/flutter_command.dart' show FlutterCommandResult;
 import 'build.dart';
 
@@ -77,23 +76,6 @@ class BuildAarCommand extends BuildSubCommand {
   late final FlutterProject project = _getProject();
 
   @override
-  Future<CustomDimensions> get usageValues async {
-    final String projectType;
-    if (project.manifest.isModule) {
-      projectType = 'module';
-    } else if (project.manifest.isPlugin) {
-      projectType = 'plugin';
-    } else {
-      projectType = 'app';
-    }
-
-    return CustomDimensions(
-      commandBuildAarProjectType: projectType,
-      commandBuildAarTargetPlatform: stringsArg('target-platform').join(','),
-    );
-  }
-
-  @override
   Future<Event> unifiedAnalyticsUsageValues(String commandPath) async {
     final String projectType;
     if (project.manifest.isModule) {
@@ -128,6 +110,9 @@ class BuildAarCommand extends BuildSubCommand {
     }
     await super.validateCommand();
   }
+
+  @override
+  bool get regeneratePlatformSpecificToolingDuringVerify => false;
 
   @override
   Future<FlutterCommandResult> runCommand() async {
@@ -166,11 +151,11 @@ class BuildAarCommand extends BuildSubCommand {
       throwToolExit('Please specify a build mode and try again.');
     }
 
-    displayNullSafetyMode(androidBuildInfo.first.buildInfo);
     await androidBuilder?.buildAar(
       project: project,
       target: targetFile.path,
       androidBuildInfo: androidBuildInfo,
+      generateTooling: regeneratePlatformSpecificToolingIfApplicable,
       outputDirectoryPath: stringArg('output'),
       buildNumber: buildNumber,
     );

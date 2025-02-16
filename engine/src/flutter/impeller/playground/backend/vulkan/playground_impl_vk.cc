@@ -50,7 +50,11 @@ ShaderLibraryMappingsForPlayground() {
   };
 }
 
-vk::UniqueInstance PlaygroundImplVK::global_instance_;
+// A global Vulkan instance that is reused across all Vulkan playgrounds.
+// This instance is kept for the entire process lifetime. It is not cleaned
+// up during shutdown to avoid conflicts with destruction of other globals
+// in dependencies like the Vulkan validation layers.
+VkInstance PlaygroundImplVK::global_instance_ = VK_NULL_HANDLE;
 
 void PlaygroundImplVK::DestroyWindowHandle(WindowHandle handle) {
   if (!handle) {
@@ -91,7 +95,6 @@ PlaygroundImplVK::PlaygroundImplVK(PlaygroundSwitches switches)
   context_settings.enable_validation = switches_.enable_vulkan_validation;
   context_settings.fatal_missing_validations =
       switches_.enable_vulkan_validation;
-  ;
 
   auto context_vk = ContextVK::Create(std::move(context_settings));
   if (!context_vk || !context_vk->IsValid()) {
@@ -207,7 +210,7 @@ void PlaygroundImplVK::InitGlobalVulkanInstance() {
   auto instance_result = vk::createInstanceUnique(instance_info);
   FML_CHECK(instance_result.result == vk::Result::eSuccess)
       << "Unable to initialize global Vulkan instance";
-  global_instance_ = std::move(instance_result.value);
+  global_instance_ = instance_result.value.release();
 }
 
 fml::Status PlaygroundImplVK::SetCapabilities(
@@ -231,6 +234,15 @@ bool PlaygroundImplVK::IsVulkanDriverPresent() {
                     "that does not support Vulkan.";
 #endif  // TARGET_OS_MAC
   return false;
+}
+
+// |PlaygroundImpl|
+Playground::VKProcAddressResolver
+PlaygroundImplVK::CreateVKProcAddressResolver() const {
+  return [](void* instance, const char* proc_name) -> void* {
+    return reinterpret_cast<void*>(::glfwGetInstanceProcAddress(
+        reinterpret_cast<VkInstance>(instance), proc_name));
+  };
 }
 
 }  // namespace impeller

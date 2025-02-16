@@ -204,8 +204,6 @@ template("_kernel_worker") {
 }
 
 template("_compile_platform") {
-  assert(defined(invoker.sound_null_safety),
-         "sound_null_safety must be defined for $target_name")
   assert(defined(invoker.kernel_target),
          "kernel_target must be defined for $target_name")
   assert(defined(invoker.summary_only),
@@ -216,12 +214,7 @@ template("_compile_platform") {
     inputs = [ "sdk_rewriter.dart" ] + web_ui_sources
 
     outputs = [ invoker.output_dill ]
-
-    if (invoker.sound_null_safety) {
-      args = [ "--sound-null-safety" ]
-    } else {
-      args = [ "--no-sound-null-safety" ]
-    }
+    args = []
 
     if (invoker.summary_only) {
       args += [ "--summary-only" ]
@@ -280,41 +273,20 @@ template("_compile_platform") {
   }
 }
 
-# Compile the unsound DDC SDK's summary.
-_compile_platform("flutter_dartdevc_kernel_sdk_outline_unsound") {
-  sound_null_safety = false
+_compile_platform("flutter_dartdevc_kernel_sdk_outline") {
   kernel_target = "ddc"
   summary_only = true
   output_dill = "$root_out_dir/flutter_web_sdk/kernel/ddc_outline.dill"
 }
 
-# Compile the sound DDC SDK's summary.
-_compile_platform("flutter_dartdevc_kernel_sdk_outline_sound") {
-  sound_null_safety = true
-  kernel_target = "ddc"
-  summary_only = true
-  output_dill = "$root_out_dir/flutter_web_sdk/kernel/ddc_outline_sound.dill"
-}
-
-_compile_platform("flutter_dart2js_kernel_sdk_full_unsound") {
-  sound_null_safety = false
-  kernel_target = "dart2js"
-  summary_only = false
-  output_dill =
-      "$root_out_dir/flutter_web_sdk/kernel/dart2js_platform_unsound.dill"
-  null_environment = true
-}
-
-_compile_platform("flutter_dart2js_kernel_sdk_full_sound") {
-  sound_null_safety = true
+_compile_platform("flutter_dart2js_kernel_sdk_full") {
   kernel_target = "dart2js"
   summary_only = false
   output_dill = "$root_out_dir/flutter_web_sdk/kernel/dart2js_platform.dill"
   null_environment = true
 }
 
-_compile_platform("flutter_dart2wasm_kernel_sdk_full_sound") {
-  sound_null_safety = true
+_compile_platform("flutter_dart2wasm_kernel_sdk_full") {
   kernel_target = "dart2wasm"
   summary_only = false
   output_dill = "$root_out_dir/flutter_web_sdk/kernel/dart2wasm_platform.dill"
@@ -323,22 +295,14 @@ _compile_platform("flutter_dart2wasm_kernel_sdk_full_sound") {
 
 group("flutter_platform_dills") {
   public_deps = [
-    ":flutter_dart2js_kernel_sdk_full_sound",
-    ":flutter_dart2js_kernel_sdk_full_unsound",
-    ":flutter_dart2wasm_kernel_sdk_full_sound",
-    ":flutter_dartdevc_kernel_sdk_outline_sound",
-    ":flutter_dartdevc_kernel_sdk_outline_unsound",
-
-    # TODO(jacksongardner): remove these once they are no longer used by the flutter tool
-    # https://github.com/flutter/flutter/issues/113303
-    ":flutter_dartdevc_kernel_sdk_outline_sound",
-    ":flutter_dartdevc_kernel_sdk_outline_unsound",
+    ":flutter_dart2js_kernel_sdk_full",
+    ":flutter_dart2wasm_kernel_sdk_full",
+    ":flutter_dartdevc_kernel_sdk_outline",
+    ":flutter_dartdevc_kernel_sdk_outline",
   ]
 }
 
 template("_compile_ddc_module") {
-  assert(defined(invoker.sound_null_safety),
-         "sound_null_safety must be defined for $target_name")
   assert(defined(invoker.sdk_path_prefix),
          "sdk_path_prefix must be defined for $target_name")
   assert(defined(invoker.module_format),
@@ -351,9 +315,6 @@ template("_compile_ddc_module") {
     packages = dart_sdk_package_config
 
     name_suffix = "-canvaskit"
-    if (invoker.sound_null_safety) {
-      name_suffix += "-sound"
-    }
 
     dart_sdk_js_path = "$root_out_dir/flutter_web_sdk/kernel/${invoker.sdk_path_prefix}${name_suffix}/dart_sdk.js"
 
@@ -362,13 +323,7 @@ template("_compile_ddc_module") {
       dart_sdk_js_path + ".map",
     ]
 
-    if (invoker.sound_null_safety) {
-      args = [ "--sound-null-safety" ]
-    } else {
-      args = [ "--no-sound-null-safety" ]
-    }
-
-    args += [
+    args = [
       "--compile-sdk",
       "dart:core",
 
@@ -415,8 +370,6 @@ template("_compile_ddc_module") {
 }
 
 template("_compile_ddc_modules") {
-  assert(defined(invoker.sound_null_safety),
-         "sound_null_safety must be defined for $target_name")
   forward_variables_from(invoker, "*")
 
   # We compile multiple times instead of passing multiple modules to a single
@@ -428,31 +381,22 @@ template("_compile_ddc_modules") {
     canary = false
   }
 
-  # No support for unsound null safety with the DDC library bundle format.
-  if (sound_null_safety) {
-    _compile_ddc_module("${target_name}_ddcLibraryBundle") {
-      sdk_path_prefix = "ddcLibraryBundle"
-      module_format = "ddc"
-      canary = true
-    }
+  _compile_ddc_module("${target_name}_ddcLibraryBundle") {
+    sdk_path_prefix = "ddcLibraryBundle"
+    module_format = "ddc"
+    canary = true
   }
 }
 
-# Compiles the unsound canvaskit only renderer.
+# Compiles the canvaskit only renderer.
 _compile_ddc_modules("flutter_dartdevc_canvaskit_kernel_sdk") {
-  sound_null_safety = false
-}
-
-# Compiles the sound canvaskit only renderer.
-_compile_ddc_modules("flutter_dartdevc_canvaskit_kernel_sdk_sound") {
-  sound_null_safety = true
 }
 
 group("flutter_ddc_modules") {
   public_deps = [
     ":flutter_dartdevc_canvaskit_kernel_sdk_amd",
-    ":flutter_dartdevc_canvaskit_kernel_sdk_sound_amd",
-    ":flutter_dartdevc_canvaskit_kernel_sdk_sound_ddcLibraryBundle",
+    ":flutter_dartdevc_canvaskit_kernel_sdk_amd",
+    ":flutter_dartdevc_canvaskit_kernel_sdk_ddcLibraryBundle",
   ]
 }
 
@@ -477,18 +421,14 @@ if (!is_fuchsia) {
 
     # flutter_ddc_modules
     sources = get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_amd")
-    sources +=
-        get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_sound_amd")
+    sources += get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_amd")
     sources += get_target_outputs(
-            ":flutter_dartdevc_canvaskit_kernel_sdk_sound_ddcLibraryBundle")
+            ":flutter_dartdevc_canvaskit_kernel_sdk_ddcLibraryBundle")
 
     # flutter_platform_dills
-    sources +=
-        get_target_outputs(":flutter_dartdevc_kernel_sdk_outline_unsound")
-    sources += get_target_outputs(":flutter_dartdevc_kernel_sdk_outline_sound")
-    sources += get_target_outputs(":flutter_dart2js_kernel_sdk_full_unsound")
-    sources += get_target_outputs(":flutter_dart2js_kernel_sdk_full_sound")
-    sources += get_target_outputs(":flutter_dart2wasm_kernel_sdk_full_sound")
+    sources += get_target_outputs(":flutter_dartdevc_kernel_sdk_outline")
+    sources += get_target_outputs(":flutter_dart2js_kernel_sdk_full")
+    sources += get_target_outputs(":flutter_dart2wasm_kernel_sdk_full")
     if (is_wasm) {
       sources += [
         "$root_out_dir/flutter_web_sdk/canvaskit/canvaskit.js",

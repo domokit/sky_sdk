@@ -273,6 +273,7 @@ void main() {
         entrypoint: 'main.js',
         nullAssertions: false,
         nativeNullAssertions: false,
+        onLoadEndBootstrap: 'on_load_end_bootstrap.js',
       );
       // bootstrap main module has correct defined module.
       expect(result, contains('let appName = "org-dartlang-app:/main.js";'));
@@ -284,6 +285,7 @@ void main() {
         entrypoint: 'main.js',
         nullAssertions: true,
         nativeNullAssertions: true,
+        onLoadEndBootstrap: 'on_load_end_bootstrap.js',
       );
 
       expect(result, contains('nonNullAsserts: true'));
@@ -295,6 +297,7 @@ void main() {
         entrypoint: 'main.js',
         nullAssertions: false,
         nativeNullAssertions: false,
+        onLoadEndBootstrap: 'on_load_end_bootstrap.js',
       );
 
       expect(result, contains('nonNullAsserts: false'));

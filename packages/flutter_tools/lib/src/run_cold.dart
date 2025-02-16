@@ -42,6 +42,9 @@ class ColdRunner extends ResidentRunner {
   FileSystem get fileSystem => globals.fs;
 
   @override
+  bool get supportsDetach => _didAttach;
+
+  @override
   Future<int> run({
     Completer<DebugConnectionInfo>? connectionInfoCompleter,
     Completer<void>? appStartedCompleter,
@@ -144,10 +147,7 @@ class ColdRunner extends ResidentRunner {
   }) async {
     _didAttach = true;
     try {
-      await connectToServiceProtocol(
-        getSkSLMethod: writeSkSL,
-        allowExistingDdsInstance: allowExistingDdsInstance,
-      );
+      await connectToServiceProtocol(allowExistingDdsInstance: allowExistingDdsInstance);
     } on Exception catch (error) {
       globals.printError('Error connecting to the service protocol: $error');
       return 2;
@@ -188,23 +188,6 @@ class ColdRunner extends ResidentRunner {
     }
     await residentDevtoolsHandler!.shutdown();
     await stopEchoingDeviceLog();
-  }
-
-  @override
-  void printHelp({required bool details}) {
-    globals.printStatus('Flutter run key commands.');
-    if (details) {
-      printHelpDetails();
-      commandHelp.hWithDetails.print();
-    } else {
-      commandHelp.hWithoutDetails.print();
-    }
-    if (_didAttach) {
-      commandHelp.d.print();
-    }
-    commandHelp.c.print();
-    commandHelp.q.print();
-    printDebuggerList();
   }
 
   @override

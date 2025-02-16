@@ -24,8 +24,6 @@ const Map<String, String> kManuallyPinnedDependencies = <String, String>{
   'flutter_gallery_assets': '1.0.2', // Tests depend on the exact version.
   'flutter_template_images': '5.0.0', // Must always exactly match flutter_tools template.
   'google_mobile_ads': '5.1.0', // https://github.com/flutter/flutter/issues/156912
-  'intl':
-      '0.19.0', // 0.20.0 introduces new transitive dependencies that are not (yet) cleared in Flutter's allow list.
   'native_assets_builder':
       '0.11.1', // Under active development with breaking changes until 1.0.0. Manually rolled by @dcharkes.
   'native_assets_cli':

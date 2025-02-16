@@ -23,27 +23,6 @@ import 'util.dart';
 // removes the ability for disabling AA on Paint objects.
 const bool _kUsingMSAA = bool.fromEnvironment('flutter.canvaskit.msaa');
 
-typedef SubmitCallback = bool Function(SurfaceFrame, CkCanvas);
-
-/// A frame which contains a canvas to be drawn into.
-class SurfaceFrame {
-  SurfaceFrame(this.skiaSurface, this.submitCallback) : _submitted = false;
-
-  final CkSurface skiaSurface;
-  final SubmitCallback submitCallback;
-  final bool _submitted;
-
-  /// Submit this frame to be drawn.
-  bool submit() {
-    if (_submitted) {
-      return false;
-    }
-    return submitCallback(this, skiaCanvas);
-  }
-
-  CkCanvas get skiaCanvas => skiaSurface.getCanvas();
-}
-
 /// A surface which can be drawn into by the compositor.
 ///
 /// The underlying representation is a [CkSurface], which can be reused by
@@ -54,6 +33,19 @@ class Surface extends DisplayCanvas {
     : useOffscreenCanvas = Surface.offscreenCanvasSupported && !isDisplayCanvas;
 
   CkSurface? _surface;
+
+  /// Returns the underlying CanvasKit Surface. Should only be used in tests.
+  CkSurface? debugGetCkSurface() {
+    bool assertsEnabled = false;
+    assert(() {
+      assertsEnabled = true;
+      return true;
+    }());
+    if (!assertsEnabled) {
+      throw StateError('debugGetCkSurface() can only be used in tests');
+    }
+    return _surface;
+  }
 
   /// Whether or not to use an `OffscreenCanvas` to back this [Surface].
   final bool useOffscreenCanvas;
@@ -97,7 +89,17 @@ class Surface extends DisplayCanvas {
   DomOffscreenCanvas? _offscreenCanvas;
 
   /// Returns the underlying OffscreenCanvas. Should only be used in tests.
-  DomOffscreenCanvas? get debugOffscreenCanvas => _offscreenCanvas;
+  DomOffscreenCanvas? debugGetOffscreenCanvas() {
+    bool assertsEnabled = false;
+    assert(() {
+      assertsEnabled = true;
+      return true;
+    }());
+    if (!assertsEnabled) {
+      throw StateError('debugGetOffscreenCanvas() can only be used in tests');
+    }
+    return _offscreenCanvas;
+  }
 
   /// The <canvas> backing this Surface in the case that OffscreenCanvas isn't
   /// supported.
@@ -147,17 +149,18 @@ class Surface extends DisplayCanvas {
 
     if (browserSupportsCreateImageBitmap) {
       JSObject bitmapSource;
+      DomImageBitmap bitmap;
       if (useOffscreenCanvas) {
-        bitmapSource = _offscreenCanvas! as JSObject;
+        bitmap = _offscreenCanvas!.transferToImageBitmap();
       } else {
         bitmapSource = _canvasElement! as JSObject;
+        bitmap = await createImageBitmap(bitmapSource, (
+          x: 0,
+          y: _pixelHeight - bitmapSize.height,
+          width: bitmapSize.width,
+          height: bitmapSize.height,
+        ));
       }
-      final DomImageBitmap bitmap = await createImageBitmap(bitmapSource, (
-        x: 0,
-        y: _pixelHeight - bitmapSize.height,
-        width: bitmapSize.width,
-        height: bitmapSize.height,
-      ));
       canvas.render(bitmap);
     } else {
       // If the browser doesn't support `createImageBitmap` (e.g. Safari 14)
@@ -170,20 +173,6 @@ class Surface extends DisplayCanvas {
       }
       canvas.renderWithNoBitmapSupport(imageSource, _pixelHeight, bitmapSize);
     }
-  }
-
-  /// Acquire a frame of the given [size] containing a drawable canvas.
-  ///
-  /// The given [size] is in physical pixels.
-  SurfaceFrame acquireFrame(ui.Size size) {
-    final CkSurface surface = createOrUpdateSurface(BitmapSize.fromSize(size));
-
-    // ignore: prefer_function_declarations_over_variables
-    final SubmitCallback submitCallback = (SurfaceFrame surfaceFrame, CkCanvas canvas) {
-      return _presentSurface();
-    };
-
-    return SurfaceFrame(surface, submitCallback);
   }
 
   BitmapSize? _currentCanvasPhysicalSize;
@@ -237,7 +226,8 @@ class Surface extends DisplayCanvas {
     }
     // TODO(jonahwilliams): this is somewhat wasteful. We should probably
     // eagerly setup this surface instead of delaying until the first frame?
-    // Or at least cache the estimated window sizeThis is the first frame we have rendered with this canvas.
+    // Or at least cache the estimated window size.
+    // This is the first frame we have rendered with this canvas.
     createOrUpdateSurface(size);
   }
 
@@ -261,16 +251,13 @@ class Surface extends DisplayCanvas {
         return _surface!;
       }
 
-      final BitmapSize? previousCanvasSize = _currentCanvasPhysicalSize;
-      // Initialize a new, larger, canvas. If the size is growing, then make the
-      // new canvas larger than required to avoid many canvas creations.
-      if (previousCanvasSize != null &&
-          (size.width > previousCanvasSize.width || size.height > previousCanvasSize.height)) {
-        final BitmapSize newSize = BitmapSize.fromSize(size.toSize() * 1.4);
+      if (_currentCanvasPhysicalSize != null &&
+          (size.width != _currentCanvasPhysicalSize!.width ||
+              size.height != _currentCanvasPhysicalSize!.height)) {
         _surface?.dispose();
         _surface = null;
-        _pixelWidth = newSize.width;
-        _pixelHeight = newSize.height;
+        _pixelWidth = size.width;
+        _pixelHeight = size.height;
         if (useOffscreenCanvas) {
           _offscreenCanvas!.width = _pixelWidth.toDouble();
           _offscreenCanvas!.height = _pixelHeight.toDouble();
@@ -285,10 +272,14 @@ class Surface extends DisplayCanvas {
       }
     }
 
+    // If we reached here, then this is the first frame and we haven't made a
+    // surface yet, we are forcing a new context, or the size of the surface
+    // has changed and we need to make a new one.
+    _surface?.dispose();
+    _surface = null;
+
     // Either a new context is being forced or we've never had one.
     if (_forceNewContext || _currentCanvasPhysicalSize == null) {
-      _surface?.dispose();
-      _surface = null;
       _grContext?.releaseResourcesAndAbandonContext();
       _grContext?.delete();
       _grContext = null;
@@ -297,7 +288,6 @@ class Surface extends DisplayCanvas {
       _currentCanvasPhysicalSize = size;
     }
 
-    _surface?.dispose();
     return _surface = _createNewSurface(size);
   }
 
@@ -413,6 +403,8 @@ class Surface extends DisplayCanvas {
       if (_glContext != 0) {
         _grContext = canvasKit.MakeGrContext(glContext.toDouble());
         if (_grContext == null) {
+          // TODO(harryterkelsen): Make this error message more descriptive by
+          // reporting the number of currently live Surfaces, https://github.com/flutter/flutter/issues/162868.
           throw CanvasKitError(
             'Failed to initialize CanvasKit. '
             'CanvasKit.MakeGrContext returned null.',
@@ -486,11 +478,6 @@ class Surface extends DisplayCanvas {
     } catch (error) {
       throw CanvasKitError('Failed to create CPU-based surface: $error.');
     }
-  }
-
-  bool _presentSurface() {
-    _surface!.flush();
-    return true;
   }
 
   @override

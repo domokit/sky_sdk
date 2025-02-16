@@ -2,6 +2,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# This file is a temporary shim needed during the elimination of the buildroot.
-# See: https://github.com/flutter/flutter/issues/67373
-import("//flutter/build_overrides/vulkan_headers.gni")
+# This file is needed by the vulkan-headers build, but doesn't need to actually
+# set anything.
+
+if (is_linux) {
+  vulkan_use_x11 = true
+  vulkan_use_wayland = true
+}

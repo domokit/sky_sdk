@@ -51,7 +51,15 @@ The easiest way (though not the quickest) is to use `run_tests.py`:
 ./testing/run_tests.py --type java --android-variant android_debug_unopt_arm64
 ```
 
-You may also be able to run the tests directly from Android Studio.
+> [!TIP]
+> Trying to debug tests or timeouts/hangs?
+>
+> Run the tests directly from Android Studio, or [set `maxParallelForks` to `1`](https://github.com/flutter/flutter/blob/1cd3ab16ca1cba35e187ae75063fce0915985b94/engine/src/flutter/shell/platform/android/test_runner/build.gradle#L55):
+>
+> ```diff
+> + maxParallelForks availableProcessors // The CI bot has 8 CPUs.
+> - maxParallelForks 1
+> ```
 
 ### Integration tests
 
@@ -150,6 +158,7 @@ completion:
 ![Example](https://github.com/flutter/flutter/assets/168174/8a75dd27-66e1-4c4f-88af-667a73b909b6)
 
 > [!NOTE]
+>
 > `--compile-commands-dir` must point to an Android build output:
 >
 > ```jsonc
@@ -220,7 +229,8 @@ code completion in the `io/flutter` and `test/io/flutter` folders. For example, 
 ![Example](https://github.com/flutter/flutter/assets/168174/387550d4-eab7-4097-9da3-7713a6ec4da7)
 
 To get code coverage displayed in line: go to the test class you wish to run and
-1. Right click > Modify Run Configuration..., 
+
+1. Right click > Modify Run Configuration...,
 2. In the window that pops up click Modify options > Specify classes
-and packages (under "code coverage"). 
+   and packages (under "code coverage").
 3. In the new box that appears at the bottom of the window, click the + > Add package, and then add `io.flutter.*`.

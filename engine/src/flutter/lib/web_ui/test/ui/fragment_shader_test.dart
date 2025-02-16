@@ -96,5 +96,5 @@ Future<void> testMain() async {
     // Make sure we can reuse the shader object with a new uniform value and the same Paint object.
     shader.setFloat(0, 25.0);
     await drawCircleReusePaint('fragment_shader_voronoi_tile25px_reuse_paint.png');
-  }, skip: isHtml); // Fragment shaders are not supported by the HTML renderer.
+  });
 }

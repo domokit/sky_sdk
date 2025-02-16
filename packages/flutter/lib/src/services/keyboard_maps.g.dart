@@ -1753,7 +1753,7 @@ const Map<int, LogicalKeyboardKey> kGtkToLogicalKey = <int, LogicalKeyboardKey>{
   64795: LogicalKeyboardKey.exSel,
   64797: LogicalKeyboardKey.printScreen,
   64798: LogicalKeyboardKey.enter,
-  65027: LogicalKeyboardKey.altRight,
+  65027: LogicalKeyboardKey.altGraph,
   65032: LogicalKeyboardKey.groupNext,
   65034: LogicalKeyboardKey.groupPrevious,
   65036: LogicalKeyboardKey.groupFirst,

@@ -54,7 +54,7 @@ android {
       maxHeapSize "8g"
       maxParallelForks availableProcessors // The CI bot has 8 CPUs.
       testLogging {
-        events "passed", "skipped", "failed", "standardOut", "standardError"
+        events "started", "passed", "skipped", "failed", "standardOut", "standardError"
         exceptionFormat "full"
         showStackTraces true
         showStandardStreams true

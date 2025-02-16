@@ -1730,9 +1730,9 @@ void _paragraphTests() {
         canvas,
         SkWebGLContextOptions(antialias: 0, majorVersion: webGLVersion.toDouble()),
       );
-      final SkGrContext grContext = canvasKit.MakeGrContext(glContext);
+      final SkGrContext? grContext = canvasKit.MakeGrContext(glContext);
       final SkSurface? skSurface = canvasKit.MakeOnScreenGLSurface(
-        grContext,
+        grContext!,
         100,
         100,
         SkColorSpaceSRGB,
@@ -1755,8 +1755,8 @@ void _paragraphTests() {
             canvas,
             SkWebGLContextOptions(antialias: 0, majorVersion: webGLVersion.toDouble()),
           ).toInt();
-      final SkGrContext grContext = canvasKit.MakeGrContext(glContext.toDouble());
-      final SkSurface? surface = canvasKit.MakeRenderTarget(grContext, 1, 1);
+      final SkGrContext? grContext = canvasKit.MakeGrContext(glContext.toDouble());
+      final SkSurface? surface = canvasKit.MakeRenderTarget(grContext!, 1, 1);
 
       expect(surface, isNotNull);
     },

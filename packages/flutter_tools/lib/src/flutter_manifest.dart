@@ -664,7 +664,6 @@ void _validateFlutter(YamlMap? yaml, List<String> errors) {
 
   for (int i = 0; i < yamlList.length; i++) {
     if (yamlList[i] is! T) {
-      // ignore: avoid_dynamic_calls
       errors.add(
         'Expected $context to be a list of $typeAlias, but element at index $i was a ${yamlList[i].runtimeType}.',
       );
@@ -682,7 +681,6 @@ void _validateDeferredComponents(MapEntry<Object?, Object?> kvp, List<String> er
     for (int i = 0; i < yamlList.length; i++) {
       final Object? valueMap = yamlList[i];
       if (valueMap is! YamlMap) {
-        // ignore: avoid_dynamic_calls
         errors.add(
           'Expected the $i element in "${kvp.key}" to be a map, but got ${yamlList[i]} (${yamlList[i].runtimeType}).',
         );

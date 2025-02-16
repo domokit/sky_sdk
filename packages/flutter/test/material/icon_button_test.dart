@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import '../widgets/feedback_tester.dart';
 import '../widgets/semantics_tester.dart';
 
@@ -3317,6 +3318,62 @@ void main() {
     await tester.pump();
     expect(onLongPressed, false);
   });
+
+  testWidgets('does not draw focus color when focused by semantics on the web', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/158527.
+
+    final FocusNode focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+
+    const Color focusColor = Colors.orange;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: IconButton(
+            focusColor: focusColor,
+            focusNode: focusNode,
+            icon: const Icon(Icons.headphones),
+            onPressed: () {},
+          ),
+        ),
+      ),
+    );
+
+    // Make sure we are in "traditional mode" where the button could potentially draw focus highlights.
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
+
+    expect(focusNode.hasFocus, isFalse);
+
+    // Focus on it with semantics.
+    tester.platformDispatcher.onSemanticsActionEvent!(
+      SemanticsActionEvent(
+        type: SemanticsAction.focus,
+        viewId: tester.view.viewId,
+        nodeId: tester.semantics.find(find.byIcon(Icons.headphones)).id,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Make sure no focus highlight was drawn.
+    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {
+      return object.runtimeType.toString() == '_RenderInkFeatures';
+    });
+    expect(focusNode.hasFocus, isTrue);
+    expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.touch));
+    expect(inkFeatures, isNot(paints..rect(color: focusColor)));
+
+    // Check that focus highlight is drawn in traditional mode.
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(focusNode.hasFocus, isTrue);
+    expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
+    expect(inkFeatures, paints..rect(color: focusColor));
+  }, skip: !isBrowser); // [intended] tests web-specific behavior.
 }
 
 Widget buildAllVariants({

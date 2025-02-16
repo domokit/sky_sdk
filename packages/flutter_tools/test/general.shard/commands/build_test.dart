@@ -5,15 +5,12 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
-import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/io.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/platform.dart';
-import 'package:flutter_tools/src/base/process.dart';
 import 'package:flutter_tools/src/base/signals.dart';
 import 'package:flutter_tools/src/base/terminal.dart';
-import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/build_system/build_system.dart';
 import 'package:flutter_tools/src/commands/attach.dart';
 import 'package:flutter_tools/src/commands/build.dart';
@@ -99,57 +96,18 @@ void main() {
     }
   });
 
-  testUsingContext('BuildSubCommand displays current null safety mode', () async {
-    const BuildInfo unsound = BuildInfo(
-      BuildMode.debug,
-      '',
-      nullSafetyMode: NullSafetyMode.unsound,
-      treeShakeIcons: false,
-      packageConfigPath: '.dart_tool/package_config.json',
-    );
-
-    final BufferLogger logger = BufferLogger.test();
-    FakeBuildSubCommand(logger).test(unsound);
-    expect(logger.statusText, contains('Building without sound null safety ⚠️'));
-  });
-
   testUsingContext('Include only supported sub commands', () {
     final BufferLogger logger = BufferLogger.test();
-    final ProcessUtils processUtils = ProcessUtils(
-      logger: logger,
-      processManager: FakeProcessManager.empty(),
-    );
     final MemoryFileSystem fs = MemoryFileSystem.test();
     final BuildCommand command = BuildCommand(
-      artifacts: Artifacts.test(fileSystem: fs),
       androidSdk: FakeAndroidSdk(),
       buildSystem: TestBuildSystem.all(BuildResult(success: true)),
       fileSystem: fs,
       logger: logger,
-      processUtils: processUtils,
       osUtils: FakeOperatingSystemUtils(),
     );
     for (final Command<void> x in command.subcommands.values) {
       expect((x as BuildSubCommand).supported, isTrue);
     }
   });
-}
-
-class FakeBuildSubCommand extends BuildSubCommand {
-  FakeBuildSubCommand(Logger logger) : super(logger: logger, verboseHelp: false);
-
-  @override
-  String get description => throw UnimplementedError();
-
-  @override
-  String get name => throw UnimplementedError();
-
-  void test(BuildInfo buildInfo) {
-    displayNullSafetyMode(buildInfo);
-  }
-
-  @override
-  Future<FlutterCommandResult> runCommand() {
-    throw UnimplementedError();
-  }
 }

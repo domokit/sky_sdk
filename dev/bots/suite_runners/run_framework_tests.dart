@@ -322,7 +322,6 @@ Future<void> frameworkTestsRunner() async {
     await runFlutterTest(path.join(flutterRoot, 'packages', 'flutter_localizations'));
     await runFlutterTest(path.join(flutterRoot, 'packages', 'flutter_test'));
     await runFlutterTest(path.join(flutterRoot, 'packages', 'fuchsia_remote_debug_protocol'));
-    await runFlutterTest(path.join(flutterRoot, 'dev', 'integration_tests', 'non_nullable'));
     const String httpClientWarning =
         'Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses\n'
         'TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request\n'

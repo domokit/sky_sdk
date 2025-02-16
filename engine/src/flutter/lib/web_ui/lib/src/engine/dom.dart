@@ -158,7 +158,6 @@ extension DomWindowExtension on DomWindow {
         message.toJSAnyShallow,
         targetOrigin.toJS,
         // Cast is necessary so we can call `.toJS` on the right extension.
-        // ignore: unnecessary_cast
         (messagePorts as List<JSAny>).toJS,
       );
     }

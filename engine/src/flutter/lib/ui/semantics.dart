@@ -348,20 +348,117 @@ enum SemanticsRole {
 
   /// A tab button.
   ///
-  /// see also:
+  /// See also:
   ///
   ///  * [tabBar], which is the role for containers of tab buttons.
   tab,
 
   /// Contains tab buttons.
   ///
-  /// see also:
+  /// See also:
   ///
   ///  * [tab], which is the role for tab buttons.
   tabBar,
 
   /// The main display for a tab.
   tabPanel,
+
+  /// A pop up dialog.
+  dialog,
+
+  /// An alert dialog.
+  alertDialog,
+
+  /// A table structure containing data arranged in rows and columns.
+  ///
+  /// See also:
+  ///
+  /// * [cell], [row], [columnHeader] for table related roles.
+  table,
+
+  /// A cell in a [table] that does not contain column or row header information.
+  ///
+  /// See also:
+  ///
+  /// * [table],[row], [columnHeader] for table related roles.
+  cell,
+
+  /// A row of [cell]s or or [columnHeader]s in a [table].
+  ///
+  /// See also:
+  ///
+  /// * [table] ,[cell],[columnHeader] for table related roles.
+  row,
+
+  /// A cell in a [table] contains header information for a column.
+  ///
+  /// See also:
+  ///
+  /// * [table] ,[cell], [row] for table related roles.
+  columnHeader,
+
+  /// An input field for users to enter search terms.
+  searchBox,
+
+  /// A control used for dragging across content.
+  ///
+  /// For example, the drag handle of [ReorderableList].
+  dragHandle,
+
+  /// A control to cycle through content on tap.
+  ///
+  /// For example, the next and previous month button of a [CalendarDatePicker].
+  spinButton,
+
+  /// A input field with a dropdown list box attached.
+  ///
+  /// For example, a [DropDownMenu]
+  comboBox,
+
+  /// Contains a list of [menu]s.
+  ///
+  /// For example, a [MenuBar].
+  menuBar,
+
+  /// A button that opens a dropdown that contains multiple [menuItem]s.
+  ///
+  /// For example, a [MenuAnchor] or [DropDownButton].
+  menu,
+
+  /// A item in a dropdown created by [menu] or [comboBox].
+  menuItem,
+
+  /// A container to display multiple [listItem]s in vertical or horizontal
+  /// layout.
+  ///
+  /// For example, a [LisView] or [Column].
+  list,
+
+  /// An item in a [list].
+  listItem,
+
+  /// An area that represents a form.
+  form,
+
+  /// A pop up displayed when hovering over a component to provide contextual
+  /// explanation.
+  tooltip,
+
+  /// A graphic object that spins to indicate the application is busy.
+  ///
+  /// For example, a [CircularProgressIndicator].
+  loadingSpinner,
+
+  /// A graphic object that shows progress with a numeric number.
+  ///
+  /// For example, a [LinearProgressIndicator].
+  progressBar,
+
+  /// A keyboard shortcut field that allows the user to enter a combination or
+  /// sequence of keystrokes.
+  ///
+  /// For example, [Shortcuts].
+  hotKey,
 }
 
 /// A Boolean value that can be associated with a semantics node.

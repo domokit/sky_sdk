@@ -6,6 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TextStyle iconStyle(WidgetTester tester, IconData icon) {
+    final RichText iconRichText = tester.widget<RichText>(
+      find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)),
+    );
+    return iconRichText.text.style!;
+  }
+
   test('TextButtonTheme lerp special cases', () {
     expect(TextButtonThemeData.lerp(null, null, 0), null);
     const TextButtonThemeData data = TextButtonThemeData();
@@ -447,4 +454,33 @@ void main() {
 
     expect(buttonTopRight.dx, iconTopRight.dx + 16.0);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/162839.
+  testWidgets(
+    'TextButton icon uses provided TextButtonThemeData foregroundColor over default icon color',
+    (WidgetTester tester) async {
+      const Color foregroundColor = Color(0xFFFFA500);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(foregroundColor: foregroundColor),
+            ),
+          ),
+          home: Material(
+            child: Center(
+              child: TextButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.add),
+                label: const Text('Button'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(iconStyle(tester, Icons.add).color, foregroundColor);
+    },
+  );
 }

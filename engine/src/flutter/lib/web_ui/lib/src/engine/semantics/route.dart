@@ -6,17 +6,8 @@ import '../dom.dart';
 import '../semantics.dart';
 import '../util.dart';
 
-/// Denotes that all descendant nodes are inside a route.
-///
-/// Routes can include dialogs, pop-up menus, sub-screens, and more.
-///
-/// See also:
-///
-///   * [RouteName], which provides a description for this route in the absense
-///     of an explicit route label set on the route itself.
-class SemanticRoute extends SemanticRole {
-  SemanticRoute(SemanticsObject semanticsObject)
-    : super.blank(EngineSemanticsRole.route, semanticsObject) {
+class SemanticRouteBase extends SemanticRole {
+  SemanticRouteBase(super.kind, super.object) : super.blank() {
     // The following behaviors can coexist with the route. Generic `RouteName`
     // and `LabelAndValue` are not used by this role because when the route
     // names its own route an `aria-label` is used instead of
@@ -42,13 +33,6 @@ class SemanticRoute extends SemanticRole {
       // Case 2: nothing requested explicit focus. Focus on the first descendant.
       _setDefaultFocus();
     });
-
-    // Lacking any more specific information, ARIA role "dialog" is the
-    // closest thing to Flutter's route. This can be revisited if better
-    // options become available, especially if the framework volunteers more
-    // specific information about the route. Other attributes in the vicinity
-    // of routes include: "alertdialog", `aria-modal`, "menu", "tooltip".
-    setAriaRole('dialog');
   }
 
   void _setDefaultFocus() {
@@ -109,6 +93,63 @@ class SemanticRoute extends SemanticRole {
   }
 }
 
+/// Denotes that all descendant nodes are inside a route.
+///
+/// See also:
+///
+///   * [RouteName], which provides a description for this route in the absence
+///     of an explicit route label set on the route itself.
+class SemanticRoute extends SemanticRouteBase {
+  SemanticRoute(SemanticsObject object) : super(EngineSemanticsRole.route, object) {
+    // Lacking any more specific information, ARIA role "dialog" is the
+    // closest thing to Flutter's route. This can be revisited if better
+    // options become available, especially if the framework volunteers more
+    // specific information about the route. Other attributes in the vicinity
+    // of routes include: "alertdialog", `aria-modal`, "menu", "tooltip".
+    setAriaRole('dialog');
+  }
+}
+
+/// Indicates the container as a pop dialog.
+///
+/// Uses aria dialog role to convey this semantic information to the element.
+///
+/// Setting this role will also set aria-modal to true, which helps screen
+/// reader better understand this section of screen.
+///
+/// Screen-readers take advantage of "aria-label" to describe the visual.
+///
+/// See also:
+///
+///   * [RouteName], which provides a description for this route in the absence
+///     of an explicit route label set on the route itself.
+class SemanticDialog extends SemanticRouteBase {
+  SemanticDialog(SemanticsObject object) : super(EngineSemanticsRole.dialog, object) {
+    setAriaRole('dialog');
+    setAttribute('aria-modal', true);
+  }
+}
+
+/// Indicates the container as an alert dialog.
+///
+/// Uses aria alertdialog role to convey this semantic information to the element.
+///
+/// Setting this role will also set aria-modal to true, which helps screen
+/// reader better understand this section of screen.
+///
+/// Screen-readers takes advantage of "aria-label" to describe the visual.
+///
+/// See also:
+///
+///   * [RouteName], which provides a description for this route in the absence
+///     of an explicit route label set on the route itself.
+class SemanticAlertDialog extends SemanticRouteBase {
+  SemanticAlertDialog(SemanticsObject object) : super(EngineSemanticsRole.alertDialog, object) {
+    setAriaRole('alertdialog');
+    setAttribute('aria-modal', true);
+  }
+}
+
 /// Supplies a description for the nearest ancestor [SemanticRoute].
 ///
 /// This role is assigned to nodes that have `namesRoute` set but not
@@ -121,7 +162,7 @@ class SemanticRoute extends SemanticRole {
 class RouteName extends SemanticBehavior {
   RouteName(super.semanticsObject, super.owner);
 
-  SemanticRoute? _route;
+  SemanticRouteBase? _route;
 
   @override
   void update() {
@@ -139,7 +180,7 @@ class RouteName extends SemanticBehavior {
     }
 
     if (semanticsObject.isLabelDirty) {
-      final SemanticRoute? route = _route;
+      final SemanticRouteBase? route = _route;
       if (route != null) {
         // Already attached to a route, just update the description.
         route.describeBy(this);
@@ -158,11 +199,11 @@ class RouteName extends SemanticBehavior {
 
   void _lookUpNearestAncestorRoute() {
     SemanticsObject? parent = semanticsObject.parent;
-    while (parent != null && parent.semanticRole?.kind != EngineSemanticsRole.route) {
+    while (parent != null && (parent.semanticRole is! SemanticRouteBase)) {
       parent = parent.parent;
     }
-    if (parent != null && parent.semanticRole?.kind == EngineSemanticsRole.route) {
-      _route = parent.semanticRole! as SemanticRoute;
+    if (parent != null) {
+      _route = parent.semanticRole! as SemanticRouteBase;
     }
   }
 }

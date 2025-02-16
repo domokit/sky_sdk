@@ -8,7 +8,6 @@
 #include <gtk/gtk.h>
 
 #include "flutter/shell/platform/linux/fl_key_event.h"
-#include "flutter/shell/platform/linux/fl_text_input_view_delegate.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_binary_messenger.h"
 
 G_BEGIN_DECLS
@@ -29,25 +28,50 @@ G_DECLARE_FINAL_TYPE(FlTextInputHandler,
 /**
  * fl_text_input_handler_new:
  * @messenger: an #FlBinaryMessenger.
- * @im_context: (allow-none): a #GtkIMContext.
- * @view_delegate: an #FlTextInputViewDelegate.
  *
  * Creates a new handler that implements SystemChannels.textInput from the
  * Flutter services library.
  *
  * Returns: a new #FlTextInputHandler.
  */
-FlTextInputHandler* fl_text_input_handler_new(
-    FlBinaryMessenger* messenger,
-    GtkIMContext* im_context,
-    FlTextInputViewDelegate* view_delegate);
+FlTextInputHandler* fl_text_input_handler_new(FlBinaryMessenger* messenger);
+
+/**
+ * fl_text_input_handler_get_im_context:
+ * @handler: an #FlTextInputHandler.
+ *
+ * Get the IM context that is being used. Provided for testing purposes.
+ *
+ * Returns: a #GtkIMContext.
+ */
+GtkIMContext* fl_text_input_handler_get_im_context(FlTextInputHandler* handler);
+
+/**
+ * fl_text_input_handler_set_widget:
+ * @handler: an #FlTextInputHandler.
+ * @widget: the widget with keyboard focus.
+ *
+ * Set the widget that has input focus.
+ */
+void fl_text_input_handler_set_widget(FlTextInputHandler* handler,
+                                      GtkWidget* widget);
+
+/**
+ * fl_text_input_handler_get_widget:
+ * @handler: an #FlTextInputHandler.
+ *
+ * Get the widget that has input focus.
+ *
+ * Returns: a #GtkWidget or %NULL if none active.
+ */
+GtkWidget* fl_text_input_handler_get_widget(FlTextInputHandler* handler);
 
 /**
  * fl_text_input_handler_filter_keypress
  * @handler: an #FlTextInputHandler.
  * @event: a #FlKeyEvent
  *
- * Process a Gdk key event.
+ * Process a key event.
  *
  * Returns: %TRUE if the event was used.
  */

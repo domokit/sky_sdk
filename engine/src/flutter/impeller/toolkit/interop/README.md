@@ -16,7 +16,7 @@ A single-header C API for 2D graphics and text rendering. [Impeller](../../READM
   * The text layout and shaping engine along with the bundled ICU data tables brings the size up to ~2.5 MB.
   * If the application does not need text layout and shaping, or can interface with an existing library on the target platform, it is recommended to generate the SDK without built-in support for typography.
 * **Performant**
-  * Built to perform the best when using a modern graphics API like Metal or Vulkan (not all may be available to start) and when running on mobile tiler GPUs like the ones found in smartphones and AppleSilicon/ARM desktops.
+  * Built to perform the best when using a modern graphics API like Metal or Vulkan and when running on mobile tiler GPUs like the ones found in smartphones and AppleSilicon/ARM desktops.
   * Impeller does need a GPU. Performance will likely be inadequate for interactive use cases when using software rendering. Software rendering can be enabled using projects like SwiftShader, Angle, LLVMPipe, etc… If you are using software rendering in your projects, restrict its use to testing on CI. Impeller will likely never have a dedicated software renderer.
 
 # Prebuilt Artifacts
@@ -79,7 +79,7 @@ window.Draw(dl);
 
 ### Standalone
 
-A fully functional example of using Impeller to draw using GLFW is available in [`example.c`](example.c). This example is also present in the `impeller_sdk.zip` [prebuilts](#prebuilt-artifacts) along with necessary artifacts.
+A fully functional example of using Impeller to draw using GLFW is available in [`example_gl.c`](example_gl.c), [`example_vk.c`](example_vk.c) and [`example_mtl.c`](example_mtl.c). This example is also present in the `impeller_sdk.zip` [prebuilts](#prebuilt-artifacts) along with necessary artifacts.
 
 ### CMake
 

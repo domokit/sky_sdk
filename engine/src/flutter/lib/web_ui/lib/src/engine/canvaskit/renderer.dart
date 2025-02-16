@@ -48,15 +48,25 @@ class CanvasKitRenderer implements Renderer {
   Rasterizer _rasterizer = _createRasterizer();
 
   static Rasterizer _createRasterizer() {
-    if (isSafari || isFirefox) {
+    if (configuration.canvasKitForceMultiSurfaceRasterizer || isSafari || isFirefox) {
       return MultiSurfaceRasterizer();
     }
     return OffscreenCanvasRasterizer();
   }
 
+  /// Resets the [Rasterizer] to the default value. Used in tests.
+  void debugResetRasterizer() {
+    _rasterizer = _createRasterizer();
+  }
+
   /// Override the rasterizer with the given [_rasterizer]. Used in tests.
   void debugOverrideRasterizer(Rasterizer testRasterizer) {
     _rasterizer = testRasterizer;
+  }
+
+  /// Returns the current [Rasterizer]. Used in tests.
+  Rasterizer debugGetRasterizer() {
+    return _rasterizer;
   }
 
   set resourceCacheMaxBytes(int bytes) => _rasterizer.setResourceCacheMaxBytes(bytes);

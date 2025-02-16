@@ -10,7 +10,6 @@ import 'package:test/test.dart';
 import 'package:ui/src/engine.dart';
 
 import '../../common/matchers.dart';
-import '../../html/image_test.dart';
 
 void main() {
   internalBootstrapBrowserTest(() => doTests);

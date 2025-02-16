@@ -111,7 +111,9 @@ Future<void> buildMacOS({
   final ProjectMigration migration = ProjectMigration(migrators);
   await migration.run();
 
-  final Directory flutterBuildDir = globals.fs.directory(getMacOSBuildDirectory());
+  final Directory flutterBuildDir = flutterProject.directory.childDirectory(
+    getMacOSBuildDirectory(),
+  );
   if (!flutterBuildDir.existsSync()) {
     flutterBuildDir.createSync(recursive: true);
   }

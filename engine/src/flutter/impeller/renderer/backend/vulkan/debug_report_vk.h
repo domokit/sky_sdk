@@ -30,12 +30,12 @@ class DebugReportVK {
 
   Result OnDebugCallback(vk::DebugUtilsMessageSeverityFlagBitsEXT severity,
                          vk::DebugUtilsMessageTypeFlagsEXT type,
-                         const VkDebugUtilsMessengerCallbackDataEXT* data);
+                         const vk::DebugUtilsMessengerCallbackDataEXT* data);
 
   static VKAPI_ATTR VkBool32 VKAPI_CALL DebugUtilsMessengerCallback(
-      VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-      VkDebugUtilsMessageTypeFlagsEXT type,
-      const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
+      vk::DebugUtilsMessageSeverityFlagBitsEXT severity,
+      vk::DebugUtilsMessageTypeFlagsEXT type,
+      const vk::DebugUtilsMessengerCallbackDataEXT* callback_data,
       void* user_data);
 
   DebugReportVK(const DebugReportVK&) = delete;

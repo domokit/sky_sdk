@@ -34,3 +34,6 @@ e.g `./gradlew test --tests "com.flutter.gradle.BaseApplicationNameHandlerTest.s
 
 Sometimes changing a test name and then running it will cause an IDE error. To get Android Studio back
 to a good state on Mac, run `Help > "Repair IDE"`, and then in the popup window `"Rescan project indexes > Everything works now."`
+
+To add a new test, add a class under `src/test/kotlin`, with methods annotated with `@Test`.
+These tests will get automatically run on CI by `packages/flutter_tools/test/integration.shard/android_run_flutter_gradle_plugin_tests_test.dart`.

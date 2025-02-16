@@ -76,7 +76,12 @@ class CupertinoButton extends StatefulWidget {
     this.padding,
     this.color,
     this.disabledColor = CupertinoColors.quaternarySystemFill,
+    @Deprecated(
+      'Use minimumSize instead. '
+      'This feature was deprecated after v3.28.0-3.0.pre.',
+    )
     this.minSize,
+    this.minimumSize,
     this.pressedOpacity = 0.4,
     this.borderRadius,
     this.alignment = Alignment.center,
@@ -87,6 +92,7 @@ class CupertinoButton extends StatefulWidget {
     this.onLongPress,
     required this.onPressed,
   }) : assert(pressedOpacity == null || (pressedOpacity >= 0.0 && pressedOpacity <= 1.0)),
+       assert(minimumSize == null || minSize == null),
        _style = _CupertinoButtonStyle.plain;
 
   /// Creates an iOS-style button with a tinted background.
@@ -105,7 +111,12 @@ class CupertinoButton extends StatefulWidget {
     this.padding,
     this.color,
     this.disabledColor = CupertinoColors.tertiarySystemFill,
+    @Deprecated(
+      'Use minimumSize instead. '
+      'This feature was deprecated after v3.28.0-3.0.pre.',
+    )
     this.minSize,
+    this.minimumSize,
     this.pressedOpacity = 0.4,
     this.borderRadius,
     this.alignment = Alignment.center,
@@ -115,21 +126,26 @@ class CupertinoButton extends StatefulWidget {
     this.autofocus = false,
     this.onLongPress,
     required this.onPressed,
-  }) : _style = _CupertinoButtonStyle.tinted;
+  }) : assert(minimumSize == null || minSize == null),
+       _style = _CupertinoButtonStyle.tinted;
 
   /// Creates an iOS-style button with a filled background.
   ///
-  /// The background color is derived from the [CupertinoTheme]'s `primaryColor`.
-  ///
-  /// To specify a custom background color, use the [color] argument of the
-  /// default constructor.
+  /// The background color is derived from the [color] argument.
+  /// The foreground color is the [CupertinoTheme]'s `primaryContrastingColor`.
   const CupertinoButton.filled({
     super.key,
     required this.child,
     this.sizeStyle = CupertinoButtonSize.large,
     this.padding,
+    this.color,
     this.disabledColor = CupertinoColors.tertiarySystemFill,
+    @Deprecated(
+      'Use minimumSize instead. '
+      'This feature was deprecated after v3.28.0-3.0.pre.',
+    )
     this.minSize,
+    this.minimumSize,
     this.pressedOpacity = 0.4,
     this.borderRadius,
     this.alignment = Alignment.center,
@@ -140,7 +156,7 @@ class CupertinoButton extends StatefulWidget {
     this.onLongPress,
     required this.onPressed,
   }) : assert(pressedOpacity == null || (pressedOpacity >= 0.0 && pressedOpacity <= 1.0)),
-       color = null,
+       assert(minimumSize == null || minSize == null),
        _style = _CupertinoButtonStyle.filled;
 
   /// The widget below this widget in the tree.
@@ -181,7 +197,18 @@ class CupertinoButton extends StatefulWidget {
   ///
   /// Defaults to kMinInteractiveDimensionCupertino which the iOS Human
   /// Interface Guidelines recommends as the minimum tappable area.
+  @Deprecated(
+    'Use minimumSize instead. '
+    'This feature was deprecated after v3.28.0-3.0.pre.',
+  )
   final double? minSize;
+
+  /// The minimum size of the button.
+  ///
+  /// Defaults to a button with a height and a width of
+  /// [kMinInteractiveDimensionCupertino], which the iOS Human
+  /// Interface Guidelines recommends as the minimum tappable area.
+  final Size? minimumSize;
 
   /// The opacity that the button will fade to when it is pressed.
   /// The button will have an opacity of 1.0 when it is not pressed.
@@ -355,6 +382,12 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     final bool enabled = widget.enabled;
+    final Size? minimumSize =
+        widget.minimumSize == null
+            ? widget.minSize == null
+                ? null
+                : Size(widget.minSize!, widget.minSize!)
+            : widget.minimumSize!;
     final CupertinoThemeData themeData = CupertinoTheme.of(context);
     final Color primaryColor = themeData.primaryColor;
     final Color? backgroundColor = (widget.color == null
@@ -418,11 +451,11 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 minWidth:
-                    widget.minSize ??
+                    minimumSize?.width ??
                     kCupertinoButtonMinSize[widget.sizeStyle] ??
                     kMinInteractiveDimensionCupertino,
                 minHeight:
-                    widget.minSize ??
+                    minimumSize?.height ??
                     kCupertinoButtonMinSize[widget.sizeStyle] ??
                     kMinInteractiveDimensionCupertino,
               ),

@@ -85,79 +85,7 @@ class NextContext extends Context {
       CherrypickState.ABANDONED,
     ];
     switch (state.currentPhase) {
-      case pb.ReleasePhase.APPLY_ENGINE_CHERRYPICKS:
-        final Remote upstream = Remote.upstream(state.engine.upstream.url);
-        final EngineRepository engine = EngineRepository(
-          checkouts,
-          initialRef: state.engine.workingBranch,
-          upstreamRemote: upstream,
-          previousCheckoutLocation: state.engine.checkoutPath,
-        );
-        if (!state_import.requiresEnginePR(state)) {
-          stdio.printStatus('This release has no engine cherrypicks. No Engine PR is necessary.\n');
-          break;
-        }
-
-        final List<pb.Cherrypick> unappliedCherrypicks = <pb.Cherrypick>[
-          for (final pb.Cherrypick cherrypick in state.engine.cherrypicks)
-            if (!finishedStates.contains(cherrypick.state)) cherrypick,
-        ];
-
-        if (unappliedCherrypicks.isEmpty) {
-          stdio.printStatus('All engine cherrypicks have been auto-applied by the conductor.\n');
-        } else {
-          if (unappliedCherrypicks.length == 1) {
-            stdio.printStatus(
-              'There was ${unappliedCherrypicks.length} cherrypick that was not auto-applied.',
-            );
-          } else {
-            stdio.printStatus(
-              'There were ${unappliedCherrypicks.length} cherrypicks that were not auto-applied.',
-            );
-          }
-          stdio.printStatus(
-            'These must be applied manually in the directory '
-            '${state.engine.checkoutPath} before proceeding.\n',
-          );
-        }
-        if (!autoAccept) {
-          final bool response = await prompt(
-            'Are you ready to push your engine branch to the repository '
-            '${state.engine.mirror.url}?',
-          );
-          if (!response) {
-            stdio.printError('Aborting command.');
-            updateState(state, stdio.logs);
-            return;
-          }
-        }
-
-        await pushWorkingBranch(engine, state.engine);
-      case pb.ReleasePhase.VERIFY_ENGINE_CI:
-        stdio.printStatus('You must validate post-submit CI for your engine PR and merge it');
-        if (!autoAccept) {
-          final bool response = await prompt(
-            'Has CI passed for the engine PR?\n\n'
-            '${state_import.luciConsoleLink(state.engine.candidateBranch, 'engine')}',
-          );
-          if (!response) {
-            stdio.printError('Aborting command.');
-            updateState(state, stdio.logs);
-            return;
-          }
-        }
       case pb.ReleasePhase.APPLY_FRAMEWORK_CHERRYPICKS:
-        final Remote engineUpstreamRemote = Remote.upstream(state.engine.upstream.url);
-        final EngineRepository engine = EngineRepository(
-          checkouts,
-          // We explicitly want to check out the merged version from upstream
-          initialRef: '${engineUpstreamRemote.name}/${state.engine.candidateBranch}',
-          upstreamRemote: engineUpstreamRemote,
-          previousCheckoutLocation: state.engine.checkoutPath,
-        );
-
-        final String engineRevision = await engine.reverseParse('HEAD');
-
         final Remote upstream = Remote.upstream(state.framework.upstream.url);
         final FrameworkRepository framework = FrameworkRepository(
           checkouts,
@@ -166,26 +94,12 @@ class NextContext extends Context {
           previousCheckoutLocation: state.framework.checkoutPath,
         );
         stdio.printStatus('Writing candidate branch...');
-        bool needsCommit = await framework.updateCandidateBranchVersion(
+        final bool needsCommit = await framework.updateCandidateBranchVersion(
           state.framework.candidateBranch,
         );
         if (needsCommit) {
           final String revision = await framework.commit(
             'Create candidate branch version ${state.framework.candidateBranch} for ${state.releaseChannel}',
-            addFirst: true,
-          );
-          // append to list of cherrypicks so we know a PR is required
-          state.framework.cherrypicks.add(
-            pb.Cherrypick.create()
-              ..appliedRevision = revision
-              ..state = pb.CherrypickState.COMPLETED,
-          );
-        }
-        stdio.printStatus('Rolling new engine hash $engineRevision to framework checkout...');
-        needsCommit = await framework.updateEngineRevision(engineRevision);
-        if (needsCommit) {
-          final String revision = await framework.commit(
-            'Update Engine revision to $engineRevision for ${state.releaseChannel} release ${state.releaseVersion}',
             addFirst: true,
           );
           // append to list of cherrypicks so we know a PR is required

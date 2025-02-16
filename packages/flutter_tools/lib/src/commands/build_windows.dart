@@ -64,7 +64,6 @@ class BuildWindowsCommand extends BuildSubCommand {
             : 'windows-x64';
     final TargetPlatform targetPlatform = getTargetPlatformForName(defaultTargetPlatform);
 
-    displayNullSafetyMode(buildInfo);
     await buildWindows(
       project.windows,
       buildInfo,

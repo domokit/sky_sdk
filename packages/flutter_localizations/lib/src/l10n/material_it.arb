@@ -56,7 +56,7 @@
   "refreshIndicatorSemanticLabel": "Aggiorna",
   "moreButtonTooltip": "Altro",
   "dateSeparator": "/",
-  "dateHelpText": "mm/gg/aaaa",
+  "dateHelpText": "gg/mm/aaaa",
   "selectYearSemanticsLabel": "Seleziona anno",
   "unspecifiedDate": "Data",
   "unspecifiedDateRange": "Intervallo di date",

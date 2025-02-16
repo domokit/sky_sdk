@@ -7,7 +7,7 @@ import 'package:yaml/yaml.dart';
 
 enum Compiler { dart2js, dart2wasm }
 
-enum Renderer { html, canvaskit, skwasm }
+enum Renderer { canvaskit, skwasm }
 
 class CompileConfiguration {
   CompileConfiguration(this.name, this.compiler, this.renderer);

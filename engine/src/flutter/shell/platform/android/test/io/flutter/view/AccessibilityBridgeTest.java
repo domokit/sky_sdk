@@ -37,6 +37,7 @@ import android.text.SpannableString;
 import android.text.SpannedString;
 import android.text.style.LocaleSpan;
 import android.text.style.TtsSpan;
+import android.text.style.URLSpan;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewParent;
@@ -191,6 +192,26 @@ public class AccessibilityBridgeTest {
 
     assertEquals(nodeInfo.getContentDescription(), null);
     assertEquals(nodeInfo.getText(), null);
+  }
+
+  @Test
+  public void itCreatesURLSpanForlinkURL() {
+    AccessibilityBridge accessibilityBridge = setUpBridge();
+
+    TestSemanticsNode testSemanticsNode = new TestSemanticsNode();
+    testSemanticsNode.label = "Hello";
+    testSemanticsNode.linkUrl = "https://flutter.dev";
+    testSemanticsNode.addFlag(AccessibilityBridge.Flag.IS_LINK);
+    TestSemanticsUpdate testSemanticsUpdate = testSemanticsNode.toUpdate();
+
+    testSemanticsUpdate.sendUpdateToBridge(accessibilityBridge);
+    AccessibilityNodeInfo nodeInfo = accessibilityBridge.createAccessibilityNodeInfo(0);
+    SpannableString actual = (SpannableString) nodeInfo.getContentDescription();
+    assertEquals(actual.toString(), "Hello");
+    Object[] objectSpans = actual.getSpans(0, actual.length(), Object.class);
+    assertEquals(objectSpans.length, 1);
+    URLSpan span = (URLSpan) objectSpans[0];
+    assertEquals(span.getURL(), "https://flutter.dev");
   }
 
   @Test
@@ -2311,6 +2332,7 @@ public class AccessibilityBridgeTest {
     String hint = null;
     List<TestStringAttribute> hintAttributes;
     String tooltip = null;
+    String linkUrl = null;
     int textDirection = 0;
     float left = 0.0f;
     float top = 0.0f;
@@ -2372,6 +2394,12 @@ public class AccessibilityBridgeTest {
         bytes.putInt(-1);
       } else {
         strings.add(tooltip);
+        bytes.putInt(strings.size() - 1);
+      }
+      if (linkUrl == null) {
+        bytes.putInt(-1);
+      } else {
+        strings.add(linkUrl);
         bytes.putInt(strings.size() - 1);
       }
       bytes.putInt(textDirection);

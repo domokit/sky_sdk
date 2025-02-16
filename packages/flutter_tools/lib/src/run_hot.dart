@@ -133,6 +133,9 @@ class HotRunner extends ResidentRunner {
 
   String? flavor;
 
+  @override
+  bool get supportsDetach => stopAppDuringCleanup;
+
   Future<void> _calculateTargetPlatform() async {
     if (_targetPlatform != null) {
       return;
@@ -253,12 +256,10 @@ class HotRunner extends ResidentRunner {
         reloadSources: _reloadSourcesService,
         restart: _restartService,
         compileExpression: _compileExpressionService,
-        getSkSLMethod: writeSkSL,
         allowExistingDdsInstance: allowExistingDdsInstance,
       );
       // Catches all exceptions, non-Exception objects are rethrown.
     } catch (error) {
-      // ignore: avoid_catches_without_on_clauses
       if (error is! Exception && error is! String) {
         rethrow;
       }
@@ -536,7 +537,7 @@ class HotRunner extends ResidentRunner {
           bundleFirstUpload: isFirstUpload,
           bundleDirty: !isFirstUpload && rebuildBundle,
           fullRestart: fullRestart,
-          pathToReload: getReloadPath(fullRestart: fullRestart, swap: _swap),
+          pathToReload: getReloadPath(resetCompiler: fullRestart, swap: _swap),
           invalidatedFiles: invalidationResult.uris!,
           packageConfig: invalidationResult.packageConfig!,
           dillOutputPath: dillOutputPath,
@@ -1156,35 +1157,6 @@ class HotRunner extends ResidentRunner {
       reloadMessage,
       extraTimings: extraTimings,
     );
-  }
-
-  @override
-  void printHelp({required bool details}) {
-    globals.printStatus('Flutter run key commands.');
-    commandHelp.r.print();
-    if (supportsRestart) {
-      commandHelp.R.print();
-    }
-    if (details) {
-      printHelpDetails();
-      commandHelp.hWithDetails.print();
-    } else {
-      commandHelp.hWithoutDetails.print();
-    }
-    if (stopAppDuringCleanup) {
-      commandHelp.d.print();
-    }
-    commandHelp.c.print();
-    commandHelp.q.print();
-    if (debuggingOptions.buildInfo.nullSafetyMode != NullSafetyMode.sound) {
-      globals.printStatus('');
-      globals.printStatus('Running without sound null safety ⚠️', emphasis: true);
-      globals.printStatus(
-        'Dart 3 will only support sound null safety, see https://dart.dev/null-safety',
-      );
-    }
-    globals.printStatus('');
-    printDebuggerList();
   }
 
   @visibleForTesting

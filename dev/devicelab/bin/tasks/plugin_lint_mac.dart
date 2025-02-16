@@ -37,13 +37,7 @@ Future<void> main() async {
           'integration_test.podspec',
         );
 
-        await exec('pod', <String>[
-          'lib',
-          'lint',
-          iosintegrationTestPodspec,
-          '--use-libraries',
-          '--verbose',
-        ]);
+        await exec('pod', <String>['lib', 'lint', iosintegrationTestPodspec, '--use-libraries']);
 
         final String macosintegrationTestPodspec = path.join(
           integrationTestPackage,
@@ -51,7 +45,7 @@ Future<void> main() async {
           'macos',
           'integration_test_macos.podspec',
         );
-        await _tryMacOSLint(macosintegrationTestPodspec, <String>['--verbose']);
+        await _tryMacOSLint(macosintegrationTestPodspec, <String>[]);
       });
 
       section('Create Objective-C plugin');
@@ -76,13 +70,7 @@ Future<void> main() async {
       final String objcPluginPath = path.join(tempDir.path, objcPluginName);
       final String objcPodspecPath = path.join(objcPluginPath, 'ios', '$objcPluginName.podspec');
       await inDirectory(tempDir, () async {
-        await exec('pod', <String>[
-          'lib',
-          'lint',
-          objcPodspecPath,
-          '--allow-warnings',
-          '--verbose',
-        ]);
+        await exec('pod', <String>['lib', 'lint', objcPodspecPath, '--allow-warnings']);
       });
 
       section('Lint Objective-C iOS podspec plugin as library');
@@ -94,7 +82,6 @@ Future<void> main() async {
           objcPodspecPath,
           '--allow-warnings',
           '--use-libraries',
-          '--verbose',
         ]);
       });
 
@@ -120,13 +107,7 @@ Future<void> main() async {
       final String swiftPluginPath = path.join(tempDir.path, swiftPluginName);
       final String swiftPodspecPath = path.join(swiftPluginPath, 'ios', '$swiftPluginName.podspec');
       await inDirectory(tempDir, () async {
-        await exec('pod', <String>[
-          'lib',
-          'lint',
-          swiftPodspecPath,
-          '--allow-warnings',
-          '--verbose',
-        ]);
+        await exec('pod', <String>['lib', 'lint', swiftPodspecPath, '--allow-warnings']);
       });
 
       section('Lint Swift iOS podspec plugin as library');
@@ -138,7 +119,6 @@ Future<void> main() async {
           swiftPodspecPath,
           '--allow-warnings',
           '--use-libraries',
-          '--verbose',
         ]);
       });
 
@@ -150,17 +130,13 @@ Future<void> main() async {
         '$swiftPluginName.podspec',
       );
       await inDirectory(tempDir, () async {
-        await _tryMacOSLint(macOSPodspecPath, <String>['--allow-warnings', '--verbose']);
+        await _tryMacOSLint(macOSPodspecPath, <String>['--allow-warnings']);
       });
 
       section('Lint Swift macOS podspec plugin as library');
 
       await inDirectory(tempDir, () async {
-        await _tryMacOSLint(macOSPodspecPath, <String>[
-          '--allow-warnings',
-          '--use-libraries',
-          '--verbose',
-        ]);
+        await _tryMacOSLint(macOSPodspecPath, <String>['--allow-warnings', '--use-libraries']);
       });
 
       section('Create Objective-C application');

@@ -343,4 +343,8 @@ void Runner::SetupTraceObserver() {
 }
 #endif  // !defined(DART_PRODUCT)
 
+void Runner::handle_unknown_method(uint64_t ordinal, bool method_has_response) {
+  FML_LOG(ERROR) << "Unknown method called on Runner. Ordinal: " << ordinal;
+}
+
 }  // namespace flutter_runner

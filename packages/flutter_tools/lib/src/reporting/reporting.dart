@@ -8,14 +8,11 @@ import 'dart:async';
 
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
-import 'package:package_config/package_config.dart';
 import 'package:usage/usage_io.dart';
 
 import '../base/error_handling_io.dart';
 import '../base/file_system.dart';
 import '../base/time.dart';
-import '../build_info.dart';
-import '../dart/language_version.dart';
 import '../doctor_validator.dart';
 import '../features.dart';
 import '../globals.dart' as globals;

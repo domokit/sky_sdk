@@ -13,11 +13,6 @@ import 'package:ui/ui_web/src/ui_web.dart' as ui_web;
 
 import '../engine.dart';
 
-/// Requests that the browser schedule a frame.
-///
-/// This may be overridden in tests, for example, to pump fake frames.
-ui.VoidCallback? scheduleFrameCallback;
-
 /// Signature of functions added as a listener to high contrast changes
 typedef HighContrastListener = void Function(bool enabled);
 typedef _KeyDataResponseCallback = void Function(bool handled);
@@ -735,10 +730,7 @@ class EnginePlatformDispatcher extends ui.PlatformDispatcher {
   ///    scheduling of frames.
   @override
   void scheduleFrame() {
-    if (scheduleFrameCallback == null) {
-      throw Exception('scheduleFrameCallback must be initialized first.');
-    }
-    scheduleFrameCallback!();
+    FrameService.instance.scheduleFrame();
   }
 
   @override
@@ -746,15 +738,7 @@ class EnginePlatformDispatcher extends ui.PlatformDispatcher {
     required ui.VoidCallback beginFrame,
     required ui.VoidCallback drawFrame,
   }) {
-    Timer.run(beginFrame);
-    // We use timers here to ensure that microtasks flush in between.
-    //
-    // TODO(dkwingsmt): This logic was moved from the framework and is different
-    // from how Web renders a regular frame, which doesn't flush microtasks
-    // between the callbacks at all (see `initializeEngineServices`). We might
-    // want to change this. See the to-do in `initializeEngineServices` and
-    // https://github.com/flutter/engine/pull/50570#discussion_r1496671676
-    Timer.run(drawFrame);
+    FrameService.instance.scheduleWarmUpFrame(beginFrame: beginFrame, drawFrame: drawFrame);
   }
 
   /// Updates the application's rendering on the GPU with the newly provided
@@ -1248,11 +1232,28 @@ class EnginePlatformDispatcher extends ui.PlatformDispatcher {
   /// Engine code should use this method instead of the callback directly.
   /// Otherwise zones won't work properly.
   void invokeOnSemanticsAction(int viewId, int nodeId, ui.SemanticsAction action, ByteData? args) {
-    invoke1<ui.SemanticsActionEvent>(
-      _onSemanticsActionEvent,
-      _onSemanticsActionEventZone,
-      ui.SemanticsActionEvent(type: action, nodeId: nodeId, viewId: viewId, arguments: args),
-    );
+    void sendActionToFramework() {
+      invoke1<ui.SemanticsActionEvent>(
+        _onSemanticsActionEvent,
+        _onSemanticsActionEventZone,
+        ui.SemanticsActionEvent(type: action, nodeId: nodeId, viewId: viewId, arguments: args),
+      );
+    }
+
+    // Semantic actions should not be sent to the framework while the framework
+    // is rendering a frame, even if the action is induced as a result of
+    // rendering it. An example of when the framework might need to be notified
+    // about an action as a result of rendering a new frame is a semantics
+    // update which results in the screen reader shifting focus (DOM "focus"
+    // events are delivered synchronously). In this situation a
+    // `SemanticsAction.focus` might be induced, and while it should be
+    // delivered to the framework asap, it must be done after the frame is done
+    // rendering at the earliest.
+    if (FrameService.instance.isRenderingFrame) {
+      Timer.run(sendActionToFramework);
+    } else {
+      sendActionToFramework();
+    }
   }
 
   // TODO(dnfield): make this work on web.

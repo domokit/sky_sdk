@@ -110,7 +110,7 @@ double _rectDistance(Rect a, Rect b) {
 }
 
 double _sizeDistance(Size a, Size b) {
-  final Offset delta = (b - a) as Offset; // ignore: unnecessary_parenthesis
+  final Offset delta = (b - a) as Offset;
   return delta.distance;
 }
 
@@ -511,4 +511,18 @@ class HtmlPatternMatcher extends Matcher {
 
     return mismatchDescription;
   }
+}
+
+Matcher listEqual(List<int> source, {int tolerance = 0}) {
+  return predicate((List<int> target) {
+    if (source.length != target.length) {
+      return false;
+    }
+    for (int i = 0; i < source.length; i += 1) {
+      if ((source[i] - target[i]).abs() > tolerance) {
+        return false;
+      }
+    }
+    return true;
+  }, source.toString());
 }

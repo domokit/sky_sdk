@@ -8,6 +8,8 @@ import '../base/context.dart';
 import '../base/file_system.dart';
 import '../base/logger.dart';
 import '../base/net.dart';
+import '../base/platform.dart';
+import '../base/terminal.dart';
 import '../base/time.dart';
 import '../device.dart';
 import '../project.dart';
@@ -28,6 +30,9 @@ abstract class WebRunnerFactory {
     required DebuggingOptions debuggingOptions,
     UrlTunneller? urlTunneller,
     required Logger logger,
+    required Terminal terminal,
+    required Platform platform,
+    required OutputPreferences outputPreferences,
     required FileSystem fileSystem,
     required SystemClock systemClock,
     required Analytics analytics,

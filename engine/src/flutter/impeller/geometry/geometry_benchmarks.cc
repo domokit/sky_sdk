@@ -33,6 +33,8 @@ Path CreateCubic(bool closed);
 Path CreateQuadratic(bool closed);
 /// Create a rounded rect.
 Path CreateRRect();
+/// Create a rounded superellipse.
+Path CreateRSuperellipse();
 }  // namespace
 
 static TessellatorLibtess tess;
@@ -141,12 +143,25 @@ MAKE_STROKE_BENCHMARK_CAPTURE(RRect, Butt, Bevel, );
 MAKE_STROKE_BENCHMARK_CAPTURE(RRect, Butt, Miter, );
 MAKE_STROKE_BENCHMARK_CAPTURE(RRect, Butt, Round, );
 
+// Same as RRect
+BENCHMARK_CAPTURE(BM_Convex, rse_convex, CreateRSuperellipse(), true);
+MAKE_STROKE_BENCHMARK_CAPTURE(RSuperellipse, Butt, Bevel, );
+MAKE_STROKE_BENCHMARK_CAPTURE(RSuperellipse, Butt, Miter, );
+MAKE_STROKE_BENCHMARK_CAPTURE(RSuperellipse, Butt, Round, );
+
 namespace {
 
 Path CreateRRect() {
   return PathBuilder{}
       .AddRoundRect(
           RoundRect::MakeRectXY(Rect::MakeLTRB(0, 0, 400, 400), 16, 16))
+      .TakePath();
+}
+
+Path CreateRSuperellipse() {
+  return PathBuilder{}
+      .AddRoundSuperellipse(
+          RoundSuperellipse::MakeRectXY(Rect::MakeLTRB(0, 0, 400, 400), 16, 16))
       .TakePath();
 }
 

@@ -13,7 +13,9 @@
 #include "impeller/core/texture_descriptor.h"
 #include "impeller/display_list/aiks_unittests.h"
 #include "impeller/display_list/canvas.h"
+#include "impeller/display_list/dl_vertices_geometry.h"
 #include "impeller/geometry/geometry_asserts.h"
+#include "impeller/playground/playground.h"
 #include "impeller/renderer/render_target.h"
 
 namespace impeller {
@@ -276,6 +278,111 @@ TEST_P(AiksTest, BackdropCountDownWithNestedSaveLayers) {
 
   canvas->Restore();
   EXPECT_TRUE(canvas->RequiresReadback());
+}
+
+TEST_P(AiksTest, DrawVerticesLinearGradientWithEmptySize) {
+  RenderCallback callback = [&](RenderTarget& render_target) {
+    ContentContext context(GetContext(), nullptr);
+    Canvas canvas(context, render_target, true, false);
+
+    std::vector<flutter::DlPoint> vertex_coordinates = {
+        flutter::DlPoint(0, 0),
+        flutter::DlPoint(600, 0),
+        flutter::DlPoint(0, 600),
+    };
+    std::vector<flutter::DlPoint> texture_coordinates = {
+        flutter::DlPoint(0, 0),
+        flutter::DlPoint(500, 0),
+        flutter::DlPoint(0, 500),
+    };
+    std::vector<uint16_t> indices = {0, 1, 2};
+    flutter::DlVertices::Builder vertices_builder(
+        flutter::DlVertexMode::kTriangleStrip, vertex_coordinates.size(),
+        flutter::DlVertices::Builder::kHasTextureCoordinates, indices.size());
+    vertices_builder.store_vertices(vertex_coordinates.data());
+    vertices_builder.store_indices(indices.data());
+    vertices_builder.store_texture_coordinates(texture_coordinates.data());
+    auto vertices = vertices_builder.build();
+
+    // The start and end points of the gradient form an empty rectangle.
+    std::vector<flutter::DlColor> colors = {flutter::DlColor::kBlue(),
+                                            flutter::DlColor::kRed()};
+    std::vector<Scalar> stops = {0.0, 1.0};
+    auto gradient = flutter::DlColorSource::MakeLinear(
+        {0, 0}, {0, 600}, 2, colors.data(), stops.data(),
+        flutter::DlTileMode::kClamp);
+
+    Paint paint;
+    paint.color_source = gradient.get();
+    canvas.DrawVertices(std::make_shared<DlVerticesGeometry>(vertices, context),
+                        BlendMode::kSourceOver, paint);
+
+    canvas.EndReplay();
+    return true;
+  };
+
+  ASSERT_TRUE(Playground::OpenPlaygroundHere(callback));
+}
+
+TEST_P(AiksTest, DrawVerticesWithEmptyTextureCoordinates) {
+  auto runtime_stages =
+      OpenAssetAsRuntimeStage("runtime_stage_simple.frag.iplr");
+
+  auto runtime_stage =
+      runtime_stages[PlaygroundBackendToRuntimeStageBackend(GetBackend())];
+  ASSERT_TRUE(runtime_stage);
+
+  auto runtime_effect = flutter::DlRuntimeEffect::MakeImpeller(runtime_stage);
+  auto uniform_data = std::make_shared<std::vector<uint8_t>>();
+  auto color_source = flutter::DlColorSource::MakeRuntimeEffect(
+      runtime_effect, {}, uniform_data);
+
+  RenderCallback callback = [&](RenderTarget& render_target) {
+    ContentContext context(GetContext(), nullptr);
+    Canvas canvas(context, render_target, true, false);
+
+    std::vector<flutter::DlPoint> vertex_coordinates = {
+        flutter::DlPoint(100, 100),
+        flutter::DlPoint(300, 100),
+        flutter::DlPoint(100, 300),
+    };
+    // The bounding box of the texture coordinates is empty.
+    std::vector<flutter::DlPoint> texture_coordinates = {
+        flutter::DlPoint(0, 0),
+        flutter::DlPoint(0, 100),
+        flutter::DlPoint(0, 0),
+    };
+    std::vector<uint16_t> indices = {0, 1, 2};
+    flutter::DlVertices::Builder vertices_builder(
+        flutter::DlVertexMode::kTriangleStrip, vertex_coordinates.size(),
+        flutter::DlVertices::Builder::kHasTextureCoordinates, indices.size());
+    vertices_builder.store_vertices(vertex_coordinates.data());
+    vertices_builder.store_indices(indices.data());
+    vertices_builder.store_texture_coordinates(texture_coordinates.data());
+    auto vertices = vertices_builder.build();
+
+    Paint paint;
+    paint.color_source = color_source.get();
+    canvas.DrawVertices(std::make_shared<DlVerticesGeometry>(vertices, context),
+                        BlendMode::kSourceOver, paint);
+
+    canvas.EndReplay();
+    return true;
+  };
+
+  ASSERT_TRUE(Playground::OpenPlaygroundHere(callback));
+}
+
+TEST_P(AiksTest, SupportsBlitToOnscreen) {
+  ContentContext context(GetContext(), nullptr);
+  auto canvas = CreateTestCanvas(context, Rect::MakeLTRB(0, 0, 100, 100),
+                                 /*requires_readback=*/true);
+
+  if (GetBackend() == PlaygroundBackend::kOpenGLES) {
+    EXPECT_FALSE(canvas->SupportsBlitToOnscreen());
+  } else {
+    EXPECT_TRUE(canvas->SupportsBlitToOnscreen());
+  }
 }
 
 }  // namespace testing

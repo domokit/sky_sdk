@@ -13,7 +13,21 @@ embed_blob("embedded_icu_data") {
   deps = []
 }
 
-impeller_component("interop") {
+# The public C/C++ Impeller API.
+impeller_component("interop_api") {
+  public = [
+    "impeller.h",
+    "impeller.hpp",
+  ]
+
+  sources = [
+    "impeller_c.c",
+    "impeller_cc.cc",
+  ]
+}
+
+# The common base used by all interop backends.
+impeller_component("interop_base") {
   sources = [
     "color_filter.cc",
     "color_filter.h",
@@ -29,11 +43,6 @@ impeller_component("interop") {
     "formats.h",
     "image_filter.cc",
     "image_filter.h",
-    "impeller.cc",
-    "impeller.h",
-    "impeller.hpp",
-    "impeller_c.c",
-    "impeller_cc.cc",
     "mask_filter.cc",
     "mask_filter.h",
     "object.cc",
@@ -59,6 +68,8 @@ impeller_component("interop") {
   ]
 
   public_deps = [
+    ":embedded_icu_data",
+    ":interop_api",
     "../../base",
     "../../display_list",
     "../../entity",
@@ -67,8 +78,15 @@ impeller_component("interop") {
     "//flutter/fml",
     "//flutter/third_party/txt",
   ]
+}
 
-  deps = [ ":embedded_icu_data" ]
+# Wires up the public API entrypoints to the appropriate backends.
+impeller_component("interop") {
+  sources = [ "impeller.cc" ]
+  public_deps = [
+    ":interop_base",
+    "backend",
+  ]
 }
 
 impeller_component("library") {
@@ -79,17 +97,60 @@ impeller_component("library") {
   deps = [ ":interop" ]
 }
 
-impeller_component("example") {
+impeller_component("example_gl") {
   target_type = "executable"
 
-  output_name = "impeller_interop_example"
+  output_name = "impeller_interop_example_gl"
 
-  sources = [ "example.c" ]
+  sources = [ "example_gl.c" ]
 
   deps = [
     ":interop",
     "//flutter/third_party/glfw",
   ]
+}
+
+impeller_component("example_mtl") {
+  target_type = "executable"
+
+  output_name = "impeller_interop_example_mtl"
+
+  sources = [ "example_mtl.m" ]
+
+  deps = [
+    ":interop",
+    "//flutter/third_party/glfw",
+  ]
+
+  frameworks = [ "QuartzCore.framework" ]
+}
+
+impeller_component("example_vk") {
+  target_type = "executable"
+
+  output_name = "impeller_interop_example_vk"
+
+  sources = [ "example_vk.c" ]
+
+  deps = [
+    ":interop",
+    "//flutter/third_party/glfw",
+  ]
+}
+
+group("example") {
+  deps = []
+  if (impeller_enable_opengles) {
+    deps += [ ":example_gl" ]
+  }
+
+  if (impeller_enable_metal) {
+    deps += [ ":example_mtl" ]
+  }
+
+  if (impeller_enable_vulkan) {
+    deps += [ ":example_vk" ]
+  }
 }
 
 impeller_component("interop_unittests") {
@@ -132,6 +193,18 @@ zip_bundle("sdk") {
     {
       source = "impeller.hpp"
       destination = "include/impeller.hpp"
+    },
+    {
+      source = "example_gl.c"
+      destination = "examples/example_gl.c"
+    },
+    {
+      source = "example_vk.c"
+      destination = "examples/example_vk.c"
+    },
+    {
+      source = "example_mtl.m"
+      destination = "examples/example_mtl.m"
     },
   ]
 

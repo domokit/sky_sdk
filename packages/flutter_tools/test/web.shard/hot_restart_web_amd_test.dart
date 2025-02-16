@@ -7,7 +7,7 @@ library;
 
 import '../src/common.dart';
 
-import 'test_data/hot_restart_web_utils.dart';
+import 'test_data/hot_restart_web_test_common.dart';
 
 void main() async {
   await testAll(useDDCLibraryBundleFormat: false);

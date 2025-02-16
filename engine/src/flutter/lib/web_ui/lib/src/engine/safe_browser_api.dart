@@ -869,7 +869,6 @@ class GlContext {
   }
 }
 
-// ignore: avoid_classes_with_only_static_members
 /// Creates gl context from cached OffscreenCanvas for webgl rendering to image.
 class GlContextCache {
   static int _maxPixelWidth = 0;

@@ -66,14 +66,14 @@ void testUsingContext(
   skip, // should default to `false`, but https://github.com/dart-lang/test/issues/545 doesn't allow this
 }) {
   if (overrides[FileSystem] != null && overrides[ProcessManager] == null) {
-    throw StateError(
+    fail(
       'If you override the FileSystem context you must also provide a ProcessManager, '
       'otherwise the processes you launch will not be dealing with the same file system '
       'that you are dealing with in your test.',
     );
   }
   if (overrides.containsKey(ProcessUtils)) {
-    throw StateError('Do not inject ProcessUtils for testing, use ProcessManager instead.');
+    fail('Do not inject ProcessUtils for testing, use ProcessManager instead.');
   }
 
   // Ensure we don't rely on the default [Config] constructor which will

@@ -291,8 +291,6 @@ class CustomDeviceAppSession {
       if (debuggingOptions.traceSystrace) 'trace-systrace=true',
       if (debuggingOptions.traceToFile != null) 'trace-to-file=${debuggingOptions.traceToFile}',
       if (debuggingOptions.endlessTraceBuffer) 'endless-trace-buffer=true',
-      if (debuggingOptions.dumpSkpOnShaderCompilation) 'dump-skp-on-shader-compilation=true',
-      if (debuggingOptions.cacheSkSL) 'cache-sksl=true',
       if (debuggingOptions.purgePersistentCache) 'purge-persistent-cache=true',
       if (debuggingOptions.debuggingEnabled) ...<String>[
         if (debuggingOptions.deviceVmServicePort != null)
