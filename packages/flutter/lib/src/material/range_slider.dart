@@ -458,6 +458,12 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     }
   }
 
+  // Always keep the ValueIndicator visible on the Overlay; otherwise, it cannot be updated during the build phase.
+  late final OverlayPortalController _valueIndicatorOverlayPortalController =
+      OverlayPortalController()..show();
+  // Control whether the value indicator is visible only when it needs to be shown during dragging.
+  late final ValueNotifier<bool> _showValueIndicatorForDragged = ValueNotifier<bool>(false);
+
   @override
   void initState() {
     super.initState();
@@ -508,9 +514,7 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     enableController.dispose();
     startPositionController.dispose();
     endPositionController.dispose();
-    overlayEntry?.remove();
-    overlayEntry?.dispose();
-    overlayEntry = null;
+    _showValueIndicatorForDragged.dispose();
     super.dispose();
   }
 
@@ -723,40 +727,61 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
       mouseCursor: effectiveMouseCursor,
       child: CompositedTransformTarget(
         link: _layerLink,
-        child: _RangeSliderRenderObjectWidget(
-          values: _unlerpRangeValues(widget.values),
-          divisions: widget.divisions,
-          labels: widget.labels,
-          sliderTheme: sliderTheme,
-          textScaleFactor: effectiveTextScale,
-          screenSize: screenSize(),
-          onChanged: _enabled && (widget.max > widget.min) ? _handleChanged : null,
-          onChangeStart: widget.onChangeStart != null ? _handleDragStart : null,
-          onChangeEnd: widget.onChangeEnd != null ? _handleDragEnd : null,
-          state: this,
-          semanticFormatterCallback: widget.semanticFormatterCallback,
-          hovering: _hovering,
+        child: OverlayPortal(
+          controller: _valueIndicatorOverlayPortalController,
+          overlayChildBuilder: (BuildContext context) {
+            return _buildValueIndicator(sliderTheme.showValueIndicator);
+          },
+          child: _RangeSliderRenderObjectWidget(
+            values: _unlerpRangeValues(widget.values),
+            divisions: widget.divisions,
+            labels: widget.labels,
+            sliderTheme: sliderTheme,
+            textScaleFactor: effectiveTextScale,
+            screenSize: screenSize(),
+            onChanged: _enabled && (widget.max > widget.min) ? _handleChanged : null,
+            onChangeStart: widget.onChangeStart != null ? _handleDragStart : null,
+            onChangeEnd: widget.onChangeEnd != null ? _handleDragEnd : null,
+            state: this,
+            semanticFormatterCallback: widget.semanticFormatterCallback,
+            hovering: _hovering,
+          ),
         ),
       ),
     );
   }
 
   final LayerLink _layerLink = LayerLink();
-
-  OverlayEntry? overlayEntry;
+  Widget _buildValueIndicator(ShowValueIndicator? showValueIndicator) {
+    late final Widget valueIndicator = CompositedTransformFollower(
+      link: _layerLink,
+      child: _ValueIndicatorRenderObjectWidget(state: this),
+    );
+    late final Widget valueIndicatorWhenDragged = ValueListenableBuilder<bool>(
+      valueListenable: _showValueIndicatorForDragged,
+      builder: (BuildContext context, bool showValueIndicator, Widget? child) {
+        return showValueIndicator ? valueIndicator : const SizedBox.shrink();
+      },
+    );
+    return switch (showValueIndicator) {
+      ShowValueIndicator.alwaysVisible => valueIndicator,
+      ShowValueIndicator.onlyForDiscrete =>
+        widget.divisions != null ? valueIndicatorWhenDragged : const SizedBox.shrink(),
+      ShowValueIndicator.onlyForContinuous =>
+        widget.divisions == null ? valueIndicatorWhenDragged : const SizedBox.shrink(),
+      ShowValueIndicator.onDrag || ShowValueIndicator.always => valueIndicatorWhenDragged,
+      _ => const SizedBox.shrink(),
+    };
+  }
 
   void showValueIndicator() {
-    if (overlayEntry == null) {
-      overlayEntry = OverlayEntry(
-        builder: (BuildContext context) {
-          return CompositedTransformFollower(
-            link: _layerLink,
-            child: _ValueIndicatorRenderObjectWidget(state: this),
-          );
-        },
-      );
-      Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
-    }
+    assert(mounted);
+    _showValueIndicatorForDragged.value = true;
+  }
+
+  void hideValueIndicator() {
+    assert(mounted);
+    _showValueIndicatorForDragged.value = false;
   }
 }
 
@@ -892,9 +917,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       curve: Curves.fastOutSlowIn,
     )..addStatusListener((AnimationStatus status) {
       if (status.isDismissed) {
-        _state.overlayEntry?.remove();
-        _state.overlayEntry?.dispose();
-        _state.overlayEntry = null;
+        _state.hideValueIndicator();
       }
     });
     _enableAnimation = CurvedAnimation(parent: _state.enableController, curve: Curves.easeInOut);
@@ -1147,10 +1170,14 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     }
   }
 
-  bool get showValueIndicator => switch (_sliderTheme.showValueIndicator!) {
-    ShowValueIndicator.onlyForDiscrete => isDiscrete,
-    ShowValueIndicator.onlyForContinuous => !isDiscrete,
-    ShowValueIndicator.always => true,
+  bool get shouldAlwaysShowValueIndicator =>
+      _sliderTheme.showValueIndicator == ShowValueIndicator.alwaysVisible;
+  bool get shouldShowValueIndicatorWhenDragged => switch (_sliderTheme.showValueIndicator!) {
+    ShowValueIndicator.onlyForDiscrete => isDiscrete && _active,
+    ShowValueIndicator.onlyForContinuous => !isDiscrete && _active,
+    ShowValueIndicator.alwaysVisible ||
+    ShowValueIndicator.always ||
+    ShowValueIndicator.onDrag => true,
     ShowValueIndicator.never => false,
   };
 
@@ -1296,7 +1323,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       onChanged!(_discretizeRangeValues(_newValues));
 
       _state.overlayController.forward();
-      if (showValueIndicator) {
+      if (shouldShowValueIndicatorWhenDragged) {
         _state.valueIndicatorController.forward();
         _state.interactionTimer?.cancel();
         _state.interactionTimer = Timer(_minimumInteractionTime * timeDilation, () {
@@ -1333,7 +1360,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
         shouldCallOnChangeStart = true;
         _active = true;
         _state.overlayController.forward();
-        if (showValueIndicator) {
+        if (shouldShowValueIndicatorWhenDragged) {
           _state.valueIndicatorController.forward();
         }
       }
@@ -1365,7 +1392,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       return;
     }
 
-    if (showValueIndicator && _state.interactionTimer == null) {
+    if (shouldShowValueIndicatorWhenDragged && _state.interactionTimer == null) {
       _state.valueIndicatorController.reverse();
     }
 
@@ -1598,7 +1625,10 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     final double bottomValue = isLastThumbStart ? endValue : startValue;
     final double topValue = isLastThumbStart ? startValue : endValue;
     final bool shouldPaintValueIndicators =
-        isEnabled && labels != null && !_valueIndicatorAnimation.isDismissed && showValueIndicator;
+        isEnabled &&
+        labels != null &&
+        ((shouldShowValueIndicatorWhenDragged && !_valueIndicatorAnimation.isDismissed) ||
+            shouldAlwaysShowValueIndicator);
 
     if (shouldPaintValueIndicators) {
       _state.paintBottomValueIndicator = (PaintingContext context, Offset offset) {
@@ -1606,8 +1636,14 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
           _sliderTheme.rangeValueIndicatorShape!.paint(
             context,
             bottomThumbCenter,
-            activationAnimation: _valueIndicatorAnimation,
-            enableAnimation: _enableAnimation,
+            activationAnimation:
+                shouldAlwaysShowValueIndicator
+                    ? const AlwaysStoppedAnimation<double>(1)
+                    : _valueIndicatorAnimation,
+            enableAnimation:
+                shouldAlwaysShowValueIndicator
+                    ? const AlwaysStoppedAnimation<double>(1)
+                    : _enableAnimation,
             isDiscrete: isDiscrete,
             isOnTop: false,
             labelPainter: bottomLabelPainter,
@@ -1686,8 +1722,14 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
           _sliderTheme.rangeValueIndicatorShape!.paint(
             context,
             topThumbCenter,
-            activationAnimation: _valueIndicatorAnimation,
-            enableAnimation: _enableAnimation,
+            activationAnimation:
+                _sliderTheme.showValueIndicator == ShowValueIndicator.alwaysVisible
+                    ? const AlwaysStoppedAnimation<double>(1)
+                    : _valueIndicatorAnimation,
+            enableAnimation:
+                _sliderTheme.showValueIndicator == ShowValueIndicator.alwaysVisible
+                    ? const AlwaysStoppedAnimation<double>(1)
+                    : _enableAnimation,
             isDiscrete: isDiscrete,
             isOnTop: thumbDelta < innerOverflow,
             labelPainter: topLabelPainter,

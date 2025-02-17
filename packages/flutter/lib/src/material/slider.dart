@@ -666,6 +666,12 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
   FocusNode? _focusNode;
   FocusNode get focusNode => widget.focusNode ?? _focusNode!;
 
+  // Always keep the ValueIndicator visible on the Overlay; otherwise, it cannot be updated during the build phase.
+  late final OverlayPortalController _valueIndicatorOverlayPortalController =
+      OverlayPortalController()..show();
+  // Control whether the value indicator is visible only when it needs to be shown during dragging.
+  late final ValueNotifier<bool> _showValueIndicatorForDragged = ValueNotifier<bool>(false);
+
   @override
   void initState() {
     super.initState();
@@ -694,9 +700,7 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
     valueIndicatorController.dispose();
     enableController.dispose();
     positionController.dispose();
-    overlayEntry?.remove();
-    overlayEntry?.dispose();
-    overlayEntry = null;
+    _showValueIndicatorForDragged.dispose();
     _focusNode?.dispose();
     super.dispose();
   }
@@ -989,6 +993,13 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
     if (padding != null) {
       result = Padding(padding: padding, child: result);
     }
+    result = OverlayPortal(
+      controller: _valueIndicatorOverlayPortalController,
+      overlayChildBuilder: (BuildContext context) {
+        return _buildValueIndicator(sliderTheme.showValueIndicator);
+      },
+      child: result,
+    );
 
     return Semantics(
       label: widget.label,
@@ -1030,21 +1041,36 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
   }
 
   final LayerLink _layerLink = LayerLink();
-
-  OverlayEntry? overlayEntry;
+  Widget _buildValueIndicator(ShowValueIndicator? showValueIndicator) {
+    late final Widget valueIndicator = CompositedTransformFollower(
+      link: _layerLink,
+      child: _ValueIndicatorRenderObjectWidget(state: this),
+    );
+    late final Widget valueIndicatorWhenDragged = ValueListenableBuilder<bool>(
+      valueListenable: _showValueIndicatorForDragged,
+      builder: (BuildContext context, bool showValueIndicator, Widget? child) {
+        return showValueIndicator ? valueIndicator : const SizedBox.shrink();
+      },
+    );
+    return switch (showValueIndicator) {
+      ShowValueIndicator.alwaysVisible => valueIndicator,
+      ShowValueIndicator.onlyForDiscrete =>
+        widget.divisions != null ? valueIndicatorWhenDragged : const SizedBox.shrink(),
+      ShowValueIndicator.onlyForContinuous =>
+        widget.divisions == null ? valueIndicatorWhenDragged : const SizedBox.shrink(),
+      ShowValueIndicator.onDrag || ShowValueIndicator.always => valueIndicatorWhenDragged,
+      _ => const SizedBox.shrink(),
+    };
+  }
 
   void showValueIndicator() {
-    if (overlayEntry == null) {
-      overlayEntry = OverlayEntry(
-        builder: (BuildContext context) {
-          return CompositedTransformFollower(
-            link: _layerLink,
-            child: _ValueIndicatorRenderObjectWidget(state: this),
-          );
-        },
-      );
-      Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
-    }
+    assert(mounted);
+    _showValueIndicatorForDragged.value = true;
+  }
+
+  void hideValueIndicator() {
+    assert(mounted);
+    _showValueIndicatorForDragged.value = false;
   }
 }
 
@@ -1199,9 +1225,7 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       curve: Curves.fastOutSlowIn,
     )..addStatusListener((AnimationStatus status) {
       if (status.isDismissed) {
-        _state.overlayEntry?.remove();
-        _state.overlayEntry?.dispose();
-        _state.overlayEntry = null;
+        _state.hideValueIndicator();
       }
     });
     _enableAnimation = CurvedAnimation(parent: _state.enableController, curve: Curves.easeInOut);
@@ -1451,12 +1475,12 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
   void _updateForFocus(bool focused) {
     if (focused) {
       _state.overlayController.forward();
-      if (showValueIndicator) {
+      if (shouldShowValueIndicatorWhenDragged) {
         _state.valueIndicatorController.forward();
       }
     } else {
       _state.overlayController.reverse();
-      if (showValueIndicator) {
+      if (shouldShowValueIndicatorWhenDragged) {
         _state.valueIndicatorController.reverse();
       }
     }
@@ -1474,11 +1498,13 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     }
   }
 
-  bool get showValueIndicator => switch (_sliderTheme.showValueIndicator!) {
+  bool get shouldAlwaysShowValueIndicator =>
+      _sliderTheme.showValueIndicator == ShowValueIndicator.alwaysVisible;
+  bool get shouldShowValueIndicatorWhenDragged => switch (_sliderTheme.showValueIndicator!) {
     ShowValueIndicator.onlyForDiscrete => isDiscrete,
     ShowValueIndicator.onlyForContinuous => !isDiscrete,
-    ShowValueIndicator.always => true,
-    ShowValueIndicator.never => false,
+    ShowValueIndicator.always || ShowValueIndicator.onDrag => true,
+    ShowValueIndicator.never || ShowValueIndicator.alwaysVisible => false,
   };
 
   double get _adjustmentUnit {
@@ -1596,7 +1622,7 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
         onChangeStart?.call(_discretize(value));
         onChanged!(_discretize(_currentDragValue));
         _state.overlayController.forward();
-        if (showValueIndicator) {
+        if (shouldShowValueIndicatorWhenDragged) {
           _state.valueIndicatorController.forward();
           _state.interactionTimer?.cancel();
           _state.interactionTimer = Timer(_minimumInteractionTime * timeDilation, () {
@@ -1620,7 +1646,7 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       _active = false;
       _currentDragValue = 0.0;
       _state.overlayController.reverse();
-      if (showValueIndicator && _state.interactionTimer == null) {
+      if (shouldShowValueIndicatorWhenDragged && _state.interactionTimer == null) {
         _state.valueIndicatorController.reverse();
       }
     }
@@ -1849,15 +1875,22 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       }
     }
 
-    if (isInteractive && label != null && !_valueIndicatorAnimation.isDismissed) {
-      if (showValueIndicator) {
+    if (isInteractive && label != null) {
+      if ((shouldShowValueIndicatorWhenDragged && !_valueIndicatorAnimation.isDismissed) ||
+          shouldAlwaysShowValueIndicator) {
         _state.paintValueIndicator = (PaintingContext context, Offset offset) {
           if (attached && _labelPainter.text != null) {
             _sliderTheme.valueIndicatorShape!.paint(
               context,
               offset + thumbCenter,
-              activationAnimation: _valueIndicatorAnimation,
-              enableAnimation: _enableAnimation,
+              activationAnimation:
+                  shouldAlwaysShowValueIndicator
+                      ? const AlwaysStoppedAnimation<double>(1)
+                      : _valueIndicatorAnimation,
+              enableAnimation:
+                  shouldAlwaysShowValueIndicator
+                      ? const AlwaysStoppedAnimation<double>(1)
+                      : _enableAnimation,
               isDiscrete: isDiscrete,
               labelPainter: _labelPainter,
               parentBox: this,
