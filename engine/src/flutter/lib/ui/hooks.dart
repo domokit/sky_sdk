@@ -59,6 +59,11 @@ void _removeView(int viewId) {
 }
 
 @pragma('vm:entry-point')
+void _setEngineHandle(int engineHandle) {
+  PlatformDispatcher.instance._engineHandle = engineHandle;
+}
+
+@pragma('vm:entry-point')
 void _updateDisplays(
   List<int> ids,
   List<double> widths,

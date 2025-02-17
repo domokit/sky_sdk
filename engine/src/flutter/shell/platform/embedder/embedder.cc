@@ -2397,6 +2397,10 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
         "Could not infer the Flutter project to run from given arguments.");
   }
 
+  if (args->engine_handle != 0) {
+    run_configuration.SetEngineHandle(args->engine_handle);
+  }
+
   // Create the engine but don't launch the shell or run the root isolate.
   auto embedder_engine = std::make_unique<flutter::EmbedderEngine>(
       std::move(thread_host),               //

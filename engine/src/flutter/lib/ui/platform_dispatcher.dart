@@ -301,6 +301,12 @@ class PlatformDispatcher {
     _invoke(onMetricsChanged, _onMetricsChangedZone);
   }
 
+  /// Opaque engine handle for the engine running current isolate. Can be used
+  /// in native code to retrieve the engine instance.
+  int? get engineHandle => _engineHandle;
+
+  int? _engineHandle;
+
   // Called from the engine, via hooks.dart.
   //
   // Updates the available displays.

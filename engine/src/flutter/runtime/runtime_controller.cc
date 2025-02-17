@@ -529,7 +529,8 @@ bool RuntimeController::LaunchRootIsolate(
     std::optional<std::string> dart_entrypoint_library,
     const std::vector<std::string>& dart_entrypoint_args,
     std::unique_ptr<IsolateConfiguration> isolate_configuration,
-    std::shared_ptr<NativeAssetsManager> native_assets_manager) {
+    std::shared_ptr<NativeAssetsManager> native_assets_manager,
+    std::optional<int64_t> engine_handle) {
   if (root_isolate_.lock()) {
     FML_LOG(ERROR) << "Root isolate was already running.";
     return false;
@@ -577,6 +578,11 @@ bool RuntimeController::LaunchRootIsolate(
     platform_configuration->DidCreateIsolate();
     if (!FlushRuntimeStateToIsolate()) {
       FML_DLOG(ERROR) << "Could not set up initial isolate state.";
+    }
+    if (engine_handle) {
+      if (!platform_configuration->SetEngineHandle(*engine_handle)) {
+        FML_DLOG(ERROR) << "Could not set engine handle.";
+      }
     }
   } else {
     FML_DCHECK(false) << "RuntimeController created without window binding.";

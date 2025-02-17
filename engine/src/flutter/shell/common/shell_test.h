@@ -71,6 +71,7 @@ class ShellTest : public FixtureTest {
     // Defaults to calling ShellTestPlatformView::Create with the provided
     // arguments.
     Shell::CreateCallback<PlatformView> platform_view_create_callback;
+    std::optional<int64_t> engine_handle;
   };
 
   ShellTest();

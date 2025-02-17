@@ -245,8 +245,9 @@ Engine::RunStatus Engine::Run(RunConfiguration configuration) {
           configuration.GetEntrypointLibrary(),      //
           configuration.GetEntrypointArgs(),         //
           configuration.TakeIsolateConfiguration(),  //
-          native_assets_manager_)                    //
-  ) {
+          native_assets_manager_,                    //
+          configuration.GetEngineHandle()))          //
+  {
     return RunStatus::Failure;
   }
 

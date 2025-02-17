@@ -473,6 +473,9 @@ static void OnPlatformMessage(const FlutterPlatformMessage* message, void* user_
   // Weak reference to last view that received a pointer event. This is used to
   // pair cursor change with a view.
   __weak FlutterView* _lastViewWithPointerEvent;
+
+  // Unique handle for current engine.
+  int64_t _engineHandle;
 }
 
 - (instancetype)initWithName:(NSString*)labelPrefix project:(FlutterDartProject*)project {
@@ -493,6 +496,9 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
     pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0);
   }
 }
+
+static int64_t nextHandle = 1;
+static NSMapTable* engineMap;
 
 - (instancetype)initWithName:(NSString*)labelPrefix
                      project:(FlutterDartProject*)project
@@ -549,6 +555,11 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
   }
 
   _vsyncWaiters = [NSMapTable strongToStrongObjectsMapTable];
+  _engineHandle = nextHandle++;
+  if (engineMap == nil) {
+    engineMap = [NSMapTable strongToWeakObjectsMapTable];
+  }
+  [engineMap setObject:self forKey:@(_engineHandle)];
 
   return self;
 }
@@ -641,6 +652,7 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
     }
     std::cout << message << std::endl;
   };
+  flutterArguments.engine_handle = _engineHandle;
 
   static size_t sTaskRunnerIdentifiers = 0;
   const FlutterTaskRunnerDescription cocoa_task_runner_description = {
@@ -1157,6 +1169,13 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
     NSLog(@"Failed to shut down Flutter engine: error %d", result);
   }
   _engine = nullptr;
+
+  [engineMap removeObjectForKey:@(_engineHandle)];
+}
+
++ (FlutterEngine*)engineForHandle:(int64_t)handle {
+  NSAssert([[NSThread currentThread] isMainThread], @"Must be called on the main thread.");
+  return [engineMap objectForKey:@(handle)];
 }
 
 - (void)setUpPlatformViewChannel {

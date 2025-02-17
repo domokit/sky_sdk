@@ -339,6 +339,15 @@ class PlatformConfiguration final {
   bool RemoveView(int64_t view_id);
 
   //----------------------------------------------------------------------------
+  /// @brief     Sets the opaque handle of the engine.
+  ///
+  ///            The handle can be passed from Dart to native code to retrieve
+  ///            the engine instance.
+  ///
+  /// @return    Whether the handle was set.
+  bool SetEngineHandle(int64_t engine_handle);
+
+  //----------------------------------------------------------------------------
   /// @brief      Update the view metrics for the specified view.
   ///
   ///             If the view is not found, silently return false.
@@ -529,6 +538,7 @@ class PlatformConfiguration final {
   tonic::DartPersistentValue on_error_;
   tonic::DartPersistentValue add_view_;
   tonic::DartPersistentValue remove_view_;
+  tonic::DartPersistentValue set_engine_handle_;
   tonic::DartPersistentValue update_window_metrics_;
   tonic::DartPersistentValue update_displays_;
   tonic::DartPersistentValue update_locales_;

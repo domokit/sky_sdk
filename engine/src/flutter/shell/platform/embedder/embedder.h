@@ -2553,6 +2553,11 @@ typedef struct {
   /// being registered on the framework side. The callback is invoked from
   /// a task posted to the platform thread.
   FlutterChannelUpdateCallback channel_update_callback;
+
+  /// Opaque handle provided by the engine. Accessible in Dart code through
+  /// `PlatformDispatcher.instance.engineHandle`. Can be used in native code to
+  /// retrieve the engine instance that is running the Dart code.
+  int64_t engine_handle;
 } FlutterProjectArgs;
 
 #ifndef FLUTTER_ENGINE_NO_PROTOTYPES

@@ -98,6 +98,14 @@ FLUTTER_DARWIN_EXPORT
  */
 - (void)shutDownEngine;
 
+/**
+ * Returns engine for the handle, nil if the handle is not valid.
+ * The handle can be obtained in Dart code through
+ * `PlatformDispatcher.instance.engineHandle`.
+ * This function must be called on the main thread.
+ */
++ (nullable FlutterEngine*)engineForHandle:(int64_t)handle;
+
 @end
 
 #endif  // FLUTTER_SHELL_PLATFORM_DARWIN_MACOS_FRAMEWORK_HEADERS_FLUTTERENGINE_H_

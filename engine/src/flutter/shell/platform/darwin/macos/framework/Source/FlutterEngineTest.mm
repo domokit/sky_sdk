@@ -863,6 +863,32 @@ TEST_F(FlutterEngineTest, ResponseFromBackgroundThread) {
   }
 }
 
+TEST_F(FlutterEngineTest, CanGetEngineForHandle) {
+  FlutterEngine* engine = GetFlutterEngine();
+
+  fml::AutoResetWaitableEvent latch;
+  std::optional<int64_t> engineHandle;
+  AddNativeCallback("NotifyEngineHandle", CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
+                      const auto argument = Dart_GetNativeArgument(args, 0);
+                      if (!Dart_IsNull(argument)) {
+                        const auto handle = tonic::DartConverter<int64_t>::FromDart(argument);
+                        engineHandle = handle;
+                      }
+                      latch.Signal();
+                    }));
+
+  EXPECT_TRUE([engine runWithEntrypoint:@"testEngineHandle"]);
+  latch.Wait();
+
+  EXPECT_TRUE(engineHandle.has_value());
+  if (!engineHandle.has_value()) {
+    return;
+  }
+  EXPECT_EQ(engine, [FlutterEngine engineForHandle:*engineHandle]);
+  ShutDownEngine();
+  EXPECT_EQ(nil, [FlutterEngine engineForHandle:*engineHandle]);
+}
+
 TEST_F(FlutterEngineTest, ThreadSynchronizerNotBlockingRasterThreadAfterShutdown) {
   FlutterThreadSynchronizer* threadSynchronizer = [[FlutterThreadSynchronizer alloc] init];
   [threadSynchronizer shutdown];
