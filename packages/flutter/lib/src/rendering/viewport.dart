@@ -32,6 +32,51 @@ enum CacheExtentStyle {
   viewport,
 }
 
+/// Specifies an order in which to paint the slivers of a [ScrollView].
+///
+/// The slivers of a [ScrollView] are the list returned by
+/// [ScrollView.buildSlivers].  For a [CustomScrollView], this is
+/// the same list as [CustomScrollView.slivers].
+/// For the other built-in subclasses of [ScrollView],
+/// there is only one sliver in the list, and this ordering has no effect.
+///
+/// Whichever order the slivers are painted in,
+/// they will be hit-tested in the opposite order.
+///
+/// This can also be thought of as an ordering in the z-direction:
+/// whichever sliver is painted last (and hit-tested first) is on top,
+/// because it will paint over other slivers if there is overlap.
+/// Similarly, whichever sliver is painted first (and hit-tested last)
+/// is on the bottom.
+enum SliverPaintOrder {
+  /// The first sliver paints on top, and the last sliver on bottom.
+  ///
+  /// The slivers are painted in the reverse order of [ScrollView.buildSlivers]
+  /// (for example, the reverse order of [CustomScrollView.slivers]),
+  /// and hit-tested in the same order as [ScrollView.buildSlivers].
+  firstIsTop,
+
+  /// The last sliver paints on top, and the first sliver on bottom.
+  ///
+  /// The slivers are painted in the same order as [ScrollView.buildSlivers]
+  /// (for example, the same order as [CustomScrollView.slivers]),
+  /// and hit-tested in the reverse order.
+  lastIsTop,
+
+  /// The center sliver paints on top, and the first sliver paints on bottom.
+  ///
+  /// If [ScrollView.center] is null or corresponds to the first sliver
+  /// in the list, this order is equivalent to [firstIsTop].
+  /// Otherwise, the [ScrollView.center] sliver paints on top;
+  /// it's followed in the z-order by the slivers after it to the end
+  /// of the list; then the slivers before the center in reverse order,
+  /// with the first sliver in the list at the bottom in the z-direction.
+  ///
+  /// This order is only available when [ScrollView.shrinkWrap] is false;
+  /// i.e., for [RenderViewport] and not for [RenderShrinkWrappingViewport].
+  centerTopFirstBottom,
+}
+
 /// An interface for render objects that are bigger on the inside.
 ///
 /// Some render objects, such as [RenderViewport], present a portion of their
@@ -278,6 +323,7 @@ abstract class RenderViewportBase<ParentDataClass extends ContainerParentDataMix
     required ViewportOffset offset,
     double? cacheExtent,
     CacheExtentStyle cacheExtentStyle = CacheExtentStyle.pixel,
+    required SliverPaintOrder paintOrder,
     Clip clipBehavior = Clip.hardEdge,
   }) : assert(axisDirectionToAxis(axisDirection) != axisDirectionToAxis(crossAxisDirection)),
        assert(cacheExtent != null || cacheExtentStyle == CacheExtentStyle.pixel),
@@ -286,6 +332,7 @@ abstract class RenderViewportBase<ParentDataClass extends ContainerParentDataMix
        _offset = offset,
        _cacheExtent = cacheExtent ?? RenderAbstractViewport.defaultCacheExtent,
        _cacheExtentStyle = cacheExtentStyle,
+       _paintOrder = paintOrder,
        _clipBehavior = clipBehavior;
 
   /// Report the semantics of this node, for example for accessibility purposes.
@@ -454,6 +501,32 @@ abstract class RenderViewportBase<ParentDataClass extends ContainerParentDataMix
     }
     _cacheExtentStyle = value;
     markNeedsLayout();
+  }
+
+  /// {@template flutter.rendering.RenderViewportBase.paintOrder}
+  /// The order in which to paint the slivers;
+  /// equivalently, the order in which to arrange them in the z-direction.
+  ///
+  /// Whichever order the slivers are painted in,
+  /// they will be hit-tested in the opposite order.
+  ///
+  /// To think of this as an ordering in the z-direction:
+  /// whichever sliver is painted last (and hit-tested first) is on top,
+  /// because it will paint over other slivers if there is overlap.
+  /// Similarly, whichever sliver is painted first (and hit-tested last)
+  /// is on the bottom.
+  /// {@endtemplate}
+  ///
+  /// The default is [SliverPaintOrder.centerTopFirstBottom] for [RenderViewport]
+  /// and [SliverPaintOrder.firstIsTop] for [RenderShrinkWrappingViewport].
+  SliverPaintOrder get paintOrder => _paintOrder;
+  SliverPaintOrder _paintOrder;
+  set paintOrder(SliverPaintOrder value) {
+    if (value != _paintOrder) {
+      _paintOrder = value;
+      markNeedsPaint();
+      markNeedsSemanticsUpdate();
+    }
   }
 
   /// {@macro flutter.material.Material.clipBehavior}
@@ -1172,6 +1245,26 @@ abstract class RenderViewportBase<ParentDataClass extends ContainerParentDataMix
   @protected
   Iterable<RenderSliver> get childrenInHitTestOrder;
 
+  Iterable<RenderSliver> get _childrenLastToFirst {
+    final List<RenderSliver> children = <RenderSliver>[];
+    RenderSliver? child = lastChild;
+    while (child != null) {
+      children.add(child);
+      child = childBefore(child);
+    }
+    return children;
+  }
+
+  Iterable<RenderSliver> get _childrenFirstToLast {
+    final List<RenderSliver> children = <RenderSliver>[];
+    RenderSliver? child = firstChild;
+    while (child != null) {
+      children.add(child);
+      child = childAfter(child);
+    }
+    return children;
+  }
+
   @override
   void showOnScreen({
     RenderObject? descendant,
@@ -1315,6 +1408,7 @@ class RenderViewport extends RenderViewportBase<SliverPhysicalContainerParentDat
     RenderSliver? center,
     super.cacheExtent,
     super.cacheExtentStyle,
+    super.paintOrder = SliverPaintOrder.centerTopFirstBottom,
     super.clipBehavior,
   }) : assert(anchor >= 0.0 && anchor <= 1.0),
        assert(cacheExtentStyle != CacheExtentStyle.viewport || cacheExtent != null),
@@ -1714,6 +1808,23 @@ class RenderViewport extends RenderViewportBase<SliverPhysicalContainerParentDat
 
   @override
   Iterable<RenderSliver> get childrenInPaintOrder {
+    return switch (paintOrder) {
+      SliverPaintOrder.firstIsTop => _childrenLastToFirst,
+      SliverPaintOrder.lastIsTop => _childrenFirstToLast,
+      SliverPaintOrder.centerTopFirstBottom => _childrenFirstLastCenter,
+    };
+  }
+
+  @override
+  Iterable<RenderSliver> get childrenInHitTestOrder {
+    return switch (paintOrder) {
+      SliverPaintOrder.firstIsTop => _childrenFirstToLast,
+      SliverPaintOrder.lastIsTop => _childrenLastToFirst,
+      SliverPaintOrder.centerTopFirstBottom => _childrenCenterLastFirst,
+    };
+  }
+
+  Iterable<RenderSliver> get _childrenFirstLastCenter {
     final List<RenderSliver> children = <RenderSliver>[];
     if (firstChild == null) {
       return children;
@@ -1733,8 +1844,7 @@ class RenderViewport extends RenderViewportBase<SliverPhysicalContainerParentDat
     }
   }
 
-  @override
-  Iterable<RenderSliver> get childrenInHitTestOrder {
+  Iterable<RenderSliver> get _childrenCenterLastFirst {
     final List<RenderSliver> children = <RenderSliver>[];
     if (firstChild == null) {
       return children;
@@ -1794,9 +1904,11 @@ class RenderShrinkWrappingViewport extends RenderViewportBase<SliverLogicalConta
     super.axisDirection,
     required super.crossAxisDirection,
     required super.offset,
+    super.paintOrder = SliverPaintOrder.firstIsTop,
     super.clipBehavior,
     List<RenderSliver>? children,
   }) {
+    assert(paintOrder != SliverPaintOrder.centerTopFirstBottom);
     addAll(children);
   }
 
@@ -2041,23 +2153,21 @@ class RenderShrinkWrappingViewport extends RenderViewportBase<SliverLogicalConta
 
   @override
   Iterable<RenderSliver> get childrenInPaintOrder {
-    final List<RenderSliver> children = <RenderSliver>[];
-    RenderSliver? child = lastChild;
-    while (child != null) {
-      children.add(child);
-      child = childBefore(child);
-    }
-    return children;
+    return switch (paintOrder) {
+      SliverPaintOrder.firstIsTop => _childrenLastToFirst,
+      SliverPaintOrder.lastIsTop => _childrenFirstToLast,
+      // centerTopFirstBottom is not supported; fall back.
+      SliverPaintOrder.centerTopFirstBottom => _childrenLastToFirst,
+    };
   }
 
   @override
   Iterable<RenderSliver> get childrenInHitTestOrder {
-    final List<RenderSliver> children = <RenderSliver>[];
-    RenderSliver? child = firstChild;
-    while (child != null) {
-      children.add(child);
-      child = childAfter(child);
-    }
-    return children;
+    return switch (paintOrder) {
+      SliverPaintOrder.firstIsTop => _childrenFirstToLast,
+      SliverPaintOrder.lastIsTop => _childrenLastToFirst,
+      // centerTopFirstBottom is not supported; fall back.
+      SliverPaintOrder.centerTopFirstBottom => _childrenFirstToLast,
+    };
   }
 }

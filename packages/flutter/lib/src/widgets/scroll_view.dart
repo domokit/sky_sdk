@@ -117,6 +117,7 @@ abstract class ScrollView extends StatelessWidget {
     this.anchor = 0.0,
     this.cacheExtent,
     this.semanticChildCount,
+    this.paintOrder,
     this.dragStartBehavior = DragStartBehavior.start,
     this.keyboardDismissBehavior,
     this.restorationId,
@@ -131,6 +132,7 @@ abstract class ScrollView extends StatelessWidget {
        assert(!shrinkWrap || center == null),
        assert(anchor >= 0.0 && anchor <= 1.0),
        assert(semanticChildCount == null || semanticChildCount >= 0),
+       assert(!shrinkWrap || paintOrder != SliverPaintOrder.centerTopFirstBottom),
        physics =
            physics ??
            ((primary ?? false) ||
@@ -370,6 +372,15 @@ abstract class ScrollView extends StatelessWidget {
   ///  * [SemanticsConfiguration.scrollChildCount], the corresponding semantics property.
   final int? semanticChildCount;
 
+  /// {@macro flutter.rendering.RenderViewportBase.paintOrder}
+  ///
+  /// When [shrinkWrap] is true, the value [SliverPaintOrder.centerTopFirstBottom]
+  /// is not available.
+  ///
+  /// Defaults to [SliverPaintOrder.centerTopFirstBottom] if [shrinkWrap] is false,
+  /// and [SliverPaintOrder.firstIsTop] if [shrinkWrap] is true.
+  final SliverPaintOrder? paintOrder;
+
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
 
@@ -462,6 +473,7 @@ abstract class ScrollView extends StatelessWidget {
         axisDirection: axisDirection,
         offset: offset,
         slivers: slivers,
+        paintOrder: paintOrder ?? SliverPaintOrder.firstIsTop,
         clipBehavior: clipBehavior,
       );
     }
@@ -472,6 +484,7 @@ abstract class ScrollView extends StatelessWidget {
       cacheExtent: cacheExtent,
       center: center,
       anchor: anchor,
+      paintOrder: paintOrder ?? SliverPaintOrder.centerTopFirstBottom,
       clipBehavior: clipBehavior,
     );
   }
@@ -701,6 +714,7 @@ class CustomScrollView extends ScrollView {
     super.center,
     super.anchor,
     super.cacheExtent,
+    super.paintOrder,
     this.slivers = const <Widget>[],
     super.semanticChildCount,
     super.dragStartBehavior,
