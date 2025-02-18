@@ -652,5 +652,36 @@ TEST_F(WindowsTest, AddRemoveView) {
   }
 }
 
+TEST_F(WindowsTest, EngineHandle) {
+  auto& context = GetContext();
+  WindowsConfigBuilder builder(context);
+  builder.SetDartEntrypoint("testEngineHandle");
+
+  fml::AutoResetWaitableEvent latch;
+  std::optional<int64_t> engineHandle;
+  context.AddNativeFunction(
+      "NotifyEngineHandle", CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
+        const auto argument = Dart_GetNativeArgument(args, 0);
+        if (!Dart_IsNull(argument)) {
+          const auto handle = tonic::DartConverter<int64_t>::FromDart(argument);
+          engineHandle = handle;
+        }
+        latch.Signal();
+      }));
+  // Create the implicit view.
+  ViewControllerPtr first_controller{builder.Run()};
+  ASSERT_NE(first_controller, nullptr);
+
+  latch.Wait();
+  EXPECT_TRUE(engineHandle.has_value());
+  if (!engineHandle.has_value()) {
+    return;
+  }
+  auto engine = FlutterDesktopViewControllerGetEngine(first_controller.get());
+  EXPECT_EQ(engine, FlutterDesktopEngineForHandle(*engineHandle));
+  first_controller.reset();
+  EXPECT_EQ(nullptr, FlutterDesktopEngineForHandle(*engineHandle));
+}
+
 }  // namespace testing
 }  // namespace flutter
