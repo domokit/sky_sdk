@@ -1914,6 +1914,7 @@ void main() {
           textDirection: TextDirection.ltr,
           child: CustomScrollView(
             center: const ValueKey<int>(2),
+            anchor: 0.5,
             slivers: List<Widget>.generate(5, makeSliver),
           ),
         ),
@@ -1931,6 +1932,7 @@ void main() {
           child: CustomScrollView(
             paintOrder: SliverPaintOrder.lastIsTop,
             center: const ValueKey<int>(2),
+            anchor: 0.5,
             slivers: List<Widget>.generate(5, makeSliver),
           ),
         ),
@@ -1952,6 +1954,7 @@ void main() {
           textDirection: TextDirection.ltr,
           child: CustomScrollView(
             center: const ValueKey<int>(2),
+            anchor: 0.5,
             slivers: List<Widget>.generate(5, makeSliver),
           ),
         ),
@@ -1974,6 +1977,7 @@ void main() {
           child: CustomScrollView(
             paintOrder: SliverPaintOrder.lastIsTop,
             center: const ValueKey<int>(2),
+            anchor: 0.5,
             slivers: List<Widget>.generate(5, makeSliver),
           ),
         ),
