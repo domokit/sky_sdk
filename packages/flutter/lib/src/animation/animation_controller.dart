@@ -352,6 +352,7 @@ class AnimationController extends Animation<double>
   }
 
   Simulation? _simulation;
+  Duration? _skipDuration;
 
   /// The current value of the animation.
   ///
@@ -471,6 +472,10 @@ class AnimationController extends Animation<double>
   /// If [from] is non-null, it will be set as the current [value] before running
   /// the animation.
   ///
+  /// [skipDuration] is the duration to skip before starting the animation. If the
+  /// animation duration is 1000 milliseconds and [skipDuration] is 200 milliseconds,
+  /// the animation will start from the 200-millisecond mark and end after 800 milliseconds.
+  ///
   /// The most recently returned [TickerFuture], if any, is marked as having been
   /// canceled, meaning the future never completes and its [TickerFuture.orCancel]
   /// derivative future completes with a [TickerCanceled] error.
@@ -478,7 +483,7 @@ class AnimationController extends Animation<double>
   /// During the animation, [status] is reported as [AnimationStatus.forward],
   /// which switches to [AnimationStatus.completed] when [upperBound] is
   /// reached at the end of the animation.
-  TickerFuture forward({double? from}) {
+  TickerFuture forward({double? from, Duration? skipDuration}) {
     assert(() {
       if (duration == null) {
         throw FlutterError(
@@ -498,7 +503,7 @@ class AnimationController extends Animation<double>
     if (from != null) {
       value = from;
     }
-    return _animateToInternal(upperBound);
+    return _animateToInternal(upperBound, skipDuration: skipDuration);
   }
 
   /// Starts running this animation in reverse (towards the beginning).
@@ -508,6 +513,10 @@ class AnimationController extends Animation<double>
   /// If [from] is non-null, it will be set as the current [value] before running
   /// the animation.
   ///
+  /// [skipDuration] is the duration to skip before starting the animation. If the
+  /// animation duration is 1000 milliseconds and [skipDuration] is 200 milliseconds,
+  /// the animation will start from the 200-millisecond mark and end after 800 milliseconds.
+  ///
   /// The most recently returned [TickerFuture], if any, is marked as having been
   /// canceled, meaning the future never completes and its [TickerFuture.orCancel]
   /// derivative future completes with a [TickerCanceled] error.
@@ -515,7 +524,7 @@ class AnimationController extends Animation<double>
   /// During the animation, [status] is reported as [AnimationStatus.reverse],
   /// which switches to [AnimationStatus.dismissed] when [lowerBound] is
   /// reached at the end of the animation.
-  TickerFuture reverse({double? from}) {
+  TickerFuture reverse({double? from, Duration? skipDuration}) {
     assert(() {
       if (duration == null && reverseDuration == null) {
         throw FlutterError(
@@ -535,7 +544,7 @@ class AnimationController extends Animation<double>
     if (from != null) {
       value = from;
     }
-    return _animateToInternal(lowerBound);
+    return _animateToInternal(lowerBound, skipDuration: skipDuration);
   }
 
   /// Toggles the direction of this animation, based on whether it [isForwardOrCompleted].
@@ -547,10 +556,14 @@ class AnimationController extends Animation<double>
   /// If [from] is non-null, it will be set as the current [value] before running
   /// the animation.
   ///
+  /// [skipDuration] is the duration to skip before starting the animation. If the
+  /// animation duration is 1000 milliseconds and [skipDuration] is 200 milliseconds,
+  /// the animation will start from the 200-millisecond mark and end after 800 milliseconds.
+  ///
   /// The most recently returned [TickerFuture], if any, is marked as having been
   /// canceled, meaning the future never completes and its [TickerFuture.orCancel]
   /// derivative future completes with a [TickerCanceled] error.
-  TickerFuture toggle({double? from}) {
+  TickerFuture toggle({double? from, Duration? skipDuration}) {
     assert(() {
       Duration? duration = this.duration;
       if (isForwardOrCompleted) {
@@ -577,7 +590,7 @@ class AnimationController extends Animation<double>
     return _animateToInternal(switch (_direction) {
       _AnimationDirection.forward => upperBound,
       _AnimationDirection.reverse => lowerBound,
-    });
+    }, skipDuration: skipDuration);
   }
 
   /// Drives the animation from its current value to the given target, "forward".
@@ -596,7 +609,16 @@ class AnimationController extends Animation<double>
   /// If the `target` argument is the same as the current [value] of the
   /// animation, then this won't animate, and the returned [TickerFuture] will
   /// be already complete.
-  TickerFuture animateTo(double target, {Duration? duration, Curve curve = Curves.linear}) {
+  ///
+  /// [skipDuration] is the duration to skip before starting the animation. If the
+  /// animation duration is 1000 milliseconds and [skipDuration] is 200 milliseconds,
+  /// the animation will start from the 200-millisecond mark and end after 800 milliseconds.
+  TickerFuture animateTo(
+    double target, {
+    Duration? duration,
+    Curve curve = Curves.linear,
+    Duration? skipDuration,
+  }) {
     assert(() {
       if (this.duration == null && duration == null) {
         throw FlutterError(
@@ -614,7 +636,7 @@ class AnimationController extends Animation<double>
       'AnimationController methods should not be used after calling dispose.',
     );
     _direction = _AnimationDirection.forward;
-    return _animateToInternal(target, duration: duration, curve: curve);
+    return _animateToInternal(target, duration: duration, curve: curve, skipDuration: skipDuration);
   }
 
   /// Drives the animation from its current value to the given target, "backward".
@@ -633,7 +655,16 @@ class AnimationController extends Animation<double>
   /// If the `target` argument is the same as the current [value] of the
   /// animation, then this won't animate, and the returned [TickerFuture] will
   /// be already complete.
-  TickerFuture animateBack(double target, {Duration? duration, Curve curve = Curves.linear}) {
+  ///
+  /// [skipDuration] is the duration to skip before starting the animation. If the
+  /// animation duration is 1000 milliseconds and [skipDuration] is 200 milliseconds,
+  /// the animation will start from the 200-millisecond mark and end after 800 milliseconds.
+  TickerFuture animateBack(
+    double target, {
+    Duration? duration,
+    Curve curve = Curves.linear,
+    Duration? skipDuration,
+  }) {
     assert(() {
       if (this.duration == null && reverseDuration == null && duration == null) {
         throw FlutterError(
@@ -651,13 +682,14 @@ class AnimationController extends Animation<double>
       'AnimationController methods should not be used after calling dispose.',
     );
     _direction = _AnimationDirection.reverse;
-    return _animateToInternal(target, duration: duration, curve: curve);
+    return _animateToInternal(target, duration: duration, curve: curve, skipDuration: skipDuration);
   }
 
   TickerFuture _animateToInternal(
     double target, {
     Duration? duration,
     Curve curve = Curves.linear,
+    Duration? skipDuration,
   }) {
     final double scale = switch (animationBehavior) {
       // Since the framework cannot handle zero duration animations, we run it at 5% of the normal
@@ -704,6 +736,7 @@ class AnimationController extends Animation<double>
     assert(!isAnimating);
     return _startSimulation(
       _InterpolationSimulation(_value, target, simulationDuration, curve, scale),
+      skipDuration: skipDuration,
     );
   }
 
@@ -785,6 +818,10 @@ class AnimationController extends Animation<double>
   /// is used. See [SpringDescription.withDampingRatio] for how to create a
   /// suitable [SpringDescription].
   ///
+  /// [skipDuration] is the duration to skip before starting the animation. If the
+  /// animation duration is 1000 milliseconds and [skipDuration] is 200 milliseconds,
+  /// the animation will start from the 200-millisecond mark and end after 800 milliseconds.
+  ///
   /// The resulting spring simulation cannot be of type [SpringType.underDamped];
   /// such a spring would oscillate rather than fling.
   ///
@@ -797,6 +834,7 @@ class AnimationController extends Animation<double>
     double velocity = 1.0,
     SpringDescription? springDescription,
     AnimationBehavior? animationBehavior,
+    Duration? skipDuration,
   }) {
     springDescription ??= _kFlingSpringDescription;
     _direction = velocity < 0.0 ? _AnimationDirection.reverse : _AnimationDirection.forward;
@@ -824,7 +862,7 @@ class AnimationController extends Animation<double>
       'with an explicit SpringSimulation if an underdamped spring is intentional.',
     );
     stop();
-    return _startSimulation(simulation);
+    return _startSimulation(simulation, skipDuration: skipDuration);
   }
 
   /// Drives the animation according to the given simulation.
@@ -833,6 +871,10 @@ class AnimationController extends Animation<double>
   /// The values from the simulation are clamped to the [lowerBound] and
   /// [upperBound]. To avoid this, consider creating the [AnimationController]
   /// using the [AnimationController.unbounded] constructor.
+  ///
+  /// [skipDuration] is the duration to skip before starting the animation. If the
+  /// animation duration is 1000 milliseconds and [skipDuration] is 200 milliseconds,
+  /// the animation will start from the 200-millisecond mark and end after 800 milliseconds.
   ///
   /// Returns a [TickerFuture] that completes when the animation is complete.
   ///
@@ -848,7 +890,7 @@ class AnimationController extends Animation<double>
   ///
   ///  * [animateBackWith], which is like this method but the status is always
   ///    [AnimationStatus.reverse].
-  TickerFuture animateWith(Simulation simulation) {
+  TickerFuture animateWith(Simulation simulation, {Duration? skipDuration}) {
     assert(
       _ticker != null,
       'AnimationController.animateWith() called after AnimationController.dispose()\n'
@@ -856,13 +898,17 @@ class AnimationController extends Animation<double>
     );
     stop();
     _direction = _AnimationDirection.forward;
-    return _startSimulation(simulation);
+    return _startSimulation(simulation, skipDuration: skipDuration);
   }
 
   /// Drives the animation according to the given simulation with a [status] of
   /// [AnimationStatus.reverse].
   ///
   /// {@macro flutter.animation.AnimationController.animateWith}
+  ///
+  /// [skipDuration] is the duration to skip before starting the animation. If the
+  /// animation duration is 1000 milliseconds and [skipDuration] is 200 milliseconds,
+  /// the animation will start from the 200-millisecond mark and end after 800 milliseconds.
   ///
   /// The [status] is always [AnimationStatus.reverse] for the entire duration
   /// of the simulation.
@@ -871,7 +917,7 @@ class AnimationController extends Animation<double>
   ///
   ///  * [animateWith], which is like this method but the status is always
   ///    [AnimationStatus.forward].
-  TickerFuture animateBackWith(Simulation simulation) {
+  TickerFuture animateBackWith(Simulation simulation, {Duration? skipDuration}) {
     assert(
       _ticker != null,
       'AnimationController.animateWith() called after AnimationController.dispose()\n'
@@ -879,12 +925,13 @@ class AnimationController extends Animation<double>
     );
     stop();
     _direction = _AnimationDirection.reverse;
-    return _startSimulation(simulation);
+    return _startSimulation(simulation, skipDuration: skipDuration);
   }
 
-  TickerFuture _startSimulation(Simulation simulation) {
+  TickerFuture _startSimulation(Simulation simulation, {Duration? skipDuration}) {
     assert(!isAnimating);
     _simulation = simulation;
+    _skipDuration = skipDuration;
     _lastElapsedDuration = Duration.zero;
     _value = clampDouble(simulation.x(0.0), lowerBound, upperBound);
     final TickerFuture result = _ticker!.start();
@@ -921,6 +968,7 @@ class AnimationController extends Animation<double>
     );
     _simulation = null;
     _lastElapsedDuration = null;
+    _skipDuration = null;
     _ticker!.stop(canceled: canceled);
   }
 
@@ -966,9 +1014,10 @@ class AnimationController extends Animation<double>
   }
 
   void _tick(Duration elapsed) {
-    _lastElapsedDuration = elapsed;
+    final Duration effectiveElapsed = elapsed + (_skipDuration ?? Duration.zero);
+    _lastElapsedDuration = effectiveElapsed;
     final double elapsedInSeconds =
-        elapsed.inMicroseconds.toDouble() / Duration.microsecondsPerSecond;
+        effectiveElapsed.inMicroseconds.toDouble() / Duration.microsecondsPerSecond;
     assert(elapsedInSeconds >= 0.0);
     _value = clampDouble(_simulation!.x(elapsedInSeconds), lowerBound, upperBound);
     if (_simulation!.isDone(elapsedInSeconds)) {

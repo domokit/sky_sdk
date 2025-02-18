@@ -17,15 +17,15 @@ class _MockAnimationController extends AnimationController {
   int reverseCalls = 0;
 
   @override
-  TickerFuture forward({double? from}) {
+  TickerFuture forward({double? from, Duration? skipDuration}) {
     forwardCalls++;
-    return super.forward(from: from);
+    return super.forward(from: from, skipDuration: skipDuration);
   }
 
   @override
-  TickerFuture reverse({double? from}) {
+  TickerFuture reverse({double? from, Duration? skipDuration}) {
     reverseCalls++;
-    return super.reverse(from: from);
+    return super.reverse(from: from, skipDuration: skipDuration);
   }
 }
 
