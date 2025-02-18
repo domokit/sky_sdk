@@ -416,6 +416,33 @@ TEST(FlEngineTest, DartEntrypointArgs) {
   EXPECT_TRUE(called);
 }
 
+TEST(FlEngineTest, EngineHandle) {
+  int64_t engine_handle;
+  {
+    g_autoptr(FlDartProject) project = fl_dart_project_new();
+    g_autoptr(FlEngine) engine = fl_engine_new(project);
+
+    fl_engine_get_embedder_api(engine)->Initialize = MOCK_ENGINE_PROC(
+        Initialize,
+        ([&engine_handle](size_t version, const FlutterRendererConfig* config,
+                          const FlutterProjectArgs* args, void* user_data,
+                          FLUTTER_API_SYMBOL(FlutterEngine) * engine_out) {
+          engine_handle = args->engine_handle;
+          return kSuccess;
+        }));
+    fl_engine_get_embedder_api(engine)->RunInitialized = MOCK_ENGINE_PROC(
+        RunInitialized, ([](auto engine) { return kSuccess; }));
+
+    g_autoptr(GError) error = nullptr;
+    EXPECT_TRUE(fl_engine_start(engine, &error));
+    EXPECT_EQ(error, nullptr);
+    EXPECT_TRUE(engine_handle != 0);
+
+    EXPECT_EQ(fl_engine_for_handle(engine_handle), engine);
+  }
+  EXPECT_EQ(fl_engine_for_handle(engine_handle), nullptr);
+}
+
 TEST(FlEngineTest, Locales) {
   g_autofree gchar* initial_language = g_strdup(g_getenv("LANGUAGE"));
   g_setenv("LANGUAGE", "de:en_US", TRUE);

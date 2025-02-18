@@ -48,6 +48,18 @@ FlEngine* fl_engine_new(FlDartProject* project);
 FlEngine* fl_engine_new_headless(FlDartProject* project);
 
 /**
+ * fl_engine_for_handle:
+ * @handle: an engine handle obtained through
+ * PlatformDispatcher.instance.engineHandle.
+ *
+ * Returns Flutter engine associated with the handle or NULL if not found.
+ * Must be called from the main thread.
+ *
+ * Returns: a #FlEngine or NULL.
+ */
+FlEngine* fl_engine_for_handle(int64_t handle);
+
+/**
  * fl_engine_get_binary_messenger:
  * @engine: an #FlEngine.
  *
