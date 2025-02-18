@@ -22,9 +22,16 @@ void main() async {
     await flutterDriver.close();
   });
 
+  // TODO(matanlurey): Convert to use package:integration_test
   test('verify that engineHandle is set and works', () async {
     final Map<String, Object?> response =
         json.decode(await flutterDriver.requestData('')) as Map<String, Object?>;
-    expect(response['engineHandle'], 1);
+    expect(
+      response['engineHandle'],
+      1,
+      // Valid engine handles start at 1 to make detecting uninitialized
+      // values easier.
+      reason: 'engineHandle of first engine instance should be 1',
+    );
   }, timeout: Timeout.none);
 }
