@@ -69,7 +69,7 @@ class Viewport extends MultiChildRenderObjectWidget {
     this.center,
     this.cacheExtent,
     this.cacheExtentStyle = CacheExtentStyle.pixel,
-    this.paintOrder = SliverPaintOrder.centerTopFirstBottom,
+    this.paintOrder = SliverPaintOrder.firstIsTop,
     this.clipBehavior = Clip.hardEdge,
     List<Widget> slivers = const <Widget>[],
   }) : assert(center == null || slivers.where((Widget child) => child.key == center).length == 1),
@@ -138,7 +138,7 @@ class Viewport extends MultiChildRenderObjectWidget {
 
   /// {@macro flutter.rendering.RenderViewportBase.paintOrder}
   ///
-  /// Defaults to [SliverPaintOrder.centerTopFirstBottom].
+  /// Defaults to [SliverPaintOrder.firstIsTop].
   final SliverPaintOrder paintOrder;
 
   /// {@macro flutter.material.Material.clipBehavior}
@@ -368,8 +368,7 @@ class ShrinkWrappingViewport extends MultiChildRenderObjectWidget {
     this.paintOrder = SliverPaintOrder.firstIsTop,
     this.clipBehavior = Clip.hardEdge,
     List<Widget> slivers = const <Widget>[],
-  }) : assert(paintOrder != SliverPaintOrder.centerTopFirstBottom),
-       super(children: slivers);
+  }) : super(children: slivers);
 
   /// The direction in which the [offset]'s [ViewportOffset.pixels] increases.
   ///

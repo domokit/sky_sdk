@@ -1908,10 +1908,13 @@ void main() {
       );
 
       // Children should be painted in reverse order to the list given
+      // ignore: invalid_use_of_protected_member
       expect(renderViewport.childrenInPaintOrder, equals(children.reversed));
       // childrenInPaintOrder should be reverse of childrenInHitTestOrder
       expect(
+        // ignore: invalid_use_of_protected_member
         renderViewport.childrenInPaintOrder,
+        // ignore: invalid_use_of_protected_member
         equals(renderViewport.childrenInHitTestOrder.toList().reversed),
       );
     });
@@ -1930,10 +1933,13 @@ void main() {
       );
 
       // Children should be painted in reverse order to the list given
+      // ignore: invalid_use_of_protected_member
       expect(renderViewport.childrenInPaintOrder, equals(children.reversed));
       // childrenInPaintOrder should be reverse of childrenInHitTestOrder
       expect(
+        // ignore: invalid_use_of_protected_member
         renderViewport.childrenInPaintOrder,
+        // ignore: invalid_use_of_protected_member
         equals(renderViewport.childrenInHitTestOrder.toList().reversed),
       );
     });
