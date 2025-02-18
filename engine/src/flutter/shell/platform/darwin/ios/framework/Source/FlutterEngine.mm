@@ -158,6 +158,11 @@ static constexpr int kNumProfilerSamplesPerSec = 5;
   FlutterBinaryMessengerRelay* _binaryMessenger;
   FlutterTextureRegistryRelay* _textureRegistry;
   std::unique_ptr<flutter::ConnectionCollection> _connections;
+  int64_t _engineHandle;
+}
+
+- (int64_t)engineHandle {
+  return _engineHandle;
 }
 
 - (instancetype)init {
@@ -180,6 +185,9 @@ static constexpr int kNumProfilerSamplesPerSec = 5;
       allowHeadlessExecution:allowHeadlessExecution
           restorationEnabled:NO];
 }
+
+static int64_t nextHandle = 1;
+static NSMapTable* engineMap;
 
 - (instancetype)initWithName:(NSString*)labelPrefix
                      project:(FlutterDartProject*)project
@@ -238,7 +246,18 @@ static constexpr int kNumProfilerSamplesPerSec = 5;
                  name:NSCurrentLocaleDidChangeNotification
                object:nil];
 
+  _engineHandle = nextHandle++;
+  if (engineMap == nil) {
+    engineMap = [NSMapTable strongToWeakObjectsMapTable];
+  }
+  [engineMap setObject:self forKey:@(_engineHandle)];
+
   return self;
+}
+
++ (FlutterEngine*)engineForHandle:(int64_t)handle {
+  NSAssert([[NSThread currentThread] isMainThread], @"Must be called on the main thread.");
+  return [engineMap objectForKey:@(handle)];
 }
 
 - (void)setUpSceneLifecycleNotifications:(NSNotificationCenter*)center API_AVAILABLE(ios(13.0)) {
@@ -499,6 +518,7 @@ static constexpr int kNumProfilerSamplesPerSec = 5;
   _profiler.reset();
   _threadHost.reset();
   _platformViewsController = nil;
+  [engineMap removeObjectForKey:@(_engineHandle)];
 }
 
 - (NSURL*)observatoryUrl {
@@ -704,9 +724,12 @@ static constexpr int kNumProfilerSamplesPerSec = 5;
           libraryURI:(NSString*)libraryOrNil
       entrypointArgs:(NSArray<NSString*>*)entrypointArgs {
   // Launch the Dart application with the inferred run configuration.
-  self.shell.RunEngine([self.dartProject runConfigurationForEntrypoint:entrypoint
-                                                          libraryOrNil:libraryOrNil
-                                                        entrypointArgs:entrypointArgs]);
+  flutter::RunConfiguration configuration =
+      [self.dartProject runConfigurationForEntrypoint:entrypoint
+                                         libraryOrNil:libraryOrNil
+                                       entrypointArgs:entrypointArgs];
+  configuration.SetEngineHandle(_engineHandle);
+  self.shell.RunEngine(std::move(configuration));
 }
 
 - (void)setUpShell:(std::unique_ptr<flutter::Shell>)shell
@@ -1452,6 +1475,7 @@ static void SetEntryPoint(flutter::Settings* settings, NSString* entrypoint, NSS
       [self.dartProject runConfigurationForEntrypoint:entrypoint
                                          libraryOrNil:libraryURI
                                        entrypointArgs:entrypointArgs];
+  configuration.SetEngineHandle(result->_engineHandle);
 
   fml::WeakPtr<flutter::PlatformView> platform_view = _shell->GetPlatformView();
   FML_DCHECK(platform_view);

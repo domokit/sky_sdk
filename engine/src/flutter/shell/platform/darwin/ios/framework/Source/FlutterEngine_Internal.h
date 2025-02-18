@@ -87,6 +87,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, readonly) FlutterDartProject* project;
 
+/**
+ * Returns the engine handle. Used in FlutterEngineTest.
+ */
+- (int64_t)engineHandle;
+
 @end
 
 NS_ASSUME_NONNULL_END
