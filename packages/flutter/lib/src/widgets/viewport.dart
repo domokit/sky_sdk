@@ -16,7 +16,7 @@ import 'debug.dart';
 import 'framework.dart';
 import 'scroll_notification.dart';
 
-export 'package:flutter/rendering.dart' show AxisDirection, GrowthDirection;
+export 'package:flutter/rendering.dart' show AxisDirection, GrowthDirection, SliverPaintOrder;
 
 /// A widget through which a portion of larger content can be viewed, typically
 /// in combination with a [Scrollable].
