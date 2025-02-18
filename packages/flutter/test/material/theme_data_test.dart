@@ -1489,6 +1489,20 @@ void main() {
     });
   });
 
+  testWidgets('Override elevationToShadow predefined', (WidgetTester tester) async {
+    final ThemeData theme = ThemeData();
+    expect(theme.elevationToShadow, kElevationToShadow);
+    
+    final ElevationToShadow customElevationToShadow = <int, List<BoxShadow>>{
+      0: <BoxShadow>[const BoxShadow()]
+    };
+
+    final ThemeData themeWithDefaultElevationToShadow = ThemeData(
+      elevationToShadow: customElevationToShadow
+    );
+    expect(themeWithDefaultElevationToShadow.elevationToShadow, customElevationToShadow);
+  });
+
   testWidgets(
     'ThemeData.brightness not matching ColorScheme.brightness throws a helpful error message',
     (WidgetTester tester) async {
