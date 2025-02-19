@@ -142,9 +142,9 @@ class BorderSide with Diagnosticable {
   /// such as [Container.clipBehavior] can be used in an outside widget to clip
   /// it. If [Container.decoration] has a border, the container may incorporate
   /// [width] as additional padding:
-  /// - [strokeAlignInside] provides padding with full [width].
+  /// - [strokeAlignInside] provides zero padding, as stroke is drawn entirely inside.
   /// - [strokeAlignCenter] provides padding with half [width].
-  /// - [strokeAlignOutside] provides zero padding, as stroke is drawn entirely outside.
+  /// - [strokeAlignOutside] provides padding with full [width].
   ///
   /// This property is not honored by [toPaint] (because the [Paint] object
   /// cannot represent it); it is intended that classes that use [BorderSide]
@@ -660,7 +660,7 @@ abstract class OutlinedBorder extends ShapeBorder {
   const OutlinedBorder({this.side = BorderSide.none});
 
   @override
-  EdgeInsetsGeometry get dimensions => EdgeInsets.all(math.max(side.strokeInset, 0));
+  EdgeInsetsGeometry get dimensions => EdgeInsets.all(math.max(side.strokeOutset, 0));
 
   /// The border outline's color and weight.
   ///
