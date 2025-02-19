@@ -137,7 +137,6 @@ class BuildApkCommand extends BuildSubCommand {
       targetArchs: _targetArchs.map<AndroidArch>(getAndroidArchForName),
     );
     validateBuild(androidBuildInfo);
-    displayNullSafetyMode(androidBuildInfo.buildInfo);
     globals.terminal.usesTerminalUi = true;
     final FlutterProject project = FlutterProject.current();
     await androidBuilder?.buildApk(

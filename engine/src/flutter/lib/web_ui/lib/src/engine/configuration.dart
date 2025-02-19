@@ -172,12 +172,6 @@ class FlutterConfiguration {
   // runtime. They must be static constants for the compiler to remove dead code
   // effectively.
 
-  /// Auto detect which rendering backend to use.
-  ///
-  /// Using flutter tools option "--web-renderer=auto" would set the value to
-  /// true. Otherwise, it would be false.
-  static const bool flutterWebAutoDetect = bool.fromEnvironment('FLUTTER_WEB_AUTO_DETECT');
-
   static const bool flutterWebUseSkwasm = bool.fromEnvironment('FLUTTER_WEB_USE_SKWASM');
 
   /// Enable the Skia-based rendering backend.

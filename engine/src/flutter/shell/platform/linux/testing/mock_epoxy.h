@@ -16,6 +16,7 @@ namespace testing {
 class MockEpoxy {
  public:
   MockEpoxy();
+  ~MockEpoxy();
 
   MOCK_METHOD(bool, epoxy_has_gl_extension, (const char* extension));
   MOCK_METHOD(bool, epoxy_is_desktop_gl, ());

@@ -287,7 +287,6 @@ void main() {
       expect(buildInfo.splitDebugInfoPath, '/project-name/v1.2.3/');
       expect(buildInfo.dartObfuscation, isTrue);
       expect(buildInfo.dartDefines.contains('foo=bar'), isTrue);
-      expect(buildInfo.nullSafetyMode, NullSafetyMode.sound);
     }, overrides: <Type, Generator>{AndroidBuilder: () => fakeAndroidBuilder});
   });
 

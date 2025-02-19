@@ -65,8 +65,8 @@ std::shared_ptr<ColorSourceContents> Paint::CreateContents() const {
 
       std::array<Point, 2> bounds{start_point, end_point};
       auto intrinsic_size = Rect::MakePointBounds(bounds.begin(), bounds.end());
-      if (intrinsic_size.has_value() && !intrinsic_size->IsEmpty()) {
-        contents->SetColorSourceSize(intrinsic_size->GetSize());
+      if (intrinsic_size.has_value()) {
+        contents->SetColorSourceSize(intrinsic_size->GetSize().Max({1, 1}));
       }
       return contents;
     }
@@ -95,8 +95,8 @@ std::shared_ptr<ColorSourceContents> Paint::CreateContents() const {
       auto radius_pt = Point(radius, radius);
       std::array<Point, 2> bounds{center + radius_pt, center - radius_pt};
       auto intrinsic_size = Rect::MakePointBounds(bounds.begin(), bounds.end());
-      if (intrinsic_size.has_value() && !intrinsic_size->IsEmpty()) {
-        contents->SetColorSourceSize(intrinsic_size->GetSize());
+      if (intrinsic_size.has_value()) {
+        contents->SetColorSourceSize(intrinsic_size->GetSize().Max({1, 1}));
       }
       return contents;
     }
@@ -129,8 +129,8 @@ std::shared_ptr<ColorSourceContents> Paint::CreateContents() const {
       auto radius_pt = Point(radius, radius);
       std::array<Point, 2> bounds{center + radius_pt, center - radius_pt};
       auto intrinsic_size = Rect::MakePointBounds(bounds.begin(), bounds.end());
-      if (intrinsic_size.has_value() && !intrinsic_size->IsEmpty()) {
-        contents->SetColorSourceSize(intrinsic_size->GetSize());
+      if (intrinsic_size.has_value()) {
+        contents->SetColorSourceSize(intrinsic_size->GetSize().Max({1, 1}));
       }
       return contents;
     }

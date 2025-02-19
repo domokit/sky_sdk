@@ -15,6 +15,7 @@ import 'package:flutter_tools/src/base/io.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/platform.dart';
 import 'package:flutter_tools/src/base/signals.dart';
+import 'package:flutter_tools/src/base/terminal.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/commands/drive.dart';
@@ -34,6 +35,8 @@ void main() {
   late FileSystem fileSystem;
   late BufferLogger logger;
   late Platform platform;
+  late Terminal terminal;
+  late OutputPreferences outputPreferences;
   late FakeDeviceManager fakeDeviceManager;
   late FakeSignals signals;
 
@@ -41,6 +44,8 @@ void main() {
     fileSystem = MemoryFileSystem.test();
     logger = BufferLogger.test();
     platform = FakePlatform();
+    terminal = Terminal.test();
+    outputPreferences = OutputPreferences.test();
     fakeDeviceManager = FakeDeviceManager();
     signals = FakeSignals();
   });
@@ -60,6 +65,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
       fileSystem.file('lib/main.dart').createSync(recursive: true);
@@ -89,6 +96,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
       fileSystem.file('lib/app.dart').createSync(recursive: true);
@@ -116,6 +125,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
       fileSystem.file('lib/main.dart').createSync(recursive: true);
@@ -148,6 +159,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
       fileSystem.file('lib/main.dart').createSync(recursive: true);
@@ -188,6 +201,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
         flutterDriverFactory: FailingFakeFlutterDriverFactory(),
       );
@@ -229,6 +244,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
       fileSystem.file('lib/main.dart').createSync(recursive: true);
@@ -269,6 +286,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
         flutterDriverFactory: FailingFakeFlutterDriverFactory(),
       );
@@ -321,6 +340,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
 
@@ -365,6 +386,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: Signals.test(),
         flutterDriverFactory: NeverEndingFlutterDriverFactory(() {}),
       );
@@ -430,6 +453,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: Signals.test(),
         flutterDriverFactory: NeverEndingFlutterDriverFactory(() {
           signal.controller.add(signal);
@@ -485,6 +510,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
 
@@ -522,6 +549,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
 
@@ -582,6 +611,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
 
@@ -616,6 +647,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
 
@@ -650,6 +683,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
 
@@ -684,6 +719,8 @@ void main() {
         fileSystem: fileSystem,
         logger: logger,
         platform: platform,
+        terminal: terminal,
+        outputPreferences: outputPreferences,
         signals: signals,
       );
 

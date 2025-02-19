@@ -13,6 +13,7 @@
 #include "flutter/shell/platform/linux/fl_mouse_cursor_handler.h"
 #include "flutter/shell/platform/linux/fl_renderer.h"
 #include "flutter/shell/platform/linux/fl_task_runner.h"
+#include "flutter/shell/platform/linux/fl_text_input_handler.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_dart_project.h"
 #include "flutter/shell/platform/linux/public/flutter_linux/fl_engine.h"
 
@@ -584,6 +585,16 @@ void fl_engine_request_app_exit(FlEngine* engine);
  * Returns: a #FlKeyboardManager.
  */
 FlKeyboardManager* fl_engine_get_keyboard_manager(FlEngine* engine);
+
+/**
+ * fl_engine_get_text_input_handler:
+ * @engine: an #FlEngine.
+ *
+ * Gets the text input handler used by this engine.
+ *
+ * Returns: a #FlTextInputHandler.
+ */
+FlTextInputHandler* fl_engine_get_text_input_handler(FlEngine* engine);
 
 /**
  * fl_engine_get_mouse_cursor_handler:

@@ -92,13 +92,7 @@ export class FlutterLoader {
      * @param {import("./types").WebRenderer} renderer
      **/
     const buildContainsRenderer = (build, renderer) => {
-      switch (build.renderer) {
-        // The "auto" build contains both canvaskit and html renderers.
-        case "auto":
-          return renderer == "canvaskit" || renderer == "html";
-        default:
-          return build.renderer == renderer;
-      }
+      return build.renderer == renderer;
     }
 
     const buildIsCompatible = (build) => {

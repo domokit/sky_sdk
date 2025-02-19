@@ -123,6 +123,7 @@ class ShaderCompiler {
         ];
 
       case TargetPlatform.ios:
+        return <String>['--runtime-stage-metal'];
       case TargetPlatform.darwin:
         return <String>['--sksl', '--runtime-stage-metal'];
 

@@ -24,9 +24,6 @@ import 'package:integration_test_example/main.dart' as app;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // TODO(matanlurey): Make this automatic as part of the bootstrap.
-  VmServiceProxyGoldenFileComparator.useIfRunningOnDevice();
-
   testWidgets('can use matchesGoldenFile with integration_test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     app.main();

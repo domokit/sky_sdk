@@ -15,6 +15,7 @@ namespace testing {
 class MockKeymap {
  public:
   MockKeymap();
+  ~MockKeymap();
 
   MOCK_METHOD(GdkKeymap*, gdk_keymap_get_for_display, (GdkDisplay * display));
   MOCK_METHOD(guint,

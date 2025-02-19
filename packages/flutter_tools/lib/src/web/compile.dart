@@ -71,7 +71,9 @@ class WebBuilder {
     )).any((Plugin p) => p.platforms.containsKey(WebPlugin.kConfigKey));
     final Directory outputDirectory =
         outputDirectoryPath == null
-            ? _fileSystem.directory(getWebBuildDirectory())
+            ? _fileSystem.directory(
+              _fileSystem.path.join(flutterProject.directory.path, getWebBuildDirectory()),
+            )
             : _fileSystem.directory(outputDirectoryPath);
     outputDirectory.createSync(recursive: true);
 
@@ -89,7 +91,7 @@ class WebBuilder {
       final BuildResult result = await _buildSystem.build(
         globals.buildTargets.webServiceWorker(_fileSystem, compilerConfigs),
         Environment(
-          projectDir: _fileSystem.currentDirectory,
+          projectDir: flutterProject.directory,
           outputDir: outputDirectory,
           buildDir: flutterProject.directory
               .childDirectory('.dart_tool')
@@ -160,30 +162,19 @@ class WebBuilder {
 
 /// Web rendering backend mode.
 enum WebRendererMode {
-  /// Auto detects which rendering backend to use.
-  auto,
-
   /// Always uses canvaskit.
   canvaskit,
-
-  /// Always uses html.
-  html,
 
   /// Always use skwasm.
   skwasm;
 
   factory WebRendererMode.fromDartDefines(Iterable<String> defines, {required bool useWasm}) {
-    if (defines.contains('FLUTTER_WEB_AUTO_DETECT=true')) {
-      return auto;
-    } else if (defines.contains('FLUTTER_WEB_USE_SKIA=false') &&
+    if (defines.contains('FLUTTER_WEB_USE_SKIA=false') &&
         defines.contains('FLUTTER_WEB_USE_SKWASM=true')) {
       return skwasm;
     } else if (defines.contains('FLUTTER_WEB_USE_SKIA=true') &&
         defines.contains('FLUTTER_WEB_USE_SKWASM=false')) {
       return canvaskit;
-    } else if (defines.contains('FLUTTER_WEB_USE_SKIA=false') &&
-        defines.contains('FLUTTER_WEB_USE_SKWASM=false')) {
-      return html; // The horror!
     }
     return getDefault(useWasm: useWasm);
   }
@@ -195,30 +186,6 @@ enum WebRendererMode {
   static const WebRendererMode defaultForJs = WebRendererMode.canvaskit;
   static const WebRendererMode defaultForWasm = WebRendererMode.skwasm;
 
-  /// Returns whether the WebRendererMode is considered deprecated or not.
-  ///
-  /// Deprecated modes: auto, html.
-  bool get isDeprecated => switch (this) {
-    auto => true,
-    canvaskit => false,
-    html => true,
-    skwasm => false,
-  };
-
-  /// Returns a consistent deprecation warning for the WebRendererMode.
-  String get deprecationWarning =>
-      'The HTML Renderer is deprecated and will be removed. Please, stop using it.'
-      '\nSee: https://docs.flutter.dev/to/web-html-renderer-deprecation';
-
-  String get helpText => switch (this) {
-    auto => 'Use the HTML renderer on mobile devices, and CanvasKit on desktop devices.',
-    canvaskit =>
-      'Always use the CanvasKit renderer. This renderer uses WebGL and WebAssembly to render graphics.',
-    html =>
-      'Always use the HTML renderer. This renderer uses a combination of HTML, CSS, SVG, 2D Canvas, and WebGL.',
-    skwasm => 'Always use the experimental skwasm renderer.',
-  };
-
   /// Returns [dartDefines] in a way usable from the CLI.
   ///
   /// This is used to start integration tests.
@@ -226,9 +193,7 @@ enum WebRendererMode {
       dartDefines.map((String define) => '--dart-define=$define');
 
   Iterable<String> get dartDefines => switch (this) {
-    auto => const <String>{'FLUTTER_WEB_AUTO_DETECT=true'},
     canvaskit => const <String>{'FLUTTER_WEB_USE_SKIA=true', 'FLUTTER_WEB_USE_SKWASM=false'},
-    html => const <String>{'FLUTTER_WEB_USE_SKIA=false', 'FLUTTER_WEB_USE_SKWASM=false'},
     skwasm => const <String>{'FLUTTER_WEB_USE_SKIA=false', 'FLUTTER_WEB_USE_SKWASM=true'},
   };
 
@@ -238,9 +203,7 @@ enum WebRendererMode {
 
     dartDefinesSet
       ..removeWhere((String d) {
-        return d.startsWith('FLUTTER_WEB_AUTO_DETECT=') ||
-            d.startsWith('FLUTTER_WEB_USE_SKIA=') ||
-            d.startsWith('FLUTTER_WEB_USE_SKWASM=');
+        return d.startsWith('FLUTTER_WEB_USE_SKIA=') || d.startsWith('FLUTTER_WEB_USE_SKWASM=');
       })
       ..addAll(dartDefines);
 
@@ -251,37 +214,28 @@ enum WebRendererMode {
 /// The correct precompiled artifact to use for each build and render mode for DDC with AMD modules.
 // TODO(markzipan): delete this when DDC's AMD module system is deprecated, https://github.com/flutter/flutter/issues/142060.
 const Map<WebRendererMode, HostArtifact> kAmdDartSdkJsArtifactMap = <WebRendererMode, HostArtifact>{
-  WebRendererMode.auto: HostArtifact.webPrecompiledAmdCanvaskitAndHtmlSdk,
   WebRendererMode.canvaskit: HostArtifact.webPrecompiledAmdCanvaskitSdk,
-  WebRendererMode.html: HostArtifact.webPrecompiledAmdSdk,
 };
 
 /// The correct source map artifact to use for each build and render mode for DDC with AMD modules.
 // TODO(markzipan): delete this when DDC's AMD module system is deprecated, https://github.com/flutter/flutter/issues/142060.
 const Map<WebRendererMode, HostArtifact> kAmdDartSdkJsMapArtifactMap =
     <WebRendererMode, HostArtifact>{
-      WebRendererMode.auto: HostArtifact.webPrecompiledAmdCanvaskitAndHtmlSdkSourcemaps,
       WebRendererMode.canvaskit: HostArtifact.webPrecompiledAmdCanvaskitSdkSourcemaps,
-      WebRendererMode.html: HostArtifact.webPrecompiledAmdSdkSourcemaps,
     };
 
 /// The correct precompiled artifact to use for each build and render mode for
 /// DDC with DDC library bundle module format.
 const Map<WebRendererMode, HostArtifact> kDdcLibraryBundleDartSdkJsArtifactMap =
     <WebRendererMode, HostArtifact>{
-      WebRendererMode.auto: HostArtifact.webPrecompiledDdcLibraryBundleCanvaskitAndHtmlSdk,
       WebRendererMode.canvaskit: HostArtifact.webPrecompiledDdcLibraryBundleCanvaskitSdk,
-      WebRendererMode.html: HostArtifact.webPrecompiledDdcLibraryBundleSdk,
     };
 
 /// The correct source map artifact to use for each build and render mode for
 /// DDC with DDC library bundle module format.
 const Map<WebRendererMode, HostArtifact> kDdcLibraryBundleDartSdkJsMapArtifactMap =
     <WebRendererMode, HostArtifact>{
-      WebRendererMode.auto:
-          HostArtifact.webPrecompiledDdcLibraryBundleCanvaskitAndHtmlSdkSourcemaps,
       WebRendererMode.canvaskit: HostArtifact.webPrecompiledDdcLibraryBundleCanvaskitSdkSourcemaps,
-      WebRendererMode.html: HostArtifact.webPrecompiledDdcLibraryBundleSdkSourcemaps,
     };
 
 String _buildEventAnalyticsSettings({required List<WebCompilerConfig> configs}) {

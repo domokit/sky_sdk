@@ -144,6 +144,9 @@ class TextureGLES final : public Texture,
   // Visible for testing.
   std::optional<HandleGLES> GetSyncFence() const;
 
+  // visible for testing
+  Type ComputeTypeForBinding(GLenum target) const;
+
  private:
   std::shared_ptr<ReactorGLES> reactor_;
   const Type type_;

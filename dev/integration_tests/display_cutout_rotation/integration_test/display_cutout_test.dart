@@ -14,7 +14,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('end-to-end test', () {
-    // Test assumes a custom driver that enables
+    // Test assumes that the device already has enabled
     // "com.android.internal.display.cutout.emulation.tall".
     testWidgets('cutout should be on top in portrait mode', (WidgetTester tester) async {
       // Force rotation

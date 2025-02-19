@@ -53,7 +53,8 @@ class TextSelectionThemeData with Diagnosticable {
   ///
   /// On iOS [TextField] and [SelectableText] cannot access [selectionHandleColor].
   /// To set the [selectionHandleColor] on iOS, you can change the
-  /// [CupertinoThemeData.primaryColor] in [ThemeData.cupertinoOverrideTheme].
+  /// [CupertinoThemeData.primaryColor] by wrapping the subtree containing
+  /// your [TextField] or [SelectableText] with a [CupertinoTheme].
   final Color? selectionHandleColor;
 
   /// Creates a copy of this object with the given fields replaced with the

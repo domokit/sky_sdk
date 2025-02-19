@@ -1265,15 +1265,15 @@ flutter:
       await residentRunner.run();
 
       final File generatedLocalizationsFile = globals.fs
-          .directory('.dart_tool')
-          .childDirectory('flutter_gen')
-          .childDirectory('gen_l10n')
+          .directory('lib')
+          .childDirectory('l10n')
           .childFile('app_localizations.dart');
-      expect(generatedLocalizationsFile.existsSync(), isTrue);
+      expect(generatedLocalizationsFile, exists);
 
       // Completing this future ensures that the daemon can exit correctly.
       expect(await residentRunner.waitForAppToFinish(), 1);
     }),
+    overrides: <Type, Generator>{FeatureFlags: enableExplicitPackageDependencies},
   );
 
   testUsingContext(
@@ -1390,7 +1390,7 @@ flutter:
             commandHelp.hWithDetails,
             commandHelp.c,
             commandHelp.q,
-            '',
+            '\n',
           ].join('\n'),
         ),
       );
@@ -1425,7 +1425,7 @@ flutter:
             commandHelp.hWithoutDetails,
             commandHelp.c,
             commandHelp.q,
-            '',
+            '\n',
           ].join('\n'),
         ),
       );

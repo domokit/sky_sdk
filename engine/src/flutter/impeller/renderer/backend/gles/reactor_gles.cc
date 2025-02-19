@@ -374,7 +374,7 @@ bool ReactorGLES::FlushOps() {
 
 void ReactorGLES::SetupDebugGroups() {
   // Setup of a default active debug group: Filter everything in.
-  if (proc_table_->DebugMessageControlKHR.IsAvailable()) {
+  if (can_set_debug_labels_) {
     proc_table_->DebugMessageControlKHR(GL_DONT_CARE,  // source
                                         GL_DONT_CARE,  // type
                                         GL_DONT_CARE,  // severity

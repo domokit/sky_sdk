@@ -139,6 +139,44 @@ TaskFunction createSolidColorTest({required bool enableImpeller}) {
   ).call;
 }
 
+// Can run on emulator or physical android device.
+// Device must have developer settings enabled.
+// Device must be android api 30 or higher.
+TaskFunction createDisplayCutoutTest() {
+  return IntegrationTest(
+    '${flutterDirectory.path}/dev/integration_tests/display_cutout_rotation/',
+    'integration_test/display_cutout_test.dart',
+    setup: (Device device) async {
+      if (device is! AndroidDevice) {
+        // Only android devices support this cutoutTest.
+        throw TaskResult.failure('This test should only target android');
+      }
+      // Test requires developer settings added in 28 and behavior added in 30.
+      final String sdkResult = await device.shellEval('getprop', <String>['ro.build.version.sdk']);
+      if (sdkResult.startsWith('2') || sdkResult.startsWith('1') || sdkResult.length == 1) {
+        throw TaskResult.failure('This test should only target android 30+.');
+      }
+      print('Adding Synthetic notch...');
+      // This command will cause any running android activity to be recreated.
+      await device.shellExec('cmd', <String>[
+        'overlay',
+        'enable',
+        'com.android.internal.display.cutout.emulation.tall',
+      ]);
+    },
+    tearDown: (Device device) async {
+      if (device is AndroidDevice) {
+        print('Removing Synthetic notch...');
+        await device.shellExec('cmd', <String>[
+          'overlay',
+          'disable',
+          'com.android.internal.display.cutout.emulation.tall',
+        ]);
+      }
+    },
+  ).call;
+}
+
 TaskFunction dartDefinesTask() {
   return DriverTest(
     '${flutterDirectory.path}/dev/integration_tests/ui',
@@ -217,7 +255,6 @@ class DriverTest {
         ...extraOptions,
       ];
       await flutter('drive', options: options, environment: environment);
-
       return TaskResult.success(null);
     });
   }
@@ -231,6 +268,8 @@ class IntegrationTest {
     this.createPlatforms = const <String>[],
     this.withTalkBack = false,
     this.environment,
+    this.setup,
+    this.tearDown,
   });
 
   final String testDirectory;
@@ -240,12 +279,19 @@ class IntegrationTest {
   final bool withTalkBack;
   final Map<String, String>? environment;
 
+  /// Run before flutter drive with the result from devices.workingDevice.
+  final Future<void> Function(Device device)? setup;
+
+  /// Run after flutter drive with the result from devices.workingDevice.
+  final Future<void> Function(Device device)? tearDown;
+
   Future<TaskResult> call() {
     return inDirectory<TaskResult>(testDirectory, () async {
       final Device device = await devices.workingDevice;
       await device.unlock();
       final String deviceId = device.deviceId;
       await flutter('packages', options: <String>['get']);
+      await setup?.call(await devices.workingDevice);
 
       if (createPlatforms.isNotEmpty) {
         await flutter(
@@ -265,6 +311,7 @@ class IntegrationTest {
 
       final List<String> options = <String>['-v', '-d', deviceId, testTarget, ...extraOptions];
       await flutter('test', options: options, environment: environment);
+      await tearDown?.call(await devices.workingDevice);
 
       if (withTalkBack) {
         await disableTalkBack();

@@ -392,6 +392,15 @@ static std::optional<GLenum> ToRenderBufferFormat(PixelFormat format) {
   FML_UNREACHABLE();
 }
 
+TextureGLES::Type TextureGLES::ComputeTypeForBinding(GLenum target) const {
+  // When binding to a GL_READ_FRAMEBUFFER, any multisampled
+  // textures must be bound as single sampled.
+  if (target == GL_READ_FRAMEBUFFER && type_ == Type::kTextureMultisampled) {
+    return Type::kTexture;
+  }
+  return type_;
+}
+
 void TextureGLES::InitializeContentsIfNecessary() const {
   if (!IsValid() || slices_initialized_[0]) {
     return;
@@ -588,7 +597,7 @@ bool TextureGLES::SetAsFramebufferAttachment(
   }
   const auto& gl = reactor_->GetProcTable();
 
-  switch (type_) {
+  switch (ComputeTypeForBinding(target)) {
     case Type::kTexture:
       gl.FramebufferTexture2D(target,                             // target
                               ToAttachmentType(attachment_type),  // attachment

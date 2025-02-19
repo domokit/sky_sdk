@@ -4,6 +4,7 @@
 
 import 'package:args/args.dart';
 import 'package:meta/meta.dart';
+import 'package:package_config/package_config.dart';
 
 import '../base/common.dart';
 import '../base/deferred_component.dart';
@@ -118,17 +119,36 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
     required this.os,
   }) {
     addPubOptions();
-    argParser.addFlag(
-      kLaunchPreviewer,
-      defaultsTo: true,
-      help: 'Launches the widget preview environment.',
-      // Should only be used for testing.
-      hide: !verboseHelp,
-    );
+    argParser
+      ..addFlag(
+        kLaunchPreviewer,
+        defaultsTo: true,
+        help: 'Launches the widget preview environment.',
+        // Should only be used for testing.
+        hide: !verboseHelp,
+      )
+      ..addFlag(
+        kUseFlutterWeb,
+        help: 'Launches the widget preview environment using Flutter Web.',
+        hide: !verboseHelp,
+      )
+      ..addFlag(
+        kHeadlessWeb,
+        help: 'Launches Chrome in headless mode for testing.',
+        hide: !verboseHelp,
+      );
   }
 
   static const String kWidgetPreviewScaffoldName = 'widget_preview_scaffold';
   static const String kLaunchPreviewer = 'launch-previewer';
+  static const String kUseFlutterWeb = 'web';
+  static const String kHeadlessWeb = 'headless-web';
+
+  @override
+  Future<Set<DevelopmentArtifact>> get requiredArtifacts async => const <DevelopmentArtifact>{
+    // Ensure the Flutter Web SDK is installed.
+    DevelopmentArtifact.web,
+  };
 
   @override
   String get description => 'Starts the widget preview environment.';
@@ -137,6 +157,8 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
   String get name => 'start';
 
   final bool verboseHelp;
+
+  bool get isWeb => boolArg(kUseFlutterWeb);
 
   @override
   final FileSystem fs;
@@ -188,9 +210,10 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
           titleCaseProjectName: 'Widget Preview Scaffold',
           flutterRoot: Cache.flutterRoot!,
           dartSdkVersionBounds: '^${cache.dartSdkBuild}',
-          linux: platform.isLinux,
-          macos: platform.isMacOS,
-          windows: platform.isWindows,
+          linux: platform.isLinux && !isWeb,
+          macos: platform.isMacOS && !isWeb,
+          windows: platform.isWindows && !isWeb,
+          web: isWeb,
         ),
         overwrite: true,
         generateMetadata: false,
@@ -238,6 +261,7 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
   }
 
   void onChangeDetected(PreviewMapping previews) {
+    _previewCodeGenerator.populatePreviewsInGeneratedPreviewScaffold(previews);
     logger.printStatus('Triggering reload based on change to preview set: $previews');
     _widgetPreviewApp?.restart();
   }
@@ -250,9 +274,10 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
   Future<void> initialBuild({required FlutterProject widgetPreviewScaffoldProject}) async {
     // TODO(bkonyi): handle error case where desktop device isn't enabled.
     await widgetPreviewScaffoldProject.ensureReadyForPlatformSpecificTooling(
-      linuxPlatform: platform.isLinux,
-      macOSPlatform: platform.isMacOS,
-      windowsPlatform: platform.isWindows,
+      linuxPlatform: platform.isLinux && !isWeb,
+      macOSPlatform: platform.isMacOS && !isWeb,
+      windowsPlatform: platform.isWindows && !isWeb,
+      webPlatform: isWeb,
     );
 
     // Generate initial package_config.json, otherwise the build will fail.
@@ -262,6 +287,10 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
       offline: offline,
       outputMode: PubOutputMode.summaryOnly,
     );
+
+    if (isWeb) {
+      return;
+    }
 
     // WARNING: this log message is used by test/integration.shard/widget_preview_test.dart
     logger.printStatus('Performing initial build of the Widget Preview Scaffold...');
@@ -362,9 +391,12 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
 
       // We launch from a prebuilt widget preview scaffold instance to reduce launch times after
       // the first run.
-      final File prebuiltApplicationBinary = fs.file(
-        prebuiltApplicationBinaryPath(widgetPreviewScaffoldProject: widgetPreviewScaffoldProject),
-      );
+      File? prebuiltApplicationBinary;
+      if (!isWeb) {
+        prebuiltApplicationBinary = fs.file(
+          prebuiltApplicationBinaryPath(widgetPreviewScaffoldProject: widgetPreviewScaffoldProject),
+        );
+      }
       const String? kEmptyRoute = null;
       const bool kEnableHotReload = true;
 
@@ -378,12 +410,20 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
             BuildMode.debug,
             null,
             treeShakeIcons: false,
+            extraFrontEndOptions:
+                isWeb ? <String>['--dartdevc-canary', '--dartdevc-module-format=ddc'] : null,
             packageConfigPath: widgetPreviewScaffoldProject.packageConfig.path,
+            packageConfig: PackageConfig.parseBytes(
+              widgetPreviewScaffoldProject.packageConfig.readAsBytesSync(),
+              widgetPreviewScaffoldProject.packageConfig.uri,
+            ),
           ),
+          webEnableExposeUrl: false, // TODO(bkonyi): verify
+          webRunHeadless: boolArg(kHeadlessWeb),
         ),
         kEnableHotReload, // hot mode
         applicationBinary: prebuiltApplicationBinary,
-        trackWidgetCreation: false,
+        trackWidgetCreation: true,
         projectRootPath: widgetPreviewScaffoldProject.directory.path,
       );
     } on Exception catch (error) {

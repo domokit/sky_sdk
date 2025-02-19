@@ -59,6 +59,8 @@ kotlin {
 }
 
 dependencies {
+    compileOnly("androidx.annotation:annotation-jvm:1.9.1")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
     // When bumping, also update:
     //  * ndkVersion in FlutterExtension in packages/flutter_tools/gradle/src/main/groovy/flutter.groovy
     //  * AGP version in the buildscript block in packages/flutter_tools/gradle/src/main/kotlin_scripts/dependency_version_checker.gradle.kts
@@ -68,4 +70,5 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("com.android.tools.build:gradle:8.7.3")
     testImplementation("org.mockito:mockito-core:4.8.0")
+    testImplementation("io.mockk:mockk:1.13.16")
 }

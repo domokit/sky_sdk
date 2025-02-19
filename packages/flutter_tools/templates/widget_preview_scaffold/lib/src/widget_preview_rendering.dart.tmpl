@@ -2,11 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'controls.dart';
+import 'generated_preview.dart';
 import 'utils.dart';
 
 class WidgetPreviewWidget extends StatefulWidget {
@@ -289,6 +291,10 @@ class PreviewAssetBundle extends PlatformAssetBundle {
 
   @override
   Future<ImmutableBuffer> loadBuffer(String key) async {
+    if (kIsWeb) {
+      final ByteData bytes = await load(key);
+      return ImmutableBuffer.fromUint8List(Uint8List.sublistView(bytes));
+    }
     return await ImmutableBuffer.fromAsset(
       key.startsWith(_kPackagesPrefix) ? key : '../../$key',
     );
@@ -300,24 +306,18 @@ class PreviewAssetBundle extends PlatformAssetBundle {
 /// We don't actually define this as `main` to avoid copying this file into
 /// the preview scaffold project which prevents us from being able to use hot
 /// restart to iterate on this file.
-Future<void> mainImpl({
-  required List<WidgetPreview> Function() previewsProvider,
-}) async {
+Future<void> mainImpl() async {
   runApp(
-    _WidgetPreviewScaffold(
-      previewsProvider: previewsProvider,
-    ),
+    _WidgetPreviewScaffold(),
   );
 }
 
 class _WidgetPreviewScaffold extends StatelessWidget {
-  const _WidgetPreviewScaffold({required this.previewsProvider});
-
-  final List<WidgetPreview> Function() previewsProvider;
+  const _WidgetPreviewScaffold();
 
   @override
   Widget build(BuildContext context) {
-    final List<WidgetPreview> previewList = previewsProvider();
+    final List<WidgetPreview> previewList = previews();
     Widget previewView;
     if (previewList.isEmpty) {
       previewView = const Column(

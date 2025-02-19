@@ -190,12 +190,7 @@ Future<void> initializeEngineUi() async {
   ensureMetaTag('generator', 'Flutter');
 
   if (!configuration.multiViewEnabled) {
-    final EngineFlutterWindow implicitView = ensureImplicitViewInitialized(
-      hostElement: configuration.hostElement,
-    );
-    if (renderer is HtmlRenderer) {
-      ensureResourceManagerInitialized(implicitView);
-    }
+    ensureImplicitViewInitialized(hostElement: configuration.hostElement);
   }
   _initializationState = DebugEngineInitializationState.initialized;
 }

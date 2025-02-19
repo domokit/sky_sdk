@@ -110,7 +110,30 @@ sealed class _DebugSemanticsRoleChecks {
     SemanticsRole.tab => _semanticsTab,
     SemanticsRole.tabBar => _semanticsTabBar,
     SemanticsRole.tabPanel => _noCheckRequired,
+    SemanticsRole.table => _noCheckRequired,
+    SemanticsRole.cell => _semanticsCell,
+    SemanticsRole.columnHeader => _semanticsColumnHeader,
+    // TODO(chunhtai): add checks when the roles are used in framework.
+    // https://github.com/flutter/flutter/issues/159741.
+    SemanticsRole.row => _unimplemented,
+    SemanticsRole.searchBox => _unimplemented,
+    SemanticsRole.dragHandle => _unimplemented,
+    SemanticsRole.spinButton => _unimplemented,
+    SemanticsRole.comboBox => _unimplemented,
+    SemanticsRole.menuBar => _unimplemented,
+    SemanticsRole.menu => _unimplemented,
+    SemanticsRole.menuItem => _unimplemented,
+    SemanticsRole.list => _unimplemented,
+    SemanticsRole.listItem => _unimplemented,
+    SemanticsRole.form => _unimplemented,
+    SemanticsRole.tooltip => _unimplemented,
+    SemanticsRole.loadingSpinner => _unimplemented,
+    SemanticsRole.progressBar => _unimplemented,
+    SemanticsRole.hotKey => _unimplemented,
   }(node);
+
+  static FlutterError? _unimplemented(SemanticsNode node) =>
+      FlutterError('Missing checks for role ${node.getSemanticsData().role}');
 
   static FlutterError? _noCheckRequired(SemanticsNode node) => null;
 
@@ -139,6 +162,20 @@ sealed class _DebugSemanticsRoleChecks {
       return error == null;
     });
     return error;
+  }
+
+  static FlutterError? _semanticsCell(SemanticsNode node) {
+    if (node.parent?.role != SemanticsRole.table) {
+      return FlutterError('A cell must be a child of a table');
+    }
+    return null;
+  }
+
+  static FlutterError? _semanticsColumnHeader(SemanticsNode node) {
+    if (node.parent?.role != SemanticsRole.table) {
+      return FlutterError('A columnHeader must be a child of a table');
+    }
+    return null;
   }
 }
 

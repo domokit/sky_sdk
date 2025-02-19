@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'dart:js_interop';
 import 'dart:ui' as ui;
-import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart';
 
@@ -134,9 +133,6 @@ class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkIm
     return collector;
   }
 
-  // HTML renderer does not support decoding network images to a specified size. The decode parameter
-  // here is ignored and `ui_web.createImageCodecFromUrl` will be used directly
-  // in place of the typical `instantiateImageCodec` method.
   Future<ImageStreamCompleter> _loadAsync(
     NetworkImage key,
     _SimpleDecoderCallback decode,
@@ -176,9 +172,6 @@ class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkIm
     final bool containsNetworkImageHeaders = key.headers?.isNotEmpty ?? false;
     // When headers are set, the image can only be loaded by decoding.
     //
-    // For the HTML renderer, `ui_web.createImageCodecFromUrl` method is not
-    // capable of handling headers.
-    //
     // For CanvasKit and Skwasm, it is not possible to load an <img> element and
     // pass the headers with the request to fetch the image. Since the user has
     // provided headers, this function should assume the headers are required to
@@ -186,32 +179,6 @@ class NetworkImage extends image_provider.ImageProvider<image_provider.NetworkIm
     // in an <img> tag without the headers.
     if (containsNetworkImageHeaders) {
       return loadViaDecode();
-    }
-
-    if (!isSkiaWeb) {
-      // This branch is only hit by the HTML renderer, which is deprecated. The
-      // HTML renderer supports loading images with CORS restrictions, so we
-      // don't need to catch errors and try loading the image in an <img> tag
-      // in this case.
-
-      // Resolve the Codec before passing it to
-      // [MultiFrameImageStreamCompleter] so any errors aren't reported
-      // twice (once from the MultiFrameImageStreamCompleter) and again
-      // from the wrapping [ForwardingImageStreamCompleter].
-      final Uri resolved = Uri.base.resolve(key.url);
-      final ui.Codec codec = await ui_web.createImageCodecFromUrl(
-        resolved,
-        chunkCallback: (int bytes, int total) {
-          chunkEvents.add(ImageChunkEvent(cumulativeBytesLoaded: bytes, expectedTotalBytes: total));
-        },
-      );
-      return MultiFrameImageStreamCompleter(
-        chunkEvents: chunkEvents.stream,
-        codec: Future<ui.Codec>.value(codec),
-        scale: key.scale,
-        debugLabel: key.url,
-        informationCollector: _imageStreamInformationCollector(key),
-      );
     }
 
     switch (webHtmlElementStrategy) {

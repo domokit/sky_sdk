@@ -140,7 +140,6 @@ class BuildBundleCommand extends BuildSubCommand {
     }
 
     final BuildInfo buildInfo = await getBuildInfo();
-    displayNullSafetyMode(buildInfo);
 
     await _bundleBuilder.build(
       platform: platform,

@@ -259,7 +259,6 @@ class BuildIOSFrameworkCommand extends BuildFrameworkCommand {
       globals.fs.path.absolute(globals.fs.path.normalize(outputArgument)),
     );
     final List<BuildInfo> buildInfos = await getBuildInfos();
-    displayNullSafetyMode(buildInfos.first);
     for (final BuildInfo buildInfo in buildInfos) {
       // Create the build-mode specific metadata.
       //

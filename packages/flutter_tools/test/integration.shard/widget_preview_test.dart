@@ -7,6 +7,7 @@ import 'dart:convert';
 
 import 'package:file/file.dart';
 import 'package:flutter_tools/src/base/io.dart';
+import 'package:flutter_tools/src/commands/widget_preview.dart';
 import 'package:process/process.dart';
 
 import '../src/common.dart';
@@ -22,6 +23,12 @@ const List<String> firstLaunchMessages = <String>[
 ];
 
 const List<String> subsequentLaunchMessages = <String>[
+  'Loading previews into the Widget Preview Scaffold...',
+  'Done loading previews.',
+];
+
+const List<String> firstLaunchMessagesWeb = <String>[
+  'Creating widget preview scaffolding at:',
   'Loading previews into the Widget Preview Scaffold...',
   'Done loading previews.',
 ];
@@ -43,13 +50,21 @@ void main() {
     tryToDelete(tempDir);
   });
 
-  Future<void> runWidgetPreview({required List<String> expectedMessages}) async {
+  Future<void> runWidgetPreview({
+    required List<String> expectedMessages,
+    bool useWeb = false,
+  }) async {
     expect(expectedMessages, isNotEmpty);
     int i = 0;
     process = await processManager.start(<String>[
       flutterBin,
       'widget-preview',
       'start',
+      '--verbose',
+      if (useWeb) ...<String>[
+        '--${WidgetPreviewStartCommand.kUseFlutterWeb}',
+        '--${WidgetPreviewStartCommand.kHeadlessWeb}',
+      ],
     ], workingDirectory: tempDir.path);
 
     final Completer<void> completer = Completer<void>();
@@ -70,6 +85,16 @@ void main() {
       printOnFailure('STDERR: $msg');
     });
 
+    unawaited(
+      process!.exitCode.then((int exitCode) {
+        if (completer.isCompleted) {
+          return;
+        }
+        completer.completeError(
+          TestFailure('The widget previewer exited unexpectedly (exit code: $exitCode)'),
+        );
+      }),
+    );
     await completer.future;
     process!.kill();
     process = null;
@@ -80,6 +105,10 @@ void main() {
       await runWidgetPreview(expectedMessages: firstLaunchMessages);
     });
 
+    testWithoutContext('web smoke test', () async {
+      await runWidgetPreview(expectedMessages: firstLaunchMessagesWeb, useWeb: true);
+    });
+
     testWithoutContext('does not rebuild project on subsequent runs', () async {
       // The first run of 'flutter widget-preview start' should generate a new preview scaffold and
       // pre-build the application.
@@ -87,6 +116,14 @@ void main() {
 
       // We shouldn't regenerate the scaffold after the initial run.
       await runWidgetPreview(expectedMessages: subsequentLaunchMessages);
+    });
+
+    testWithoutContext('does not recreate project on subsequent --web runs', () async {
+      // The first run of 'flutter widget-preview start --web' should generate a new preview scaffold
+      await runWidgetPreview(expectedMessages: firstLaunchMessagesWeb, useWeb: true);
+
+      // We shouldn't regenerate the scaffold after the initial run.
+      await runWidgetPreview(expectedMessages: subsequentLaunchMessages, useWeb: true);
     });
   });
 }

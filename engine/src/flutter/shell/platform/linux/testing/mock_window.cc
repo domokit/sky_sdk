@@ -12,6 +12,12 @@ MockWindow::MockWindow() {
   mock = this;
 }
 
+MockWindow::~MockWindow() {
+  if (mock == this) {
+    mock = nullptr;
+  }
+}
+
 GdkDisplay* gdk_display_get_default() {
   return GDK_DISPLAY(g_object_new(gdk_display_get_type(), nullptr));
 }

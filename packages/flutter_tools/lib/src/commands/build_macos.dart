@@ -57,7 +57,6 @@ class BuildMacosCommand extends BuildSubCommand {
     if (!supported) {
       throwToolExit('"build macos" only supported on macOS hosts.');
     }
-    displayNullSafetyMode(buildInfo);
     await buildMacOS(
       flutterProject: project,
       buildInfo: buildInfo,

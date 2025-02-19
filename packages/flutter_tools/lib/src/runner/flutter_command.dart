@@ -1355,23 +1355,6 @@ abstract class FlutterCommand extends Command<void> {
       codeSizeDirectory = directory.path;
     }
 
-    NullSafetyMode nullSafetyMode = NullSafetyMode.sound;
-    if (argParser.options.containsKey(FlutterOptions.kNullSafety)) {
-      final bool wasNullSafetyFlagParsed =
-          argResults?.wasParsed(FlutterOptions.kNullSafety) ?? false;
-      // Extra frontend options are only provided if explicitly
-      // requested.
-      if (wasNullSafetyFlagParsed) {
-        if (boolArg(FlutterOptions.kNullSafety)) {
-          nullSafetyMode = NullSafetyMode.sound;
-          extraFrontEndOptions.add('--sound-null-safety');
-        } else {
-          nullSafetyMode = NullSafetyMode.unsound;
-          extraFrontEndOptions.add('--no-sound-null-safety');
-        }
-      }
-    }
-
     final bool dartObfuscation =
         argParser.options.containsKey(FlutterOptions.kDartObfuscationOption) &&
         boolArg(FlutterOptions.kDartObfuscationOption);
@@ -1471,7 +1454,6 @@ abstract class FlutterCommand extends Command<void> {
       dartExperiments: experiments,
       performanceMeasurementFile: performanceMeasurementFile,
       packageConfigPath: packagesPath ?? packageConfigFile.path,
-      nullSafetyMode: nullSafetyMode,
       codeSizeDirectory: codeSizeDirectory,
       androidGradleDaemon: androidGradleDaemon,
       androidSkipBuildDependencyValidation: androidSkipBuildDependencyValidation,
@@ -1880,9 +1862,6 @@ Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and 
         buildSystem: globals.buildSystem,
         buildTargets: globals.buildTargets,
       );
-      if (reportNullSafety) {
-        await _sendNullSafetyAnalyticsEvents(project);
-      }
     }
 
     if (regeneratePlatformSpecificToolingDuringVerify) {
@@ -1944,16 +1923,6 @@ Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and 
           featureFlags.isExplicitPackageDependenciesEnabled &&
           (releaseMode ?? getBuildMode().isRelease),
     );
-  }
-
-  Future<void> _sendNullSafetyAnalyticsEvents(FlutterProject project) async {
-    final BuildInfo buildInfo = await getBuildInfo();
-    NullSafetyAnalysisEvent(
-      buildInfo.packageConfig,
-      buildInfo.nullSafetyMode,
-      project.manifest.appName,
-      globals.flutterUsage,
-    ).send();
   }
 
   /// The set of development artifacts required for this command.

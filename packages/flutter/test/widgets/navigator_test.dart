@@ -16,6 +16,14 @@ import 'navigator_utils.dart';
 import 'observer_tester.dart';
 import 'semantics_tester.dart';
 
+@pragma('vm:entry-point')
+Route<void> _routeBuilder(BuildContext context, Object? arguments) {
+  return MaterialPageRoute<void>(
+    settings: const RouteSettings(name: 'route'),
+    builder: (BuildContext context) => Container(),
+  );
+}
+
 class FirstWidget extends StatelessWidget {
   const FirstWidget({super.key});
   @override
@@ -1459,12 +1467,409 @@ void main() {
 
     await tester.tap(find.text('/')); // pushNamed('/A'), stack becomes /, /A
     await tester.pumpAndSettle();
-    pageValue.then((String? value) {
-      assert(false);
-    });
 
     final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
-    navigator.removeRoute(routes['/A']!); // stack becomes /, pageValue will not complete
+    navigator.removeRoute(
+      routes['/A']!,
+      'B',
+    ); // stack becomes /, pageValue will complete and return 'B'
+    expect(await pageValue, 'B');
+  });
+
+  testWidgets('remove route below an other one whose value is awaited', (
+    WidgetTester tester,
+  ) async {
+    late Future<String?> pageValue;
+    final Map<String, WidgetBuilder> pageBuilders = <String, WidgetBuilder>{
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              pageValue = Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A':
+          (BuildContext context) => OnTapPage(
+            id: '/A',
+            onTap: () {
+              Navigator.pushNamed(context, '/B');
+            },
+          ),
+      '/B':
+          (BuildContext context) => OnTapPage(
+            id: 'B',
+            onTap: () {
+              Navigator.pop(context, 'B');
+            },
+          ),
+    };
+    final Map<String, Route<String>> routes = <String, Route<String>>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          routes[settings.name!] = PageRouteBuilder<String>(
+            settings: settings,
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
+              return pageBuilders[settings.name!]!(context);
+            },
+          );
+          return routes[settings.name];
+        },
+      ),
+    );
+
+    await tester.tap(find.text('/')); // pushNamed('/A'), stack becomes /, /A
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('/A')); // pushNamed('/B'), stack becomes /, /A, /B
+
+    final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+    navigator.removeRouteBelow(
+      routes['/B']!,
+      'A',
+    ); // stack becomes /, /B, pageValue will complete and return 'A'
+    expect(await pageValue, 'A');
+  });
+
+  testWidgets('replace route by an other whose value is awaited', (WidgetTester tester) async {
+    late Future<String?> pageValue;
+    final Map<String, WidgetBuilder> pageBuilders = <String, WidgetBuilder>{
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              pageValue = Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A': (BuildContext context) => const OnTapPage(id: '/A'),
+    };
+    final Map<String, Route<String>> routes = <String, Route<String>>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          routes[settings.name!] = PageRouteBuilder<String>(
+            settings: settings,
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
+              return pageBuilders[settings.name!]!(context);
+            },
+          );
+          return routes[settings.name];
+        },
+      ),
+    );
+
+    await tester.tap(find.text('/')); // pushNamed('/A'), stack becomes /, /A
+    await tester.pumpAndSettle();
+
+    final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+
+    final MaterialPageRoute<void> routeB = MaterialPageRoute<void>(
+      builder: (BuildContext context) => const OnTapPage(id: '/B'),
+    );
+    navigator.replace(
+      oldRoute: routes['/A']!,
+      newRoute: routeB,
+    ); // stack becomes /, /B, pageValue will complete and return 'A'
+    expect(await pageValue, null);
+  });
+
+  testWidgets('replace route by an other whose value is awaited', (WidgetTester tester) async {
+    late Future<String?> pageValue;
+    final Map<String, WidgetBuilder> pageBuilders = <String, WidgetBuilder>{
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              pageValue = Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A': (BuildContext context) => const OnTapPage(id: '/A'),
+    };
+    final Map<String, Route<String>> routes = <String, Route<String>>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          routes[settings.name!] = PageRouteBuilder<String>(
+            settings: settings,
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
+              return pageBuilders[settings.name!]!(context);
+            },
+          );
+          return routes[settings.name];
+        },
+      ),
+    );
+
+    await tester.tap(find.text('/')); // pushNamed('/A'), stack becomes /, /A
+    await tester.pumpAndSettle();
+
+    final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+
+    final MaterialPageRoute<void> routeB = MaterialPageRoute<void>(
+      builder: (BuildContext context) => const OnTapPage(id: '/B'),
+    );
+    navigator.replace(
+      oldRoute: routes['/A']!,
+      newRoute: routeB,
+    ); // stack becomes /, /B, pageValue will complete and return 'A'
+    expect(await pageValue, null);
+  });
+
+  testWidgets('restorable replace route by an other whose value is awaited', (
+    WidgetTester tester,
+  ) async {
+    late Future<String?> pageAValue;
+    final Map<String, WidgetBuilder> pageBuilders = <String, WidgetBuilder>{
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              pageAValue = Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A': (BuildContext context) => const OnTapPage(id: '/A'),
+    };
+    final Map<String, Route<String>> routes = <String, Route<String>>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          routes[settings.name!] = PageRouteBuilder<String>(
+            settings: settings,
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
+              return pageBuilders[settings.name!]!(context);
+            },
+          );
+          return routes[settings.name];
+        },
+      ),
+    );
+
+    await tester.tap(find.text('/')); // pushNamed('/A'), stack becomes /, /A
+    await tester.pumpAndSettle();
+
+    final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+
+    navigator.restorableReplace(
+      oldRoute: routes['/A']!,
+      newRouteBuilder: _routeBuilder,
+    ); // stack becomes /, /route, pageValue will complete and return 'A'
+    expect(await pageAValue, null);
+  });
+
+  testWidgets('push named route and remove until where routes values are awaited', (
+    WidgetTester tester,
+  ) async {
+    late Future<String?> pageAValue;
+    late Future<String?> pageBValue;
+    final Map<String, WidgetBuilder> pageBuilders = <String, WidgetBuilder>{
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              pageAValue = Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A':
+          (BuildContext context) => OnTapPage(
+            id: '/A',
+            onTap: () {
+              pageBValue = Navigator.pushNamed(context, '/B');
+            },
+          ),
+      '/B': (BuildContext context) => const OnTapPage(id: '/B'),
+      '/C': (BuildContext context) => const OnTapPage(id: '/C'),
+    };
+    final Map<String, Route<String>> routes = <String, Route<String>>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          routes[settings.name!] = PageRouteBuilder<String>(
+            settings: settings,
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
+              return pageBuilders[settings.name!]!(context);
+            },
+          );
+          return routes[settings.name];
+        },
+      ),
+    );
+
+    await tester.tap(find.text('/')); // pushNamed('/A'), stack becomes /, /A
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('/A')); // pushNamed('/B'), stack becomes /, /A, /B
+
+    final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+
+    navigator.pushNamedAndRemoveUntil(
+      '/C',
+      ModalRoute.withName('/'),
+    ); // stack becomes /, /C, pageAValue & pageBValue will complete and return null
+    expect(await pageAValue, null);
+    expect(await pageBValue, null);
+  });
+
+  testWidgets('push route and remove until where routes values are awaited', (
+    WidgetTester tester,
+  ) async {
+    late Future<String?> pageAValue;
+    late Future<String?> pageBValue;
+    final Map<String, WidgetBuilder> pageBuilders = <String, WidgetBuilder>{
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              pageAValue = Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A':
+          (BuildContext context) => OnTapPage(
+            id: '/A',
+            onTap: () {
+              pageBValue = Navigator.pushNamed(context, '/B');
+            },
+          ),
+      '/B': (BuildContext context) => const OnTapPage(id: '/B'),
+    };
+    final Map<String, Route<String>> routes = <String, Route<String>>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          routes[settings.name!] = PageRouteBuilder<String>(
+            settings: settings,
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
+              return pageBuilders[settings.name!]!(context);
+            },
+          );
+          return routes[settings.name];
+        },
+      ),
+    );
+
+    await tester.tap(find.text('/')); // pushNamed('/A'), stack becomes /, /A
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('/A')); // pushNamed('/B'), stack becomes /, /A, /B
+
+    final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+
+    final MaterialPageRoute<void> routeC = MaterialPageRoute<void>(
+      builder: (BuildContext context) => const OnTapPage(id: '/C'),
+    );
+    navigator.pushAndRemoveUntil(
+      routeC,
+      ModalRoute.withName('/'),
+    ); // stack becomes /, /C, pageAValue & pageBValue will complete and return null
+    expect(await pageAValue, null);
+    expect(await pageBValue, null);
+  });
+
+  testWidgets('restorable push named and remove until where routes values are awaited', (
+    WidgetTester tester,
+  ) async {
+    late Future<String?> pageAValue;
+    late Future<String?> pageBValue;
+    final Map<String, WidgetBuilder> pageBuilders = <String, WidgetBuilder>{
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              pageAValue = Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A':
+          (BuildContext context) => OnTapPage(
+            id: '/A',
+            onTap: () {
+              pageBValue = Navigator.pushNamed(context, '/B');
+            },
+          ),
+      '/B': (BuildContext context) => const OnTapPage(id: '/B'),
+      '/C': (BuildContext context) => const OnTapPage(id: '/C'),
+    };
+    final Map<String, Route<String>> routes = <String, Route<String>>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          routes[settings.name!] = PageRouteBuilder<String>(
+            settings: settings,
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
+              return pageBuilders[settings.name!]!(context);
+            },
+          );
+          return routes[settings.name];
+        },
+      ),
+    );
+
+    await tester.tap(find.text('/')); // pushNamed('/A'), stack becomes /, /A
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('/A')); // pushNamed('/B'), stack becomes /, /A, /B
+
+    final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+
+    navigator.restorablePushNamedAndRemoveUntil(
+      '/C',
+      ModalRoute.withName('/'),
+    ); // stack becomes /, /C, pageAValue & pageBValue will complete and return null
+    expect(await pageAValue, null);
+    expect(await pageBValue, null);
+  });
+
+  testWidgets('restorable push and remove until where routes values are awaited', (
+    WidgetTester tester,
+  ) async {
+    late Future<String?> pageAValue;
+    late Future<String?> pageBValue;
+    final Map<String, WidgetBuilder> pageBuilders = <String, WidgetBuilder>{
+      '/':
+          (BuildContext context) => OnTapPage(
+            id: '/',
+            onTap: () {
+              pageAValue = Navigator.pushNamed(context, '/A');
+            },
+          ),
+      '/A':
+          (BuildContext context) => OnTapPage(
+            id: '/A',
+            onTap: () {
+              pageBValue = Navigator.pushNamed(context, '/B');
+            },
+          ),
+      '/B': (BuildContext context) => const OnTapPage(id: '/B'),
+    };
+    final Map<String, Route<String>> routes = <String, Route<String>>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          routes[settings.name!] = PageRouteBuilder<String>(
+            settings: settings,
+            pageBuilder: (BuildContext context, Animation<double> _, Animation<double> _) {
+              return pageBuilders[settings.name!]!(context);
+            },
+          );
+          return routes[settings.name];
+        },
+      ),
+    );
+
+    await tester.tap(find.text('/')); // pushNamed('/A'), stack becomes /, /A
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('/A')); // pushNamed('/B'), stack becomes /, /A, /B
+
+    final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+
+    navigator.restorablePushAndRemoveUntil(
+      _routeBuilder,
+      ModalRoute.withName('/'),
+    ); // stack becomes /, /route, pageAValue & pageBValue will complete and return null
+    expect(await pageAValue, null);
+    expect(await pageBValue, null);
   });
 
   testWidgets('replacing route can be observed', (WidgetTester tester) async {
@@ -4027,8 +4432,8 @@ void main() {
           transitionDelegate: transitionDelegate,
         ),
       );
-      // The pageless route of initial page route should be removed without complete.
-      expect(initialPageless1Completed, false);
+      // The pageless route of initial page route should be removed and completed.
+      expect(initialPageless1Completed, true);
       expect(secondPageless1Completed, false);
       expect(secondPageless2Completed, false);
       expect(thirdPageless1Completed, false);
@@ -4044,9 +4449,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(initialPageless1Completed, false);
-      expect(secondPageless1Completed, false);
-      expect(secondPageless2Completed, false);
+      expect(initialPageless1Completed, true);
+      expect(secondPageless1Completed, true);
+      expect(secondPageless2Completed, true);
       expect(thirdPageless1Completed, false);
 
       myPages = <TestPage>[const TestPage(key: ValueKey<String>('4'), name: 'forth')];
@@ -4060,10 +4465,10 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(initialPageless1Completed, false);
-      expect(secondPageless1Completed, false);
-      expect(secondPageless2Completed, false);
-      expect(thirdPageless1Completed, false);
+      expect(initialPageless1Completed, true);
+      expect(secondPageless1Completed, true);
+      expect(secondPageless2Completed, true);
+      expect(thirdPageless1Completed, true);
       expect(find.text('forth'), findsOneWidget);
     });
 
@@ -5859,12 +6264,12 @@ class AlwaysRemoveTransitionDelegate extends TransitionDelegate<void> {
       final RouteTransitionRecord exitingPageRoute = locationToExitingPageRoute[location]!;
       if (exitingPageRoute.isWaitingForExitingDecision) {
         final bool hasPagelessRoute = pageRouteToPagelessRoutes.containsKey(exitingPageRoute);
-        exitingPageRoute.markForRemove();
+        exitingPageRoute.markForComplete();
         if (hasPagelessRoute) {
           final List<RouteTransitionRecord> pagelessRoutes =
               pageRouteToPagelessRoutes[exitingPageRoute]!;
           for (final RouteTransitionRecord pagelessRoute in pagelessRoutes) {
-            pagelessRoute.markForRemove();
+            pagelessRoute.markForComplete();
           }
         }
       }

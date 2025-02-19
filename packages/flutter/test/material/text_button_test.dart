@@ -2547,4 +2547,27 @@ void main() {
     final Offset iconTopRight = tester.getTopRight(find.byIcon(Icons.add));
     expect(buttonTopRight.dx, iconTopRight.dx + 16.0);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/162839.
+  testWidgets('TextButton icon uses provided foregroundColor over default icon color', (
+    WidgetTester tester,
+  ) async {
+    const Color foregroundColor = Color(0xFFFF1234);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: TextButton.icon(
+              style: TextButton.styleFrom(foregroundColor: foregroundColor),
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              label: const Text('Button'),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(iconStyle(tester, Icons.add).color, foregroundColor);
+  });
 }

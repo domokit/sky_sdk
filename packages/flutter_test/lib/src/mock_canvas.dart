@@ -388,6 +388,9 @@ abstract class PaintPattern {
   /// arguments as they were seen by the method.
   void arc({
     Rect? rect,
+    double? startAngle,
+    double? sweepAngle,
+    bool? useCenter,
     Color? color,
     double? strokeWidth,
     bool? hasMaskFilter,
@@ -968,6 +971,9 @@ class _TestRecordingCanvasPatternMatcher extends _TestRecordingCanvasMatcher
   @override
   void arc({
     Rect? rect,
+    double? startAngle,
+    double? sweepAngle,
+    bool? useCenter,
     Color? color,
     double? strokeWidth,
     bool? hasMaskFilter,
@@ -977,6 +983,9 @@ class _TestRecordingCanvasPatternMatcher extends _TestRecordingCanvasMatcher
     _predicates.add(
       _ArcPaintPredicate(
         rect: rect,
+        startAngle: startAngle,
+        sweepAngle: sweepAngle,
+        useCenter: useCenter,
         color: color,
         strokeWidth: strokeWidth,
         hasMaskFilter: hasMaskFilter,
@@ -1598,6 +1607,9 @@ class _LinePaintPredicate extends _DrawCommandPaintPredicate {
 class _ArcPaintPredicate extends _DrawCommandPaintPredicate {
   _ArcPaintPredicate({
     this.rect,
+    this.startAngle,
+    this.sweepAngle,
+    this.useCenter,
     super.color,
     super.strokeWidth,
     super.hasMaskFilter,
@@ -1606,6 +1618,12 @@ class _ArcPaintPredicate extends _DrawCommandPaintPredicate {
   }) : super(#drawArc, 'an arc', 5, 4);
 
   final Rect? rect;
+
+  final double? startAngle;
+
+  final double? sweepAngle;
+
+  final bool? useCenter;
 
   @override
   void verifyArguments(List<dynamic> arguments) {
@@ -1617,6 +1635,27 @@ class _ArcPaintPredicate extends _DrawCommandPaintPredicate {
         'exactly the expected rect ($rect).',
       );
     }
+    final double startAngleArgument = arguments[1] as double;
+    if (startAngle != null && startAngleArgument != startAngle) {
+      throw FlutterError(
+        'It called $methodName with a start angle, $startAngleArgument, which '
+        'was not exactly the expected start angle ($startAngle).',
+      );
+    }
+    final double sweepAngleArgument = arguments[2] as double;
+    if (sweepAngle != null && sweepAngleArgument != sweepAngle) {
+      throw FlutterError(
+        'It called $methodName with a sweep angle, $sweepAngleArgument, which '
+        'was not exactly the expected sweep angle ($sweepAngle).',
+      );
+    }
+    final bool useCenterArgument = arguments[3] as bool;
+    if (useCenter != null && useCenterArgument != useCenter) {
+      throw FlutterError(
+        'It called $methodName with a useCenter value, $useCenterArgument, '
+        'which was not exactly the expected value ($useCenter).',
+      );
+    }
   }
 
   @override
@@ -1624,6 +1663,15 @@ class _ArcPaintPredicate extends _DrawCommandPaintPredicate {
     super.debugFillDescription(description);
     if (rect != null) {
       description.add('rect $rect');
+    }
+    if (startAngle != null) {
+      description.add('startAngle $startAngle');
+    }
+    if (sweepAngle != null) {
+      description.add('sweepAngle $sweepAngle');
+    }
+    if (useCenter != null) {
+      description.add('useCenter $useCenter');
     }
   }
 }

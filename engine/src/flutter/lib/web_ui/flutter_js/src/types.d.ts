@@ -8,8 +8,6 @@ type WasmCompileTarget = "dart2wasm";
 export type CompileTarget = JSCompileTarget | WasmCompileTarget;
 
 export type WebRenderer =
-  "auto" |
-  "html" |
   "canvaskit" |
   "skwasm";
 

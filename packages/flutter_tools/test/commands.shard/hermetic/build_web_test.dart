@@ -4,7 +4,6 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
-import 'package:flutter_tools/src/base/common.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/platform.dart';
@@ -14,14 +13,12 @@ import 'package:flutter_tools/src/build_system/targets/web.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/commands/build.dart';
 import 'package:flutter_tools/src/commands/build_web.dart';
-import 'package:flutter_tools/src/dart/pub.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/runner/flutter_command.dart';
 import 'package:flutter_tools/src/web/compile.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
 import '../../src/test_build_system.dart';
 import '../../src/test_flutter_command_runner.dart';
@@ -31,16 +28,6 @@ void main() {
   final Platform fakePlatform = FakePlatform(environment: <String, String>{'FLUTTER_ROOT': '/'});
   late BufferLogger logger;
   late ProcessManager processManager;
-
-  // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
-  // See https://github.com/flutter/flutter/issues/160257 for details.
-  FeatureFlags enableExplicitPackageDependencies() {
-    return TestFeatureFlags(
-      isExplicitPackageDependenciesEnabled: true,
-      // Assumed to be true below.
-      isWebEnabled: true,
-    );
-  }
 
   setUpAll(() {
     Cache.flutterRoot = '';
@@ -458,42 +445,6 @@ void main() {
       ProcessManager: () => processManager,
     },
   );
-
-  // Tests whether using a deprecated webRenderer toggles a warningText.
-  Future<void> testWebRendererDeprecationMessage(WebRendererMode webRenderer) async {
-    testUsingContext(
-      'Using the "${webRenderer.name}" renderer triggers a warningText.',
-      () async {
-        // Run the command so it parses the renderer, but ignore all errors.
-        // We only care about the logger.
-        try {
-          final TestWebBuildCommand buildCommand = TestWebBuildCommand(fileSystem: fileSystem);
-          await createTestCommandRunner(
-            buildCommand,
-          ).run(<String>['build', 'web', '--no-pub', ...webRenderer.toCliDartDefines]);
-        } on ToolExit catch (error) {
-          expect(error, isA<ToolExit>());
-        }
-        expect(
-          logger.warningText,
-          contains('See: https://docs.flutter.dev/to/web-html-renderer-deprecation'),
-        );
-      },
-      overrides: <Type, Generator>{
-        Platform: () => fakePlatform,
-        FileSystem: () => fileSystem,
-        ProcessManager: () => processManager,
-        Logger: () => logger,
-        FeatureFlags: enableExplicitPackageDependencies,
-        Pub: FakePubWithPrimedDeps.new,
-      },
-    );
-  }
-
-  /// Do test all the deprecated WebRendererModes
-  WebRendererMode.values
-      .where((WebRendererMode mode) => mode.isDeprecated)
-      .forEach(testWebRendererDeprecationMessage);
 
   testUsingContext(
     'flutter build web option visibility',

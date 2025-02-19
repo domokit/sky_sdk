@@ -1236,7 +1236,6 @@ void main() {
       JsCompilerConfig(optimizationLevel: 0),
       JsCompilerConfig(noFrequencyBasedMinification: true),
       JsCompilerConfig(sourceMaps: false),
-      JsCompilerConfig(renderer: WebRendererMode.html),
 
       // All properties non-default
       JsCompilerConfig(
@@ -1246,7 +1245,6 @@ void main() {
         optimizationLevel: 0,
         noFrequencyBasedMinification: true,
         sourceMaps: false,
-        renderer: WebRendererMode.html,
       ),
     ];
 

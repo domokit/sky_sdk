@@ -152,6 +152,79 @@ void main() {
     expect(result.outputFiles.single.path, '${environment.buildDir.path}/out');
   });
 
+  group('BuildResult.outputs filtering', () {
+    final TestTarget allFilesTarget =
+        TestTarget((Environment environment) async {})
+          ..name = 'allTextFiles'
+          ..inputs = const <Source>[
+            Source.pattern('{PROJECT_DIR}/*'),
+            Source.pattern('{PROJECT_DIR}/*/*'),
+          ]
+          ..outputs = const <Source>[Source.pattern('{BUILD_DIR}/out')]
+          ..dependencies = <Target>[];
+    late BuildSystem buildSystem;
+
+    setUp(() {
+      buildSystem = setUpBuildSystem(fileSystem);
+    });
+
+    testWithoutContext('normally would update when something has changed', () async {
+      environment.projectDir.childFile('foo.dart').createSync();
+      final BuildResult result = await buildSystem.build(allFilesTarget, environment);
+      expect(
+        result.inputFiles,
+        contains(isA<File>().having((File f) => f.path, 'path', endsWith('foo.dart'))),
+      );
+    });
+
+    testWithoutContext('ignores the .dart_tool directory', () async {
+      environment.projectDir.childDirectory('.dart_tool').createSync();
+      environment.projectDir.childDirectory('.dart_tool').childFile('IGNORE_ME.txt').createSync();
+      final BuildResult result = await buildSystem.build(allFilesTarget, environment);
+      expect(
+        result.inputFiles,
+        isNot(contains(isA<File>().having((File f) => f.path, 'path', endsWith('IGNORE_ME.txt')))),
+      );
+    });
+
+    testWithoutContext('ignores files named .flutter-plugins', () async {
+      environment.projectDir.childFile('.flutter-plugins').createSync();
+      final BuildResult result = await buildSystem.build(allFilesTarget, environment);
+      expect(
+        result.inputFiles,
+        isNot(
+          contains(isA<File>().having((File f) => f.path, 'path', endsWith('.flutter-plugins'))),
+        ),
+      );
+    });
+
+    testWithoutContext('ignores files named .flutter-plugins-dependencies', () async {
+      environment.projectDir.childFile('.flutter-plugins-dependencies').createSync();
+      final BuildResult result = await buildSystem.build(allFilesTarget, environment);
+      expect(
+        result.inputFiles,
+        isNot(
+          contains(
+            isA<File>().having(
+              (File f) => f.path,
+              'path',
+              endsWith('.flutter-plugins-dependencies'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    testWithoutContext('ignores files ending with .xcconfig', () async {
+      environment.projectDir.childFile('foo.xcconfig').createSync();
+      final BuildResult result = await buildSystem.build(allFilesTarget, environment);
+      expect(
+        result.inputFiles,
+        isNot(contains(isA<File>().having((File f) => f.path, 'path', endsWith('.xcconfig')))),
+      );
+    });
+  });
+
   testWithoutContext('Does not re-invoke build if stamp is valid', () async {
     final BuildSystem buildSystem = setUpBuildSystem(fileSystem);
 

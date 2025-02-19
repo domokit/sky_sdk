@@ -151,8 +151,6 @@ class BuildAarCommand extends BuildSubCommand {
       throwToolExit('Please specify a build mode and try again.');
     }
 
-    displayNullSafetyMode(androidBuildInfo.first.buildInfo);
-
     await androidBuilder?.buildAar(
       project: project,
       target: targetFile.path,

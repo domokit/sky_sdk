@@ -19,6 +19,64 @@ Path::Path(Data data) : data_(std::make_shared<Data>(std::move(data))) {}
 
 Path::~Path() = default;
 
+Path::ComponentType Path::ComponentIterator::type() const {
+  return path_.data_->components[component_index_];
+}
+
+#define CHECK_COMPONENT(type)                           \
+  (component_index_ < path_.data_->components.size() && \
+   path_.data_->components[component_index_] == type && \
+   storage_offset_ + VerbToOffset(type) <= path_.data_->points.size())
+
+const LinearPathComponent* Path::ComponentIterator::linear() const {
+  if (!CHECK_COMPONENT(Path::ComponentType::kLinear)) {
+    return nullptr;
+  }
+  const Point* points = &(path_.data_->points[storage_offset_]);
+  return reinterpret_cast<const LinearPathComponent*>(points);
+}
+
+const QuadraticPathComponent* Path::ComponentIterator::quadratic() const {
+  if (!CHECK_COMPONENT(Path::ComponentType::kQuadratic)) {
+    return nullptr;
+  }
+  const Point* points = &(path_.data_->points[storage_offset_]);
+  return reinterpret_cast<const QuadraticPathComponent*>(points);
+}
+
+const ConicPathComponent* Path::ComponentIterator::conic() const {
+  if (!CHECK_COMPONENT(Path::ComponentType::kConic)) {
+    return nullptr;
+  }
+  const Point* points = &(path_.data_->points[storage_offset_]);
+  return reinterpret_cast<const ConicPathComponent*>(points);
+}
+
+const CubicPathComponent* Path::ComponentIterator::cubic() const {
+  if (!CHECK_COMPONENT(Path::ComponentType::kCubic)) {
+    return nullptr;
+  }
+  const Point* points = &(path_.data_->points[storage_offset_]);
+  return reinterpret_cast<const CubicPathComponent*>(points);
+}
+
+const ContourComponent* Path::ComponentIterator::contour() const {
+  if (!CHECK_COMPONENT(Path::ComponentType::kContour)) {
+    return nullptr;
+  }
+  const Point* points = &(path_.data_->points[storage_offset_]);
+  return reinterpret_cast<const ContourComponent*>(points);
+}
+
+Path::ComponentIterator& Path::ComponentIterator::operator++() {
+  auto components = path_.data_->components;
+  if (component_index_ < components.size()) {
+    storage_offset_ += VerbToOffset(path_.data_->components[component_index_]);
+    component_index_++;
+  }
+  return *this;
+}
+
 std::tuple<size_t, size_t> Path::Polyline::GetContourPointBounds(
     size_t contour_index) const {
   if (contour_index >= contours.size()) {
@@ -87,6 +145,13 @@ std::pair<size_t, size_t> Path::CountStorage(Scalar scale) const {
         points += quad->CountLinearPathComponents(scale);
         break;
       }
+      case ComponentType::kConic: {
+        const ConicPathComponent* conic =
+            reinterpret_cast<const ConicPathComponent*>(
+                &path_points[storage_offset]);
+        points += conic->CountLinearPathComponents(scale);
+        break;
+      }
       case ComponentType::kCubic: {
         const CubicPathComponent* cubic =
             reinterpret_cast<const CubicPathComponent*>(
@@ -135,6 +200,17 @@ void Path::WritePolyline(Scalar scale, VertexWriter& writer) const {
         quad->ToLinearPathComponents(scale, writer);
         break;
       }
+      case ComponentType::kConic: {
+        const ConicPathComponent* conic =
+            reinterpret_cast<const ConicPathComponent*>(
+                &path_points[storage_offset]);
+        if (first_point) {
+          writer.Write(conic->p1);
+          first_point = false;
+        }
+        conic->ToLinearPathComponents(scale, writer);
+        break;
+      }
       case ComponentType::kCubic: {
         const CubicPathComponent* cubic =
             reinterpret_cast<const CubicPathComponent*>(
@@ -170,86 +246,13 @@ void Path::WritePolyline(Scalar scale, VertexWriter& writer) const {
   }
 }
 
-Path::ComponentType Path::GetComponentTypeAtIndex(size_t index) const {
-  auto& components = data_->components;
-  return components[index];
+Path::ComponentIterator Path::begin() const {
+  return ComponentIterator(*this, 0u, 0u);
 }
 
-bool Path::GetLinearComponentAtIndex(size_t index,
-                                     LinearPathComponent& linear) const {
-  auto& components = data_->components;
-  if (index >= components.size() ||
-      components[index] != ComponentType::kLinear) {
-    return false;
-  }
-
-  size_t storage_offset = 0u;
-  for (auto i = 0u; i < index; i++) {
-    storage_offset += VerbToOffset(components[i]);
-  }
-  auto& points = data_->points;
-  linear =
-      LinearPathComponent(points[storage_offset], points[storage_offset + 1]);
-  return true;
-}
-
-bool Path::GetQuadraticComponentAtIndex(
-    size_t index,
-    QuadraticPathComponent& quadratic) const {
-  auto& components = data_->components;
-  if (index >= components.size() ||
-      components[index] != ComponentType::kQuadratic) {
-    return false;
-  }
-
-  size_t storage_offset = 0u;
-  for (auto i = 0u; i < index; i++) {
-    storage_offset += VerbToOffset(components[i]);
-  }
-  auto& points = data_->points;
-
-  quadratic =
-      QuadraticPathComponent(points[storage_offset], points[storage_offset + 1],
-                             points[storage_offset + 2]);
-  return true;
-}
-
-bool Path::GetCubicComponentAtIndex(size_t index,
-                                    CubicPathComponent& cubic) const {
-  auto& components = data_->components;
-  if (index >= components.size() ||
-      components[index] != ComponentType::kCubic) {
-    return false;
-  }
-
-  size_t storage_offset = 0u;
-  for (auto i = 0u; i < index; i++) {
-    storage_offset += VerbToOffset(components[i]);
-  }
-  auto& points = data_->points;
-
-  cubic = CubicPathComponent(points[storage_offset], points[storage_offset + 1],
-                             points[storage_offset + 2],
-                             points[storage_offset + 3]);
-  return true;
-}
-
-bool Path::GetContourComponentAtIndex(size_t index,
-                                      ContourComponent& move) const {
-  auto& components = data_->components;
-  if (index >= components.size() ||
-      components[index] != ComponentType::kContour) {
-    return false;
-  }
-
-  size_t storage_offset = 0u;
-  for (auto i = 0u; i < index; i++) {
-    storage_offset += VerbToOffset(components[i]);
-  }
-  auto& points = data_->points;
-
-  move = ContourComponent(points[storage_offset], points[storage_offset + 1]);
-  return true;
+Path::ComponentIterator Path::end() const {
+  return ComponentIterator(*this, data_->components.size(),
+                           data_->points.size());
 }
 
 Path::Polyline::Polyline(Path::Polyline::PointBufferPtr point_buffer,
@@ -315,6 +318,16 @@ void Path::EndContour(
         }
         break;
       }
+      case ComponentType::kConic: {
+        auto* conic = reinterpret_cast<const ConicPathComponent*>(
+            &path_points[storage_offset]);
+        auto maybe_end = conic->GetEndDirection();
+        if (maybe_end.has_value()) {
+          contour.end_direction = maybe_end.value();
+          return;
+        }
+        break;
+      }
       case ComponentType::kCubic: {
         auto* cubic = reinterpret_cast<const CubicPathComponent*>(
             &path_points[storage_offset]);
@@ -374,6 +387,19 @@ Path::Polyline Path::CreatePolyline(
         quad->AppendPolylinePoints(scale, *polyline.points);
         if (!start_direction.has_value()) {
           start_direction = quad->GetStartDirection();
+        }
+        break;
+      }
+      case ComponentType::kConic: {
+        poly_components.push_back({
+            .component_start_index = polyline.points->size() - 1,
+            .is_curve = true,
+        });
+        auto* conic = reinterpret_cast<const ConicPathComponent*>(
+            &path_points[storage_offset]);
+        conic->AppendPolylinePoints(scale, *polyline.points);
+        if (!start_direction.has_value()) {
+          start_direction = conic->GetStartDirection();
         }
         break;
       }

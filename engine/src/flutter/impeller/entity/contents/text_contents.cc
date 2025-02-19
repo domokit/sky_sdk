@@ -187,7 +187,9 @@ void TextContents::ComputeVertexData(
         Point position;
         if (is_translation_scale) {
           position = (screen_glyph_position +
-                      (basis_transform * point * scaled_bounds.GetSize()))
+                      ((basis_transform.m[0] < 0 ? Matrix::MakeScale({-1, 1, 1})
+                                                 : Matrix()) *
+                       point * glyph_bounds.GetSize()))
                          .Round();
         } else {
           position = entity_transform *

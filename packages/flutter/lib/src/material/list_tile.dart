@@ -605,10 +605,12 @@ class ListTile extends StatelessWidget {
 
   /// The tile's internal padding.
   ///
-  /// Insets a [ListTile]'s contents: its [leading], [title], [subtitle],
-  /// and [trailing] widgets.
+  /// Insets a [ListTile]'s contents: its [leading], [title], [subtitle], and [trailing] widgets.
   ///
-  /// If null, `EdgeInsets.symmetric(horizontal: 16.0)` is used.
+  /// If this property is null, then [ListTileThemeData.contentPadding] is used. If that is also
+  /// null and [ThemeData.useMaterial3] is true, then a default value of
+  /// `EdgeInsetsDirectional.only(start: 16.0, end: 24.0)` will be used. Otherwise, a default value
+  /// of `EdgeInsets.symmetric(horizontal: 16.0)` will be used.
   final EdgeInsetsGeometry? contentPadding;
 
   /// Whether this list tile is interactive.

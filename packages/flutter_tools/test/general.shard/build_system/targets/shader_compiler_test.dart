@@ -86,7 +86,6 @@ void main() {
         FakeCommand(
           command: <String>[
             impellerc,
-            '--sksl',
             '--runtime-stage-metal',
             '--iplr',
             '--sl=$outputPath',

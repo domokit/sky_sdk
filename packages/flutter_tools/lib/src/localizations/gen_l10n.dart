@@ -34,8 +34,7 @@ Future<LocalizationsGenerator> generateLocalizations({
     fileSystem: projectDir.fileSystem,
     logger: logger,
   );
-  if (options.syntheticPackage &&
-      (flutterManifest == null || !flutterManifest.generateLocalizations)) {
+  if (flutterManifest == null || !flutterManifest.generateLocalizations) {
     throwToolExit(
       'Attempted to generate localizations code without having '
       'the flutter: generate flag turned on.'

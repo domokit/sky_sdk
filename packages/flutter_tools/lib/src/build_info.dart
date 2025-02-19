@@ -39,7 +39,6 @@ class BuildInfo {
     required this.treeShakeIcons,
     this.performanceMeasurementFile,
     required this.packageConfigPath,
-    this.nullSafetyMode = NullSafetyMode.sound,
     this.codeSizeDirectory,
     this.androidGradleDaemon = true,
     this.androidSkipBuildDependencyValidation = false,
@@ -55,11 +54,6 @@ class BuildInfo {
        dartExperiments = dartExperiments ?? const <String>[];
 
   final BuildMode mode;
-
-  /// The null safety mode the application should be run in.
-  ///
-  /// If not provided, defaults to [NullSafetyMode.autodetect].
-  final NullSafetyMode nullSafetyMode;
 
   /// Whether the build should subset icon fonts.
   final bool treeShakeIcons;
@@ -1021,15 +1015,6 @@ List<String> decodeDartDefines(Map<String, String> environmentDefines, String ke
       .map<Object>(_defineDecoder.convert)
       .cast<String>()
       .toList();
-}
-
-/// The null safety runtime mode the app should be built in.
-enum NullSafetyMode {
-  sound,
-  unsound,
-
-  /// The null safety mode was not detected. Only supported for 'flutter test'.
-  autodetect,
 }
 
 /// Indicates the module system DDC is targeting.

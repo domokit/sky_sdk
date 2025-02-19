@@ -32,6 +32,14 @@ const Duration kThemeAnimationDuration = Duration(milliseconds: 200);
 /// The [Theme] widget implies an [IconTheme] widget, set to the value of the
 /// [ThemeData.iconTheme] of the [data] for the [Theme].
 ///
+/// To interact seamlessly with descendant Cupertino widgets, the [Theme] widget
+/// provides a [CupertinoTheme] for its descendants with a [CupertinoThemeData] inherited
+/// from the nearest ancestor [CupertinoTheme] or if none exists, derived from the
+/// Material [data] for the [Theme]. The values in the Material derived [CupertinoThemeData]
+/// are overridable through [ThemeData.cupertinoOverrideTheme]. The values from an
+/// inherited [CupertinoThemeData] can be overriden by wrapping the desired subtree
+/// with a [CupertinoTheme].
+///
 /// See also:
 ///
 ///  * [ThemeData], which describes the actual configuration of a theme.

@@ -8,7 +8,6 @@ import '../android/android_sdk.dart';
 import '../base/file_system.dart';
 import '../base/logger.dart';
 import '../base/os.dart';
-import '../build_info.dart';
 import '../build_system/build_system.dart';
 import '../commands/build_linux.dart';
 import '../commands/build_macos.dart';
@@ -95,24 +94,6 @@ abstract class BuildSubCommand extends FlutterCommand {
   @protected
   final Logger logger;
 
-  @override
-  bool get reportNullSafety => true;
-
+  /// Whether this command is supported and should be shown.
   bool get supported => true;
-
-  /// Display a message describing the current null safety runtime mode
-  /// that was selected.
-  ///
-  /// This is similar to the run message in run_hot.dart
-  @protected
-  void displayNullSafetyMode(BuildInfo buildInfo) {
-    if (buildInfo.nullSafetyMode != NullSafetyMode.sound) {
-      logger.printStatus('');
-      logger.printStatus('Building without sound null safety ⚠️', emphasis: true);
-      logger.printStatus(
-        'Dart 3 will only support sound null safety, see https://dart.dev/null-safety',
-      );
-    }
-    logger.printStatus('');
-  }
 }

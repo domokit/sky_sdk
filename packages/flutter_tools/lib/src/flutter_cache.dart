@@ -403,7 +403,7 @@ class AndroidMavenArtifacts extends ArtifactSet {
           'packages',
           'flutter_tools',
           'gradle',
-          'resolve_dependencies.gradle',
+          'resolve_dependencies.gradle.kts',
         ),
         '--project-cache-dir',
         tempDir.path,

@@ -139,6 +139,10 @@ inline const SkPoint* ToSkPoints(const DlPoint* points) {
   return points == nullptr ? nullptr : reinterpret_cast<const SkPoint*>(points);
 }
 
+inline SkPoint* ToSkPoints(DlPoint* points) {
+  return points == nullptr ? nullptr : reinterpret_cast<SkPoint*>(points);
+}
+
 inline const SkRect& ToSkRect(const DlRect& rect) {
   return *reinterpret_cast<const SkRect*>(&rect);
 }

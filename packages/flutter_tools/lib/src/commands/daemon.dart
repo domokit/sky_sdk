@@ -710,6 +710,9 @@ class AppDomain extends Domain {
         analytics: globals.analytics,
         systemClock: globals.systemClock,
         logger: globals.logger,
+        terminal: globals.terminal,
+        platform: globals.platform,
+        outputPreferences: globals.outputPreferences,
         fileSystem: globals.fs,
       );
     } else if (enableHotReload) {

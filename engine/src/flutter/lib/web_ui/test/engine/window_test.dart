@@ -551,7 +551,7 @@ Future<void> testMain() async {
     final DomElement host = createDomHTMLDivElement();
     final EngineFlutterView view = EngineFlutterView(dispatcher, host);
 
-    expect(host.getAttribute('flt-renderer'), 'canvaskit (requested explicitly)');
+    expect(host.getAttribute('flt-renderer'), 'canvaskit');
     expect(host.getAttribute('flt-build-mode'), 'debug');
 
     view.dispose();

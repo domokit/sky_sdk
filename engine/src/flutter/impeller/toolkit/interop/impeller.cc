@@ -1264,7 +1264,7 @@ ImpellerTypographyContext ImpellerTypographyContextNew() {
     VALIDATION_LOG << "Could not create typography context.";
     return nullptr;
   }
-  return Create<TypographyContext>().Leak();
+  return context.Leak();
 }
 
 IMPELLER_EXTERN_C

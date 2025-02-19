@@ -56,7 +56,6 @@
 /dev/devicelab/bin/tasks/flutter_gallery_v2_chrome_run_test.dart @yjbanov @flutter/web
 /dev/devicelab/bin/tasks/flutter_gallery_v2_web_compile_test.dart @yjbanov @flutter/web
 /dev/devicelab/bin/tasks/flutter_test_performance.dart @jtmcdole @flutter/engine
-/dev/devicelab/bin/tasks/frame_policy_delay_test_android.dart @jtmcdole @flutter/engine
 /dev/devicelab/bin/tasks/fullscreen_textfield_perf.dart @jtmcdole @flutter/engine
 /dev/devicelab/bin/tasks/fullscreen_textfield_perf__e2e_summary.dart @jtmcdole @flutter/engine
 /dev/devicelab/bin/tasks/gradient_consistent_perf__e2e_summary.dart @flar @flutter/engine
@@ -301,6 +300,7 @@
 /dev/devicelab/bin/tasks/windows_desktop_impeller.dart @jonahwilliams @flutter/engine
 /dev/devicelab/bin/tasks/mac_desktop_impeller.dart @jonahwilliams @flutter/engine
 /dev/devicelab/bin/tasks/linux_desktop_impeller.dart @jonahwilliams @flutter/engine
+/dev/devicelab/bin/tasks/android_display_cutout.dart @reidbaker @flutter/android
 
 ## Host only framework tests
 # Linux docs_deploy_beta
@@ -330,7 +330,7 @@
 # android_engine_opengles_tests @matanlurey @jonahwilliams
 # build_tests @bkonyi @flutter/tool
 # ci_yaml flutter roller @keyonghan @flutter/infra
-# coverage @goderbauer @flutter/infra
+# coverage @christopherfujino @flutter/infra
 # customer_testing @Piinks @flutter/framework
 # docs @Piinks @flutter/framework
 # flutter_driver_android_test @matanlurey @jonahwilliams

@@ -70,7 +70,7 @@ TaskFunction createWebDevModeTest(String webDevice, bool enableIncrementalCompil
                     });
                     return;
                   }
-                  if (line.contains('To hot restart')) {
+                  if (line.contains('Hot restart')) {
                     // measure clean start-up time.
                     sw.stop();
                     measurements[kInitialStartupTime] = sw.elapsedMilliseconds;
@@ -148,7 +148,7 @@ TaskFunction createWebDevModeTest(String webDevice, bool enableIncrementalCompil
                     });
                     return;
                   }
-                  if (line.contains('To hot restart')) {
+                  if (line.contains('Hot restart')) {
                     measurements[kSecondStartupTime] = sw.elapsedMilliseconds;
                     sw
                       ..reset()

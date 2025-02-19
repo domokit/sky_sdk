@@ -244,7 +244,15 @@ bool _writeFlutterPluginsList(
   final String? oldPluginsFileStringContent = _readFileContent(pluginsFile);
   bool pluginsChanged = true;
   if (oldPluginsFileStringContent != null) {
-    pluginsChanged = oldPluginsFileStringContent.contains(pluginsMap.toString());
+    Object? decodedJson;
+    try {
+      decodedJson = jsonDecode(oldPluginsFileStringContent);
+      if (decodedJson is Map<String, Object?>) {
+        final String jsonOfNewPluginsMap = jsonEncode(pluginsMap);
+        final String jsonOfOldPluginsMap = jsonEncode(decodedJson[_kFlutterPluginsPluginListKey]);
+        pluginsChanged = jsonOfNewPluginsMap != jsonOfOldPluginsMap;
+      }
+    } on FormatException catch (_) {}
   }
   final String pluginFileContent = json.encode(result);
   pluginsFile.writeAsStringSync(pluginFileContent, flush: true);
