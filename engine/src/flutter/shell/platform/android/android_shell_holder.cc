@@ -222,7 +222,7 @@ std::unique_ptr<AndroidShellHolder> AndroidShellHolder::Spawn(
     const std::string& libraryUrl,
     const std::string& initial_route,
     const std::vector<std::string>& entrypoint_args,
-    int64_t engine_handle) const {
+    int64_t engine_id) const {
   FML_DCHECK(shell_ && shell_->IsSetup())
       << "A new Shell can only be spawned "
          "if the current Shell is properly constructed";
@@ -269,7 +269,7 @@ std::unique_ptr<AndroidShellHolder> AndroidShellHolder::Spawn(
     // Fail the whole thing.
     return nullptr;
   }
-  config->SetEngineHandle(engine_handle);
+  config->SetEngineId(engine_id);
 
   std::unique_ptr<flutter::Shell> shell =
       shell_->Spawn(std::move(config.value()), initial_route,
@@ -285,7 +285,7 @@ void AndroidShellHolder::Launch(
     const std::string& entrypoint,
     const std::string& libraryUrl,
     const std::vector<std::string>& entrypoint_args,
-    int64_t engine_handle) {
+    int64_t engine_id) {
   if (!IsValid()) {
     return;
   }
@@ -295,7 +295,7 @@ void AndroidShellHolder::Launch(
   if (!config) {
     return;
   }
-  config->SetEngineHandle(engine_handle);
+  config->SetEngineId(engine_id);
   UpdateDisplayMetrics();
   shell_->RunEngine(std::move(config.value()));
 }

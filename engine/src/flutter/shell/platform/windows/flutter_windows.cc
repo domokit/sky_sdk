@@ -197,10 +197,10 @@ bool FlutterDesktopEngineDestroy(FlutterDesktopEngineRef engine_ref) {
   return result;
 }
 
-FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineForHandle(
-    int64_t engine_handle) {
+FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineForId(
+    int64_t engine_id) {
   return HandleForEngine(
-      flutter::FlutterWindowsEngine::GetEngineForHandle(engine_handle));
+      flutter::FlutterWindowsEngine::GetEngineForId(engine_id));
 }
 
 bool FlutterDesktopEngineRun(FlutterDesktopEngineRef engine,

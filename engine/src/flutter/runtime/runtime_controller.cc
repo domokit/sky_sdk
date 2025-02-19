@@ -530,7 +530,7 @@ bool RuntimeController::LaunchRootIsolate(
     const std::vector<std::string>& dart_entrypoint_args,
     std::unique_ptr<IsolateConfiguration> isolate_configuration,
     std::shared_ptr<NativeAssetsManager> native_assets_manager,
-    std::optional<int64_t> engine_handle) {
+    std::optional<int64_t> engine_id) {
   if (root_isolate_.lock()) {
     FML_LOG(ERROR) << "Root isolate was already running.";
     return false;
@@ -579,9 +579,9 @@ bool RuntimeController::LaunchRootIsolate(
     if (!FlushRuntimeStateToIsolate()) {
       FML_DLOG(ERROR) << "Could not set up initial isolate state.";
     }
-    if (engine_handle) {
-      if (!platform_configuration->SetEngineHandle(*engine_handle)) {
-        FML_DLOG(ERROR) << "Could not set engine handle.";
+    if (engine_id) {
+      if (!platform_configuration->SetEngineId(*engine_id)) {
+        FML_DLOG(ERROR) << "Could not set engine identifier.";
       }
     }
   } else {

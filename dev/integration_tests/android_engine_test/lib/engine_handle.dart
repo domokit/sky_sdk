@@ -16,7 +16,7 @@ void main() {
   enableFlutterDriverExtension(
     handler: (String? command) async {
       return json.encode(<String, Object?>{
-        'engineHandle': PlatformDispatcher.instance.engineHandle,
+        'engineId': PlatformDispatcher.instance.engineId,
       });
     },
     commands: <CommandExtension>[nativeDriverCommands],

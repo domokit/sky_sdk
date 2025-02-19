@@ -652,19 +652,19 @@ TEST_F(WindowsTest, AddRemoveView) {
   }
 }
 
-TEST_F(WindowsTest, EngineHandle) {
+TEST_F(WindowsTest, EngineId) {
   auto& context = GetContext();
   WindowsConfigBuilder builder(context);
-  builder.SetDartEntrypoint("testEngineHandle");
+  builder.SetDartEntrypoint("testEngineId");
 
   fml::AutoResetWaitableEvent latch;
-  std::optional<int64_t> engineHandle;
+  std::optional<int64_t> engineId;
   context.AddNativeFunction(
-      "NotifyEngineHandle", CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
+      "NotifyEngineId", CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
         const auto argument = Dart_GetNativeArgument(args, 0);
         if (!Dart_IsNull(argument)) {
           const auto handle = tonic::DartConverter<int64_t>::FromDart(argument);
-          engineHandle = handle;
+          engineId = handle;
         }
         latch.Signal();
       }));
@@ -673,14 +673,14 @@ TEST_F(WindowsTest, EngineHandle) {
   ASSERT_NE(first_controller, nullptr);
 
   latch.Wait();
-  EXPECT_TRUE(engineHandle.has_value());
-  if (!engineHandle.has_value()) {
+  EXPECT_TRUE(engineId.has_value());
+  if (!engineId.has_value()) {
     return;
   }
   auto engine = FlutterDesktopViewControllerGetEngine(first_controller.get());
-  EXPECT_EQ(engine, FlutterDesktopEngineForHandle(*engineHandle));
+  EXPECT_EQ(engine, FlutterDesktopEngineForId(*engineId));
   first_controller.reset();
-  EXPECT_EQ(nullptr, FlutterDesktopEngineForHandle(*engineHandle));
+  EXPECT_EQ(nullptr, FlutterDesktopEngineForId(*engineId));
 }
 
 }  // namespace testing

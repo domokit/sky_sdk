@@ -2397,8 +2397,8 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
         "Could not infer the Flutter project to run from given arguments.");
   }
 
-  if (args->engine_handle != 0) {
-    run_configuration.SetEngineHandle(args->engine_handle);
+  if (args->engine_id != 0) {
+    run_configuration.SetEngineId(args->engine_id);
   }
 
   // Create the engine but don't launch the shell or run the root isolate.

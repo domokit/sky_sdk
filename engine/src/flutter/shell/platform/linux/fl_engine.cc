@@ -103,7 +103,7 @@ struct _FlEngine {
   GDestroyNotify update_semantics_handler_destroy_notify;
 
   // Unique handle for this engine.
-  gint64 engine_handle;
+  gint64 engine_id;
 };
 
 G_DEFINE_QUARK(fl_engine_error_quark, fl_engine_error)
@@ -473,7 +473,7 @@ static void fl_engine_set_property(GObject* object,
 static void fl_engine_dispose(GObject* object) {
   FlEngine* self = FL_ENGINE(object);
 
-  g_hash_table_remove(engine_map, GINT_TO_POINTER(self->engine_handle));
+  g_hash_table_remove(engine_map, GINT_TO_POINTER(self->engine_id));
 
   if (self->engine != nullptr) {
     self->embedder_api.Shutdown(self->engine);
@@ -560,12 +560,12 @@ static FlEngine* fl_engine_new_full(FlDartProject* project,
   g_return_val_if_fail(FL_IS_RENDERER(renderer), nullptr);
 
   FlEngine* self = FL_ENGINE(g_object_new(fl_engine_get_type(), nullptr));
-  self->engine_handle = next_handle++;
+  self->engine_id = next_handle++;
   if (engine_map == nullptr) {
     engine_map =
         g_hash_table_new_full(g_direct_hash, g_direct_equal, nullptr, nullptr);
   }
-  g_hash_table_insert(engine_map, GINT_TO_POINTER(self->engine_handle), self);
+  g_hash_table_insert(engine_map, GINT_TO_POINTER(self->engine_id), self);
 
   self->project = FL_DART_PROJECT(g_object_ref(project));
   self->renderer = FL_RENDERER(g_object_ref(renderer));
@@ -583,7 +583,7 @@ static FlEngine* fl_engine_new_full(FlDartProject* project,
   return self;
 }
 
-FlEngine* fl_engine_for_handle(int64_t handle) {
+FlEngine* fl_engine_for_id(int64_t handle) {
   void* engine = g_hash_table_lookup(engine_map, GINT_TO_POINTER(handle));
   return engine ? FL_ENGINE(engine) : nullptr;
 }
@@ -676,7 +676,7 @@ gboolean fl_engine_start(FlEngine* self, GError** error) {
       dart_entrypoint_args != nullptr ? g_strv_length(dart_entrypoint_args) : 0;
   args.dart_entrypoint_argv =
       reinterpret_cast<const char* const*>(dart_entrypoint_args);
-  args.engine_handle = self->engine_handle;
+  args.engine_id = self->engine_id;
 
   FlutterCompositor compositor = {};
   compositor.struct_size = sizeof(FlutterCompositor);

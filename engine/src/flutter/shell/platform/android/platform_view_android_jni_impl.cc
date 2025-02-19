@@ -198,7 +198,7 @@ static jobject SpawnJNI(JNIEnv* env,
                         jstring jLibraryUrl,
                         jstring jInitialRoute,
                         jobject jEntrypointArgs,
-                        jlong engineHandle) {
+                        jlong engineId) {
   jobject jni = env->NewObject(g_flutter_jni_class->obj(), g_jni_constructor);
   if (jni == nullptr) {
     FML_LOG(ERROR) << "Could not create a FlutterJNI instance";
@@ -216,7 +216,7 @@ static jobject SpawnJNI(JNIEnv* env,
 
   auto spawned_shell_holder =
       ANDROID_SHELL_HOLDER->Spawn(jni_facade, entrypoint, libraryUrl,
-                                  initial_route, entrypoint_args, engineHandle);
+                                  initial_route, entrypoint_args, engineId);
 
   if (spawned_shell_holder == nullptr || !spawned_shell_holder->IsValid()) {
     FML_LOG(ERROR) << "Could not spawn Shell";
@@ -284,7 +284,7 @@ static void RunBundleAndSnapshotFromLibrary(JNIEnv* env,
                                             jstring jLibraryUrl,
                                             jobject jAssetManager,
                                             jobject jEntrypointArgs,
-                                            jlong engineHandle) {
+                                            jlong engineId) {
   auto apk_asset_provider = std::make_unique<flutter::APKAssetProvider>(
       env,                                            // jni environment
       jAssetManager,                                  // asset manager
@@ -295,7 +295,7 @@ static void RunBundleAndSnapshotFromLibrary(JNIEnv* env,
   auto entrypoint_args = fml::jni::StringListToVector(env, jEntrypointArgs);
 
   ANDROID_SHELL_HOLDER->Launch(std::move(apk_asset_provider), entrypoint,
-                               libraryUrl, entrypoint_args, engineHandle);
+                               libraryUrl, entrypoint_args, engineId);
 }
 
 static jobject LookupCallbackInformation(JNIEnv* env,

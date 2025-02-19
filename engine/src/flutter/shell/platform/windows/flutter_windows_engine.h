@@ -96,10 +96,10 @@ class FlutterWindowsEngine {
 
   virtual ~FlutterWindowsEngine();
 
-  // Returns the engine associated with the given handle, or nullptr if the
-  // handle is not valid.
+  // Returns the engine associated with the given identifier, or nullptr if the
+  // identifier is not valid.
   // Must be called on the platform thread.
-  static FlutterWindowsEngine* GetEngineForHandle(int64_t engine_handle);
+  static FlutterWindowsEngine* GetEngineForId(int64_t engine_id);
 
   // Starts running the entrypoint function specifed in the project bundle. If
   // unspecified, defaults to main().
@@ -371,10 +371,10 @@ class FlutterWindowsEngine {
   FlutterViewId next_view_id_ = kImplicitViewId;
 
   // Unique handle for the engine.
-  int64_t engine_handle_;
+  int64_t engine_id_;
 
-  static int64_t next_engine_handle_;
-  static std::map<int64_t, FlutterWindowsEngine*> handle_to_engine_;
+  static int64_t next_engine_id_;
+  static std::map<int64_t, FlutterWindowsEngine*> id_to_engine_;
 
   // The views displaying the content running in this engine, if any.
   //

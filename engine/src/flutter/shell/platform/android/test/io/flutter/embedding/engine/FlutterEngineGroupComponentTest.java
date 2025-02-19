@@ -59,7 +59,7 @@ public class FlutterEngineGroupComponentTest {
     when(mockFlutterJNI.isAttached()).thenAnswer(invocation -> jniAttached);
     doAnswer(invocation -> jniAttached = true).when(mockFlutterJNI).attachToNative();
     GeneratedPluginRegistrant.clearRegisteredEngines();
-    FlutterEngine.resetNextEngineHandle();
+    FlutterEngine.resetNextEngineId();
 
     when(mockFlutterLoader.findAppBundlePath()).thenReturn("some/path/to/flutter_assets");
 

@@ -474,8 +474,8 @@ static void OnPlatformMessage(const FlutterPlatformMessage* message, void* user_
   // pair cursor change with a view.
   __weak FlutterView* _lastViewWithPointerEvent;
 
-  // Unique handle for current engine.
-  int64_t _engineHandle;
+  // Unique identifier for current engine.
+  int64_t _engineId;
 }
 
 - (instancetype)initWithName:(NSString*)labelPrefix project:(FlutterDartProject*)project {
@@ -497,7 +497,7 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
   }
 }
 
-static int64_t nextHandle = 1;
+static int64_t nextEngineId = 1;
 static NSMapTable* engineMap;
 
 - (instancetype)initWithName:(NSString*)labelPrefix
@@ -555,11 +555,11 @@ static NSMapTable* engineMap;
   }
 
   _vsyncWaiters = [NSMapTable strongToStrongObjectsMapTable];
-  _engineHandle = nextHandle++;
+  _engineId = nextEngineId++;
   if (engineMap == nil) {
     engineMap = [NSMapTable strongToWeakObjectsMapTable];
   }
-  [engineMap setObject:self forKey:@(_engineHandle)];
+  [engineMap setObject:self forKey:@(_engineId)];
 
   return self;
 }
@@ -652,7 +652,7 @@ static NSMapTable* engineMap;
     }
     std::cout << message << std::endl;
   };
-  flutterArguments.engine_handle = _engineHandle;
+  flutterArguments.engine_id = _engineId;
 
   static size_t sTaskRunnerIdentifiers = 0;
   const FlutterTaskRunnerDescription cocoa_task_runner_description = {
@@ -1170,12 +1170,12 @@ static NSMapTable* engineMap;
   }
   _engine = nullptr;
 
-  [engineMap removeObjectForKey:@(_engineHandle)];
+  [engineMap removeObjectForKey:@(_engineId)];
 }
 
-+ (FlutterEngine*)engineForHandle:(int64_t)handle {
++ (FlutterEngine*)engineForId:(int64_t)identifier {
   NSAssert([[NSThread currentThread] isMainThread], @"Must be called on the main thread.");
-  return [engineMap objectForKey:@(handle)];
+  return [engineMap objectForKey:@(identifier)];
 }
 
 - (void)setUpPlatformViewChannel {

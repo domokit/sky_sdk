@@ -155,7 +155,7 @@ class RuntimeController : public PlatformConfigurationClient,
   /// @param[in]  dart_entrypoint_args     Arguments passed as a List<String>
   ///                                      to Dart's entrypoint function.
   /// @param[in]  isolate_configuration    The isolate configuration
-  /// @param[in]  engine_handle.           Engine handle to be passed to the
+  /// @param[in]  engine_id.               Engine identifier to be passed to the
   ///                                      platform dispatcher.
   ///
   /// @return     If the isolate could be launched and guided to the
@@ -169,7 +169,7 @@ class RuntimeController : public PlatformConfigurationClient,
       const std::vector<std::string>& dart_entrypoint_args,
       std::unique_ptr<IsolateConfiguration> isolate_configuration,
       std::shared_ptr<NativeAssetsManager> native_assets_manager,
-      std::optional<int64_t> engine_handle);
+      std::optional<int64_t> engine_id);
 
   //----------------------------------------------------------------------------
   /// @brief      Clone the runtime controller. Launching an isolate with a

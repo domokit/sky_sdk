@@ -863,30 +863,30 @@ TEST_F(FlutterEngineTest, ResponseFromBackgroundThread) {
   }
 }
 
-TEST_F(FlutterEngineTest, CanGetEngineForHandle) {
+TEST_F(FlutterEngineTest, CanGetEngineForId) {
   FlutterEngine* engine = GetFlutterEngine();
 
   fml::AutoResetWaitableEvent latch;
-  std::optional<int64_t> engineHandle;
-  AddNativeCallback("NotifyEngineHandle", CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
+  std::optional<int64_t> engineId;
+  AddNativeCallback("NotifyEngineId", CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
                       const auto argument = Dart_GetNativeArgument(args, 0);
                       if (!Dart_IsNull(argument)) {
-                        const auto handle = tonic::DartConverter<int64_t>::FromDart(argument);
-                        engineHandle = handle;
+                        const auto id = tonic::DartConverter<int64_t>::FromDart(argument);
+                        engineId = id;
                       }
                       latch.Signal();
                     }));
 
-  EXPECT_TRUE([engine runWithEntrypoint:@"testEngineHandle"]);
+  EXPECT_TRUE([engine runWithEntrypoint:@"testEngineId"]);
   latch.Wait();
 
-  EXPECT_TRUE(engineHandle.has_value());
-  if (!engineHandle.has_value()) {
+  EXPECT_TRUE(engineId.has_value());
+  if (!engineId.has_value()) {
     return;
   }
-  EXPECT_EQ(engine, [FlutterEngine engineForHandle:*engineHandle]);
+  EXPECT_EQ(engine, [FlutterEngine engineForId:*engineId]);
   ShutDownEngine();
-  EXPECT_EQ(nil, [FlutterEngine engineForHandle:*engineHandle]);
+  EXPECT_EQ(nil, [FlutterEngine engineForId:*engineId]);
 }
 
 TEST_F(FlutterEngineTest, ThreadSynchronizerNotBlockingRasterThreadAfterShutdown) {

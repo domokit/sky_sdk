@@ -90,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Returns the engine handle. Used in FlutterEngineTest.
  */
-- (int64_t)engineHandle;
+- (int64_t)engineId;
 
 @end
 

@@ -457,7 +457,7 @@ public class FlutterJNI {
       @Nullable String pathToEntrypointFunction,
       @Nullable String initialRoute,
       @Nullable List<String> entrypointArgs,
-      long engineHandle) {
+      long engineId) {
     ensureRunningOnMainThread();
     ensureAttachedToNative();
     FlutterJNI spawnedJNI =
@@ -467,7 +467,7 @@ public class FlutterJNI {
             pathToEntrypointFunction,
             initialRoute,
             entrypointArgs,
-            engineHandle);
+            engineId);
     Preconditions.checkState(
         spawnedJNI.nativeShellHolderId != null && spawnedJNI.nativeShellHolderId != 0,
         "Failed to spawn new JNI connected shell from existing shell.");
@@ -481,7 +481,7 @@ public class FlutterJNI {
       @Nullable String pathToEntrypointFunction,
       @Nullable String initialRoute,
       @Nullable List<String> entrypointArgs,
-      long engineHandle);
+      long engineId);
 
   /**
    * Detaches this {@code FlutterJNI} instance from Flutter's native engine, which precludes any
@@ -1002,7 +1002,7 @@ public class FlutterJNI {
       @Nullable String pathToEntrypointFunction,
       @NonNull AssetManager assetManager,
       @Nullable List<String> entrypointArgs,
-      long engineHandle) {
+      long engineId) {
     ensureRunningOnMainThread();
     ensureAttachedToNative();
     nativeRunBundleAndSnapshotFromLibrary(
@@ -1012,7 +1012,7 @@ public class FlutterJNI {
         pathToEntrypointFunction,
         assetManager,
         entrypointArgs,
-        engineHandle);
+        engineId);
   }
 
   private native void nativeRunBundleAndSnapshotFromLibrary(
@@ -1022,7 +1022,7 @@ public class FlutterJNI {
       @Nullable String pathToEntrypointFunction,
       @NonNull AssetManager manager,
       @Nullable List<String> entrypointArgs,
-      long engineHandle);
+      long engineId);
   // ------ End Dart Execution Support -------
 
   // --------- Start Platform Message Support ------

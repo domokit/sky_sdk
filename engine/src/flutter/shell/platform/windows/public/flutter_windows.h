@@ -162,12 +162,12 @@ FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineCreate(
 // |engine| is no longer valid after this call.
 FLUTTER_EXPORT bool FlutterDesktopEngineDestroy(FlutterDesktopEngineRef engine);
 
-// Returns the engine associated with the given handle, or nullptr if no such
-// engine exists.
-// Handle can be obtained from PlatformDispatcher.instance.engineHandle.
-// This must be called from the platform thread.
-FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineForHandle(
-    int64_t engine_handle);
+// Returns the engine associated with the given identifier, or nullptr if no
+// such engine exists. Identifier can be obtained from
+// PlatformDispatcher.instance.engineId. This must be called from the platform
+// thread.
+FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineForId(
+    int64_t engine_id);
 
 // Starts running the given engine instance.
 //

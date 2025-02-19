@@ -59,8 +59,8 @@ void _removeView(int viewId) {
 }
 
 @pragma('vm:entry-point')
-void _setEngineHandle(int engineHandle) {
-  PlatformDispatcher.instance._engineHandle = engineHandle;
+void _setEngineId(int engineId) {
+  PlatformDispatcher.instance._engineId = engineId;
 }
 
 @pragma('vm:entry-point')

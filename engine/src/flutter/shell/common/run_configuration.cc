@@ -105,13 +105,13 @@ const std::vector<std::string>& RunConfiguration::GetEntrypointArgs() const {
   return entrypoint_args_;
 }
 
-void RunConfiguration::SetEngineHandle(int64_t engine_handle) {
-  engine_handle_ = engine_handle;
+void RunConfiguration::SetEngineId(int64_t engine_id) {
+  engine_id_ = engine_id;
 }
 
-// Engine handle to be passed to the platform dispatcher.
-std::optional<int64_t> RunConfiguration::GetEngineHandle() const {
-  return engine_handle_;
+// Engine identifier to be passed to the platform dispatcher.
+std::optional<int64_t> RunConfiguration::GetEngineId() const {
+  return engine_id_;
 }
 
 std::unique_ptr<IsolateConfiguration>

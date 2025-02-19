@@ -164,12 +164,12 @@ FLUTTER_DARWIN_EXPORT
           restorationEnabled:(BOOL)restorationEnabled NS_DESIGNATED_INITIALIZER;
 
 /**
- * Returns engine for the handle, nil if the handle is not valid.
- * The handle can be obtained in Dart code through
- * `PlatformDispatcher.instance.engineHandle`.
+ * Returns engine for the identifier, nil if the identifier is not valid.
+ * The identifier can be obtained in Dart code through
+ * `PlatformDispatcher.instance.engineId`.
  * This function must be called on the main thread.
  */
-+ (nullable FlutterEngine*)engineForHandle:(int64_t)handle;
++ (nullable FlutterEngine*)engineForId:(int64_t)identifier;
 
 /**
  * Runs a Dart program on an Isolate from the main Dart library (i.e. the library that

@@ -86,10 +86,10 @@ void sendFooMessage() {
   PlatformDispatcher.instance.sendPlatformMessage('foo', null, (ByteData? result) {});
 }
 
-@pragma('vm:external-name', 'NotifyEngineHandle')
-external void notifyEngineHandle(int? engineHandle);
+@pragma('vm:external-name', 'NotifyEngineId')
+external void notifyEngineId(int? engineId);
 
 @pragma('vm:entry-point')
-void testEngineHandle() {
-  notifyEngineHandle(PlatformDispatcher.instance.engineHandle);
+void testEngineId() {
+  notifyEngineId(PlatformDispatcher.instance.engineId);
 }

@@ -195,13 +195,13 @@ class RunConfiguration {
   std::unique_ptr<IsolateConfiguration> TakeIsolateConfiguration();
 
   //----------------------------------------------------------------------------
-  /// @brief      Sets the engine handle to be passed to the platform
+  /// @brief      Sets the engine identifier to be passed to the platform
   ///             dispatcher.
-  void SetEngineHandle(int64_t engine_handle);
+  void SetEngineId(int64_t engine_id);
 
   ///----------------------------------------------------------------------------
-  /// @return     Engine handle to be passed to the platform dispatcher.
-  std::optional<int64_t> GetEngineHandle() const;
+  /// @return     Engine identifier to be passed to the platform dispatcher.
+  std::optional<int64_t> GetEngineId() const;
 
  private:
   std::unique_ptr<IsolateConfiguration> isolate_configuration_;
@@ -209,7 +209,7 @@ class RunConfiguration {
   std::string entrypoint_ = "main";
   std::string entrypoint_library_ = "";
   std::vector<std::string> entrypoint_args_;
-  std::optional<int64_t> engine_handle_;
+  std::optional<int64_t> engine_id_;
 
   FML_DISALLOW_COPY_AND_ASSIGN(RunConfiguration);
 };
