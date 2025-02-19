@@ -119,7 +119,7 @@ sealed class _DebugSemanticsRoleChecks {
     SemanticsRole.searchBox => _unimplemented,
     SemanticsRole.dragHandle => _unimplemented,
     SemanticsRole.spinButton => _unimplemented,
-    SemanticsRole.comboBox => _unimplemented,
+    SemanticsRole.comboBox => _semanticsComboBox,
     SemanticsRole.menuBar => _unimplemented,
     SemanticsRole.menu => _unimplemented,
     SemanticsRole.menuItem => _unimplemented,
@@ -136,6 +136,15 @@ sealed class _DebugSemanticsRoleChecks {
       FlutterError('Missing checks for role ${node.getSemanticsData().role}');
 
   static FlutterError? _noCheckRequired(SemanticsNode node) => null;
+
+  static FlutterError? _semanticsComboBox(SemanticsNode node) {
+    final SemanticsData data = node.getSemanticsData();
+    if (!data.hasFlag(SemanticsFlag.hasExpandedState)) {
+      return FlutterError('A combo box needs expanded states');
+    }
+
+    return null;
+  }
 
   static FlutterError? _semanticsTab(SemanticsNode node) {
     final SemanticsData data = node.getSemanticsData();
