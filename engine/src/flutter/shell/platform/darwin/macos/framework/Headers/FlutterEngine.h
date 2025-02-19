@@ -99,9 +99,12 @@ FLUTTER_DARWIN_EXPORT
 - (void)shutDownEngine;
 
 /**
- * Returns engine for the identifier, nil if the identifier is not valid.
+ * Returns engine for the identifier. The identifier must be valid for an engine
+ * that is currently running, otherwise the behavior is undefined.
+ *
  * The identifier can be obtained in Dart code through
  * `PlatformDispatcher.instance.engineId`.
+ *
  * This function must be called on the main thread.
  */
 + (nullable FlutterEngine*)engineForId:(int64_t)identifier;

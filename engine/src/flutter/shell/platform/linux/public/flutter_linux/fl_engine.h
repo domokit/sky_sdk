@@ -52,7 +52,9 @@ FlEngine* fl_engine_new_headless(FlDartProject* project);
  * @handle: an engine identifier obtained through
  * PlatformDispatcher.instance.engineId.
  *
- * Returns Flutter engine associated with the identifier or NULL if not found.
+ * Returns Flutter engine associated with the identifier. The identifier
+ * must be valid and for a running engine otherwise the behavior is
+ * undefined.
  * Must be called from the main thread.
  *
  * Returns: a #FlEngine or NULL.

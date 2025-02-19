@@ -886,7 +886,6 @@ TEST_F(FlutterEngineTest, CanGetEngineForId) {
   }
   EXPECT_EQ(engine, [FlutterEngine engineForId:*engineId]);
   ShutDownEngine();
-  EXPECT_EQ(nil, [FlutterEngine engineForId:*engineId]);
 }
 
 TEST_F(FlutterEngineTest, ThreadSynchronizerNotBlockingRasterThreadAfterShutdown) {

@@ -679,8 +679,6 @@ TEST_F(WindowsTest, EngineId) {
   }
   auto engine = FlutterDesktopViewControllerGetEngine(first_controller.get());
   EXPECT_EQ(engine, FlutterDesktopEngineForId(*engineId));
-  first_controller.reset();
-  EXPECT_EQ(nullptr, FlutterDesktopEngineForId(*engineId));
 }
 
 }  // namespace testing

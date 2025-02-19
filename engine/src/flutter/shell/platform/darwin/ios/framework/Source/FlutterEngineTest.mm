@@ -274,24 +274,17 @@ FLUTTER_ASSERT_ARC
 }
 
 - (void)testEngineId {
-  int64_t id1;
-  int64_t id2;
-  @autoreleasepool {
-    FlutterEngine* engine = [[FlutterEngine alloc] initWithName:@"foobar"];
-    [engine run];
-    id1 = engine.engineId;
-    XCTAssertTrue(id1 != 0);
-    FlutterEngine* spawn = [engine spawnWithEntrypoint:nil
-                                            libraryURI:nil
-                                          initialRoute:nil
-                                        entrypointArgs:nil];
-    id2 = spawn.engineId;
-    XCTAssertEqual(id2, id1 + 1);
-    XCTAssertEqual([FlutterEngine engineForId:id1], engine);
-    XCTAssertEqual([FlutterEngine engineForId:id2], spawn);
-  }
-  XCTAssertNil([FlutterEngine engineForId:id1]);
-  XCTAssertNil([FlutterEngine engineForId:id2]);
+  FlutterEngine* engine = [[FlutterEngine alloc] initWithName:@"foobar"];
+  [engine run];
+  int64_t id1 = engine.engineId;
+  XCTAssertTrue(id1 != 0);
+  FlutterEngine* spawn = [engine spawnWithEntrypoint:nil
+                                          libraryURI:nil
+                                        initialRoute:nil
+                                      entrypointArgs:nil];
+  int64_t id2 = spawn.engineId;
+  XCTAssertEqual([FlutterEngine engineForId:id1], engine);
+  XCTAssertEqual([FlutterEngine engineForId:id2], spawn);
 }
 
 - (void)testSetHandlerAfterRun {
