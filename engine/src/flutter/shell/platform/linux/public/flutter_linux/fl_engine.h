@@ -48,20 +48,6 @@ FlEngine* fl_engine_new(FlDartProject* project);
 FlEngine* fl_engine_new_headless(FlDartProject* project);
 
 /**
- * fl_engine_for_id:
- * @handle: an engine identifier obtained through
- * PlatformDispatcher.instance.engineId.
- *
- * Returns Flutter engine associated with the identifier. The identifier
- * must be valid and for a running engine otherwise the behavior is
- * undefined.
- * Must be called from the main thread.
- *
- * Returns: a #FlEngine or NULL.
- */
-FlEngine* fl_engine_for_id(int64_t handle);
-
-/**
  * fl_engine_get_binary_messenger:
  * @engine: an #FlEngine.
  *

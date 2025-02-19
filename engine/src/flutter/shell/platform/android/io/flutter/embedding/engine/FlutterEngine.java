@@ -701,6 +701,11 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
     return pluginRegistry;
   }
 
+  /** Returns unique identifier for this engine. */
+  public long getEngineId() {
+    return engineId;
+  }
+
   /**
    * Returns engine for the given identifier or null if identifier is not valid. The handle can be
    * obtained through
@@ -710,6 +715,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
    * <p>Must be called on the UI thread.
    */
   @Nullable
+  @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
   public static FlutterEngine engineForId(long handle) {
     return idToEngine.get(handle);
   }

@@ -92,6 +92,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (int64_t)engineId;
 
+/**
+ * Returns engine for the identifier. The identifier must be valid for an engine
+ * that is currently running, otherwise the behavior is undefined.
+ *
+ * The identifier can be obtained in Dart code through
+ * `PlatformDispatcher.instance.engineId`.
+ *
+ * This function must be called on the main thread.
+ */
++ (nullable FlutterEngine*)engineForIdentifier:(int64_t)identifier;
+
 @end
 
 NS_ASSUME_NONNULL_END

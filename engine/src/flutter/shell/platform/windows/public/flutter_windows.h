@@ -162,15 +162,6 @@ FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineCreate(
 // |engine| is no longer valid after this call.
 FLUTTER_EXPORT bool FlutterDesktopEngineDestroy(FlutterDesktopEngineRef engine);
 
-// Returns the engine associated with the given identifier. Engine identifier
-// must be valid and for a running engine, otherwise the behavior is undefined.
-//
-// Identifier can be obtained from PlatformDispatcher.instance.engineId.
-//
-// This method must be called from the platform thread.
-FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineForId(
-    int64_t engine_id);
-
 // Starts running the given engine instance.
 //
 // The entry_point parameter is deprecated but preserved for
