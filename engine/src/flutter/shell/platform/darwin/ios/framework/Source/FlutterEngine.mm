@@ -246,7 +246,7 @@ static constexpr int kNumProfilerSamplesPerSec = 5;
   return self;
 }
 
-+ (FlutterEngine*)engineForId:(int64_t)identifier {
++ (FlutterEngine*)engineForIdentifier:(int64_t)identifier {
   NSAssert([[NSThread currentThread] isMainThread], @"Must be called on the main thread.");
   return (__bridge FlutterEngine*)reinterpret_cast<void*>(identifier);
 }

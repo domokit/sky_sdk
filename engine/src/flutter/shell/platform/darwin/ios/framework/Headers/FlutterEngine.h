@@ -172,7 +172,7 @@ FLUTTER_DARWIN_EXPORT
  *
  * This function must be called on the main thread.
  */
-+ (nullable FlutterEngine*)engineForId:(int64_t)identifier;
++ (nullable FlutterEngine*)engineForIdentifier:(int64_t)identifier;
 
 /**
  * Runs a Dart program on an Isolate from the main Dart library (i.e. the library that

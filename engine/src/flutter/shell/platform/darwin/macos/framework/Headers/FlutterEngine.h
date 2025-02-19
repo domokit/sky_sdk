@@ -107,7 +107,7 @@ FLUTTER_DARWIN_EXPORT
  *
  * This function must be called on the main thread.
  */
-+ (nullable FlutterEngine*)engineForId:(int64_t)identifier;
++ (nullable FlutterEngine*)engineForIdentifier:(int64_t)identifier;
 
 @end
 

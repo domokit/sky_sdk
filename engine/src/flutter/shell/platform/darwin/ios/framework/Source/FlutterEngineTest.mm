@@ -283,8 +283,8 @@ FLUTTER_ASSERT_ARC
                                         initialRoute:nil
                                       entrypointArgs:nil];
   int64_t id2 = spawn.engineId;
-  XCTAssertEqual([FlutterEngine engineForId:id1], engine);
-  XCTAssertEqual([FlutterEngine engineForId:id2], spawn);
+  XCTAssertEqual([FlutterEngine engineForIdentifier:id1], engine);
+  XCTAssertEqual([FlutterEngine engineForIdentifier:id2], spawn);
 }
 
 - (void)testSetHandlerAfterRun {

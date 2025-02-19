@@ -884,7 +884,7 @@ TEST_F(FlutterEngineTest, CanGetEngineForId) {
   if (!engineId.has_value()) {
     return;
   }
-  EXPECT_EQ(engine, [FlutterEngine engineForId:*engineId]);
+  EXPECT_EQ(engine, [FlutterEngine engineForIdentifier:*engineId]);
   ShutDownEngine();
 }
 
