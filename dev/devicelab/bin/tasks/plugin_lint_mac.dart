@@ -15,6 +15,10 @@ Future<void> main() async {
   await task(() async {
     final Directory tempDir = Directory.systemTemp.createTempSync('flutter_plugin_test.');
     try {
+      section('Use CocoaPods');
+
+      await flutter('config', options: <String>['--no-enable-swift-package-manager']);
+
       section('Lint integration_test');
 
       await inDirectory(tempDir, () async {
