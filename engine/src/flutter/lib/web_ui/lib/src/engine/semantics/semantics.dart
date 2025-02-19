@@ -1283,33 +1283,6 @@ class SemanticsObject {
   /// The dom element of this semantics object.
   DomElement get element => semanticRole!.element;
 
-  /// Returns the HTML element that contains the HTML elements of direct
-  /// children of this object.
-  ///
-  /// The element is created lazily. When the child list is empty this element
-  /// is not created. This is necessary for "aria-label" to function correctly.
-  /// The browser will ignore the [label] of HTML element that contain child
-  /// elements.
-  DomElement? getOrCreateChildContainer() {
-    if (_childContainerElement == null) {
-      _childContainerElement = createDomElement('flt-semantics-container');
-      _childContainerElement!.style
-        ..position = 'absolute'
-        // Ignore pointer events on child container so that platform views
-        // behind it can be reached.
-        ..pointerEvents = 'none';
-      element.append(_childContainerElement!);
-    }
-    return _childContainerElement;
-  }
-
-  /// The element that contains the elements belonging to the child semantics
-  /// nodes.
-  ///
-  /// This element is used to correct for [_rect] offsets. It is only non-`null`
-  /// when there are non-zero children (i.e. when [hasChildren] is `true`).
-  DomElement? _childContainerElement;
-
   /// The parent of this semantics object.
   ///
   /// This value is not final until the tree is finalized. It is not safe to
@@ -1592,22 +1565,15 @@ class SemanticsObject {
     // Trivial case: remove all children.
     if (_childrenInHitTestOrder == null || _childrenInHitTestOrder!.isEmpty) {
       if (_currentChildrenInRenderOrder == null || _currentChildrenInRenderOrder!.isEmpty) {
-        // A container element must not have been created when child list is empty.
-        assert(_childContainerElement == null);
         _currentChildrenInRenderOrder = null;
         return;
       }
-
-      // A container element must have been created when child list is not empty.
-      assert(_childContainerElement != null);
 
       // Remove all children from this semantics object.
       final int len = _currentChildrenInRenderOrder!.length;
       for (int i = 0; i < len; i++) {
         owner._detachObject(_currentChildrenInRenderOrder![i].id);
       }
-      _childContainerElement!.remove();
-      _childContainerElement = null;
       _currentChildrenInRenderOrder = null;
       return;
     }
@@ -1616,7 +1582,6 @@ class SemanticsObject {
     final Int32List childrenInTraversalOrder = _childrenInTraversalOrder!;
     final Int32List childrenInHitTestOrder = _childrenInHitTestOrder!;
     final int childCount = childrenInHitTestOrder.length;
-    final DomElement? containerElement = getOrCreateChildContainer();
 
     assert(childrenInTraversalOrder.length == childrenInHitTestOrder.length);
 
@@ -1648,7 +1613,7 @@ class SemanticsObject {
     // Trivial case: previous list was empty => just populate the container.
     if (_currentChildrenInRenderOrder == null || _currentChildrenInRenderOrder!.isEmpty) {
       for (final SemanticsObject child in childrenInRenderOrder) {
-        containerElement!.append(child.element);
+        element!.append(child.element);
         owner._attachObject(parent: this, child: child);
       }
       _currentChildrenInRenderOrder = childrenInRenderOrder;
@@ -1732,9 +1697,9 @@ class SemanticsObject {
       final SemanticsObject child = childrenInRenderOrder[i];
       if (!stationaryIds.contains(child.id)) {
         if (refNode == null) {
-          containerElement!.append(child.element);
+          element!.append(child.element);
         } else {
-          containerElement!.insertBefore(child.element, refNode);
+          element!.insertBefore(child.element, refNode);
         }
         owner._attachObject(parent: this, child: child);
       } else {
@@ -1887,10 +1852,7 @@ class SemanticsObject {
 
     // Reparent element.
     if (previousElement != element) {
-      final DomElement? container = _childContainerElement;
-      if (container != null) {
-        element.append(container);
-      }
+      previousElement?.children.forEach((child) => element.append(child));
       final DomElement? parent = previousElement?.parent;
       if (parent != null) {
         parent.insertBefore(element, previousElement);
@@ -1971,8 +1933,6 @@ class SemanticsObject {
       ..width = '${_rect!.width}px'
       ..height = '${_rect!.height}px';
 
-    final DomElement? containerElement = hasChildren ? getOrCreateChildContainer() : null;
-
     final bool hasZeroRectOffset = _rect!.top == 0.0 && _rect!.left == 0.0;
     final Float32List? transform = _transform;
     final bool hasIdentityTransform =
@@ -1983,9 +1943,6 @@ class SemanticsObject {
         verticalContainerAdjustment == 0.0 &&
         horizontalContainerAdjustment == 0.0) {
       _clearSemanticElementTransform(element);
-      if (containerElement != null) {
-        _clearSemanticElementTransform(containerElement);
-      }
       return;
     }
 
@@ -2014,20 +1971,6 @@ class SemanticsObject {
         ..transform = matrix4ToCssTransform(effectiveTransform);
     } else {
       _clearSemanticElementTransform(element);
-    }
-
-    if (containerElement != null) {
-      if (!hasZeroRectOffset ||
-          verticalContainerAdjustment != 0.0 ||
-          horizontalContainerAdjustment != 0.0) {
-        final double translateX = -_rect!.left + horizontalContainerAdjustment;
-        final double translateY = -_rect!.top + verticalContainerAdjustment;
-        containerElement.style
-          ..top = '${translateY}px'
-          ..left = '${translateX}px';
-      } else {
-        _clearSemanticElementTransform(containerElement);
-      }
     }
   }
 
@@ -2571,7 +2514,7 @@ class EngineSemanticsOwner {
           removals.add(node);
         } else {
           assert(node._parent == parent);
-          assert(node.element.parentNode == parent._childContainerElement);
+          assert(node.element.parentNode == parent.element);
         }
         return true;
       });
@@ -2714,9 +2657,6 @@ AFTER: $description
 
         // Dirty fields should be cleared after the tree has been finalized.
         assert(object._dirtyFields == 0);
-
-        // Make sure a child container is created only when there are children.
-        assert(object._childContainerElement == null || object.hasChildren);
 
         // Ensure child ID list is consistent with the parent-child
         // relationship of the semantics tree.
