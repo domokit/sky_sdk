@@ -2169,7 +2169,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(menuAnchor.controller!.isOpen, true);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    // Simulate `TextInputAction.done` on textfield
+    await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pumpAndSettle();
     expect(menuAnchor.controller!.isOpen, false);
   });
@@ -2222,7 +2223,15 @@ void main() {
     // Test onSelected on key press
     await simulateKeyDownEvent(LogicalKeyboardKey.arrowDown);
     await tester.pumpAndSettle();
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+
+    // On mobile platforms, the TextField cannot gain focus by default; the focus is
+    // on a FocusNode specifically used for keyboard navigation. Therefore,
+    // LogicalKeyboardKey.enter should be used.
+    if (isMobile) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    } else {
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+    }
     await tester.pumpAndSettle();
     expect(selectionCount, expectedCount);
 
@@ -4010,6 +4019,27 @@ void main() {
     textField = tester.widget(find.byType(TextField));
     expect(textField.textInputAction, TextInputAction.next);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/162539
+  testWidgets(
+    'When requestFocusOnTap is true, the TextField should gain focus after being tapped.',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DropdownMenu<TestMenu>(
+              dropdownMenuEntries: menuChildren,
+              requestFocusOnTap: true,
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+      final Element textField = tester.firstElement(find.byType(TextField));
+      expect(Focus.of(textField).hasFocus, isTrue);
+    },
+  );
 
   testWidgets('items can be constrainted to be smaller than the text field with menuStyle', (
     WidgetTester tester,

@@ -294,6 +294,12 @@ bool FlutterWindowsEngine::Run(std::string_view entrypoint) {
   custom_task_runners.thread_priority_setter =
       &WindowsPlatformThreadPrioritySetter;
 
+  if (project_->merged_platform_ui_thread()) {
+    FML_LOG(WARNING)
+        << "Running with merged platform and UI thread. Experimental.";
+    custom_task_runners.ui_task_runner = &platform_task_runner;
+  }
+
   FlutterProjectArgs args = {};
   args.struct_size = sizeof(FlutterProjectArgs);
   args.shutdown_dart_vm_when_done = true;

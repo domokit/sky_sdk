@@ -377,6 +377,25 @@ void main() {
   });
 
   testWidgets(
+    'CircularProgressIndicator.year2023 set to false and provided circularTrackColor does not throw exception',
+    (WidgetTester tester) async {
+      const Color circularTrackColor = Color(0XFF0000FF);
+      final ThemeData theme = ThemeData(
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          circularTrackColor: circularTrackColor,
+          year2023: false,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Theme(data: theme, child: const Center(child: CircularProgressIndicator())),
+      );
+
+      expect(tester.takeException(), null);
+    },
+  );
+
+  testWidgets(
     'Opt into 2024 CircularProgressIndicator appearance with ProgressIndicatorThemeData.year2023',
     (WidgetTester tester) async {
       final ThemeData theme = ThemeData(

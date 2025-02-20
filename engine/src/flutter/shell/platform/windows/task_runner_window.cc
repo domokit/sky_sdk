@@ -10,6 +10,11 @@
 
 namespace flutter {
 
+static const uintptr_t kTimerId = 0;
+
+// Timer used for PollOnce timeout.
+static const uintptr_t kPollTimeoutTimerId = 1;
+
 TaskRunnerWindow::TaskRunnerWindow() {
   WNDCLASS window_class = RegisterWindowClass();
   window_handle_ =
@@ -69,6 +74,16 @@ void TaskRunnerWindow::RemoveDelegate(Delegate* delegate) {
   }
 }
 
+void TaskRunnerWindow::PollOnce(std::chrono::milliseconds timeout) {
+  MSG msg;
+  ::SetTimer(window_handle_, kPollTimeoutTimerId, timeout.count(), nullptr);
+  if (GetMessage(&msg, window_handle_, 0, 0)) {
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
+  }
+  ::KillTimer(window_handle_, kPollTimeoutTimerId);
+}
+
 void TaskRunnerWindow::ProcessTasks() {
   auto next = std::chrono::nanoseconds::max();
   auto delegates_copy(delegates_);
@@ -84,10 +99,10 @@ void TaskRunnerWindow::ProcessTasks() {
 
 void TaskRunnerWindow::SetTimer(std::chrono::nanoseconds when) {
   if (when == std::chrono::nanoseconds::max()) {
-    KillTimer(window_handle_, 0);
+    KillTimer(window_handle_, kTimerId);
   } else {
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(when);
-    ::SetTimer(window_handle_, 0, millis.count() + 1, nullptr);
+    ::SetTimer(window_handle_, kTimerId, millis.count() + 1, nullptr);
   }
 }
 
@@ -115,6 +130,13 @@ TaskRunnerWindow::HandleMessage(UINT const message,
                                 LPARAM const lparam) noexcept {
   switch (message) {
     case WM_TIMER:
+      if (wparam == kPollTimeoutTimerId) {
+        // Ignore PollOnce timeout timer.
+        return 0;
+      }
+      FML_DCHECK(wparam == kTimerId);
+      ProcessTasks();
+      return 0;
     case WM_NULL:
       ProcessTasks();
       return 0;

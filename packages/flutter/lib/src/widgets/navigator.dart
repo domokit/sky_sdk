@@ -164,8 +164,10 @@ abstract class Route<T> extends _RoutePlaceholder {
   /// If the [settings] are not provided, an empty [RouteSettings] object is
   /// used instead.
   ///
+  /// {@template flutter.widgets.navigator.Route.requestFocus}
   /// If [requestFocus] is not provided, the value of [Navigator.requestFocus] is
   /// used instead.
+  /// {@endtemplate}
   Route({RouteSettings? settings, bool? requestFocus})
     : _settings = settings ?? const RouteSettings(),
       _requestFocus = requestFocus {

@@ -80,6 +80,9 @@ typedef struct {
 
   // GPU choice preference
   FlutterDesktopGpuPreference gpu_preference;
+
+  // Whether the UI isolate should run on the platform thread.
+  bool merged_platform_ui_thread;
 } FlutterDesktopEngineProperties;
 
 // ========== View Controller ==========
