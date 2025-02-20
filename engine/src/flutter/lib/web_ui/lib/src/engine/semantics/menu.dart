@@ -29,7 +29,6 @@ class SemanticComboBox extends SemanticRole {
     } else {
       setAttribute('aria-expanded', 'false');
     }
-    print(semanticsObject.flags);
   }
 
   @override
