@@ -1466,6 +1466,80 @@ void _testVerticalScrolling() {
     // Engine semantics returns scroll top back to neutral.
     expect(scrollable.scrollTop >= (10 - browserMaxScrollDiff), isTrue);
   });
+
+  test('scrollable switches to pointer event mode on a wheel event', () async {
+    final actionLog = <ui.SemanticsActionEvent>[];
+    ui.PlatformDispatcher.instance.onSemanticsActionEvent = actionLog.add;
+
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    addTearDown(() async {
+      semantics().semanticsEnabled = false;
+    });
+
+    final ui.SemanticsUpdateBuilder builder = ui.SemanticsUpdateBuilder();
+    updateNode(
+      builder,
+      actions: 0 | ui.SemanticsAction.scrollUp.index | ui.SemanticsAction.scrollDown.index,
+      transform: Matrix4.identity().toFloat64(),
+      rect: const ui.Rect.fromLTRB(0, 0, 50, 100),
+      childrenInHitTestOrder: Int32List.fromList(<int>[1, 2, 3]),
+      childrenInTraversalOrder: Int32List.fromList(<int>[1, 2, 3]),
+    );
+
+    for (int id = 1; id <= 3; id++) {
+      updateNode(
+        builder,
+        id: id,
+        transform: Matrix4.translationValues(0, 50.0 * id, 0).toFloat64(),
+        rect: const ui.Rect.fromLTRB(0, 0, 50, 50),
+      );
+    }
+
+    owner().updateSemantics(builder.build());
+    expectSemanticsTree(owner(), '''
+<sem style="touch-action: none; overflow-y: scroll">
+  <flt-semantics-scroll-overflow></flt-semantics-scroll-overflow>
+  <sem-c>
+    <sem style="z-index: 3"></sem>
+    <sem style="z-index: 2"></sem>
+    <sem style="z-index: 1"></sem>
+  </sem-c>
+</sem>''');
+
+    final DomElement scrollable = owner().debugSemanticsTree![0]!.element;
+    expect(scrollable, isNotNull);
+
+    void expectNeutralPosition() {
+      // Browsers disagree on the exact value, but it's always close to 10.
+      expect((scrollable.scrollTop - 10).abs(), lessThan(2));
+    }
+
+    // Initially, starting with a neutral scroll position, everything should be
+    // in browser gesture mode, react to DOM scroll events, and generate
+    // semantic actions.
+    expectNeutralPosition();
+    expect(semantics().gestureMode, GestureMode.browserGestures);
+    scrollable.scrollTop = 20;
+    expect(scrollable.scrollTop, 20);
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    expect(actionLog, hasLength(1));
+    final capturedEvent = actionLog.removeLast();
+    expect(capturedEvent.type, ui.SemanticsAction.scrollUp);
+
+    // Now, starting with a neutral mode, observing a DOM "wheel" event should
+    // swap into pointer event mode, and the scrollable becomes a plain clip,
+    // i.e. `overflow: hidden`.
+    expectNeutralPosition();
+    expect(semantics().gestureMode, GestureMode.browserGestures);
+    expect(scrollable.style.overflowY, 'scroll');
+
+    semantics().receiveGlobalEvent(createDomEvent('Event', 'wheel'));
+    expect(semantics().gestureMode, GestureMode.pointerEvents);
+    expect(scrollable.style.overflowY, 'hidden');
+  });
 }
 
 void _testHorizontalScrolling() {

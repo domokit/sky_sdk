@@ -313,14 +313,12 @@ class ThemeData with Diagnosticable {
     BottomNavigationBarThemeData? bottomNavigationBarTheme,
     BottomSheetThemeData? bottomSheetTheme,
     ButtonThemeData? buttonTheme,
-    // TODO(QuncCccccc): Change the parameter type to CardThemeData
-    Object? cardTheme,
+    CardThemeData? cardTheme,
     CheckboxThemeData? checkboxTheme,
     ChipThemeData? chipTheme,
     DataTableThemeData? dataTableTheme,
     DatePickerThemeData? datePickerTheme,
-    // TODO(QuncCccccc): Change the parameter type to DialogThemeData
-    Object? dialogTheme,
+    DialogThemeData? dialogTheme,
     DividerThemeData? dividerTheme,
     DrawerThemeData? drawerTheme,
     DropdownMenuThemeData? dropdownMenuTheme,
@@ -346,8 +344,7 @@ class ThemeData with Diagnosticable {
     SliderThemeData? sliderTheme,
     SnackBarThemeData? snackBarTheme,
     SwitchThemeData? switchTheme,
-    // TODO(QuncCccccc): Change the parameter type to TabBarThemeData
-    Object? tabBarTheme,
+    TabBarThemeData? tabBarTheme,
     TextButtonThemeData? textButtonTheme,
     TextSelectionThemeData? textSelectionTheme,
     TimePickerThemeData? timePickerTheme,
@@ -519,27 +516,11 @@ class ThemeData with Diagnosticable {
     bottomAppBarTheme ??= const BottomAppBarTheme();
     bottomNavigationBarTheme ??= const BottomNavigationBarThemeData();
     bottomSheetTheme ??= const BottomSheetThemeData();
-    // TODO(QuncCccccc): Clean it up once the type of `cardTheme` is changed to `CardThemeData`
-    if (cardTheme != null) {
-      if (cardTheme is CardTheme) {
-        cardTheme = cardTheme.data;
-      } else if (cardTheme is! CardThemeData) {
-        throw ArgumentError('cardTheme must be either a CardThemeData or a CardTheme');
-      }
-    }
     cardTheme ??= const CardThemeData();
     checkboxTheme ??= const CheckboxThemeData();
     chipTheme ??= const ChipThemeData();
     dataTableTheme ??= const DataTableThemeData();
     datePickerTheme ??= const DatePickerThemeData();
-    // TODO(QuncCccccc): Clean this up once the type of `dialogTheme` is changed to `DialogThemeData`
-    if (dialogTheme != null) {
-      if (dialogTheme is DialogTheme) {
-        dialogTheme = dialogTheme.data;
-      } else if (dialogTheme is! DialogThemeData) {
-        throw ArgumentError('dialogTheme must be either a DialogThemeData or a DialogTheme');
-      }
-    }
     dialogTheme ??= const DialogThemeData();
     dividerTheme ??= const DividerThemeData();
     drawerTheme ??= const DrawerThemeData();
@@ -566,14 +547,6 @@ class ThemeData with Diagnosticable {
     sliderTheme ??= const SliderThemeData();
     snackBarTheme ??= const SnackBarThemeData();
     switchTheme ??= const SwitchThemeData();
-    // TODO(QuncCccccc): Clean this up once the type of `tabBarTheme` is changed to `TabBarThemeData`
-    if (tabBarTheme != null) {
-      if (tabBarTheme is TabBarTheme) {
-        tabBarTheme = tabBarTheme.data;
-      } else if (tabBarTheme is! TabBarThemeData) {
-        throw ArgumentError('tabBarTheme must be either a TabBarThemeData or a TabBarTheme');
-      }
-    }
     tabBarTheme ??= const TabBarThemeData();
     textButtonTheme ??= const TextButtonThemeData();
     textSelectionTheme ??= const TextSelectionThemeData();
@@ -636,12 +609,12 @@ class ThemeData with Diagnosticable {
       bottomNavigationBarTheme: bottomNavigationBarTheme,
       bottomSheetTheme: bottomSheetTheme,
       buttonTheme: buttonTheme,
-      cardTheme: cardTheme as CardThemeData,
+      cardTheme: cardTheme,
       checkboxTheme: checkboxTheme,
       chipTheme: chipTheme,
       dataTableTheme: dataTableTheme,
       datePickerTheme: datePickerTheme,
-      dialogTheme: dialogTheme as DialogThemeData,
+      dialogTheme: dialogTheme,
       dividerTheme: dividerTheme,
       drawerTheme: drawerTheme,
       dropdownMenuTheme: dropdownMenuTheme,
@@ -667,7 +640,7 @@ class ThemeData with Diagnosticable {
       sliderTheme: sliderTheme,
       snackBarTheme: snackBarTheme,
       switchTheme: switchTheme,
-      tabBarTheme: tabBarTheme as TabBarThemeData,
+      tabBarTheme: tabBarTheme,
       textButtonTheme: textButtonTheme,
       textSelectionTheme: textSelectionTheme,
       timePickerTheme: timePickerTheme,
@@ -1525,13 +1498,12 @@ class ThemeData with Diagnosticable {
     BottomNavigationBarThemeData? bottomNavigationBarTheme,
     BottomSheetThemeData? bottomSheetTheme,
     ButtonThemeData? buttonTheme,
-    Object? cardTheme,
+    CardThemeData? cardTheme,
     CheckboxThemeData? checkboxTheme,
     ChipThemeData? chipTheme,
     DataTableThemeData? dataTableTheme,
     DatePickerThemeData? datePickerTheme,
-    // TODO(QuncCccccc): Change the parameter type to DialogThemeData
-    Object? dialogTheme,
+    DialogThemeData? dialogTheme,
     DividerThemeData? dividerTheme,
     DrawerThemeData? drawerTheme,
     DropdownMenuThemeData? dropdownMenuTheme,
@@ -1557,8 +1529,7 @@ class ThemeData with Diagnosticable {
     SliderThemeData? sliderTheme,
     SnackBarThemeData? snackBarTheme,
     SwitchThemeData? switchTheme,
-    // TODO(QuncCccccc): Change the parameter type to TabBarThemeData
-    Object? tabBarTheme,
+    TabBarThemeData? tabBarTheme,
     TextButtonThemeData? textButtonTheme,
     TextSelectionThemeData? textSelectionTheme,
     TimePickerThemeData? timePickerTheme,
@@ -1591,32 +1562,6 @@ class ThemeData with Diagnosticable {
   }) {
     cupertinoOverrideTheme = cupertinoOverrideTheme?.noDefault();
 
-    // TODO(QuncCccccc): Clean it up once the type of `cardTheme` is changed to `CardThemeData`
-    if (cardTheme != null) {
-      if (cardTheme is CardTheme) {
-        cardTheme = cardTheme.data;
-      } else if (cardTheme is! CardThemeData) {
-        throw ArgumentError('cardTheme must be either a CardThemeData or a CardTheme');
-      }
-    }
-
-    // TODO(QuncCccccc): Clean this up once the type of `dialogTheme` is changed to `DialogThemeData`
-    if (dialogTheme != null) {
-      if (dialogTheme is DialogTheme) {
-        dialogTheme = dialogTheme.data;
-      } else if (dialogTheme is! DialogThemeData) {
-        throw ArgumentError('dialogTheme must be either a DialogThemeData or a DialogTheme');
-      }
-    }
-
-    // TODO(QuncCccccc): Clean this up once the type of `tabBarTheme` is changed to `TabBarThemeData`
-    if (tabBarTheme != null) {
-      if (tabBarTheme is TabBarTheme) {
-        tabBarTheme = tabBarTheme.data;
-      } else if (tabBarTheme is! TabBarThemeData) {
-        throw ArgumentError('tabBarTheme must be either a TabBarThemeData or a TabBarTheme');
-      }
-    }
     return ThemeData.raw(
       // For the sanity of the reader, make sure these properties are in the same
       // order in every place that they are separated by section comments (e.g.
@@ -1671,12 +1616,12 @@ class ThemeData with Diagnosticable {
       bottomNavigationBarTheme: bottomNavigationBarTheme ?? this.bottomNavigationBarTheme,
       bottomSheetTheme: bottomSheetTheme ?? this.bottomSheetTheme,
       buttonTheme: buttonTheme ?? this.buttonTheme,
-      cardTheme: cardTheme as CardThemeData? ?? this.cardTheme,
+      cardTheme: cardTheme ?? this.cardTheme,
       checkboxTheme: checkboxTheme ?? this.checkboxTheme,
       chipTheme: chipTheme ?? this.chipTheme,
       dataTableTheme: dataTableTheme ?? this.dataTableTheme,
       datePickerTheme: datePickerTheme ?? this.datePickerTheme,
-      dialogTheme: dialogTheme as DialogThemeData? ?? this.dialogTheme,
+      dialogTheme: dialogTheme ?? this.dialogTheme,
       dividerTheme: dividerTheme ?? this.dividerTheme,
       drawerTheme: drawerTheme ?? this.drawerTheme,
       dropdownMenuTheme: dropdownMenuTheme ?? this.dropdownMenuTheme,
@@ -1702,7 +1647,7 @@ class ThemeData with Diagnosticable {
       sliderTheme: sliderTheme ?? this.sliderTheme,
       snackBarTheme: snackBarTheme ?? this.snackBarTheme,
       switchTheme: switchTheme ?? this.switchTheme,
-      tabBarTheme: tabBarTheme as TabBarThemeData? ?? this.tabBarTheme,
+      tabBarTheme: tabBarTheme ?? this.tabBarTheme,
       textButtonTheme: textButtonTheme ?? this.textButtonTheme,
       textSelectionTheme: textSelectionTheme ?? this.textSelectionTheme,
       timePickerTheme: timePickerTheme ?? this.timePickerTheme,

@@ -7,6 +7,7 @@ import 'base/file_system.dart';
 import 'base/utils.dart';
 import 'base/version.dart';
 import 'build_info.dart';
+import 'build_system/build_system.dart';
 import 'bundle.dart' as bundle;
 import 'convert.dart';
 import 'features.dart';
@@ -282,6 +283,42 @@ abstract class XcodeBasedProject extends FlutterProjectPlatform {
       return buildSettings;
     }
     return null;
+  }
+
+  /// When flutter assemble runs within an Xcode run script, it does not know
+  /// the scheme and therefore doesn't know what flavor is being used. This
+  /// makes a best effort to parse the scheme name from the [kXcodeConfiguration].
+  /// Most flavor's [kXcodeConfiguration] should follow the naming convention
+  /// of '$baseConfiguration-$scheme'. This is only semi-enforced by
+  /// [buildXcodeProject], so it may not work. Also check if separated by a
+  /// space instead of a `-`. Once parsed, match it with a scheme/flavor name.
+  /// If the flavor cannot be parsed or matched, use the [kFlavor] environment
+  /// variable, which may or may not be set/correct, as a fallback.
+  Future<String?> parseFlavorFromConfiguration(Environment environment) async {
+    final String? configuration = environment.defines[kXcodeConfiguration];
+    final String? flavor = environment.defines[kFlavor];
+    if (configuration == null) {
+      return flavor;
+    }
+    List<String> splitConfiguration = configuration.split('-');
+    if (splitConfiguration.length == 1) {
+      splitConfiguration = configuration.split(' ');
+    }
+    if (splitConfiguration.length == 1) {
+      return flavor;
+    }
+    final String parsedScheme = splitConfiguration[1];
+
+    final XcodeProjectInfo? info = await projectInfo();
+    if (info == null) {
+      return flavor;
+    }
+    for (final String schemeName in info.schemes) {
+      if (schemeName.toLowerCase() == parsedScheme.toLowerCase()) {
+        return schemeName;
+      }
+    }
+    return flavor;
   }
 }
 

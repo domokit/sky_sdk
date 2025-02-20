@@ -733,6 +733,21 @@ void testMain() {
     expect(event.defaultPrevented, isFalse);
   });
 
+  test('wheel event - switches semantics to pointer event mode', () async {
+    EngineSemantics.instance.debugResetGestureMode();
+    expect(EngineSemantics.instance.gestureMode, GestureMode.browserGestures);
+    // Synthesize a 'wheel' event.
+    final DomEvent event = _PointerEventContext().wheel(
+      buttons: 0,
+      clientX: 10,
+      clientY: 10,
+      deltaX: 10,
+      deltaY: 0,
+    );
+    rootElement.dispatchEvent(event);
+    expect(EngineSemantics.instance.gestureMode, GestureMode.pointerEvents);
+  });
+
   test('does synthesize add or hover or move for scroll', () {
     final _ButtonedEventMixin context = _PointerEventContext();
     final List<ui.PointerDataPacket> packets = <ui.PointerDataPacket>[];

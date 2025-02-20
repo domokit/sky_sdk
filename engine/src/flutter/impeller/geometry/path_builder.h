@@ -60,6 +60,16 @@ class PathBuilder {
                                 Point point,
                                 bool relative = false);
 
+  /// @brief Insert a conic curve from the current position to `point` using
+  /// the control point `controlPoint` and the weight `weight`.
+  ///
+  /// If `relative` is true the `point` and `controlPoint` are relative to
+  /// current location.
+  PathBuilder& ConicCurveTo(Point controlPoint,
+                            Point point,
+                            Scalar weight,
+                            bool relative = false);
+
   /// @brief Insert a cubic curve from the curren position to `point` using the
   /// control points `controlPoint1` and `controlPoint2`.
   ///
@@ -70,7 +80,7 @@ class PathBuilder {
                             Point point,
                             bool relative = false);
 
-  PathBuilder& AddRect(Rect rect);
+  PathBuilder& AddRect(const Rect& rect);
 
   PathBuilder& AddCircle(const Point& center, Scalar radius);
 
@@ -86,11 +96,23 @@ class PathBuilder {
 
   /// @brief Move to point `p1`, then insert a quadradic curve from `p1` to `p2`
   /// with the control point `cp`.
-  PathBuilder& AddQuadraticCurve(Point p1, Point cp, Point p2);
+  PathBuilder& AddQuadraticCurve(const Point& p1,
+                                 const Point& cp,
+                                 const Point& p2);
+
+  /// @brief Move to point `p1`, then insert a conic curve from `p1` to `p2`
+  /// with the control point `cp` and weight `weight`.
+  PathBuilder& AddConicCurve(const Point& p1,
+                             const Point& cp,
+                             const Point& p2,
+                             Scalar weight);
 
   /// @brief Move to point `p1`, then insert a cubic curve from `p1` to `p2`
   /// with control points `cp1` and `cp2`.
-  PathBuilder& AddCubicCurve(Point p1, Point cp1, Point cp2, Point p2);
+  PathBuilder& AddCubicCurve(const Point& p1,
+                             const Point& cp1,
+                             const Point& cp2,
+                             const Point& p2);
 
   /// @brief Transform the existing path segments and contours by the given
   /// `offset`.
@@ -134,6 +156,11 @@ class PathBuilder {
   void AddLinearComponentIfNeeded(const Point& p1, const Point& p2);
 
   void AddQuadraticComponent(const Point& p1, const Point& cp, const Point& p2);
+
+  void AddConicComponent(const Point& p1,
+                         const Point& cp,
+                         const Point& p2,
+                         Scalar weight);
 
   void AddCubicComponent(const Point& p1,
                          const Point& cp1,

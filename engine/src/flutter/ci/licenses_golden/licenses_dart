@@ -1,4 +1,4 @@
-Signature: 9da5883f819c9f3b175e40704f95e53a
+Signature: aa632d8c40618d46198943997476248a
 
 ====================================================================================================
 LIBRARY: dart
@@ -4231,6 +4231,7 @@ ORIGIN: ../../../flutter/third_party/dart/runtime/engine/engine.h + ../../../flu
 ORIGIN: ../../../flutter/third_party/dart/runtime/engine/include/dart_engine.h + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/platform/lockers.h + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/runtime/tools/generate_dart_api_win_c.dart + ../../../flutter/third_party/dart/LICENSE
+ORIGIN: ../../../flutter/third_party/dart/sdk/lib/_internal/wasm/lib/dynamic_module.dart + ../../../flutter/third_party/dart/LICENSE
 ORIGIN: ../../../flutter/third_party/dart/sdk/lib/_internal/wasm/lib/function_patch.dart + ../../../flutter/third_party/dart/LICENSE
 TYPE: LicenseType.bsd
 FILE: ../../../flutter/third_party/dart/runtime/bin/dart_api_win.c
@@ -4240,6 +4241,7 @@ FILE: ../../../flutter/third_party/dart/runtime/engine/engine.h
 FILE: ../../../flutter/third_party/dart/runtime/engine/include/dart_engine.h
 FILE: ../../../flutter/third_party/dart/runtime/platform/lockers.h
 FILE: ../../../flutter/third_party/dart/runtime/tools/generate_dart_api_win_c.dart
+FILE: ../../../flutter/third_party/dart/sdk/lib/_internal/wasm/lib/dynamic_module.dart
 FILE: ../../../flutter/third_party/dart/sdk/lib/_internal/wasm/lib/function_patch.dart
 ----------------------------------------------------------------------------------------------------
 Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
@@ -4427,6 +4429,8 @@ FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/dartaotruntim
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/dartaotruntime_product.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/gen_snapshot.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/gen_snapshot_product.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_futures_aot.plist
+FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_futures_kernel.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_main_aot.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_main_kernel.plist
 FILE: ../../../flutter/third_party/dart/runtime/tools/entitlements/run_timer_aot.plist
@@ -4856,7 +4860,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
   This Source Code Form is "Incompatible With Secondary Licenses", as
   defined by the Mozilla Public License, v. 2.0.
 
-You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/fcef25f18e4d9ff27d4ad6c0affa4c0045144df0
+You may obtain a copy of this library's Source Code Form from: https://dart.googlesource.com/sdk/+/2cecb16348e4778844660d5e7d16a96efe3706ec
 /third_party/fallback_root_certificates/
 
 ====================================================================================================

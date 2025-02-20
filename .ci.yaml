@@ -121,6 +121,17 @@ platform_properties:
       os: Linux
       device_type: "mokey"
 
+  linux_galaxy_s24:
+    properties:
+      dependencies: >-
+        [
+          {"dependency": "android_sdk", "version": "version:35v1"},
+          {"dependency": "open_jdk", "version": "version:17"},
+          {"dependency": "curl", "version": "version:7.64.0"}
+        ]
+      os: Linux
+      device_type: "SM-S921U1"
+
   mac:
     properties:
       contexts: >-
@@ -1125,7 +1136,6 @@ targets:
   - name: Linux_android_emu android_display_cutout
     recipe: devicelab/devicelab_drone
     timeout: 60
-    bringup: true
     properties:
       tags: >
         ["devicelab", "linux"]
@@ -3064,6 +3074,17 @@ targets:
     properties:
       tags: >
         ["devicelab", "android", "linux", "pixel", "7pro"]
+      task_name: new_gallery_impeller__transition_perf
+
+  # Samsung Galaxy S24, Impeller (Vulkan)
+  - name: Linux_galaxy_s24 new_gallery_impeller__transition_perf
+    recipe: devicelab/devicelab_drone
+    bringup: true
+    presubmit: false
+    timeout: 60
+    properties:
+      tags: >
+        ["devicelab", "android", "linux", "samsung", "s24"]
       task_name: new_gallery_impeller__transition_perf
 
   # Pixel 7 Pro, Impeller (OpenGL)
@@ -5990,6 +6011,7 @@ targets:
       - DEPS
 
   - name: Windows_arm64 plugin_test_windows
+    bringup: true # Flaky https://github.com/flutter/flutter/issues/163122
     recipe: devicelab/devicelab_drone
     presubmit: false
     timeout: 60

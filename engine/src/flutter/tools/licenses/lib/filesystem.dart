@@ -86,7 +86,8 @@ FileType identifyFile(String name, Reader reader) {
           'third_party/icu/source/samples/uresb/sr.txt') || // This specific sample contains non-UTF-8 data (unlike other sr.txt files).
       (path.split(name).reversed.take(2).toList().reversed.join('/') ==
           'builds/detect.mk') || // This specific freetype sample contains non-UTF-8 data (unlike other .mk files).
-      (path.split(name).reversed.take(3).toList().reversed.join('/') == 'third_party/cares/cares.rc')) {
+      (path.split(name).reversed.take(3).toList().reversed.join('/') ==
+          'third_party/cares/cares.rc')) {
     return FileType.latin1Text;
   }
   if (path.split(name).reversed.take(6).toList().reversed.join('/') ==

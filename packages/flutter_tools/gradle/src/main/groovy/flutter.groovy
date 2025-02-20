@@ -8,6 +8,7 @@ import com.flutter.gradle.BaseApplicationNameHandler
 import com.flutter.gradle.Deeplink
 import com.flutter.gradle.DependencyVersionChecker
 import com.flutter.gradle.IntentFilterCheck
+import com.flutter.gradle.VersionUtils
 import groovy.json.JsonGenerator
 import groovy.xml.QName
 import java.nio.file.Paths
@@ -789,50 +790,6 @@ class FlutterPlugin implements Plugin<Project> {
         }
     }
 
-    /**
-     * Compares semantic versions ignoring labels.
-     *
-     * If the versions are equal (ignoring labels), returns one of the two strings arbitrarily.
-     * If minor or patch are omitted (non-conformant to semantic versioning), they are considered zero.
-     * If the provided versions in both are equal, the longest version string is returned.
-     * For example, "2.8.0" vs "2.8" will always consider "2.8.0" to be the most recent version.
-     * For another example, "8.7-rc-2" vs "8.7.2" will always consider "8.7.2" to be the most recent version.
-     */
-   static String mostRecentSemanticVersion(String version1, String version2) {
-        def v1Parts = version1.tokenize('.-')
-        def v2Parts = version2.tokenize('.-')
-
-        for (int i = 0; i < Math.max(v1Parts.size(), v2Parts.size()); i++) {
-            def v1Part = i < v1Parts.size() ? v1Parts[i] : '0'
-            def v2Part = i < v2Parts.size() ? v2Parts[i] : '0'
-
-            def v1Num = v1Part.isNumber() ? v1Part.toInteger() : 0
-            def v2Num = v2Part.isNumber() ? v2Part.toInteger() : 0
-
-            if (v1Num != v2Num) {
-                return v1Num > v2Num ? version1 : version2
-            }
-
-            if (v1Part.isNumber() && !v2Part.isNumber()) {
-                return version1
-            } else if (!v1Part.isNumber() && v2Part.isNumber()) {
-                return version2
-            } else if (v1Part != v2Part) {
-                return comparePreReleaseIdentifiers(v1Part, v2Part) ? version1 : version2
-            }
-        }
-
-        // If versions are equal, return the longest version string
-        return version1.length() >= version2.length() ? version1 : version2
-    }
-
-    static boolean comparePreReleaseIdentifiers(String v1Part, String v2Part) {
-        def v1PreRelease = v1Part.replaceAll("\\D", "")
-        def v2PreRelease = v2Part.replaceAll("\\D", "")
-
-        return v1PreRelease < v2PreRelease
-    }
-
     private void forceNdkDownload(Project gradleProject, String flutterSdkRootPath) {
         // If the project is already configuring a native build, we don't need to do anything.
         Boolean forcingNotRequired = gradleProject.android.externalNativeBuild.cmake.path != null
@@ -900,7 +857,7 @@ class FlutterPlugin implements Plugin<Project> {
                     }
 
                     String pluginNdkVersion = pluginProject.android.ndkVersion ?: ndkVersionIfUnspecified
-                    maxPluginNdkVersion = mostRecentSemanticVersion(pluginNdkVersion, maxPluginNdkVersion)
+                    maxPluginNdkVersion = VersionUtils.mostRecentSemanticVersion(pluginNdkVersion, maxPluginNdkVersion)
                     if (pluginNdkVersion != projectNdkVersion) {
                         pluginsWithDifferentNdkVersion.add(new Tuple(pluginProject.name, pluginNdkVersion))
                     }

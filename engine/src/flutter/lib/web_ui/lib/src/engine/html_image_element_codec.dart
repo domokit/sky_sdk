@@ -39,9 +39,7 @@ abstract class HtmlImageElementCodec implements ui.Codec {
     // builders to create UI.
     chunkCallback?.call(0, 100);
     imgElement = createDomHTMLImageElement();
-    if (renderer is! HtmlRenderer) {
-      imgElement!.crossOrigin = 'anonymous';
-    }
+    imgElement!.crossOrigin = 'anonymous';
     imgElement!
       ..decoding = 'async'
       ..src = src;

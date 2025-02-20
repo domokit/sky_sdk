@@ -723,6 +723,13 @@ mixin _WheelEventListenerMixin on _BaseAdapter {
   }
 
   void _handleWheelEvent(DomEvent event) {
+    // Wheel events should switch semantics to pointer event mode, because wheel
+    // events should always be handled by the framework.
+    // See: https://github.com/flutter/flutter/issues/159358
+    if (!EngineSemantics.instance.receiveGlobalEvent(event)) {
+      return;
+    }
+
     assert(domInstanceOfString(event, 'WheelEvent'));
     if (_debugLogPointerEvents) {
       print(event.type);

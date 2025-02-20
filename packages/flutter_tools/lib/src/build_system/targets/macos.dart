@@ -12,6 +12,7 @@ import '../../base/process.dart';
 import '../../build_info.dart';
 import '../../devfs.dart';
 import '../../globals.dart' as globals show xcode;
+import '../../project.dart';
 import '../build_system.dart';
 import '../depfile.dart';
 import '../exceptions.dart';
@@ -487,12 +488,15 @@ abstract class MacOSBundleFlutterAssets extends Target {
         .childDirectory('flutter_assets');
     assetDirectory.createSync(recursive: true);
 
+    final FlutterProject flutterProject = FlutterProject.fromDirectory(environment.projectDir);
+    final String? flavor = await flutterProject.macos.parseFlavorFromConfiguration(environment);
+
     final Depfile assetDepfile = await copyAssets(
       environment,
       assetDirectory,
       targetPlatform: TargetPlatform.darwin,
       buildMode: buildMode,
-      flavor: environment.defines[kFlavor],
+      flavor: flavor,
       additionalContent: <String, DevFSContent>{
         'NativeAssetsManifest.json': DevFSFileContent(
           environment.buildDir.childFile('native_assets.json'),

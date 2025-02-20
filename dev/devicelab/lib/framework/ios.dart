@@ -142,7 +142,32 @@ Future<bool> runXcodeTests({
   required String platformDirectory,
   required String destination,
   required String testName,
+  List<String> actions = const <String>['test'],
   String configuration = 'Release',
+  List<String> extraOptions = const <String>[],
+  String scheme = 'Runner',
+  bool skipCodesign = false,
+}) {
+  return runXcodeBuild(
+    platformDirectory: platformDirectory,
+    destination: destination,
+    testName: testName,
+    actions: actions,
+    configuration: configuration,
+    extraOptions: extraOptions,
+    scheme: scheme,
+    skipCodesign: skipCodesign,
+  );
+}
+
+Future<bool> runXcodeBuild({
+  required String platformDirectory,
+  required String destination,
+  required String testName,
+  List<String> actions = const <String>['build'],
+  String configuration = 'Release',
+  List<String> extraOptions = const <String>[],
+  String scheme = 'Runner',
   bool skipCodesign = false,
 }) async {
   final Map<String, String> environment = Platform.environment;
@@ -170,14 +195,15 @@ Future<bool> runXcodeTests({
       '-workspace',
       'Runner.xcworkspace',
       '-scheme',
-      'Runner',
+      scheme,
       '-configuration',
       configuration,
       '-destination',
       destination,
       '-resultBundlePath',
       resultBundlePath,
-      'test',
+      ...actions,
+      ...extraOptions,
       'COMPILER_INDEX_STORE_ENABLE=NO',
       if (developmentTeam != null) 'DEVELOPMENT_TEAM=$developmentTeam',
       if (codeSignStyle != null) 'CODE_SIGN_STYLE=$codeSignStyle',

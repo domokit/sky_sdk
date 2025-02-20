@@ -265,39 +265,46 @@ SkPath DlPath::ConvertToSkiaPath(const Path& path, const DlPoint& shift) {
     }
   };
 
-  size_t count = path.GetComponentCount();
-  for (size_t i = 0; i < count; i++) {
-    switch (path.GetComponentTypeAtIndex(i)) {
+  for (auto it = path.begin(), end = path.end(); it != end; ++it) {
+    switch (it.type()) {
       case ComponentType::kContour: {
-        impeller::ContourComponent contour;
-        path.GetContourComponentAtIndex(i, contour);
+        const impeller::ContourComponent* contour = it.contour();
+        FML_DCHECK(contour != nullptr);
         if (subpath_needs_close) {
           sk_path.close();
         }
-        pending_moveto = contour.destination;
-        subpath_needs_close = contour.IsClosed();
+        pending_moveto = contour->destination;
+        subpath_needs_close = contour->IsClosed();
         break;
       }
       case ComponentType::kLinear: {
-        impeller::LinearPathComponent linear;
-        path.GetLinearComponentAtIndex(i, linear);
+        const impeller::LinearPathComponent* linear = it.linear();
+        FML_DCHECK(linear != nullptr);
         resolve_moveto();
-        sk_path.lineTo(ToSkPoint(linear.p2));
+        sk_path.lineTo(ToSkPoint(linear->p2));
         break;
       }
       case ComponentType::kQuadratic: {
-        impeller::QuadraticPathComponent quadratic;
-        path.GetQuadraticComponentAtIndex(i, quadratic);
+        const impeller::QuadraticPathComponent* quadratic = it.quadratic();
+        FML_DCHECK(quadratic != nullptr);
         resolve_moveto();
-        sk_path.quadTo(ToSkPoint(quadratic.cp), ToSkPoint(quadratic.p2));
+        sk_path.quadTo(ToSkPoint(quadratic->cp), ToSkPoint(quadratic->p2));
+        break;
+      }
+      case ComponentType::kConic: {
+        const impeller::ConicPathComponent* conic = it.conic();
+        FML_DCHECK(conic != nullptr);
+        resolve_moveto();
+        sk_path.conicTo(ToSkPoint(conic->cp), ToSkPoint(conic->p2),
+                        conic->weight.x);
         break;
       }
       case ComponentType::kCubic: {
-        impeller::CubicPathComponent cubic;
-        path.GetCubicComponentAtIndex(i, cubic);
+        const impeller::CubicPathComponent* cubic = it.cubic();
+        FML_DCHECK(cubic != nullptr);
         resolve_moveto();
-        sk_path.cubicTo(ToSkPoint(cubic.cp1), ToSkPoint(cubic.cp2),
-                        ToSkPoint(cubic.p2));
+        sk_path.cubicTo(ToSkPoint(cubic->cp1), ToSkPoint(cubic->cp2),
+                        ToSkPoint(cubic->p2));
         break;
       }
     }
@@ -339,27 +346,26 @@ Path DlPath::ConvertToImpellerPath(const SkPath& path, const DlPoint& shift) {
         builder.QuadraticCurveTo(ToDlPoint(data.points[1]),
                                  ToDlPoint(data.points[2]));
         break;
-      case SkPath::kConic_Verb: {
-        constexpr auto kPow2 = 1;  // Only works for sweeps up to 90 degrees.
-        constexpr auto kQuadCount = 1 + (2 * (1 << kPow2));
-        SkPoint points[kQuadCount];
-        const auto curve_count =
-            SkPath::ConvertConicToQuads(data.points[0],          //
-                                        data.points[1],          //
-                                        data.points[2],          //
-                                        iterator.conicWeight(),  //
-                                        points,                  //
-                                        kPow2                    //
-            );
-
-        for (int curve_index = 0, point_index = 0;  //
-             curve_index < curve_count;             //
-             curve_index++, point_index += 2        //
-        ) {
-          builder.QuadraticCurveTo(ToDlPoint(points[point_index + 1]),
-                                   ToDlPoint(points[point_index + 2]));
+      case SkPath::kConic_Verb:
+        // We might eventually have conic conversion math that deals with
+        // degenerate conics gracefully (or just handle them directly),
+        // but until then, we will detect and ignore them.
+        if (data.points[0] != data.points[1]) {
+          if (data.points[1] != data.points[2]) {
+            std::array<DlPoint, 5> points;
+            impeller::ConicPathComponent conic(
+                ToDlPoint(data.points[0]), ToDlPoint(data.points[1]),
+                ToDlPoint(data.points[2]), iterator.conicWeight());
+            conic.SubdivideToQuadraticPoints(points);
+            builder.QuadraticCurveTo(points[1], points[2]);
+            builder.QuadraticCurveTo(points[3], points[4]);
+          } else {
+            builder.LineTo(ToDlPoint(data.points[1]));
+          }
+        } else if (data.points[1] != data.points[2]) {
+          builder.LineTo(ToDlPoint(data.points[2]));
         }
-      } break;
+        break;
       case SkPath::kCubic_Verb:
         builder.CubicCurveTo(ToDlPoint(data.points[1]),
                              ToDlPoint(data.points[2]),

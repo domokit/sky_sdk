@@ -966,6 +966,13 @@ const String kBuildName = 'BuildName';
 /// The app flavor to build.
 const String kFlavor = 'Flavor';
 
+/// Environment variable of the flavor to be set in dartDefines to be accessed
+/// by the [appFlavor] service.
+const String kAppFlavor = 'FLUTTER_APP_FLAVOR';
+
+/// The Xcode configuration used to build the project.
+const String kXcodeConfiguration = 'Configuration';
+
 /// The define to pass build number
 const String kBuildNumber = 'BuildNumber';
 

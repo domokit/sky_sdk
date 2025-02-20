@@ -234,6 +234,24 @@ const float kFloatCompareEpsilon = 0.001;
 }
 @end
 
+@interface FlutterPlatformViewsTestMockFlutterViewController : FlutterViewController
+
+- (UIScreen*)flutterScreenIfViewLoaded;
+
+@end
+
+@implementation FlutterPlatformViewsTestMockFlutterViewController
+
+- (UIScreen*)flutterScreenIfViewLoaded {
+  UIScreen* mockScreen = OCMClassMock([UIScreen class]);
+  CGFloat screenScale = 3;
+  OCMStub([mockScreen scale]).andReturn(screenScale);
+
+  return mockScreen;
+}
+
+@end
+
 namespace flutter {
 namespace {
 class FlutterPlatformViewsTestMockPlatformViewDelegate : public PlatformView::Delegate {
@@ -329,13 +347,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
                                                        @"viewType" : @"MockFlutterPlatformView"
                                                      }]
             result:result];
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a translate matrix
   SkMatrix translateMatrix = SkMatrix::Translate(100, 100);
@@ -490,12 +511,15 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
   SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a backdrop filter
@@ -573,12 +597,15 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
   SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a backdrop filter
@@ -656,12 +683,15 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
   SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push backdrop filters
@@ -740,12 +770,15 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
   SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a backdrop filter
@@ -869,12 +902,15 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
   SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push backdrop filters
@@ -1025,12 +1061,15 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
   SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push backdrop filters
@@ -1326,12 +1365,15 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
   SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a dilate backdrop filter
@@ -1659,13 +1701,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a translate matrix
   SkMatrix translateMatrix = SkMatrix::Translate(100, 100);
@@ -1726,12 +1771,15 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
   SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
 
@@ -1836,13 +1884,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a rotate matrix
   SkMatrix rotateMatrix;
@@ -1918,13 +1969,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params.
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack.
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   SkMatrix translateMatrix = SkMatrix::Translate(5, 5);
   // The platform view's rect for this test will be (5, 5, 10, 10).
@@ -1996,13 +2050,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack.
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   SkMatrix translateMatrix = SkMatrix::Translate(5, 5);
   // The platform view's rect for this test will be (5, 5, 10, 10).
@@ -2073,13 +2130,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a clip rect
   SkRect rect = SkRect::MakeXYWH(2, 2, 3, 3);
@@ -2155,13 +2215,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a clip rect
   SkRect rect1 = SkRect::MakeXYWH(2, 2, 3, 3);
@@ -2257,13 +2320,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a clip rrect
   SkRRect rrect = SkRRect::MakeRectXY(SkRect::MakeXYWH(2, 2, 6, 6), 1, 1);
@@ -2366,13 +2432,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a clip rrect
   SkRRect rrect = SkRRect::MakeRectXY(SkRect::MakeXYWH(2, 2, 6, 6), 1, 1);
@@ -2492,13 +2561,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a clip path
   SkPath path;
@@ -2602,13 +2674,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a clip path
   SkPath path;
@@ -3473,6 +3548,10 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
   XCTAssertNotNil(gMockPlatformView);
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
+
   // Create embedded view params
   flutter::MutatorsStack stack;
   SkMatrix finalMatrix;
@@ -3596,6 +3675,9 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
       /*worker_task_runner=*/nil,
       /*is_gpu_disabled_jsync_switch=*/std::make_shared<fml::SyncSwitch>());
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
 
@@ -3667,6 +3749,9 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
       /*worker_task_runner=*/nil,
       /*is_gpu_disabled_jsync_switch=*/std::make_shared<fml::SyncSwitch>());
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
 
@@ -3782,6 +3867,9 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
       /*worker_task_runner=*/nil,
       /*is_gpu_disabled_jsync_switch=*/std::make_shared<fml::SyncSwitch>());
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
 
@@ -3926,13 +4014,13 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
 - (void)testFlutterClippingMaskViewPoolReuseViewsAfterRecycle {
   FlutterClippingMaskViewPool* pool = [[FlutterClippingMaskViewPool alloc] initWithCapacity:2];
-  FlutterClippingMaskView* view1 = [pool getMaskViewWithFrame:CGRectZero];
-  FlutterClippingMaskView* view2 = [pool getMaskViewWithFrame:CGRectZero];
+  FlutterClippingMaskView* view1 = [pool getMaskViewWithFrame:CGRectZero screenScale:1];
+  FlutterClippingMaskView* view2 = [pool getMaskViewWithFrame:CGRectZero screenScale:1];
   [pool insertViewToPoolIfNeeded:view1];
   [pool insertViewToPoolIfNeeded:view2];
   CGRect newRect = CGRectMake(0, 0, 10, 10);
-  FlutterClippingMaskView* view3 = [pool getMaskViewWithFrame:newRect];
-  FlutterClippingMaskView* view4 = [pool getMaskViewWithFrame:newRect];
+  FlutterClippingMaskView* view3 = [pool getMaskViewWithFrame:newRect screenScale:1];
+  FlutterClippingMaskView* view4 = [pool getMaskViewWithFrame:newRect screenScale:1];
   // view3 and view4 should randomly get either of view1 and view2.
   NSSet* set1 = [NSSet setWithObjects:view1, view2, nil];
   NSSet* set2 = [NSSet setWithObjects:view3, view4, nil];
@@ -3943,9 +4031,9 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
 
 - (void)testFlutterClippingMaskViewPoolAllocsNewMaskViewsAfterReachingCapacity {
   FlutterClippingMaskViewPool* pool = [[FlutterClippingMaskViewPool alloc] initWithCapacity:2];
-  FlutterClippingMaskView* view1 = [pool getMaskViewWithFrame:CGRectZero];
-  FlutterClippingMaskView* view2 = [pool getMaskViewWithFrame:CGRectZero];
-  FlutterClippingMaskView* view3 = [pool getMaskViewWithFrame:CGRectZero];
+  FlutterClippingMaskView* view1 = [pool getMaskViewWithFrame:CGRectZero screenScale:1];
+  FlutterClippingMaskView* view2 = [pool getMaskViewWithFrame:CGRectZero screenScale:1];
+  FlutterClippingMaskView* view3 = [pool getMaskViewWithFrame:CGRectZero screenScale:1];
   XCTAssertNotEqual(view1, view3);
   XCTAssertNotEqual(view2, view3);
 }
@@ -3954,7 +4042,7 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
   __weak UIView* weakView;
   @autoreleasepool {
     FlutterClippingMaskViewPool* pool = [[FlutterClippingMaskViewPool alloc] initWithCapacity:2];
-    FlutterClippingMaskView* view = [pool getMaskViewWithFrame:CGRectZero];
+    FlutterClippingMaskView* view = [pool getMaskViewWithFrame:CGRectZero screenScale:1];
     weakView = view;
     XCTAssertNotNil(weakView);
   }
@@ -3999,13 +4087,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
             result:result];
 
   XCTAssertNotNil(gMockPlatformView);
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack1;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack1.PushTransform(screenScaleMatrix);
   // Push a clip rect
   SkRect rect = SkRect::MakeXYWH(2, 2, 3, 3);
@@ -4114,13 +4205,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
   UIView* view2 = gMockPlatformView;
 
   XCTAssertNotNil(gMockPlatformView);
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack1;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack1.PushTransform(screenScaleMatrix);
   // Push a clip rect
   SkRect rect = SkRect::MakeXYWH(2, 2, 3, 3);
@@ -4193,13 +4287,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
             result:result];
 
   XCTAssertNotNil(gMockPlatformView);
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack1;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack1.PushTransform(screenScaleMatrix);
   // Push a clip rect
   SkRect rect = SkRect::MakeXYWH(2, 2, 3, 3);
@@ -4274,6 +4371,9 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
       /*worker_task_runner=*/nil,
       /*is_gpu_disabled_jsync_switch=*/std::make_shared<fml::SyncSwitch>());
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
 
@@ -4414,13 +4514,16 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
                                                        @"viewType" : @"MockFlutterPlatformView"
                                                      }]
             result:result];
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a translate matrix
   SkMatrix translateMatrix = SkMatrix::Translate(100, 100);
@@ -4491,14 +4594,17 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
                                                        @"viewType" : @"MockFlutterPlatformView"
                                                      }]
             result:result];
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
 
   // Create embedded view params
   flutter::MutatorsStack stack;
   // Layer tree always pushes a screen scale factor to the stack
-  SkMatrix screenScaleMatrix =
-      SkMatrix::Scale([UIScreen mainScreen].scale, [UIScreen mainScreen].scale);
+  CGFloat screenScale = [mockFlutterViewController flutterScreenIfViewLoaded].scale;
+  SkMatrix screenScaleMatrix = SkMatrix::Scale(screenScale, screenScale);
   stack.PushTransform(screenScaleMatrix);
   // Push a translate matrix
   SkMatrix translateMatrix = SkMatrix::Translate(100, 100);
@@ -4546,9 +4652,9 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
   auto pool = flutter::OverlayLayerPool{};
 
   // Add layers to the pool.
-  pool.CreateLayer(gr_context.get(), ios_context, MTLPixelFormatBGRA8Unorm);
+  pool.CreateLayer(gr_context.get(), ios_context, MTLPixelFormatBGRA8Unorm, 1);
   XCTAssertEqual(pool.size(), 1u);
-  pool.CreateLayer(gr_context.get(), ios_context, MTLPixelFormatBGRA8Unorm);
+  pool.CreateLayer(gr_context.get(), ios_context, MTLPixelFormatBGRA8Unorm, 1);
   XCTAssertEqual(pool.size(), 2u);
 
   // Mark all layers as unused.
@@ -4582,6 +4688,9 @@ fml::RefPtr<fml::TaskRunner> GetDefaultTaskRunner() {
       /*worker_task_runner=*/nil,
       /*is_gpu_disabled_jsync_switch=*/std::make_shared<fml::SyncSwitch>());
 
+  FlutterPlatformViewsTestMockFlutterViewController* mockFlutterViewController =
+      [[FlutterPlatformViewsTestMockFlutterViewController alloc] init];
+  flutterPlatformViewsController.flutterViewController = mockFlutterViewController;
   UIView* flutterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
   flutterPlatformViewsController.flutterView = flutterView;
 

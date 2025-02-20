@@ -8,6 +8,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <ostream>
 #include <tuple>
 #include <vector>
 
@@ -55,8 +56,40 @@ class Path {
   enum class ComponentType {
     kLinear,
     kQuadratic,
+    kConic,
     kCubic,
     kContour,
+  };
+
+  class ComponentIterator {
+   public:
+    ComponentType type() const;
+
+    // Return pointer to path component or null if the type is wrong or
+    // the iterator is past the end of the path.
+    const LinearPathComponent* linear() const;
+    const QuadraticPathComponent* quadratic() const;
+    const ConicPathComponent* conic() const;
+    const CubicPathComponent* cubic() const;
+    const ContourComponent* contour() const;
+
+    ComponentIterator& operator++();
+    bool operator==(const ComponentIterator& other) const {
+      return component_index_ == other.component_index_;
+    }
+    bool operator!=(const ComponentIterator& other) const {
+      return component_index_ != other.component_index_;
+    }
+
+   private:
+    ComponentIterator(const Path& path, size_t index, size_t offset)
+        : path_(path), component_index_(index), storage_offset_(offset) {}
+
+    const Path& path_;
+    size_t component_index_ = 0u;
+    size_t storage_offset_ = 0u;
+
+    friend class Path;
   };
 
   static constexpr size_t VerbToOffset(Path::ComponentType verb) {
@@ -65,6 +98,8 @@ class Path {
         return 2u;
       case Path::ComponentType::kQuadratic:
         return 3u;
+      case Path::ComponentType::kConic:
+        return 4u;
       case Path::ComponentType::kCubic:
         return 4u;
       case Path::ComponentType::kContour:
@@ -157,18 +192,8 @@ class Path {
   /// @brief Whether the line contains a single contour.
   bool IsSingleContour() const;
 
-  ComponentType GetComponentTypeAtIndex(size_t index) const;
-
-  bool GetLinearComponentAtIndex(size_t index,
-                                 LinearPathComponent& linear) const;
-
-  bool GetQuadraticComponentAtIndex(size_t index,
-                                    QuadraticPathComponent& quadratic) const;
-
-  bool GetCubicComponentAtIndex(size_t index, CubicPathComponent& cubic) const;
-
-  bool GetContourComponentAtIndex(size_t index,
-                                  ContourComponent& contour) const;
+  ComponentIterator begin() const;
+  ComponentIterator end() const;
 
   /// Callers must provide the scale factor for how this path will be
   /// transformed.

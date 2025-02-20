@@ -76,25 +76,6 @@ std::unique_ptr<Screenshot> ReadTexture(
   CGImagePtr image(CGBitmapContextCreateImage(context.get()), &CGImageRelease);
   FML_CHECK(image);
 
-  // TODO(142641): Perform the flip at the blit stage to avoid this slow copy.
-  if (texture->GetYCoordScale() == -1) {
-    CGContextPtr flipped_context(
-        CGBitmapContextCreate(
-            nullptr, texture->GetSize().width, texture->GetSize().height,
-            /*bitsPerComponent=*/8,
-            /*bytesPerRow=*/0, color_space.get(), bitmap_info),
-        &CGContextRelease);
-    CGContextTranslateCTM(flipped_context.get(), 0, texture->GetSize().height);
-    CGContextScaleCTM(flipped_context.get(), 1.0, -1.0);
-    CGContextDrawImage(
-        flipped_context.get(),
-        CGRectMake(0, 0, texture->GetSize().width, texture->GetSize().height),
-        image.get());
-    CGImagePtr flipped_image(CGBitmapContextCreateImage(flipped_context.get()),
-                             &CGImageRelease);
-    image.swap(flipped_image);
-  }
-
   return std::make_unique<MetalScreenshot>(image.release());
 }
 }  // namespace

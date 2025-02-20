@@ -174,10 +174,8 @@ class ResidentWebRunner extends ResidentRunner {
       debuggingOptions.buildInfo.ddcModuleFormat != DdcModuleFormat.ddc ||
       debuggingOptions.buildInfo.canaryFeatures != true;
 
-  // TODO(srujzs): Return true when web supports detaching.
-  // https://github.com/flutter/flutter/issues/163329
   @override
-  bool get supportsDetach => false;
+  bool get supportsDetach => stopAppDuringCleanup;
 
   ConnectionResult? _connectionResult;
   StreamSubscription<vmservice.Event>? _stdOutSub;
@@ -220,7 +218,11 @@ class ResidentWebRunner extends ResidentRunner {
     await _stdErrSub?.cancel();
     await _serviceSub?.cancel();
     await _extensionEventSub?.cancel();
-    await device!.device!.stopApp(null);
+
+    if (stopAppDuringCleanup) {
+      await device!.device!.stopApp(null);
+    }
+
     _registeredMethodsForService.clear();
     try {
       _generatedEntrypointDirectory?.deleteSync(recursive: true);
@@ -808,7 +810,9 @@ Please provide a valid TCP port (an integer between 0 and 65535, inclusive).
 
   @override
   Future<void> exitApp() async {
-    await device!.exitApps();
+    if (stopAppDuringCleanup) {
+      await device!.exitApps();
+    }
     appFinished();
   }
 

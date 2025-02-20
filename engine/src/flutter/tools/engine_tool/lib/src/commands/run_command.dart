@@ -241,10 +241,10 @@ final class RunTarget {
       TargetPlatform.darwinUnspecified ||
       TargetPlatform.darwinX64 ||
       TargetPlatform.linuxX64 ||
-      TargetPlatform.windowsX64 =>
-        'host_$mode',
-      TargetPlatform.darwinArm64 || TargetPlatform.linuxArm64 || TargetPlatform.windowsArm64 =>
-        'host_${mode}_arm64',
+      TargetPlatform.windowsX64 => 'host_$mode',
+      TargetPlatform.darwinArm64 ||
+      TargetPlatform.linuxArm64 ||
+      TargetPlatform.windowsArm64 => 'host_${mode}_arm64',
 
       // WEB
       TargetPlatform.webJavascript => 'chrome_$mode',
@@ -268,8 +268,8 @@ final class RunTarget {
         ),
 
       // FUCHSIA
-      TargetPlatform.fuchsiaArm64 || TargetPlatform.fuchsiaX64 =>
-        throw FatalError('Fuchsia is not supported.'),
+      TargetPlatform.fuchsiaArm64 ||
+      TargetPlatform.fuchsiaX64 => throw FatalError('Fuchsia is not supported.'),
 
       // TESTER
       TargetPlatform.tester => throw FatalError('flutter_tester is not supported.'),
@@ -293,8 +293,8 @@ final class RunTarget {
       TargetPlatform.androidUnspecified ||
       TargetPlatform.androidX86 ||
       TargetPlatform.androidX64 ||
-      TargetPlatform.androidArm64 =>
-        [Label.parseGn('//flutter/shell/platform/android:android_jar')],
+      TargetPlatform
+          .androidArm64 => [Label.parseGn('//flutter/shell/platform/android:android_jar')],
 
       // iOS.
       TargetPlatform.iOSUnspecified || TargetPlatform.iOSX64 || TargetPlatform.iOSArm64 => [
@@ -311,9 +311,8 @@ final class RunTarget {
       ],
 
       // Desktop (Windows).
-      TargetPlatform.windowsX64 || TargetPlatform.windowsArm64 => [
-        Label.parseGn('//flutter/shell/platform/windows'),
-      ],
+      TargetPlatform.windowsX64 ||
+      TargetPlatform.windowsArm64 => [Label.parseGn('//flutter/shell/platform/windows')],
 
       // Web.
       TargetPlatform.webJavascript => [Label.parseGn('//flutter/web_sdk:flutter_web_sdk_archive')],
