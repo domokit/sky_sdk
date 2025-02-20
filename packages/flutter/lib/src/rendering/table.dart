@@ -611,7 +611,7 @@ class RenderTable extends RenderBox {
     config.explicitChildNodes = true;
   }
 
-/// Overrides this method to create semantics nodes for rows between table and table cells.
+  /// Overrides this method to create semantics nodes for rows between table and table cells.
   @override
   void assembleSemanticsNode(
     SemanticsNode node,
