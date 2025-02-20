@@ -8,6 +8,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:flutter_devicelab/framework/devices.dart';
 import 'package:flutter_devicelab/framework/framework.dart';
+import 'package:flutter_devicelab/framework/ios.dart';
 import 'package:flutter_devicelab/framework/task_result.dart';
 import 'package:flutter_devicelab/framework/utils.dart';
 import 'package:flutter_devicelab/tasks/integration_tests.dart';
@@ -33,6 +34,8 @@ Future<void> main() async {
 
       return firstInstallFailure ?? TaskResult.success(null);
     });
+
+    await _testFlavorWhenBuiltFromXcode(projectDir);
 
     return installTestsResult;
   });
@@ -96,4 +99,61 @@ Future<TaskResult> _testInstallBogusFlavor() async {
   }
 
   return TaskResult.success(null);
+}
+
+Future<TaskResult> _testFlavorWhenBuiltFromXcode(String projectDir) async {
+  final Device device = await devices.workingDevice;
+  await inDirectory(projectDir, () async {
+    // This will put FLAVOR=free in the Flutter/Generated.xcconfig file
+    await flutter(
+      'build',
+      options: <String>['ios', '--config-only', '--debug', '--flavor', 'free'],
+    );
+  });
+
+  final File generatedXcconfig = File(path.join(projectDir, 'ios/Flutter/Generated.xcconfig'));
+  if (!generatedXcconfig.existsSync()) {
+    throw TaskResult.failure('Unable to find Generated.xcconfig');
+  }
+  if (!generatedXcconfig.readAsStringSync().contains('FLAVOR=free')) {
+    throw TaskResult.failure('Generated.xcconfig does not contain FLAVOR=free');
+  }
+
+  const String configuration = 'Debug Paid';
+  const String productName = 'Paid App';
+  const String buildDir = 'build/ios';
+
+  // Delete app bundle before build to ensure checks below do not use previously
+  // built bundle.
+  final String appPath = '$projectDir/$buildDir/$configuration-iphoneos/$productName.app';
+  final Directory appBundle = Directory(appPath);
+  if (appBundle.existsSync()) {
+    appBundle.deleteSync(recursive: true);
+  }
+
+  if (!await runXcodeBuild(
+    platformDirectory: path.join(projectDir, 'ios'),
+    destination: 'id=${device.deviceId}',
+    testName: 'flavors_test_ios',
+    configuration: configuration,
+    scheme: 'paid',
+    actions: <String>['clean', 'build'],
+    extraOptions: <String>['BUILD_DIR=${path.join(projectDir, buildDir)}'],
+  )) {
+    throw TaskResult.failure('Build failed');
+  }
+
+  if (!appBundle.existsSync()) {
+    throw TaskResult.failure('App not found at $appPath');
+  }
+
+  if (!generatedXcconfig.readAsStringSync().contains('FLAVOR=free')) {
+    throw TaskResult.failure('Generated.xcconfig does not contain FLAVOR=free');
+  }
+
+  // Despite FLAVOR=free being in the Generated.xcconfig, the flavor found in
+  // the test should be "paid" because it was built with the "Debug Paid" configuration.
+  return createFlavorsTest(
+    extraOptions: <String>['--flavor', 'paid', '--use-application-binary=$appPath'],
+  ).call();
 }

@@ -970,9 +970,6 @@ abstract class ResidentHandlers {
   Future<void> cleanupAfterSignal();
 
   /// Tear down the runner and leave the application running.
-  ///
-  /// This is not supported on web devices where the runner is running
-  /// the application server as well.
   Future<void> detach();
 
   /// Tear down the runner and exit the application.

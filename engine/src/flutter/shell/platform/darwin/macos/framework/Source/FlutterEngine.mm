@@ -1124,6 +1124,7 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
   while ((nextViewController = [viewControllerEnumerator nextObject])) {
     [nextViewController onPreEngineRestart];
   }
+  [_platformViewController reset];
 }
 
 - (void)onVSync:(uintptr_t)baton {

@@ -170,4 +170,11 @@
   _platformViewsToDispose.clear();
 }
 
+- (void)reset {
+  for (const auto& pair : _platformViews) {
+    _platformViewsToDispose.insert(pair.first);
+  }
+  [self disposePlatformViews];
+}
+
 @end

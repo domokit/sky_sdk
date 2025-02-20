@@ -7,12 +7,36 @@
 #include "flutter/fml/closure.h"
 #include "fml/trace_event.h"
 #include "impeller/base/validation.h"
+#include "impeller/core/formats.h"
 #include "impeller/geometry/point.h"
 #include "impeller/renderer/backend/gles/device_buffer_gles.h"
 #include "impeller/renderer/backend/gles/reactor_gles.h"
 #include "impeller/renderer/backend/gles/texture_gles.h"
 
 namespace impeller {
+
+namespace {
+static void FlipImage(uint8_t* buffer,
+                      size_t width,
+                      size_t height,
+                      size_t stride) {
+  if (buffer == nullptr || stride == 0) {
+    return;
+  }
+
+  const auto byte_width = width * stride;
+
+  for (size_t top = 0; top < height; top++) {
+    size_t bottom = height - top - 1;
+    if (top >= bottom) {
+      break;
+    }
+    auto* top_row = buffer + byte_width * top;
+    auto* bottom_row = buffer + byte_width * bottom;
+    std::swap_ranges(top_row, top_row + byte_width, bottom_row);
+  }
+}
+}  // namespace
 
 BlitEncodeGLES::~BlitEncodeGLES() = default;
 
@@ -314,6 +338,7 @@ bool BlitCopyTextureToBufferCommandGLES::Encode(
   }
 
   const auto& gl = reactor.GetProcTable();
+  TextureCoordinateSystem coord_system = source->GetCoordinateSystem();
 
   GLuint read_fbo = GL_NONE;
   fml::ScopedCleanupClosure delete_fbos(
@@ -328,10 +353,22 @@ bool BlitCopyTextureToBufferCommandGLES::Encode(
   }
 
   DeviceBufferGLES::Cast(*destination)
-      .UpdateBufferData([&gl, this](uint8_t* data, size_t length) {
+      .UpdateBufferData([&gl, this, coord_system,
+                         rows = source->GetSize().height](uint8_t* data,
+
+                                                          size_t length) {
         gl.ReadPixels(source_region.GetX(), source_region.GetY(),
                       source_region.GetWidth(), source_region.GetHeight(),
                       GL_RGBA, GL_UNSIGNED_BYTE, data + destination_offset);
+        switch (coord_system) {
+          case TextureCoordinateSystem::kUploadFromHost:
+            break;
+          case TextureCoordinateSystem::kRenderToTexture:
+            // The texture is upside down, and must be inverted when copying
+            // byte data out.
+            FlipImage(data + destination_offset, source_region.GetWidth(),
+                      source_region.GetHeight(), 4);
+        }
       });
 
   return true;

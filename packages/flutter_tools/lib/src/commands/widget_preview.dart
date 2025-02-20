@@ -26,6 +26,7 @@ import '../project.dart';
 import '../runner/flutter_command.dart';
 import '../widget_preview/preview_code_generator.dart';
 import '../widget_preview/preview_detector.dart';
+import '../widget_preview/preview_manifest.dart';
 import '../windows/build_windows.dart';
 import 'create_base.dart';
 import 'daemon.dart';
@@ -177,25 +178,35 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
 
   final OperatingSystemUtils os;
 
+  late final FlutterProject rootProject = getRootProject();
+
   late final PreviewDetector _previewDetector = PreviewDetector(
     logger: logger,
     fs: fs,
     onChangeDetected: onChangeDetected,
+    onPubspecChangeDetected: onPubspecChangeDetected,
   );
 
   late final PreviewCodeGenerator _previewCodeGenerator;
+  late final PreviewManifest _previewManifest;
 
   /// The currently running instance of the widget preview scaffold.
   AppInstance? _widgetPreviewApp;
 
   @override
   Future<FlutterCommandResult> runCommand() async {
-    final FlutterProject rootProject = getRootProject();
     final Directory widgetPreviewScaffold = rootProject.widgetPreviewScaffold;
+    _previewManifest = PreviewManifest(
+      logger: logger,
+      rootProject: rootProject,
+      fs: fs,
+      cache: cache,
+    );
 
     // Check to see if a preview scaffold has already been generated. If not,
     // generate one.
-    final bool generateScaffoldProject = !widgetPreviewScaffold.existsSync();
+    final bool generateScaffoldProject = _previewManifest.shouldGenerateProject();
+    // TODO(bkonyi): can this be moved?
     widgetPreviewScaffold.createSync();
 
     if (generateScaffoldProject) {
@@ -218,6 +229,7 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
         overwrite: true,
         generateMetadata: false,
       );
+      _previewManifest.generate();
 
       // WARNING: this access of widgetPreviewScaffoldProject needs to happen
       // after we generate the scaffold project as invoking the getter triggers
@@ -232,13 +244,21 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
       fs: fs,
     );
 
-    // TODO(matanlurey): Remove this comment once flutter_gen is removed.
-    //
-    // Tracking removal: https://github.com/flutter/flutter/issues/102983.
-    //
-    // Populate the pubspec after the initial build to avoid blowing away the package_config.json
-    // which may have manual changes for flutter_gen support.
-    await _populatePreviewPubspec(rootProject: rootProject);
+    if (generateScaffoldProject || _previewManifest.shouldRegeneratePubspec()) {
+      if (!generateScaffoldProject) {
+        logger.printStatus(
+          'Detected changes in pubspec.yaml. Regenerating pubspec.yaml for the '
+          'widget preview scaffold.',
+        );
+      }
+      // TODO(matanlurey): Remove this comment once flutter_gen is removed.
+      //
+      // Tracking removal: https://github.com/flutter/flutter/issues/102983.
+      //
+      // Populate the pubspec after the initial build to avoid blowing away the package_config.json
+      // which may have manual changes for flutter_gen support.
+      await _populatePreviewPubspec(rootProject: rootProject);
+    }
 
     final PreviewMapping initialPreviews = await _previewDetector.initialize(rootProject.directory);
     _previewCodeGenerator.populatePreviewsInGeneratedPreviewScaffold(initialPreviews);
@@ -264,6 +284,12 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
     _previewCodeGenerator.populatePreviewsInGeneratedPreviewScaffold(previews);
     logger.printStatus('Triggering reload based on change to preview set: $previews');
     _widgetPreviewApp?.restart();
+  }
+
+  void onPubspecChangeDetected() {
+    // TODO(bkonyi): trigger hot reload or restart?
+    logger.printStatus('Changes to pubspec.yaml detected.');
+    _populatePreviewPubspec(rootProject: rootProject);
   }
 
   /// Builds the application binary for the widget preview scaffold the first
@@ -566,6 +592,7 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
     );
 
     maybeAddFlutterGenToPackageConfig(rootProject: rootProject);
+    _previewManifest.updatePubspecHash();
   }
 
   /// Manually adds an entry for package:flutter_gen to the preview scaffold's

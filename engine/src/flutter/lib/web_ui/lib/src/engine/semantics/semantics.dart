@@ -2327,6 +2327,15 @@ class EngineSemantics {
   GestureMode get gestureMode => _gestureMode;
   GestureMode _gestureMode = GestureMode.browserGestures;
 
+  /// Resets [gestureMode] back to its original value [GestureMode.browserGestures].
+  ///
+  /// This is intended to be used in tests only.
+  @visibleForTesting
+  void debugResetGestureMode() {
+    _gestureModeClock?.datetime = null;
+    _gestureMode = GestureMode.browserGestures;
+  }
+
   AlarmClock? _gestureModeClock;
 
   AlarmClock? _getGestureModeClock() {
@@ -2406,6 +2415,12 @@ class EngineSemantics {
       'mousemove',
       'mouseleave',
       'mouseup',
+
+      // The wheel event disables browser gestures to allow the framework handle
+      // the scrolling. Doing otherwise would cause [SemanticScrollable] to send
+      // [SemanticsAction.scrollUp/Down] to the framework leading to scroll
+      // position jerks. See https://github.com/flutter/flutter/issues/159358.
+      'wheel',
     ];
 
     if (pointerEventTypes.contains(event.type)) {

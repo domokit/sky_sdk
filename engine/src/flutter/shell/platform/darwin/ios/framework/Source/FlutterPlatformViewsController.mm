@@ -11,6 +11,7 @@
 #include "flutter/fml/synchronization/count_down_latch.h"
 #import "flutter/shell/platform/darwin/ios/framework/Source/FlutterOverlayView.h"
 #import "flutter/shell/platform/darwin/ios/framework/Source/FlutterView.h"
+#import "flutter/shell/platform/darwin/ios/framework/Source/UIViewController+FlutterScreenAndSceneIfLoaded.h"
 #include "flutter/shell/platform/darwin/ios/framework/Source/overlay_layer_pool.h"
 #import "flutter/shell/platform/darwin/ios/ios_surface.h"
 
@@ -248,7 +249,8 @@ static bool ClipRRectContainsPlatformViewBoundingRect(const SkRRect& clip_rrect,
 /// Runs on the platform thread.
 - (void)createLayerWithIosContext:(const std::shared_ptr<flutter::IOSContext>&)iosContext
                         grContext:(GrDirectContext*)grContext
-                      pixelFormat:(MTLPixelFormat)pixelFormat;
+                      pixelFormat:(MTLPixelFormat)pixelFormat
+                      screenScale:(CGFloat)screenScale;
 
 /// Removes overlay views and platform views that aren't needed in the current frame.
 /// Must run on the platform thread.
@@ -561,7 +563,9 @@ static bool ClipRRectContainsPlatformViewBoundingRect(const SkRRect& clip_rrect,
   CGRect frame =
       CGRectMake(-clipView.frame.origin.x, -clipView.frame.origin.y,
                  CGRectGetWidth(self.flutterView.bounds), CGRectGetHeight(self.flutterView.bounds));
-  clipView.maskView = [self.maskViewPool getMaskViewWithFrame:frame];
+  clipView.maskView = [self.maskViewPool
+      getMaskViewWithFrame:frame
+               screenScale:[self.flutterViewController flutterScreenIfViewLoaded].scale];
 }
 
 - (void)applyMutators:(const flutter::MutatorsStack&)mutatorsStack
@@ -582,7 +586,7 @@ static bool ClipRRectContainsPlatformViewBoundingRect(const SkRRect& clip_rrect,
     [self.maskViewPool insertViewToPoolIfNeeded:(FlutterClippingMaskView*)(clipView.maskView)];
     clipView.maskView = nil;
   }
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [self.flutterViewController flutterScreenIfViewLoaded].scale;
   auto iter = mutatorsStack.Begin();
   while (iter != mutatorsStack.End()) {
     switch ((*iter)->GetType()) {
@@ -698,7 +702,7 @@ static bool ClipRRectContainsPlatformViewBoundingRect(const SkRRect& clip_rrect,
   // when we apply the transforms matrix in |applyMutators:embeddedView:boundingRect|, we need
   // to remember to do a reverse translate.
   const SkRect& rect = params.finalBoundingRect();
-  CGFloat screenScale = [UIScreen mainScreen].scale;
+  CGFloat screenScale = [self.flutterViewController flutterScreenIfViewLoaded].scale;
   clippingView.frame = CGRectMake(rect.x() / screenScale, rect.y() / screenScale,
                                   rect.width() / screenScale, rect.height() / screenScale);
   [self applyMutators:mutatorStack embeddedView:touchInterceptor boundingRect:rect];
@@ -860,7 +864,8 @@ static bool ClipRRectContainsPlatformViewBoundingRect(const SkRRect& clip_rrect,
         for (auto i = 0u; i < missingLayerCount; i++) {
           [self createLayerWithIosContext:iosContext
                                 grContext:grContext
-                              pixelFormat:((FlutterView*)self.flutterView).pixelFormat];
+                              pixelFormat:((FlutterView*)self.flutterView).pixelFormat
+                              screenScale:((FlutterView*)self.flutterView).screen.scale];
         }
         latch->CountDown();
       });
@@ -965,8 +970,9 @@ static bool ClipRRectContainsPlatformViewBoundingRect(const SkRRect& clip_rrect,
 
 - (void)createLayerWithIosContext:(const std::shared_ptr<flutter::IOSContext>&)iosContext
                         grContext:(GrDirectContext*)grContext
-                      pixelFormat:(MTLPixelFormat)pixelFormat {
-  self.layerPool->CreateLayer(grContext, iosContext, pixelFormat);
+                      pixelFormat:(MTLPixelFormat)pixelFormat
+                      screenScale:(CGFloat)screenScale {
+  self.layerPool->CreateLayer(grContext, iosContext, pixelFormat, screenScale);
 }
 
 - (void)removeUnusedLayers:(const std::vector<std::shared_ptr<flutter::OverlayLayer>>&)unusedLayers

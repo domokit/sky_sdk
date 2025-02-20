@@ -22,11 +22,11 @@ TaskFunction createPlatformInteractionTest() {
   ).call;
 }
 
-TaskFunction createFlavorsTest({Map<String, String>? environment}) {
+TaskFunction createFlavorsTest({Map<String, String>? environment, List<String>? extraOptions}) {
   return DriverTest(
     '${flutterDirectory.path}/dev/integration_tests/flavors',
     'lib/main.dart',
-    extraOptions: <String>['--flavor', 'paid'],
+    extraOptions: extraOptions ?? <String>['--flavor', 'paid'],
     environment: environment,
   ).call;
 }

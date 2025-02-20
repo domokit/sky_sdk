@@ -18,6 +18,12 @@ Directory createBasicProjectStructure(FileSystem fs) {
   return fs.systemTempDirectory.createTempSync('root');
 }
 
+void populatePubspec(Directory projectRoot, String contents) {
+  projectRoot.childFile('pubspec.yaml')
+    ..createSync(recursive: true)
+    ..writeAsStringSync(contents);
+}
+
 PreviewPath addPreviewContainingFile(Directory projectRoot, List<String> path) {
   final File file =
       projectRoot.childDirectory('lib').childFile(path.join(const LocalPlatform().pathSeparator))
@@ -44,9 +50,14 @@ void main() {
     late PreviewDetector previewDetector;
     late Directory projectRoot;
     void Function(PreviewMapping)? onChangeDetected;
+    void Function()? onPubspecChangeDetected;
 
     void onChangeDetectedRoot(PreviewMapping mapping) {
       onChangeDetected!(mapping);
+    }
+
+    void onPubspecChangeDetectedRoot() {
+      onPubspecChangeDetected!();
     }
 
     setUp(() {
@@ -57,6 +68,7 @@ void main() {
         logger: logger,
         fs: fs,
         onChangeDetected: onChangeDetectedRoot,
+        onPubspecChangeDetected: onPubspecChangeDetectedRoot,
       );
     });
 
@@ -115,6 +127,23 @@ void main() {
       // Update the file with an existing preview to remove the preview and ensure it triggers
       // the preview detector.
       addNonPreviewContainingFile(projectRoot, <String>['baz.dart']);
+      await completer.future;
+    });
+
+    testUsingContext('can detect changes in the pubspec.yaml', () async {
+      // Create an initial pubspec.
+      populatePubspec(projectRoot, 'abc');
+
+      final Completer<void> completer = Completer<void>();
+      onPubspecChangeDetected = () {
+        completer.complete();
+      };
+      // Initialize the file watcher.
+      final PreviewMapping initialPreviews = await previewDetector.initialize(projectRoot);
+      expect(initialPreviews, isEmpty);
+
+      // Change the contents of the pubspec and verify the callback is invoked.
+      populatePubspec(projectRoot, 'foo');
       await completer.future;
     });
   });

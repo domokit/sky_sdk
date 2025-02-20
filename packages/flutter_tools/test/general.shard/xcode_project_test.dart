@@ -4,9 +4,12 @@
 
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
+import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/version.dart';
+import 'package:flutter_tools/src/build_info.dart';
+import 'package:flutter_tools/src/build_system/build_system.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/flutter_manifest.dart';
 import 'package:flutter_tools/src/ios/xcodeproj.dart';
@@ -216,6 +219,102 @@ void main() {
         },
       );
     });
+
+    group('parseFlavorFromConfiguration', () {
+      testWithoutContext('from FLAVOR when CONFIGURATION is null', () async {
+        final MemoryFileSystem fs = MemoryFileSystem.test();
+        final IosProject project = IosProject.fromFlutter(FakeFlutterProject(fileSystem: fs));
+        final Environment env = Environment.test(
+          fs.currentDirectory,
+          fileSystem: fs,
+          logger: BufferLogger.test(),
+          artifacts: Artifacts.test(),
+          processManager: FakeProcessManager.any(),
+          defines: <String, String>{kFlavor: 'strawberry'},
+        );
+        expect(await project.parseFlavorFromConfiguration(env), 'strawberry');
+      });
+
+      testWithoutContext('from FLAVOR when CONFIGURATION is does not contain delimiter', () async {
+        final MemoryFileSystem fs = MemoryFileSystem.test();
+        final IosProject project = IosProject.fromFlutter(FakeFlutterProject(fileSystem: fs));
+        final Environment env = Environment.test(
+          fs.currentDirectory,
+          fileSystem: fs,
+          logger: BufferLogger.test(),
+          artifacts: Artifacts.test(),
+          processManager: FakeProcessManager.any(),
+          defines: <String, String>{kFlavor: 'strawberry', kXcodeConfiguration: 'Debug'},
+        );
+        expect(await project.parseFlavorFromConfiguration(env), 'strawberry');
+      });
+
+      testUsingContext(
+        'from CONFIGURATION when has flavor following a hyphen that matches a scheme',
+        () async {
+          final MemoryFileSystem fs = MemoryFileSystem.test();
+          final IosProject project = IosProject.fromFlutter(FakeFlutterProject(fileSystem: fs));
+          final Environment env = Environment.test(
+            fs.currentDirectory,
+            fileSystem: fs,
+            logger: BufferLogger.test(),
+            artifacts: Artifacts.test(),
+            processManager: FakeProcessManager.any(),
+            defines: <String, String>{kFlavor: 'strawberry', kXcodeConfiguration: 'Debug-vanilla'},
+          );
+          project.xcodeProject.createSync(recursive: true);
+          expect(await project.parseFlavorFromConfiguration(env), 'vanilla');
+        },
+        overrides: <Type, Generator>{
+          XcodeProjectInterpreter:
+              () => FakeXcodeProjectInterpreter(schemes: <String>['Runner', 'vanilla']),
+        },
+      );
+
+      testUsingContext(
+        'from CONFIGURATION when has flavor following a space that matches a scheme',
+        () async {
+          final MemoryFileSystem fs = MemoryFileSystem.test();
+          final IosProject project = IosProject.fromFlutter(FakeFlutterProject(fileSystem: fs));
+          final Environment env = Environment.test(
+            fs.currentDirectory,
+            fileSystem: fs,
+            logger: BufferLogger.test(),
+            artifacts: Artifacts.test(),
+            processManager: FakeProcessManager.any(),
+            defines: <String, String>{kFlavor: 'strawberry', kXcodeConfiguration: 'Debug vanilla'},
+          );
+          project.xcodeProject.createSync(recursive: true);
+          expect(await project.parseFlavorFromConfiguration(env), 'vanilla');
+        },
+        overrides: <Type, Generator>{
+          XcodeProjectInterpreter:
+              () => FakeXcodeProjectInterpreter(schemes: <String>['Runner', 'vanilla']),
+        },
+      );
+
+      testUsingContext(
+        'from FLAVOR when CONFIGURATION does not match a scheme',
+        () async {
+          final MemoryFileSystem fs = MemoryFileSystem.test();
+          final IosProject project = IosProject.fromFlutter(FakeFlutterProject(fileSystem: fs));
+          final Environment env = Environment.test(
+            fs.currentDirectory,
+            fileSystem: fs,
+            logger: BufferLogger.test(),
+            artifacts: Artifacts.test(),
+            processManager: FakeProcessManager.any(),
+            defines: <String, String>{kFlavor: 'strawberry', kXcodeConfiguration: 'Debug-random'},
+          );
+          project.xcodeProject.createSync(recursive: true);
+          expect(await project.parseFlavorFromConfiguration(env), 'strawberry');
+        },
+        overrides: <Type, Generator>{
+          XcodeProjectInterpreter:
+              () => FakeXcodeProjectInterpreter(schemes: <String>['Runner', 'vanilla']),
+        },
+      );
+    });
   });
 
   group('MacOSProject', () {
@@ -365,7 +464,11 @@ class FakeFlutterProject extends Fake implements FlutterProject {
 }
 
 class FakeXcodeProjectInterpreter extends Fake implements XcodeProjectInterpreter {
-  FakeXcodeProjectInterpreter({this.isInstalled = true, this.version});
+  FakeXcodeProjectInterpreter({
+    this.isInstalled = true,
+    this.version,
+    this.schemes = const <String>['Runner'],
+  });
 
   @override
   final bool isInstalled;
@@ -373,9 +476,11 @@ class FakeXcodeProjectInterpreter extends Fake implements XcodeProjectInterprete
   @override
   final Version? version;
 
+  List<String> schemes;
+
   @override
   Future<XcodeProjectInfo?> getInfo(String projectPath, {String? projectFilename}) async {
-    return XcodeProjectInfo(<String>[], <String>[], <String>['Runner'], BufferLogger.test());
+    return XcodeProjectInfo(<String>[], <String>[], schemes, BufferLogger.test());
   }
 }
 

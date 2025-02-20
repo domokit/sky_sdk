@@ -159,8 +159,8 @@ class ParagraphLine {
   /// ellipsized, this returns [startIndex];
   late final int visibleEndIndex = switch (fragments) {
     [] => startIndex,
-    [...final List<LayoutFragment> rest, EllipsisFragment()] || final List<LayoutFragment> rest =>
-      rest.last.end,
+    [...final List<LayoutFragment> rest, EllipsisFragment()] ||
+    final List<LayoutFragment> rest => rest.last.end,
   };
 
   /// The number of new line characters at the end of the line.

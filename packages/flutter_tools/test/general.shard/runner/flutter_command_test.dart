@@ -18,7 +18,6 @@ import 'package:flutter_tools/src/base/time.dart';
 import 'package:flutter_tools/src/base/user_messages.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/cache.dart';
-import 'package:flutter_tools/src/commands/run.dart';
 import 'package:flutter_tools/src/device.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/pre_run_validator.dart';
@@ -1209,107 +1208,11 @@ void main() {
     });
 
     group('--flavor', () {
-      late _TestDeviceManager testDeviceManager;
-      late Logger logger;
       late FileSystem fileSystem;
 
       setUp(() {
-        logger = BufferLogger.test();
-        testDeviceManager = _TestDeviceManager(logger: logger);
         fileSystem = MemoryFileSystem.test();
       });
-
-      testUsingContext(
-        "tool exits when FLUTTER_APP_FLAVOR is already set in user's environment",
-        () async {
-          fileSystem.file('lib/main.dart').createSync(recursive: true);
-          fileSystem.file('pubspec.yaml').createSync();
-
-          final FakeDevice device = FakeDevice(
-            'name',
-            'id',
-            type: PlatformType.android,
-            supportsFlavors: true,
-          );
-          testDeviceManager.devices = <Device>[device];
-          final _TestRunCommandThatOnlyValidates command = _TestRunCommandThatOnlyValidates();
-          final CommandRunner<void> runner = createTestCommandRunner(command);
-
-          expect(
-            runner.run(<String>['run', '--no-pub', '--no-hot', '--flavor=strawberry']),
-            throwsToolExit(
-              message:
-                  'FLUTTER_APP_FLAVOR is used by the framework and cannot be set in the environment.',
-            ),
-          );
-        },
-        overrides: <Type, Generator>{
-          DeviceManager: () => testDeviceManager,
-          Platform:
-              () => FakePlatform(
-                environment: <String, String>{'FLUTTER_APP_FLAVOR': 'I was already set'},
-              ),
-          Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-          FileSystem: () => fileSystem,
-          ProcessManager: () => FakeProcessManager.any(),
-        },
-      );
-
-      testUsingContext(
-        'tool exits when FLUTTER_APP_FLAVOR is set in --dart-define or --dart-define-from-file',
-        () async {
-          fileSystem.file('lib/main.dart').createSync(recursive: true);
-          fileSystem.file('pubspec.yaml').createSync();
-          fileSystem.file('config.json')
-            ..createSync()
-            ..writeAsStringSync('{"FLUTTER_APP_FLAVOR": "strawberry"}');
-
-          final FakeDevice device = FakeDevice(
-            'name',
-            'id',
-            type: PlatformType.android,
-            supportsFlavors: true,
-          );
-          testDeviceManager.devices = <Device>[device];
-          final _TestRunCommandThatOnlyValidates command = _TestRunCommandThatOnlyValidates();
-          final CommandRunner<void> runner = createTestCommandRunner(command);
-
-          expect(
-            runner.run(<String>[
-              'run',
-              '--dart-define=FLUTTER_APP_FLAVOR=strawberry',
-              '--no-pub',
-              '--no-hot',
-              '--flavor=strawberry',
-            ]),
-            throwsToolExit(
-              message:
-                  'FLUTTER_APP_FLAVOR is used by the framework and cannot be set using --dart-define or --dart-define-from-file',
-            ),
-          );
-
-          expect(
-            runner.run(<String>[
-              'run',
-              '--dart-define-from-file=config.json',
-              '--no-pub',
-              '--no-hot',
-              '--flavor=strawberry',
-            ]),
-            throwsToolExit(
-              message:
-                  'FLUTTER_APP_FLAVOR is used by the framework and cannot be set using --dart-define or --dart-define-from-file',
-            ),
-          );
-        },
-        overrides: <Type, Generator>{
-          DeviceManager: () => testDeviceManager,
-          Platform: () => FakePlatform(),
-          Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-          FileSystem: () => fileSystem,
-          ProcessManager: () => FakeProcessManager.any(),
-        },
-      );
 
       testUsingContext(
         'CLI option overrides default flavor from manifest',
@@ -1473,24 +1376,5 @@ class FakeClock extends Fake implements SystemClock {
   @override
   DateTime now() {
     return DateTime.fromMillisecondsSinceEpoch(times.removeAt(0));
-  }
-}
-
-class _TestDeviceManager extends DeviceManager {
-  _TestDeviceManager({required super.logger});
-  List<Device> devices = <Device>[];
-
-  @override
-  List<DeviceDiscovery> get deviceDiscoverers {
-    final FakePollingDeviceDiscovery discoverer = FakePollingDeviceDiscovery();
-    devices.forEach(discoverer.addDevice);
-    return <DeviceDiscovery>[discoverer];
-  }
-}
-
-class _TestRunCommandThatOnlyValidates extends RunCommand {
-  @override
-  Future<FlutterCommandResult> runCommand() async {
-    return FlutterCommandResult.success();
   }
 }

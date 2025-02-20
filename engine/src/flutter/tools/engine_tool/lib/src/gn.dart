@@ -155,10 +155,8 @@ sealed class BuildTarget {
         // Remove the leading // from the path.
         executable: json.stringList('outputs').first.substring(2),
       ),
-      'shared_library' || 'static_library' => LibraryBuildTarget(
-        label: Label.parseGn(label),
-        testOnly: testOnly,
-      ),
+      'shared_library' ||
+      'static_library' => LibraryBuildTarget(label: Label.parseGn(label), testOnly: testOnly),
       'action' => BuildTarget._parseFromAction(label, testOnly: testOnly, json: json),
       'group' => GroupBuildTarget(
         label: Label.parseGn(label),

@@ -141,6 +141,60 @@ TEST(FlutterPlatformViewController, TestCreateAndDispose) {
   EXPECT_TRUE(disposed);
 }
 
+TEST(FlutterPlatformViewController, TestReset) {
+  // Use id so we can access handleMethodCall method.
+  id platformViewController = [[FlutterPlatformViewController alloc] init];
+  TestFlutterPlatformViewFactory* factory = [TestFlutterPlatformViewFactory alloc];
+
+  [platformViewController registerViewFactory:factory withId:@"MockPlatformView"];
+
+  __block bool created = false;
+  FlutterResult resultOnCreate = ^(id result) {
+    // If a platform view is successfully created, the result is nil.
+    if (result == nil) {
+      created = true;
+    } else {
+      created = false;
+    }
+  };
+
+  // Create 2 views.
+  FlutterMethodCall* methodCallOnCreate0 =
+      [FlutterMethodCall methodCallWithMethodName:@"create"
+                                        arguments:@{
+                                          @"id" : @0,
+                                          @"viewType" : @"MockPlatformView"
+                                        }];
+
+  [platformViewController handleMethodCall:methodCallOnCreate0 result:resultOnCreate];
+  EXPECT_TRUE(created);
+
+  FlutterMethodCall* methodCallOnCreate1 =
+      [FlutterMethodCall methodCallWithMethodName:@"create"
+                                        arguments:@{
+                                          @"id" : @1,
+                                          @"viewType" : @"MockPlatformView"
+                                        }];
+  [platformViewController handleMethodCall:methodCallOnCreate1 result:resultOnCreate];
+  EXPECT_TRUE(created);
+
+  TestFlutterPlatformView* view = nil;
+
+  // Before the reset, the views exist.
+  view = (TestFlutterPlatformView*)[platformViewController platformViewWithID:0];
+  EXPECT_TRUE(view != nil);
+  view = (TestFlutterPlatformView*)[platformViewController platformViewWithID:1];
+  EXPECT_TRUE(view != nil);
+
+  // After a reset, the views should no longer exist.
+  [platformViewController reset];
+
+  view = (TestFlutterPlatformView*)[platformViewController platformViewWithID:0];
+  EXPECT_TRUE(view == nil);
+  view = (TestFlutterPlatformView*)[platformViewController platformViewWithID:1];
+  EXPECT_TRUE(view == nil);
+}
+
 TEST(FlutterPlatformViewController, TestDisposeOnMissingViewId) {
   // Use id so we can access handleMethodCall method.
   id platformViewController = [[FlutterPlatformViewController alloc] init];

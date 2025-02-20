@@ -395,7 +395,6 @@ _compile_ddc_modules("flutter_dartdevc_canvaskit_kernel_sdk") {
 group("flutter_ddc_modules") {
   public_deps = [
     ":flutter_dartdevc_canvaskit_kernel_sdk_amd",
-    ":flutter_dartdevc_canvaskit_kernel_sdk_amd",
     ":flutter_dartdevc_canvaskit_kernel_sdk_ddcLibraryBundle",
   ]
 }
@@ -421,7 +420,6 @@ if (!is_fuchsia) {
 
     # flutter_ddc_modules
     sources = get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_amd")
-    sources += get_target_outputs(":flutter_dartdevc_canvaskit_kernel_sdk_amd")
     sources += get_target_outputs(
             ":flutter_dartdevc_canvaskit_kernel_sdk_ddcLibraryBundle")
 
