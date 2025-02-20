@@ -611,6 +611,7 @@ class RenderTable extends RenderBox {
     config.explicitChildNodes = true;
   }
 
+/// Overrides this method to create semantics nodes for rows between table and table cells.
   @override
   void assembleSemanticsNode(
     SemanticsNode node,
@@ -638,6 +639,7 @@ class RenderTable extends RenderBox {
             ..role = SemanticsRole.row;
       final List<SemanticsNode> cells =
           children.skip(i * _columns).take(_columns).map((SemanticsNode cell) {
+            // Shift the cell's rect to be relative to the row's rect.
             cell.rect = cell.rect.shift(Offset(-rowBox.left, -rowBox.top));
             return cell;
           }).toList();
