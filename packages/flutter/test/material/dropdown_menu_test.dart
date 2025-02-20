@@ -10,6 +10,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../widgets/semantics_tester.dart';
+
 void main() {
   const String longText = 'one two three four five six seven eight nine ten eleven twelve';
   final List<DropdownMenuEntry<TestMenu>> menuChildren = <DropdownMenuEntry<TestMenu>>[];
@@ -3592,6 +3594,7 @@ void main() {
     expect(
       tester.getSemantics(find.byType(TextField)),
       matchesSemantics(
+        hasExpandedState: true,
         hasFocusAction: true,
         hasTapAction: true,
         isTextField: true,
@@ -3607,6 +3610,7 @@ void main() {
     expect(
       tester.getSemantics(find.byType(TextField)),
       matchesSemantics(
+        hasExpandedState: true,
         hasFocusAction: true,
         isTextField: true,
         hasEnabledState: true,
@@ -4085,6 +4089,164 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(tester.getSize(findMenuItemButton(menuChildren.first.label)).width, 150.0);
+  });
+
+  testWidgets('DropdownMenu has SemanticsRole.comboBox in semantics', (WidgetTester tester) async {
+    final SemanticsTester semantics = SemanticsTester(tester);
+    int? selectedValue;
+
+    await tester.pumpWidget(
+      StatefulBuilder(
+        builder:
+            (BuildContext context, StateSetter setState) => MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: DropdownMenu<int>(
+                    requestFocusOnTap: true,
+                    dropdownMenuEntries: const <DropdownMenuEntry<int>>[
+                      DropdownMenuEntry<int>(value: 0, label: 'Item 0'),
+                      DropdownMenuEntry<int>(value: 1, label: 'Item 1'),
+                      DropdownMenuEntry<int>(value: 2, label: 'Item 2'),
+                    ],
+                    onSelected: (int? value) {
+                      setState(() {
+                        selectedValue = value;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+      ),
+    );
+
+    TestSemantics expectedSemantics = TestSemantics.root(
+      children: <TestSemantics>[
+        TestSemantics(
+          id: 1,
+          textDirection: TextDirection.ltr,
+          children: <TestSemantics>[
+            TestSemantics(
+              id: 2,
+              children: <TestSemantics>[
+                TestSemantics(
+                  id: 3,
+                  flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
+                  children: <TestSemantics>[
+                    TestSemantics(
+                      id: 5,
+                      flags: <SemanticsFlag>[SemanticsFlag.hasExpandedState],
+                      role: SemanticsRole.comboBox,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+
+    expect(
+      semantics,
+      hasSemantics(expectedSemantics, ignoreTransform: true, ignoreId: true, ignoreRect: true),
+    );
+
+    await tester.tap(find.byType(TextField));
+    await tester.pumpAndSettle();
+
+    expectedSemantics = TestSemantics.root(
+      children: <TestSemantics>[
+        TestSemantics(
+          id: 1,
+          textDirection: TextDirection.ltr,
+          children: <TestSemantics>[
+            TestSemantics(
+              id: 2,
+              children: <TestSemantics>[
+                TestSemantics(
+                  id: 3,
+                  flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
+                  children: <TestSemantics>[
+                    TestSemantics(
+                      id: 5,
+                      flags: <SemanticsFlag>[
+                        SemanticsFlag.hasExpandedState,
+                        SemanticsFlag.isExpanded,
+                      ],
+                      role: SemanticsRole.comboBox,
+                      children: <TestSemantics>[
+                        TestSemantics(
+                          id: 6,
+                          children: <TestSemantics>[
+                            TestSemantics(
+                              id: 7,
+                              flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
+                              children: <TestSemantics>[
+                                TestSemantics(
+                                  id: 8,
+                                  label: 'Item 0',
+                                  textDirection: TextDirection.ltr,
+
+                                  flags: <SemanticsFlag>[
+                                    SemanticsFlag.hasEnabledState,
+                                    SemanticsFlag.isEnabled,
+                                    SemanticsFlag.isFocusable,
+                                  ],
+                                  actions: <SemanticsAction>[
+                                    SemanticsAction.tap,
+                                    SemanticsAction.focus,
+                                  ],
+                                ),
+                                TestSemantics(
+                                  id: 10,
+                                  label: 'Item 1',
+                                  textDirection: TextDirection.ltr,
+                                  flags: <SemanticsFlag>[
+                                    SemanticsFlag.hasEnabledState,
+                                    SemanticsFlag.isEnabled,
+                                    SemanticsFlag.isFocusable,
+                                  ],
+                                  actions: <SemanticsAction>[
+                                    SemanticsAction.tap,
+                                    SemanticsAction.focus,
+                                  ],
+                                ),
+                                TestSemantics(
+                                  id: 12,
+                                  label: 'Item 2',
+                                  textDirection: TextDirection.ltr,
+                                  flags: <SemanticsFlag>[
+                                    SemanticsFlag.hasEnabledState,
+                                    SemanticsFlag.isEnabled,
+                                    SemanticsFlag.isFocusable,
+                                  ],
+                                  actions: <SemanticsAction>[
+                                    SemanticsAction.tap,
+                                    SemanticsAction.focus,
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+
+    expect(
+      semantics,
+      hasSemantics(expectedSemantics, ignoreTransform: true, ignoreId: true, ignoreRect: true),
+    );
+
+    semantics.dispose();
   });
 }
 
