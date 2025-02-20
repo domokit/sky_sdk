@@ -77,6 +77,7 @@ export 'src/material/drawer_header.dart';
 export 'src/material/drawer_theme.dart';
 export 'src/material/dropdown.dart';
 export 'src/material/dropdown_menu.dart';
+export 'src/material/dropdown_menu_form_field.dart';
 export 'src/material/dropdown_menu_theme.dart';
 export 'src/material/elevated_button.dart';
 export 'src/material/elevated_button_theme.dart';
