@@ -40,7 +40,7 @@ class _EditableTextTapUpOutsideIntentExampleState
     // the pointer down and pointer up events later.
     latestPointerDownEvent = intent.pointerDownEvent;
 
-    // Match de default behavior of unfocusing on tap down on desktop platforms
+    // Match the default behavior of unfocusing on tap down on desktop platforms
     // and on mobile web. Additionally, save the latest pointer down event to
     // on non-web mobile platforms to calculate the distance between the pointer
     // down and pointer up events later.

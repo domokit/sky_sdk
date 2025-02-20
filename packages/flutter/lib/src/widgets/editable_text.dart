@@ -1564,9 +1564,8 @@ class EditableText extends StatefulWidget {
   /// group when the text field is focused.
   ///
   /// If this is null, [EditableTextTapUpOutsideIntent] will be invoked. In the
-  /// default implementation, this is a no-op. To change this behavior, a
-  /// callback may be set here or [EditableTextTapUpOutsideIntent] may be
-  /// overridden.
+  /// default implementation, this is a no-op. To change this behavior, set a
+  /// callback here or override [EditableTextTapUpOutsideIntent].
   ///
   /// The [PointerUpEvent] passed to the function is the event that caused the
   /// notification. It is possible that the event may occur outside of the
@@ -1578,7 +1577,7 @@ class EditableText extends StatefulWidget {
   ///
   ///  * [TapRegion] for how the region group is determined.
   ///  * [onTapOutside], which is called for each tap down.
-  ///  * [EditableTextTapOutsideIntent] for the intent that is invoked if
+  ///  * [EditableTextTapOutsideIntent], the intent that is invoked if
   ///  this is null.
   final TapRegionUpCallback? onTapUpOutside;
 
