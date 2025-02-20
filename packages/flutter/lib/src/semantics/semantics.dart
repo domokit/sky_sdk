@@ -132,7 +132,6 @@ sealed class _DebugSemanticsRoleChecks {
     SemanticsRole.hotKey => _unimplemented,
   }(node);
 
-
   static FlutterError? _unimplemented(SemanticsNode node) =>
       FlutterError('Missing checks for role ${node.getSemanticsData().role}');
 
