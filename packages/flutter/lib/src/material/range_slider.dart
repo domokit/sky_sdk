@@ -1723,11 +1723,11 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
             context,
             topThumbCenter,
             activationAnimation:
-                _sliderTheme.showValueIndicator == ShowValueIndicator.alwaysVisible
+                shouldAlwaysShowValueIndicator
                     ? const AlwaysStoppedAnimation<double>(1)
                     : _valueIndicatorAnimation,
             enableAnimation:
-                _sliderTheme.showValueIndicator == ShowValueIndicator.alwaysVisible
+                shouldAlwaysShowValueIndicator
                     ? const AlwaysStoppedAnimation<double>(1)
                     : _enableAnimation,
             isDiscrete: isDiscrete,
