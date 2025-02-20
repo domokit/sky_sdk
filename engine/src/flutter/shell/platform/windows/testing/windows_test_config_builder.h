@@ -58,6 +58,10 @@ class WindowsConfigBuilder {
   // must be decorated with `@pragma('vm:entry-point')`.
   void SetDartEntrypoint(std::string_view entrypoint);
 
+  // Set the UI Thread policy for the engine.
+  // If not set defaults to FlutterDesktopUIThreadPolicy::Default;
+  void SetUIThreadPolicy(FlutterDesktopUIThreadPolicy policy);
+
   // Adds an argument to the Dart entrypoint arguments List<String>.
   void AddDartEntrypointArgument(std::string_view arg);
 
@@ -86,6 +90,8 @@ class WindowsConfigBuilder {
   WindowsTestContext& context_;
   std::string dart_entrypoint_;
   std::vector<std::string> dart_entrypoint_arguments_;
+  FlutterDesktopUIThreadPolicy ui_thread_policy_ =
+      FlutterDesktopUIThreadPolicy::Default;
 
   FlutterDesktopGpuPreference gpu_preference_ =
       FlutterDesktopGpuPreference::NoPreference;
