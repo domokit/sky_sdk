@@ -1232,6 +1232,9 @@ class SemanticsObject {
   ///  * [isHeading], which determines whether this node represents a heading.
   bool get isHeader => hasFlag(ui.SemanticsFlag.isHeader);
 
+  /// Whether the menu is expanded.
+  bool get isExpanded => hasFlag(ui.SemanticsFlag.isExpanded);
+
   /// See [ui.SemanticsUpdateBuilder.updateNode].
   String? get identifier => _identifier;
   String? _identifier;

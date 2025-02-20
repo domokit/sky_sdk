@@ -18,6 +18,18 @@ class SemanticComboBox extends SemanticRole {
         preferredLabelRepresentation: LabelRepresentation.ariaLabel,
       ) {
     setAriaRole('combobox');
+    setAttribute('aria-expanded', 'false');
+  }
+
+  @override
+  void update() {
+    super.update();
+    if (semanticsObject.isExpanded) {
+      setAttribute('aria-expanded', 'true');
+    } else {
+      setAttribute('aria-expanded', 'false');
+    }
+    print(semanticsObject.flags);
   }
 
   @override
