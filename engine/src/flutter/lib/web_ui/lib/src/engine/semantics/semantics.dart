@@ -442,7 +442,7 @@ enum EngineSemanticsRole {
   /// Provides a label or a value.
   generic,
 
-  ///
+  /// A input field with a dropdown list box attached.
   comboBox,
 }
 
