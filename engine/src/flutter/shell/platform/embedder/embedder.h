@@ -2553,6 +2553,12 @@ typedef struct {
   /// being registered on the framework side. The callback is invoked from
   /// a task posted to the platform thread.
   FlutterChannelUpdateCallback channel_update_callback;
+
+  /// Whether to enable the Impeller rendering engine.
+  ///
+  /// When not provided, this value is treated as false. In a future release,
+  /// this setting will become a no-op when the Skia backend is fully removed.
+  bool enable_impeller;
 } FlutterProjectArgs;
 
 #ifndef FLUTTER_ENGINE_NO_PROTOTYPES

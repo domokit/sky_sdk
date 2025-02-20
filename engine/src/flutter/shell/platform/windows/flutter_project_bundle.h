@@ -64,6 +64,9 @@ class FlutterProjectBundle {
     return dart_entrypoint_arguments_;
   }
 
+  // Whether the Impeller rendering engine is enabled.
+  bool ImpellerEnabled() const { return impeller_enabled_; }
+
   // Returns the app's GPU preference.
   FlutterGpuPreference gpu_preference() const { return gpu_preference_; }
 
@@ -82,6 +85,8 @@ class FlutterProjectBundle {
 
   // Engine switches.
   std::vector<std::string> engine_switches_;
+
+  bool impeller_enabled_ = false;
 
   // App's GPU preference.
   FlutterGpuPreference gpu_preference_;

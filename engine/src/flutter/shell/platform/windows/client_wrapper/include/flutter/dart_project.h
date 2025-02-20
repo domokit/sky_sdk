@@ -90,6 +90,14 @@ class DartProject {
   // Defaults to NoPreference.
   GpuPreference gpu_preference() const { return gpu_preference_; }
 
+  // Whether to enable the Impeller rendering engine.
+  //
+  // If not provided, defaults to false.
+  void set_enable_impeller(bool value) { enable_impeller_ = value; }
+
+  /// Whether the Impeller rendering engine is enabled.
+  bool get_enable_impeller() const { return enable_impeller_; }
+
  private:
   // Accessors for internals are private, so that they can be changed if more
   // flexible options for project structures are needed later without it
@@ -116,6 +124,8 @@ class DartProject {
   std::vector<std::string> dart_entrypoint_arguments_;
   // The preference for GPU to be used by flutter engine.
   GpuPreference gpu_preference_ = GpuPreference::NoPreference;
+  // Whether the Impeller rendering backend is enabled.
+  bool enable_impeller_ = false;
 };
 
 }  // namespace flutter

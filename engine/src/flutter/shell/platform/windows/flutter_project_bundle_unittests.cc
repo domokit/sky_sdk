@@ -65,6 +65,17 @@ TEST(FlutterProjectBundle, DartEntrypointArguments) {
   EXPECT_EQ(retrieved_arguments[1], "arg2");
 }
 
+TEST(FlutterProjectBundle, EnableImpeller) {
+  FlutterDesktopEngineProperties properties = {};
+  properties.enable_impeller = true;
+  properties.assets_path = L"foo\\flutter_assets";
+  properties.icu_data_path = L"foo\\icudtl.dat";
+
+  FlutterProjectBundle project(properties);
+
+  EXPECT_TRUE(project.ImpellerEnabled());
+}
+
 #ifndef FLUTTER_RELEASE
 TEST(FlutterProjectBundle, Switches) {
   FlutterDesktopEngineProperties properties = {};
