@@ -33,6 +33,19 @@ fi
 
 FLUTTER_ROOT="$(dirname "$(dirname "$(dirname "${BASH_SOURCE[0]}")")")"
 
+LS_FILES_OUT="$(git ls-files "bin/internal/engine.version")"
+
+# If we already have a git tracked engine.version file
+if [ -n "$LS_FILES_OUT" ]; then
+  # git rev-parse HEAD~1 would not work in shallow clones
+  PREVIOUS_COMMIT="$(git cat-file -p HEAD | grep parent | head -n 1 | cut --delimiter=' ' --fields=2)"
+  ENGINE_VERSION_FILE_CONTENTS="$(cat "$FLUTTER_ROOT/bin/internal/engine.version")"
+  if [[ "$PREVIOUS_COMMIT" == "$ENGINE_VERSION_FILE_CONTENTS" ]]; then
+    # Our engine.version file should be the source of truth
+    exit 0
+  fi
+fi
+
 # Test for fusion repository and no environment variable override.
 if [ -z "$ENGINE_VERSION" ] && [ -f "$FLUTTER_ROOT/DEPS" ] && [ -f "$FLUTTER_ROOT/engine/src/.gn" ]; then
   BRANCH=$(git -C "$FLUTTER_ROOT" rev-parse --abbrev-ref HEAD)

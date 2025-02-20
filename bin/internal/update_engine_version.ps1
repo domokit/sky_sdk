@@ -19,6 +19,19 @@ $ErrorActionPreference = "Stop"
 $progName = Split-Path -parent $MyInvocation.MyCommand.Definition
 $flutterRoot = (Get-Item $progName).parent.parent.FullName
 
+LS_FILES_OUT="$(git ls-files "bin/internal/engine.version")"
+
+# If we already have a git tracked engine.version file
+if [ -n "$LS_FILES_OUT" ]; then
+  # git rev-parse HEAD~1 would not work in shallow clones
+  PREVIOUS_COMMIT="$(git cat-file -p HEAD | grep parent | head -n 1 | cut --delimiter=' ' --fields=2)"
+  ENGINE_VERSION_FILE_CONTENTS="$(cat "$FLUTTER_ROOT/bin/internal/engine.version")"
+  if [[ "$PREVIOUS_COMMIT" == "$ENGINE_VERSION_FILE_CONTENTS" ]]; then
+    # Our engine.version file should be the source of truth
+    exit 0
+  fi
+fi
+
 # Allow overriding the intended engine version via FLUTTER_PREBUILT_ENGINE_VERSION.
 #
 # This is for systems, such as Github Actions, where we know ahead of time the
