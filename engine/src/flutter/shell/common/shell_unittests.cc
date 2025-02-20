@@ -4376,6 +4376,42 @@ TEST_F(ShellTest, PointerPacketFlushMessageLoop) {
   ASSERT_FALSE(DartVMRef::IsInstanceRunning());
 }
 
+// Verifies a pointer event will flush the dart event loop.
+TEST_F(ShellTest, PointerPacketsAreDispatchedWithTask) {
+  Settings settings = CreateSettingsForFixture();
+  ThreadHost thread_host("io.flutter.test." + GetCurrentTestName() + ".",
+                         ThreadHost::Type::kPlatform);
+  auto task_runner = thread_host.platform_thread->GetTaskRunner();
+  TaskRunners task_runners("test", task_runner, task_runner, task_runner,
+                           task_runner);
+
+  EXPECT_EQ(task_runners.GetPlatformTaskRunner(),
+            task_runners.GetUITaskRunner());
+  auto shell = CreateShell(settings, task_runners);
+  auto configuration = RunConfiguration::InferFromSettings(settings);
+  configuration.SetEntrypoint("testDispatchEvents");
+
+  RunEngine(shell.get(), std::move(configuration));
+  fml::CountDownLatch latch(1);
+  bool did_invoke_callback = false;
+  AddNativeCallback(
+      // The Dart native function names aren't very consistent but this is
+      // just the native function name of the second vm entrypoint in the
+      // fixture.
+      "NotifyNative", CREATE_NATIVE_ENTRY([&](auto args) {
+        did_invoke_callback = true;
+        latch.CountDown();
+      }));
+
+  DispatchFakePointerData(shell.get(), 23);
+  EXPECT_FALSE(did_invoke_callback);
+  latch.Wait();
+  EXPECT_TRUE(did_invoke_callback);
+
+  DestroyShell(std::move(shell), task_runners);
+  ASSERT_FALSE(DartVMRef::IsInstanceRunning());
+}
+
 TEST_F(ShellTest, DiesIfSoftwareRenderingAndImpellerAreEnabledDeathTest) {
 #if defined(OS_FUCHSIA)
   GTEST_SKIP() << "Fuchsia";

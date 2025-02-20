@@ -11,8 +11,13 @@ import 'package:flutter_tools/src/base/signals.dart';
 import 'package:flutter_tools/src/widget_preview/preview_detector.dart';
 import 'package:test/test.dart';
 
-import '../../src/common.dart';
-import '../../src/context.dart';
+import '../../../src/common.dart';
+import '../../../src/context.dart';
+
+// Note: this test isn't under the general.shard since tests under that directory
+// have a 2000ms time out and these tests write to the real file system and watch
+// directories for changes. This can be slow on heavily loaded machines and cause
+// flaky failures.
 
 Directory createBasicProjectStructure(FileSystem fs) {
   return fs.systemTempDirectory.createTempSync('root');

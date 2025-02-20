@@ -625,3 +625,10 @@ void testPointerActions() {
     });
   };
 }
+
+@pragma('vm:entry-point')
+void testDispatchEvents() {
+  PlatformDispatcher.instance.onPointerDataPacket = (PointerDataPacket pointer) {
+    notifyNative();
+  };
+}

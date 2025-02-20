@@ -16,9 +16,9 @@ import 'package:flutter_tools/src/project.dart';
 import 'package:test/test.dart';
 import 'package:test_api/fake.dart';
 
-import '../../src/common.dart';
-import '../../src/context.dart';
-import '../../src/fakes.dart';
+import '../../../src/common.dart';
+import '../../../src/context.dart';
+import '../../../src/fakes.dart';
 
 void main() {
   group('WidgetPreviewStartCommand', () {
