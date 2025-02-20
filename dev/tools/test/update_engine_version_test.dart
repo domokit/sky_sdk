@@ -72,22 +72,6 @@ void main() {
     return run(executable, args);
   }
 
-  group('if FLUTTER_PREBUILT_ENGINE_VERSION is set', () {
-    setUp(() {
-      environment['FLUTTER_PREBUILT_ENGINE_VERSION'] = '123abc';
-    });
-
-    test('writes it to engine.version with no git interaction', () async {
-      runUpdateEngineVersion();
-
-      expect(testRoot.binInternalEngineVersion, exists);
-      expect(
-        testRoot.binInternalEngineVersion.readAsStringSync(),
-        equalsIgnoringWhitespace('123abc'),
-      );
-    });
-  });
-
   void setupRepo({required String branch}) {
     for (final File f in <File>[testRoot.deps, testRoot.engineSrcGn]) {
       f.createSync(recursive: true);
@@ -101,27 +85,75 @@ void main() {
     }
   }
 
+  const String engineVersionTrackedContents = 'already existing contents';
+  void setupTrackedEngineVersion() {
+    testRoot.binInternalEngineVersion.writeAsStringSync(engineVersionTrackedContents);
+    run('git', <String>['add', '-f', 'bin/internal/engine.version']);
+    run('git', <String>['commit', '-m', 'tracking engine.version']);
+  }
+
   void setupRemote({required String remote}) {
     run('git', <String>['remote', 'add', remote, testRoot.root.path]);
     run('git', <String>['fetch', remote]);
   }
 
+  group('if FLUTTER_PREBUILT_ENGINE_VERSION is set', () {
+    setUp(() {
+      environment['FLUTTER_PREBUILT_ENGINE_VERSION'] = '123abc';
+      setupRepo(branch: 'master');
+    });
+
+    test('writes it to engine.version with no git interaction', () async {
+      runUpdateEngineVersion();
+
+      expect(testRoot.binInternalEngineVersion, exists);
+      expect(
+        testRoot.binInternalEngineVersion.readAsStringSync(),
+        equalsIgnoringWhitespace('123abc'),
+      );
+    });
+  });
+
   test('writes nothing, even if files are set, if we are on "stable"', () async {
     setupRepo(branch: 'stable');
+    setupTrackedEngineVersion();
     setupRemote(remote: 'upstream');
 
     runUpdateEngineVersion();
 
-    expect(testRoot.binInternalEngineVersion, isNot(exists));
+    expect(testRoot.binInternalEngineVersion, exists);
+    expect(
+      testRoot.binInternalEngineVersion.readAsStringSync(),
+      equalsIgnoringWhitespace(engineVersionTrackedContents),
+    );
+  });
+
+  test('writes nothing, even if files are set, if we are on "3.29.0"', () async {
+    setupRepo(branch: '3.29.0');
+    setupTrackedEngineVersion();
+    setupRemote(remote: 'upstream');
+
+    runUpdateEngineVersion();
+
+    expect(testRoot.binInternalEngineVersion, exists);
+    expect(
+      testRoot.binInternalEngineVersion.readAsStringSync(),
+      equalsIgnoringWhitespace(engineVersionTrackedContents),
+    );
   });
 
   test('writes nothing, even if files are set, if we are on "beta"', () async {
     setupRepo(branch: 'beta');
+    setupTrackedEngineVersion();
     setupRemote(remote: 'upstream');
 
     runUpdateEngineVersion();
 
-    expect(testRoot.binInternalEngineVersion, isNot(exists));
+    expect(testRoot.binInternalEngineVersion, exists);
+    expect(
+      testRoot.binInternalEngineVersion.readAsStringSync(),
+      equalsIgnoringWhitespace(engineVersionTrackedContents),
+    );
   });
 
   group('if DEPS and engine/src/.gn are present, engine.version is derived from', () {
@@ -181,6 +213,8 @@ void main() {
       for (final File f in <File>[testRoot.deps, testRoot.engineSrcGn]) {
         f.createSync(recursive: true);
       }
+      setupRepo(branch: 'master');
+      setupRemote(remote: 'origin');
     });
 
     test('[DEPS] engine.version is blank', () async {
