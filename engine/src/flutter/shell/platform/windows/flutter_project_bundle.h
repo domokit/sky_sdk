@@ -67,6 +67,9 @@ class FlutterProjectBundle {
   // Returns the app's GPU preference.
   FlutterGpuPreference gpu_preference() const { return gpu_preference_; }
 
+  // Whether the UI isolate should be running on the platform thread.
+  bool merged_platform_ui_thread() const { return merged_platform_ui_thread_; }
+
  private:
   std::filesystem::path assets_path_;
   std::filesystem::path icu_path_;
@@ -85,6 +88,9 @@ class FlutterProjectBundle {
 
   // App's GPU preference.
   FlutterGpuPreference gpu_preference_;
+
+  // Whether the UI isolate should be running on the platform thread.
+  bool merged_platform_ui_thread_;
 };
 
 }  // namespace flutter

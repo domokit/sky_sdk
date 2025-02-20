@@ -925,21 +925,18 @@ TEST(FlutterWindowsViewTest, WindowResizeTests) {
         return kSuccess;
       }));
 
-  fml::AutoResetWaitableEvent resized_latch;
-  std::thread([&resized_latch, &view]() {
-    // Start the window resize. This sends the new window metrics
-    // and then blocks until another thread completes the window resize.
-    EXPECT_TRUE(view->OnWindowSizeChanged(500, 500));
-    resized_latch.Signal();
+  // Simulate raster thread.
+  std::thread([&metrics_sent_latch, &view]() {
+    metrics_sent_latch.Wait();
+    // Frame generated and presented from the raster thread.
+    EXPECT_TRUE(view->OnFrameGenerated(500, 500));
+    view->OnFramePresented();
   }).detach();
 
-  // Wait until the platform thread has started the window resize.
-  metrics_sent_latch.Wait();
-
-  // Complete the window resize by reporting a frame with the new window size.
-  ASSERT_TRUE(view->OnFrameGenerated(500, 500));
-  view->OnFramePresented();
-  resized_latch.Wait();
+  // Start the window resize. This sends the new window metrics
+  // and then blocks polling run loop until another thread completes the window
+  // resize.
+  EXPECT_TRUE(view->OnWindowSizeChanged(500, 500));
 }
 
 // Verify that an empty frame completes a view resize.
@@ -989,21 +986,18 @@ TEST(FlutterWindowsViewTest, TestEmptyFrameResizes) {
   engine_modifier.SetEGLManager(std::move(egl_manager));
   view_modifier.SetSurface(std::move(surface));
 
-  fml::AutoResetWaitableEvent resized_latch;
-  std::thread([&resized_latch, &view]() {
-    // Start the window resize. This sends the new window metrics
-    // and then blocks until another thread completes the window resize.
-    EXPECT_TRUE(view->OnWindowSizeChanged(500, 500));
-    resized_latch.Signal();
+  // Simulate raster thread.
+  std::thread([&metrics_sent_latch, &view]() {
+    metrics_sent_latch.Wait();
+
+    // Empty frame generated and presented from the raster thread.
+    EXPECT_TRUE(view->OnEmptyFrameGenerated());
+    view->OnFramePresented();
   }).detach();
 
-  // Wait until the platform thread has started the window resize.
-  metrics_sent_latch.Wait();
-
-  // Complete the window resize by reporting an empty frame.
-  view->OnEmptyFrameGenerated();
-  view->OnFramePresented();
-  resized_latch.Wait();
+  // Start the window resize. This sends the new window metrics
+  // and then blocks until another thread completes the window resize.
+  EXPECT_TRUE(view->OnWindowSizeChanged(500, 500));
 }
 
 // A window resize can be interleaved between a frame generation and
@@ -1038,15 +1032,7 @@ TEST(FlutterWindowsViewTest, WindowResizeRace) {
 
   // Inject a window resize between the frame generation and
   // frame presentation. The new size invalidates the current frame.
-  fml::AutoResetWaitableEvent resized_latch;
-  std::thread([&resized_latch, &view]() {
-    // The resize is never completed. The view times out and returns false.
-    EXPECT_FALSE(view->OnWindowSizeChanged(500, 500));
-    resized_latch.Signal();
-  }).detach();
-
-  // Wait until the platform thread has started the window resize.
-  resized_latch.Wait();
+  EXPECT_FALSE(view->OnWindowSizeChanged(500, 500));
 
   // Complete the invalidated frame while a resize is pending. Although this
   // might mean that we presented a frame with the wrong size, this should not

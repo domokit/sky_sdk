@@ -429,10 +429,8 @@ class FlutterWindowsView : public WindowBindingHandlerDelegate {
   // Currently configured WindowBindingHandler for view.
   std::unique_ptr<WindowBindingHandler> binding_handler_;
 
-  // Resize events are synchronized using this mutex and the corresponding
-  // condition variable.
+  // Protects resize_status_, resize_target_width_ and resize_target_height_.
   std::mutex resize_mutex_;
-  std::condition_variable resize_cv_;
 
   // Indicates the state of a window resize event. Platform thread will be
   // blocked while this is not done. Guarded by resize_mutex_.

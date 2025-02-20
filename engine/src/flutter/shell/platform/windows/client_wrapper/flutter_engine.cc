@@ -19,6 +19,8 @@ FlutterEngine::FlutterEngine(const DartProject& project) {
   c_engine_properties.dart_entrypoint = project.dart_entrypoint().c_str();
   c_engine_properties.gpu_preference =
       static_cast<FlutterDesktopGpuPreference>(project.gpu_preference());
+  c_engine_properties.merged_platform_ui_thread =
+      project.merged_platform_ui_thread();
 
   const std::vector<std::string>& entrypoint_args =
       project.dart_entrypoint_arguments();

@@ -1202,6 +1202,10 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 /// The [sheetAnimationStyle] parameter is used to override the modal bottom sheet
 /// animation duration and reverse animation duration.
 ///
+/// The [requestFocus] parameter is used to specify whether the bottom sheet should
+/// request focus when shown.
+/// {@macro flutter.widgets.navigator.Route.requestFocus}
+///
 /// If [AnimationStyle.duration] is provided, it will be used to override
 /// the modal bottom sheet animation duration in the underlying
 /// [BottomSheet.createAnimationController].
@@ -1254,6 +1258,7 @@ Future<T?> showModalBottomSheet<T>({
   AnimationController? transitionAnimationController,
   Offset? anchorPoint,
   AnimationStyle? sheetAnimationStyle,
+  bool? requestFocus,
 }) {
   assert(debugCheckHasMediaQuery(context));
   assert(debugCheckHasMaterialLocalizations(context));
@@ -1282,6 +1287,7 @@ Future<T?> showModalBottomSheet<T>({
       anchorPoint: anchorPoint,
       useSafeArea: useSafeArea,
       sheetAnimationStyle: sheetAnimationStyle,
+      requestFocus: requestFocus,
     ),
   );
 }

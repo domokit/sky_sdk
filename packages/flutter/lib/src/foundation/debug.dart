@@ -12,6 +12,7 @@ library;
 import 'dart:ui' as ui show Brightness;
 
 import 'assertions.dart';
+import 'memory_allocations.dart';
 import 'platform.dart';
 import 'print.dart';
 
@@ -132,3 +133,35 @@ String? activeDevToolsServerAddress;
 
 /// The uri for the connected vm service protocol.
 String? connectedVmServiceUri;
+
+/// If memory allocation tracking is enabled, dispatch object creation.
+///
+/// This method is not member of FlutterMemoryAllocations, because
+/// [FlutterMemoryAllocations] should not increase size of the Flutter application
+/// if memory allocations are disabled.
+///
+/// Should be called only from within an assert.
+///
+/// Returns true to make it easier to be wrapped into `assert`.
+bool debugMaybeDispatchObjectCreated(String library, String className, Object object) {
+  if (kFlutterMemoryAllocationsEnabled) {
+    FlutterMemoryAllocations.instance.dispatchObjectCreated(
+      library: library,
+      className: className,
+      object: object,
+    );
+  }
+  return true;
+}
+
+/// If memory allocations tracking is enabled, dispatch object disposal.
+///
+/// Should be called only from within an assert.
+///
+/// Returns true to make it easier to be wrapped into `assert`.
+bool debugMaybeDispatchObjectDisposed(Object object) {
+  if (kFlutterMemoryAllocationsEnabled) {
+    FlutterMemoryAllocations.instance.dispatchObjectDisposed(object: object);
+  }
+  return true;
+}

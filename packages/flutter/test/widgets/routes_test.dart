@@ -2656,6 +2656,53 @@ void main() {
       expect(focusScope.directionalTraversalEdgeBehavior, element);
     }
   });
+
+  testWidgets('requestFocus works correctly in showGeneralDialog.', (WidgetTester tester) async {
+    final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+    final FocusNode focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        navigatorKey: navigatorKey,
+        home: Scaffold(body: TextField(focusNode: focusNode)),
+      ),
+    );
+    focusNode.requestFocus();
+    await tester.pump();
+    expect(focusNode.hasFocus, true);
+
+    showGeneralDialog<void>(
+      context: navigatorKey.currentContext!,
+      requestFocus: true,
+      pageBuilder:
+          (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) => const Text('dialog'),
+    );
+    await tester.pumpAndSettle();
+    expect(FocusScope.of(tester.element(find.text('dialog'))).hasFocus, true);
+    expect(focusNode.hasFocus, false);
+
+    navigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(focusNode.hasFocus, true);
+
+    showGeneralDialog<void>(
+      context: navigatorKey.currentContext!,
+      requestFocus: false,
+      pageBuilder:
+          (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) => const Text('dialog'),
+    );
+    await tester.pumpAndSettle();
+    expect(FocusScope.of(tester.element(find.text('dialog'))).hasFocus, false);
+    expect(focusNode.hasFocus, true);
+  });
 }
 
 double _getOpacity(GlobalKey key, WidgetTester tester) {

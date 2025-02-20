@@ -1395,6 +1395,12 @@ Widget _buildMaterialDialogTransitions(
 /// [TraversalEdgeBehavior.closedLoop] is used, because it's typical for dialogs
 /// to allow users to cycle through dialog widgets without leaving the dialog.
 ///
+/// {@template flutter.material.dialog.requestFocus}
+/// The `requestFocus` argument is used to specify whether the dialog should
+/// request focus when shown.
+/// {@endtemplate}
+/// {@macro flutter.widgets.navigator.Route.requestFocus}
+///
 /// {@macro flutter.widgets.RawDialogRoute}
 ///
 /// If the application has multiple [Navigator] objects, it may be necessary to
@@ -1459,6 +1465,7 @@ Future<T?> showDialog<T>({
   RouteSettings? routeSettings,
   Offset? anchorPoint,
   TraversalEdgeBehavior? traversalEdgeBehavior,
+  bool? requestFocus,
 }) {
   assert(_debugIsActive(context));
   assert(debugCheckHasMaterialLocalizations(context));
@@ -1484,6 +1491,7 @@ Future<T?> showDialog<T>({
       themes: themes,
       anchorPoint: anchorPoint,
       traversalEdgeBehavior: traversalEdgeBehavior ?? TraversalEdgeBehavior.closedLoop,
+      requestFocus: requestFocus,
     ),
   );
 }
@@ -1507,6 +1515,7 @@ Future<T?> showAdaptiveDialog<T>({
   RouteSettings? routeSettings,
   Offset? anchorPoint,
   TraversalEdgeBehavior? traversalEdgeBehavior,
+  bool? requestFocus,
 }) {
   final ThemeData theme = Theme.of(context);
   switch (theme.platform) {
@@ -1525,6 +1534,7 @@ Future<T?> showAdaptiveDialog<T>({
         routeSettings: routeSettings,
         anchorPoint: anchorPoint,
         traversalEdgeBehavior: traversalEdgeBehavior,
+        requestFocus: requestFocus,
       );
     case TargetPlatform.iOS:
     case TargetPlatform.macOS:
@@ -1536,6 +1546,7 @@ Future<T?> showAdaptiveDialog<T>({
         useRootNavigator: useRootNavigator,
         anchorPoint: anchorPoint,
         routeSettings: routeSettings,
+        requestFocus: requestFocus,
       );
   }
 }

@@ -879,7 +879,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     });
   }
 
-  void handlePressed(MenuController controller) {
+  void handlePressed(MenuController controller, {bool focusForKeyboard = true}) {
     if (controller.isOpen) {
       currentHighlight = null;
       controller.close();
@@ -889,7 +889,9 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         _enableFilter = false;
       }
       controller.open();
-      _internalFocudeNode.requestFocus();
+      if (focusForKeyboard) {
+        _internalFocudeNode.requestFocus();
+      }
     }
     setState(() {});
   }
@@ -1047,7 +1049,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
               !widget.enabled
                   ? null
                   : () {
-                    handlePressed(controller);
+                    handlePressed(controller, focusForKeyboard: !canRequestFocus());
                   },
           onChanged: (String text) {
             controller.open();

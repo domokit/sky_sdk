@@ -92,6 +92,10 @@ void TaskRunner::PostTask(TaskClosure closure) {
   EnqueueTask(std::move(task));
 }
 
+void TaskRunner::PollOnce(std::chrono::milliseconds timeout) {
+  task_runner_window_->PollOnce(timeout);
+}
+
 void TaskRunner::EnqueueTask(Task task) {
   static std::atomic_uint64_t sGlobalTaskOrder(0);
 

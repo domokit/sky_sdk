@@ -46,6 +46,10 @@ class TaskRunner : public TaskRunnerWindow::Delegate {
   // Post a task to the event loop.
   void PostTask(TaskClosure task);
 
+  // Polls the event loop once. This will only process tasks scheduled through
+  // the task runner. It will not process messages sent to other windows.
+  void PollOnce(std::chrono::milliseconds timeout);
+
   // Post a task to the event loop or run it immediately if this is being called
   // from the runner's thread.
   void RunNowOrPostTask(TaskClosure task) {

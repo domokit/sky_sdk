@@ -1277,6 +1277,10 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 /// [StatefulBuilder] or a custom [StatefulWidget] if the widget needs to
 /// update dynamically.
 ///
+/// The [requestFocus] parameter is used to specify whether the popup should
+/// request focus when shown.
+/// {@macro flutter.widgets.navigator.Route.requestFocus}
+///
 /// {@macro flutter.widgets.RawDialogRoute}
 ///
 /// Returns a `Future` that resolves to the value that was passed to
@@ -1318,6 +1322,7 @@ Future<T?> showCupertinoModalPopup<T>({
   bool semanticsDismissible = false,
   RouteSettings? routeSettings,
   Offset? anchorPoint,
+  bool? requestFocus,
 }) {
   return Navigator.of(context, rootNavigator: useRootNavigator).push(
     CupertinoModalPopupRoute<T>(
@@ -1328,6 +1333,7 @@ Future<T?> showCupertinoModalPopup<T>({
       semanticsDismissible: semanticsDismissible,
       settings: routeSettings,
       anchorPoint: anchorPoint,
+      requestFocus: requestFocus,
     ),
   );
 }
@@ -1360,6 +1366,9 @@ Widget _buildCupertinoDialogTransitions(
 /// dialog to the [Navigator] furthest from or nearest to the given `context`.
 /// By default, `useRootNavigator` is `true` and the dialog route created by
 /// this method is pushed to the root navigator.
+///
+/// {@macro flutter.material.dialog.requestFocus}
+/// {@macro flutter.widgets.navigator.Route.requestFocus}
 ///
 /// {@macro flutter.widgets.RawDialogRoute}
 ///
@@ -1405,6 +1414,7 @@ Future<T?> showCupertinoDialog<T>({
   bool barrierDismissible = false,
   RouteSettings? routeSettings,
   Offset? anchorPoint,
+  bool? requestFocus,
 }) {
   return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(
     CupertinoDialogRoute<T>(
@@ -1415,6 +1425,7 @@ Future<T?> showCupertinoDialog<T>({
       barrierColor: CupertinoDynamicColor.resolve(kCupertinoModalBarrierColor, context),
       settings: routeSettings,
       anchorPoint: anchorPoint,
+      requestFocus: requestFocus,
     ),
   );
 }
