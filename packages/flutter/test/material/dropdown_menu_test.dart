@@ -4093,30 +4093,21 @@ void main() {
 
   testWidgets('DropdownMenu has SemanticsRole.comboBox in semantics', (WidgetTester tester) async {
     final SemanticsTester semantics = SemanticsTester(tester);
-    int? selectedValue;
 
     await tester.pumpWidget(
-      StatefulBuilder(
-        builder:
-            (BuildContext context, StateSetter setState) => MaterialApp(
-              home: Scaffold(
-                body: Center(
-                  child: DropdownMenu<int>(
-                    requestFocusOnTap: true,
-                    dropdownMenuEntries: const <DropdownMenuEntry<int>>[
-                      DropdownMenuEntry<int>(value: 0, label: 'Item 0'),
-                      DropdownMenuEntry<int>(value: 1, label: 'Item 1'),
-                      DropdownMenuEntry<int>(value: 2, label: 'Item 2'),
-                    ],
-                    onSelected: (int? value) {
-                      setState(() {
-                        selectedValue = value;
-                      });
-                    },
-                  ),
-                ),
-              ),
+      const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: DropdownMenu<int>(
+              requestFocusOnTap: true,
+              dropdownMenuEntries: <DropdownMenuEntry<int>>[
+                DropdownMenuEntry<int>(value: 0, label: 'Item 0'),
+                DropdownMenuEntry<int>(value: 1, label: 'Item 1'),
+                DropdownMenuEntry<int>(value: 2, label: 'Item 2'),
+              ],
             ),
+          ),
+        ),
       ),
     );
 
