@@ -2487,6 +2487,54 @@ void main() {
     expect(testWidth, equals(largestWidth));
     expect(widths.indexOf(largestWidth), equals(1));
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/39998
+
+  testWidgets('showTimeSeperator is only supported in time or dateAndTime mode', (
+    WidgetTester tester,
+  ) async {
+    expect(
+      () => CupertinoDatePicker(
+        mode: CupertinoDatePickerMode.time,
+        onDateTimeChanged: (DateTime _) {},
+        showTimeSeperator: true,
+      ),
+      returnsNormally,
+    );
+
+    expect(
+      () => CupertinoDatePicker(
+        mode: CupertinoDatePickerMode.dateAndTime,
+        onDateTimeChanged: (DateTime _) {},
+        showTimeSeperator: true,
+      ),
+      returnsNormally,
+    );
+
+    expect(
+      () => CupertinoDatePicker(
+        mode: CupertinoDatePickerMode.date,
+        onDateTimeChanged: (DateTime _) {},
+        showTimeSeperator: true,
+      ),
+      throwsA(
+        isA<AssertionError>().having(
+          (AssertionError e) => e.message ?? 'Unknown error',
+          'message',
+          contains('showTimeSeperator is only supported in time or dateAndTime modes'),
+        ),
+      ),
+    );
+
+    expect(
+      () => CupertinoDatePicker(onDateTimeChanged: (DateTime _) {}, showTimeSeperator: true),
+      throwsA(
+        isA<AssertionError>().having(
+          (AssertionError e) => e.message ?? 'Unknown error',
+          'message',
+          contains('showTimeSeperator is only supported in time or dateAndTime modes'),
+        ),
+      ),
+    );
+  });
 }
 
 Widget _buildPicker({
