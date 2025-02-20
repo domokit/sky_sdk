@@ -1431,6 +1431,10 @@ class _RenderDropdownMenuBody extends RenderBox
   @override
   void visitChildrenForSemantics(RenderObjectVisitor visitor) {
     visitChildren((RenderObject renderObjectChild) {
+      final RenderBox child = renderObjectChild as RenderBox;
+      if (child == firstChild) {
+        visitor(renderObjectChild);
+      }
       return;
     });
   }

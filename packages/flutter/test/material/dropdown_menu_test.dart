@@ -4126,8 +4126,28 @@ void main() {
                   children: <TestSemantics>[
                     TestSemantics(
                       id: 5,
-                      flags: <SemanticsFlag>[SemanticsFlag.hasExpandedState],
+                      flags: <SemanticsFlag>[
+                        SemanticsFlag.isTextField,
+                        SemanticsFlag.hasEnabledState,
+                        SemanticsFlag.isEnabled,
+                        SemanticsFlag.hasExpandedState,
+                      ],
+                      actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+                      textDirection: TextDirection.ltr,
                       role: SemanticsRole.comboBox,
+                      children: <TestSemantics>[
+                        TestSemantics(
+                          id: 6,
+                          flags: <SemanticsFlag>[
+                            SemanticsFlag.hasSelectedState,
+                            SemanticsFlag.isButton,
+                            SemanticsFlag.hasEnabledState,
+                            SemanticsFlag.isEnabled,
+                            SemanticsFlag.isFocusable,
+                          ],
+                          actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -4162,23 +4182,40 @@ void main() {
                     TestSemantics(
                       id: 5,
                       flags: <SemanticsFlag>[
+                        SemanticsFlag.isTextField,
+                        SemanticsFlag.hasEnabledState,
+                        SemanticsFlag.isEnabled,
                         SemanticsFlag.hasExpandedState,
                         SemanticsFlag.isExpanded,
                       ],
+                      actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+                      textDirection: TextDirection.ltr,
+                      textSelection: const TextSelection(baseOffset: 0, extentOffset: 0),
                       role: SemanticsRole.comboBox,
                       children: <TestSemantics>[
                         TestSemantics(
                           id: 6,
+                          flags: <SemanticsFlag>[
+                            SemanticsFlag.hasSelectedState,
+                            SemanticsFlag.isSelected,
+                            SemanticsFlag.isButton,
+                            SemanticsFlag.hasEnabledState,
+                            SemanticsFlag.isEnabled,
+                            SemanticsFlag.isFocusable,
+                          ],
+                          actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+                        ),
+                        TestSemantics(
+                          id: 7,
                           children: <TestSemantics>[
                             TestSemantics(
-                              id: 7,
+                              id: 8,
                               flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
                               children: <TestSemantics>[
                                 TestSemantics(
-                                  id: 8,
+                                  id: 9,
                                   label: 'Item 0',
                                   textDirection: TextDirection.ltr,
-
                                   flags: <SemanticsFlag>[
                                     SemanticsFlag.hasEnabledState,
                                     SemanticsFlag.isEnabled,
@@ -4190,7 +4227,7 @@ void main() {
                                   ],
                                 ),
                                 TestSemantics(
-                                  id: 10,
+                                  id: 11,
                                   label: 'Item 1',
                                   textDirection: TextDirection.ltr,
                                   flags: <SemanticsFlag>[
@@ -4204,7 +4241,7 @@ void main() {
                                   ],
                                 ),
                                 TestSemantics(
-                                  id: 12,
+                                  id: 13,
                                   label: 'Item 2',
                                   textDirection: TextDirection.ltr,
                                   flags: <SemanticsFlag>[
