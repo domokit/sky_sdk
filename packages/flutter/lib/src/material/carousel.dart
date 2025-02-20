@@ -131,6 +131,7 @@ class CarouselView extends StatefulWidget {
     this.reverse = false,
     this.onTap,
     this.enableSplash = true,
+    this.isInfinite = false,
     required double this.itemExtent,
     required this.children,
   }) : consumeMaxWeight = true,
@@ -447,60 +448,68 @@ class _CarouselViewState extends State<CarouselView> {
   }
 
   Widget _buildSliverCarousel(ThemeData theme) {
-    if (_itemExtent != null) {
-      return _SliverFixedExtentCarousel(
-        itemExtent: _itemExtent!,
-        minExtent: widget.shrinkExtent,
-        delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-          return _buildCarouselItem(theme, index);
-        }, childCount: widget.children.length),
-      );
-    }
-
-    assert(
-      _flexWeights != null && _flexWeights!.every((int weight) => weight > 0),
-      'flexWeights is null or it contains non-positive integers',
+  if (_itemExtent != null) {
+    return _SliverFixedExtentCarousel(
+      itemExtent: _itemExtent!,
+      minExtent: widget.shrinkExtent,
+      delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+        if (widget.isInfinite) {
+          index %= widget.children.length;  // Infinite scrolling logic
+        }
+        return _buildCarouselItem(theme, index);
+      }, childCount: widget.isInfinite ? null : widget.children.length),
     );
-    return _SliverWeightedCarousel(
+  }
+
+  assert(
+    _flexWeights != null && _flexWeights!.every((int weight) => weight > 0),
+    'flexWeights is null or it contains non-positive integers',
+  );
+
+  return _SliverWeightedCarousel(
       consumeMaxWeight: _consumeMaxWeight,
       shrinkExtent: widget.shrinkExtent,
       weights: _flexWeights!,
       delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+        if (widget.isInfinite) {
+          index %= widget.children.length;  // Infinite scrolling logic
+        }
         return _buildCarouselItem(theme, index);
-      }, childCount: widget.children.length),
+      }, childCount: widget.isInfinite ? null : widget.children.length),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final AxisDirection axisDirection = _getDirection(context);
-    final ScrollPhysics physics =
-        widget.itemSnapping
-            ? const CarouselScrollPhysics()
-            : ScrollConfiguration.of(context).getScrollPhysics(context);
+  final ThemeData theme = Theme.of(context);
+  final AxisDirection axisDirection = _getDirection(context);
+  final ScrollPhysics physics =
+      widget.itemSnapping
+          ? const CarouselScrollPhysics()
+          : ScrollConfiguration.of(context).getScrollPhysics(context);
 
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final double mainAxisExtent = switch (widget.scrollDirection) {
-          Axis.horizontal => constraints.maxWidth,
-          Axis.vertical => constraints.maxHeight,
-        };
-        _itemExtent =
-            _itemExtent == null ? _itemExtent : clampDouble(_itemExtent!, 0, mainAxisExtent);
+  return LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints constraints) {
+      final double mainAxisExtent = widget.scrollDirection == Axis.horizontal
+          ? constraints.maxWidth
+          : constraints.maxHeight;
 
-        return Scrollable(
-          axisDirection: axisDirection,
-          controller: _controller,
-          physics: physics,
-          viewportBuilder: (BuildContext context, ViewportOffset position) {
-            return Viewport(
-              cacheExtent: 0.0,
-              cacheExtentStyle: CacheExtentStyle.viewport,
-              axisDirection: axisDirection,
-              offset: position,
-              clipBehavior: Clip.antiAlias,
-              slivers: <Widget>[_buildSliverCarousel(theme)],
+      _itemExtent = _itemExtent == null ? _itemExtent : clampDouble(_itemExtent!, 0, mainAxisExtent);
+
+      return Scrollable(
+        axisDirection: axisDirection,
+        controller: _controller,
+        physics: physics,
+        viewportBuilder: (BuildContext context, ViewportOffset position) {
+          return Viewport(
+            cacheExtent: 0.0,
+            cacheExtentStyle: CacheExtentStyle.viewport,
+            axisDirection: axisDirection,
+            offset: position,
+            clipBehavior: Clip.antiAlias,
+            slivers: <Widget>[
+              _buildSliverCarousel(theme, isInfinite: widget.isInfinite)
+              ],
             );
           },
         );
