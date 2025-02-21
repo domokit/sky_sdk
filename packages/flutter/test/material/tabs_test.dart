@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This file is run as part of a reduced test set in CI on Mac and Windows
-// machines.
-@Tags(<String>['reduced-test-set'])
-library;
-
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -3755,8 +3750,8 @@ void main() {
         strokeWidth: indicatorWeight,
         // In RTL, the elastic tab animation expands the width of the tab with a negative offset
         // when jumping from the first tab to the last tab in a scrollable tab bar.
-        p1: const Offset(-480149, indicatorY),
-        p2: const Offset(-480051, indicatorY),
+        p1: const Offset(4951.0, indicatorY),
+        p2: const Offset(5049.0, indicatorY),
       ),
     );
 
@@ -7818,73 +7813,18 @@ void main() {
     );
   });
 
-  testWidgets('Elastic Tab animation with various size tabs - LTR', (WidgetTester tester) async {
-    final AnimationSheetBuilder animationSheet = AnimationSheetBuilder(
-      frameSize: const Size(800, 100),
-    );
-    addTearDown(animationSheet.dispose);
-
-    final List<Widget> tabs = <Widget>[
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
-    ];
-
-    final TabController controller = createTabController(
-      vsync: const TestVSync(),
-      length: tabs.length,
-    );
-
-    Widget target() {
-      return animationSheet.record(
-        boilerplate(
-          child: Container(
-            alignment: Alignment.topLeft,
-            child: TabBar(
-              indicatorAnimation: TabIndicatorAnimation.elastic,
-              controller: controller,
-              tabs: tabs,
-            ),
-          ),
-        ),
-      );
-    }
-
-    await tester.pumpFrames(target(), const Duration(milliseconds: 50));
-
-    await tester.tap(find.text('Extremely Very Long Label'));
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
-
-    await tester.tap(find.text('C'));
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
-
-    await expectLater(
-      animationSheet.collate(1),
-      matchesGoldenFile('tab_indicator.elastic_animation.various_size_tabs.ltr.png'),
-    );
-  }, skip: isBrowser); // https://github.com/flutter/flutter/issues/56001
-
-  testWidgets('Elastic Tab animation with various size tabs in a scrollable tab bar - LTR', (
+  testWidgets('Elastic Tab animation does not overflow target tab - LTR', (
     WidgetTester tester,
   ) async {
-    final AnimationSheetBuilder animationSheet = AnimationSheetBuilder(
-      frameSize: const Size(800, 100),
-    );
-    addTearDown(animationSheet.dispose);
-
     final List<Widget> tabs = <Widget>[
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
+      const Tab(text: 'Short'),
+      const Tab(text: 'A Bit Longer Text'),
+      const Tab(text: 'An Extremely Long Tab Label That Overflows'),
+      const Tab(text: 'Tiny'),
+      const Tab(text: 'Moderate Length'),
+      const Tab(text: 'Just Right'),
+      const Tab(text: 'Supercalifragilisticexpialidocious'),
+      const Tab(text: 'Longer Than Usual'),
     ];
 
     final TabController controller = createTabController(
@@ -7892,104 +7832,93 @@ void main() {
       length: tabs.length,
     );
 
-    Widget target() {
-      return animationSheet.record(
-        boilerplate(
-          child: Container(
-            alignment: Alignment.topLeft,
-            child: TabBar(
-              indicatorAnimation: TabIndicatorAnimation.elastic,
-              isScrollable: true,
-              controller: controller,
-              tabs: tabs,
-            ),
+    Widget buildTabBar() {
+      return boilerplate(
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            indicatorAnimation: TabIndicatorAnimation.elastic,
+            controller: controller,
+            tabs: tabs,
           ),
         ),
       );
     }
 
-    await tester.pumpFrames(target(), const Duration(milliseconds: 50));
+    await tester.pumpWidget(buildTabBar());
 
-    controller.animateTo(tabs.length - 1);
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
-    controller.animateTo(0);
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
+    double indicatorLeft = 92.50662931979836;
+    double indicatorRight = 241.31938023664574;
+    final Rect labelRect = tester.getRect(find.byType(Tab).at(2));
 
-    await expectLater(
-      animationSheet.collate(1),
-      matchesGoldenFile('tab_indicator.elastic_animation.various_size_tabs.scrollable.ltr.png'),
-    );
-  }, skip: isBrowser); // https://github.com/flutter/flutter/issues/56001
-
-  testWidgets('Elastic Tab animation with various size tabs - RTL', (WidgetTester tester) async {
-    final AnimationSheetBuilder animationSheet = AnimationSheetBuilder(
-      frameSize: const Size(800, 100),
-    );
-    addTearDown(animationSheet.dispose);
-
-    final List<Widget> tabs = <Widget>[
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
-    ];
-
-    final TabController controller = createTabController(
-      vsync: const TestVSync(),
-      length: tabs.length,
-    );
-
-    Widget target() {
-      return animationSheet.record(
-        boilerplate(
-          textDirection: TextDirection.rtl,
-          child: Container(
-            alignment: Alignment.topLeft,
-            child: TabBar(
-              indicatorAnimation: TabIndicatorAnimation.elastic,
-              controller: controller,
-              tabs: tabs,
-            ),
-          ),
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
         ),
-      );
-    }
-
-    await tester.pumpFrames(target(), const Duration(milliseconds: 50));
-
-    await tester.tap(find.text('Extremely Very Long Label'));
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
-
-    await tester.tap(find.text('C'));
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
-
-    await expectLater(
-      animationSheet.collate(1),
-      matchesGoldenFile('tab_indicator.elastic_animation.various_size_tabs.rtl.png'),
+      ),
     );
-  }, skip: isBrowser); // https://github.com/flutter/flutter/issues/56001
+    expect(indicatorRight, lessThan(labelRect.right));
 
-  testWidgets('Elastic Tab animation with various size tabs in a scrollable tab bar - RTL', (
+    await tester.pump(const Duration(milliseconds: 100));
+
+    indicatorLeft = 192.50227846755732;
+    indicatorRight = 282.61484607849377;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorRight, lessThan(labelRect.right));
+
+    // Let the animation complete.
+    await tester.pump(const Duration(milliseconds: 200));
+
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+  });
+
+  testWidgets('Elastic Tab animation does not overflow target tab - RTL', (
     WidgetTester tester,
   ) async {
-    final AnimationSheetBuilder animationSheet = AnimationSheetBuilder(
-      frameSize: const Size(800, 100),
-    );
-    addTearDown(animationSheet.dispose);
-
     final List<Widget> tabs = <Widget>[
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
+      const Tab(text: 'Short'),
+      const Tab(text: 'A Bit Longer Text'),
+      const Tab(text: 'An Extremely Long Tab Label That Overflows'),
+      const Tab(text: 'Tiny'),
+      const Tab(text: 'Moderate Length'),
+      const Tab(text: 'Just Right'),
+      const Tab(text: 'Supercalifragilisticexpialidocious'),
+      const Tab(text: 'Longer Than Usual'),
     ];
 
     final TabController controller = createTabController(
@@ -7997,82 +7926,935 @@ void main() {
       length: tabs.length,
     );
 
-    Widget target() {
-      return animationSheet.record(
-        boilerplate(
-          textDirection: TextDirection.rtl,
-          child: Container(
-            alignment: Alignment.topLeft,
-            child: TabBar(
-              indicatorAnimation: TabIndicatorAnimation.elastic,
-              isScrollable: true,
-              controller: controller,
-              tabs: tabs,
-            ),
+    Widget buildTabBar() {
+      return boilerplate(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            indicatorAnimation: TabIndicatorAnimation.elastic,
+            controller: controller,
+            tabs: tabs,
           ),
         ),
       );
     }
 
-    await tester.pumpFrames(target(), const Duration(milliseconds: 50));
+    await tester.pumpWidget(buildTabBar());
 
-    controller.animateTo(tabs.length - 1);
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
-    controller.animateTo(0);
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
-
-    await expectLater(
-      animationSheet.collate(1),
-      matchesGoldenFile('tab_indicator.elastic_animation.various_size_tabs.scrollable.rtl.png'),
+    double indicatorLeft = 558.6806197633543;
+    double indicatorRight = 707.4933706802017;
+    final Rect labelRect = tester.getRect(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
     );
-  }, skip: isBrowser); // https://github.com/flutter/flutter/issues/56001
+    expect(indicatorLeft, greaterThan(labelRect.left));
+
+    await tester.pump(const Duration(milliseconds: 100));
+
+    indicatorLeft = 517.3851539215062;
+    indicatorRight = 607.497721532442;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, greaterThan(labelRect.left));
+
+    // Let the animation complete.
+    await tester.pump(const Duration(milliseconds: 200));
+
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+  });
+
+  testWidgets('Linear Tab animation does not overflow target tab - LTR', (
+    WidgetTester tester,
+  ) async {
+    final List<Widget> tabs = <Widget>[
+      const Tab(text: 'Short'),
+      const Tab(text: 'A Bit Longer Text'),
+      const Tab(text: 'An Extremely Long Tab Label That Overflows'),
+      const Tab(text: 'Tiny'),
+      const Tab(text: 'Moderate Length'),
+      const Tab(text: 'Just Right'),
+      const Tab(text: 'Supercalifragilisticexpialidocious'),
+      const Tab(text: 'Longer Than Usual'),
+    ];
+
+    final TabController controller = createTabController(
+      vsync: const TestVSync(),
+      length: tabs.length,
+    );
+
+    Widget buildTabBar() {
+      return boilerplate(
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            indicatorAnimation: TabIndicatorAnimation.linear,
+            controller: controller,
+            tabs: tabs,
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildTabBar());
+
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    double indicatorLeft = 131.26358723640442;
+    double indicatorRight = 199.26358723640442;
+    final Rect labelRect = tester.getRect(find.byType(Tab).at(2));
+
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorRight, lessThan(labelRect.right));
+
+    await tester.pump(const Duration(milliseconds: 100));
+
+    indicatorLeft = 201.00625545158982;
+    indicatorRight = 269.0062554515898;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorRight, lessThan(labelRect.right));
+
+    // Let the animation complete.
+    await tester.pump(const Duration(milliseconds: 200));
+
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+  });
+
+  testWidgets('Linear Tab animation does not overflow target tab - RTL', (
+    WidgetTester tester,
+  ) async {
+    final List<Widget> tabs = <Widget>[
+      const Tab(text: 'Short'),
+      const Tab(text: 'A Bit Longer Text'),
+      const Tab(text: 'An Extremely Long Tab Label That Overflows'),
+      const Tab(text: 'Tiny'),
+      const Tab(text: 'Moderate Length'),
+      const Tab(text: 'Just Right'),
+      const Tab(text: 'Supercalifragilisticexpialidocious'),
+      const Tab(text: 'Longer Than Usual'),
+    ];
+
+    final TabController controller = createTabController(
+      vsync: const TestVSync(),
+      length: tabs.length,
+    );
+
+    Widget buildTabBar() {
+      return boilerplate(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            indicatorAnimation: TabIndicatorAnimation.linear,
+            controller: controller,
+            tabs: tabs,
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildTabBar());
+
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    double indicatorLeft = 600.7364127635956;
+    double indicatorRight = 668.7364127635956;
+    final Rect labelRect = tester.getRect(find.byType(Tab).at(2));
+
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, greaterThan(labelRect.left));
+
+    await tester.pump(const Duration(milliseconds: 100));
+
+    indicatorLeft = 530.9937445484102;
+    indicatorRight = 598.9937445484102;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, greaterThan(labelRect.left));
+
+    // Let the animation complete.
+    await tester.pump(const Duration(milliseconds: 200));
+
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+  });
+
+  testWidgets('Elastic Tab animation does not overflow target tab in a scrollable tab bar - LTR', (
+    WidgetTester tester,
+  ) async {
+    final List<Widget> tabs = <Widget>[
+      const Tab(text: 'Short'),
+      const Tab(text: 'A Bit Longer Text'),
+      const Tab(text: 'An Extremely Long Tab Label That Overflows'),
+      const Tab(text: 'Tiny'),
+      const Tab(text: 'Moderate Length'),
+      const Tab(text: 'Just Right'),
+      const Tab(text: 'Supercalifragilisticexpialidocious'),
+      const Tab(text: 'Longer Than Usual'),
+    ];
+
+    final TabController controller = createTabController(
+      vsync: const TestVSync(),
+      length: tabs.length,
+    );
+
+    Widget buildTabBar() {
+      return boilerplate(
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            isScrollable: true,
+            indicatorAnimation: TabIndicatorAnimation.elastic,
+            controller: controller,
+            tabs: tabs,
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildTabBar());
+
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    double indicatorLeft = 159.14390228994424;
+    double indicatorRight = 791.2121709715643;
+    Offset labelRectRight = tester.getBottomRight(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorRight, lessThan(labelRectRight.dx));
+
+    await tester.pump(const Duration(milliseconds: 100));
+
+    indicatorLeft = 346.2357603195887;
+    indicatorRight = 976.195212100479;
+    labelRectRight = tester.getBottomRight(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, lessThan(labelRectRight.dx));
+
+    // Let the animation complete.
+    await tester.pump(const Duration(milliseconds: 200));
+
+    indicatorLeft = 390.1999969482422;
+    indicatorRight = 982.4000091552734;
+    labelRectRight = tester.getBottomRight(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, lessThan(labelRectRight.dx));
+  });
+
+  testWidgets('Elastic Tab animation does not overflow target tab in a scrollable tab bar - RTL', (
+    WidgetTester tester,
+  ) async {
+    final List<Widget> tabs = <Widget>[
+      const Tab(text: 'Short'),
+      const Tab(text: 'A Bit Longer Text'),
+      const Tab(text: 'An Extremely Long Tab Label That Overflows'),
+      const Tab(text: 'Tiny'),
+      const Tab(text: 'Moderate Length'),
+      const Tab(text: 'Just Right'),
+      const Tab(text: 'Supercalifragilisticexpialidocious'),
+      const Tab(text: 'Longer Than Usual'),
+    ];
+
+    final TabController controller = createTabController(
+      vsync: const TestVSync(),
+      length: tabs.length,
+    );
+
+    Widget buildTabBar() {
+      return boilerplate(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            isScrollable: true,
+            indicatorAnimation: TabIndicatorAnimation.elastic,
+            controller: controller,
+            tabs: tabs,
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildTabBar());
+
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    double indicatorLeft = 1495.1878305543146;
+    double indicatorRight = 2127.2560992359345;
+    Offset labelRectLeft = tester.getBottomLeft(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, greaterThan(labelRectLeft.dx));
+
+    await tester.pump(const Duration(milliseconds: 100));
+
+    indicatorLeft = 1310.2047894254;
+    indicatorRight = 1940.1642412062902;
+    labelRectLeft = tester.getBottomLeft(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, greaterThan(labelRectLeft.dx));
+
+    // Let the animation complete.
+    await tester.pump(const Duration(milliseconds: 200));
+
+    indicatorLeft = 1303.9999923706055;
+    indicatorRight = 1896.2000045776367;
+    labelRectLeft = tester.getBottomLeft(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, greaterThan(labelRectLeft.dx));
+  });
+
+  testWidgets('Linear Tab animation does not overflow target tab in a scrollable tab bar - LTR', (
+    WidgetTester tester,
+  ) async {
+    final List<Widget> tabs = <Widget>[
+      const Tab(text: 'Short'),
+      const Tab(text: 'A Bit Longer Text'),
+      const Tab(text: 'An Extremely Long Tab Label That Overflows'),
+      const Tab(text: 'Tiny'),
+      const Tab(text: 'Moderate Length'),
+      const Tab(text: 'Just Right'),
+      const Tab(text: 'Supercalifragilisticexpialidocious'),
+      const Tab(text: 'Longer Than Usual'),
+    ];
+
+    final TabController controller = createTabController(
+      vsync: const TestVSync(),
+      length: tabs.length,
+    );
+
+    Widget buildTabBar() {
+      return boilerplate(
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            isScrollable: true,
+            indicatorAnimation: TabIndicatorAnimation.linear,
+            controller: controller,
+            tabs: tabs,
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildTabBar());
+
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    double indicatorLeft = 159.9711660555031;
+    double indicatorRight = 453.47531034110943;
+    Offset labelRectRight = tester.getBottomRight(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorRight, lessThan(labelRectRight.dx));
+
+    await tester.pump(const Duration(milliseconds: 100));
+
+    indicatorLeft = 349.4619934677845;
+    indicatorRight = 888.8090538538061;
+    labelRectRight = tester.getBottomRight(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, lessThan(labelRectRight.dx));
+
+    // Let the animation complete.
+    await tester.pump(const Duration(milliseconds: 200));
+
+    indicatorLeft = 390.1999969482422;
+    indicatorRight = 982.4000091552734;
+    labelRectRight = tester.getBottomRight(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, lessThan(labelRectRight.dx));
+  });
+
+  testWidgets('Linear Tab animation does not overflow target tab in a scrollable tab bar - RTL', (
+    WidgetTester tester,
+  ) async {
+    final List<Widget> tabs = <Widget>[
+      const Tab(text: 'Short'),
+      const Tab(text: 'A Bit Longer Text'),
+      const Tab(text: 'An Extremely Long Tab Label That Overflows'),
+      const Tab(text: 'Tiny'),
+      const Tab(text: 'Moderate Length'),
+      const Tab(text: 'Just Right'),
+      const Tab(text: 'Supercalifragilisticexpialidocious'),
+      const Tab(text: 'Longer Than Usual'),
+    ];
+
+    final TabController controller = createTabController(
+      vsync: const TestVSync(),
+      length: tabs.length,
+    );
+
+    Widget buildTabBar() {
+      return boilerplate(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            isScrollable: true,
+            indicatorAnimation: TabIndicatorAnimation.linear,
+            controller: controller,
+            tabs: tabs,
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildTabBar());
+
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    double indicatorLeft = 1832.9246911847695;
+    double indicatorRight = 2126.428835470376;
+    Offset labelRectRight = tester.getBottomRight(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, greaterThan(labelRectRight.dx));
+
+    await tester.pump(const Duration(milliseconds: 100));
+
+    indicatorLeft = 1397.590947672073;
+    indicatorRight = 1936.9380080580945;
+    labelRectRight = tester.getBottomRight(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, greaterThan(labelRectRight.dx));
+
+    // Let the animation complete.
+    await tester.pump(const Duration(milliseconds: 200));
+
+    indicatorLeft = 1303.9999923706055;
+    indicatorRight = 1896.2000045776367;
+    labelRectRight = tester.getBottomRight(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+    expect(indicatorLeft, greaterThan(labelRectRight.dx));
+  });
 
   // Regression test for https://github.com/flutter/flutter/issues/160631
   testWidgets('Elastic Tab animation when skipping tabs', (WidgetTester tester) async {
-    final AnimationSheetBuilder animationSheet = AnimationSheetBuilder(
-      frameSize: const Size(800, 100),
-    );
-    addTearDown(animationSheet.dispose);
-
-    final List<Widget> tabs = <Widget>[
-      const Tab(text: 'Medium'),
-      const Tab(text: 'Extremely Very Long Label'),
-      const Tab(text: 'C'),
-      const Tab(text: 'Short'),
-    ];
+    final List<Widget> tabs = List<Widget>.generate(10, (int index) => Tab(text: 'Tab $index'));
 
     final TabController controller = createTabController(
       vsync: const TestVSync(),
       length: tabs.length,
     );
 
-    Widget target() {
-      return animationSheet.record(
-        boilerplate(
-          child: Container(
-            alignment: Alignment.topLeft,
-            child: TabBar(
-              indicatorAnimation: TabIndicatorAnimation.elastic,
-              controller: controller,
-              tabs: tabs,
-            ),
+    Widget buildTabBar() {
+      return boilerplate(
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            indicatorAnimation: TabIndicatorAnimation.elastic,
+            controller: controller,
+            tabs: tabs,
           ),
         ),
       );
     }
 
-    await tester.pumpFrames(target(), const Duration(milliseconds: 50));
+    await tester.pumpWidget(buildTabBar());
 
-    await tester.tap(find.text('C'));
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
 
-    await tester.tap(find.text('Medium'));
-    await tester.pumpFrames(target(), const Duration(milliseconds: 500));
-
-    await expectLater(
-      animationSheet.collate(1),
-      matchesGoldenFile('tab_indicator.elastic_animation.skipping_tabs.png'),
+    double indicatorLeft = 157.20182277404584;
+    double indicatorRight = 222.89187686279502;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
     );
-  }, skip: isBrowser); // https://github.com/flutter/flutter/issues/56001
+
+    await tester.pumpAndSettle();
+
+    Rect labelRect = tester.getRect(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(Tab).last);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+
+    indicatorLeft = 670.2063797091604;
+    indicatorRight = 780.1215690197826;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    labelRect = tester.getRect(find.byType(Tab).last);
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(Tab).at(1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+
+    indicatorLeft = 100.43249254881991;
+    indicatorRight = 219.19270890381662;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    labelRect = tester.getRect(find.byType(Tab).at(1));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/162098
+  testWidgets('Linear Tab animation when skipping tabs', (WidgetTester tester) async {
+    final List<Widget> tabs = List<Widget>.generate(10, (int index) => Tab(text: 'Tab $index'));
+
+    final TabController controller = createTabController(
+      vsync: const TestVSync(),
+      length: tabs.length,
+    );
+
+    Widget buildTabBar() {
+      return boilerplate(
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: TabBar(
+            indicatorAnimation: TabIndicatorAnimation.linear,
+            controller: controller,
+            tabs: tabs,
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildTabBar());
+
+    await tester.tap(find.byType(Tab).at(2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+
+    double indicatorLeft = 164.00500436127186;
+    double indicatorRight = 212.00500436127186;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    Rect labelRect = tester.getRect(find.byType(Tab).at(2));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(Tab).last);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+
+    indicatorLeft = 694.0175152644515;
+    indicatorRight = 742.0175152644515;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    labelRect = tester.getRect(find.byType(Tab).last);
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(Tab).at(1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+
+    indicatorLeft = 143.97998255491257;
+    indicatorRight = 191.97998255491257;
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          indicatorLeft,
+          45.0,
+          indicatorRight,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    labelRect = tester.getRect(find.byType(Tab).at(1));
+    expect(
+      find.byType(TabBar),
+      paints..rrect(
+        rrect: RRect.fromLTRBAndCorners(
+          labelRect.left,
+          45.0,
+          labelRect.right,
+          48.0,
+          topLeft: const Radius.circular(3.0),
+          topRight: const Radius.circular(3.0),
+        ),
+      ),
+    );
+  });
 }
