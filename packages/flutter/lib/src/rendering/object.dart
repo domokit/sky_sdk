@@ -626,6 +626,39 @@ class PaintingContext extends ClipContext {
     }
   }
 
+  ClipRSuperellipseLayer? pushClipRSuperellipse(
+    bool needsCompositing,
+    Offset offset,
+    Rect bounds,
+    RSuperellipse clipRSuperellipse,
+    PaintingContextCallback painter, {
+    Clip clipBehavior = Clip.antiAlias,
+    ClipRSuperellipseLayer? oldLayer,
+  }) {
+    if (clipBehavior == Clip.none) {
+      painter(this, offset);
+      return null;
+    }
+    final Rect offsetBounds = bounds.shift(offset);
+    final RSuperellipse offsetShape = clipRSuperellipse.shift(offset);
+    if (needsCompositing) {
+      final ClipRSuperellipseLayer layer = oldLayer ?? ClipRSuperellipseLayer();
+      layer
+        ..clipRSuperellipse = offsetShape
+        ..clipBehavior = clipBehavior;
+      pushLayer(layer, painter, offset, childPaintBounds: offsetBounds);
+      return layer;
+    } else {
+      clipRSuperellipseAndPaint(
+        offsetShape,
+        clipBehavior,
+        offsetBounds,
+        () => painter(this, offset),
+      );
+      return null;
+    }
+  }
+
   /// Clip further painting using a path.
   ///
   /// {@macro flutter.rendering.PaintingContext.pushClipRect.needsCompositing}

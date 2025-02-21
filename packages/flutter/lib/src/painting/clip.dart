@@ -5,7 +5,7 @@
 /// @docImport 'package:flutter/rendering.dart';
 library;
 
-import 'dart:ui' show Canvas, Clip, Paint, Path, RRect, Rect, VoidCallback;
+import 'dart:ui' show Canvas, Clip, Paint, Path, RRect, RSuperellipse, Rect, VoidCallback;
 
 /// Clip utilities used by [PaintingContext].
 abstract class ClipContext {
@@ -57,6 +57,25 @@ abstract class ClipContext {
   void clipRRectAndPaint(RRect rrect, Clip clipBehavior, Rect bounds, VoidCallback painter) {
     _clipAndPaint(
       (bool doAntiAlias) => canvas.clipRRect(rrect, doAntiAlias: doAntiAlias),
+      clipBehavior,
+      bounds,
+      painter,
+    );
+  }
+
+  /// Clip [canvas] with [Path] according to the given rounded superellipse and
+  /// then paint. [canvas] is restored to the pre-clip status afterwards.
+  ///
+  /// The `bounds` is the saveLayer bounds used for
+  /// [Clip.antiAliasWithSaveLayer].
+  void clipRSuperellipseAndPaint(
+    RSuperellipse rse,
+    Clip clipBehavior,
+    Rect bounds,
+    VoidCallback painter,
+  ) {
+    _clipAndPaint(
+      (bool doAntiAlias) => canvas.clipRSuperellipse(rse, doAntiAlias: doAntiAlias),
       clipBehavior,
       bounds,
       painter,

@@ -965,6 +965,11 @@ class ClipRect extends SingleChildRenderObjectWidget {
 ///
 ///  * [CustomClipper], for information about creating custom clips.
 ///  * [ClipRect], for more efficient clips without rounded corners.
+///  * [ClipRSuperellipse], for a similar clipping shape with smoother
+///    transitions between the straight sides and the rounded corners. This
+///    shape closely matches the rounded rectangles commonly used in Apple’s
+///    design language, resembling the `RoundedRectangle` shape in SwiftUI with
+///    the `.continuous` corner style.
 ///  * [ClipOval], for an elliptical clip.
 ///  * [ClipPath], for an arbitrarily shaped clip.
 class ClipRRect extends SingleChildRenderObjectWidget {
@@ -1032,6 +1037,87 @@ class ClipRRect extends SingleChildRenderObjectWidget {
     );
     properties.add(
       DiagnosticsProperty<CustomClipper<RRect>>('clipper', clipper, defaultValue: null),
+    );
+  }
+}
+
+/// A widget that clips its child using a rounded superellipse.
+///
+/// A rounded superellipse is a shape similar to a typical rounded rectangle
+/// ([ClipRRect]), but with smoother transitions between the straight sides and
+/// the rounded corners. It resembles the `RoundedRectangle` shape in SwiftUI
+/// with the `.continuous` corner style. Technically, it is created by replacing
+/// the four corners of a superellipse (also known as a Lamé curve) with
+/// circular arcs.
+///
+/// By default, [ClipRSuperellipse] uses its own bounds as the base rectangle
+/// for the clip, but the size and location of the clip can be customized using
+/// a custom [clipper].
+///
+/// See also:
+///
+///  * [CustomClipper], for information about creating custom clips.
+///  * [ClipRect], for more efficient clips without rounded corners.
+///  * [ClipRRect], for a typical rounded rectangle, which is created by
+///    replacing the four corners of a rectangle with circular arcs.
+///  * [ClipOval], for an elliptical clip.
+///  * [ClipPath], for an arbitrarily shaped clip.
+class ClipRSuperellipse extends SingleChildRenderObjectWidget {
+  /// Creates a rounded-superellipse clip.
+  ///
+  /// The [borderRadius] defaults to [BorderRadius.zero], i.e. a rectangle with
+  /// right-angled corners.
+  ///
+  /// If [clipBehavior] is [Clip.none], no clipping will be applied.
+  const ClipRSuperellipse({
+    super.key,
+    this.borderRadius = BorderRadius.zero,
+    this.clipper,
+    this.clipBehavior = Clip.antiAlias,
+    super.child,
+  });
+
+  /// The border radius of the rounded corners.
+  ///
+  /// Values are clamped so that horizontal and vertical radii sums do not
+  /// exceed width/height.
+  ///
+  /// This value is ignored if [clipper] is non-null.
+  final BorderRadiusGeometry borderRadius;
+
+  /// If non-null, determines which clip to use.
+  final CustomClipper<RSuperellipse>? clipper;
+
+  /// {@macro flutter.rendering.ClipRectLayer.clipBehavior}
+  ///
+  /// Defaults to [Clip.antiAlias].
+  final Clip clipBehavior;
+
+  @override
+  RenderClipRSuperellipse createRenderObject(BuildContext context) {
+    return RenderClipRSuperellipse(
+      borderRadius: borderRadius,
+      clipBehavior: clipBehavior,
+      clipper: clipper,
+      textDirection: Directionality.maybeOf(context),
+    );
+  }
+
+  @override
+  void updateRenderObject(BuildContext context, RenderClipRSuperellipse renderObject) {
+    renderObject
+      ..borderRadius = borderRadius
+      ..clipBehavior = clipBehavior
+      ..clipper = clipper
+      ..textDirection = Directionality.maybeOf(context);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('borderRadius', borderRadius, defaultValue: 0));
+    properties.add(
+      DiagnosticsProperty<CustomClipper<RSuperellipse>>('clipper', clipper, defaultValue: null),
     );
   }
 }
