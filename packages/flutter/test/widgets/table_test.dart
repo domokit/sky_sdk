@@ -76,6 +76,7 @@ void main() {
   testWidgets('Table widget calculate depth', (WidgetTester tester) async {
     final UniqueKey outerTable = UniqueKey();
     final UniqueKey innerTable = UniqueKey();
+    final UniqueKey cell = UniqueKey();
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -84,11 +85,14 @@ void main() {
           children: <TableRow>[
             TableRow(
               children: <Widget>[
-                Table(
-                  key: innerTable,
-                  children: const <TableRow>[
-                    TableRow(children: <Widget>[Text('AAAAAA'), Text('B'), Text('C')]),
-                  ],
+                TableCell(
+                  key: cell,
+                  child: Table(
+                    key: innerTable,
+                    children: const <TableRow>[
+                      TableRow(children: <Widget>[Text('AAAAAA'), Text('B'), Text('C')]),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -97,9 +101,11 @@ void main() {
       ),
     );
     final RenderObject outerTableRenderObject = tester.renderObject(find.byKey(outerTable));
+    final RenderObject cellRenderObject = tester.renderObject(find.byKey(cell));
     final RenderObject innerTableRenderObject = tester.renderObject(find.byKey(innerTable));
     final RenderObject textRenderObject = tester.renderObject(find.text('AAAAAA'));
-    expect(outerTableRenderObject.depth + 1, innerTableRenderObject.depth);
+    expect(outerTableRenderObject.depth + 1, cellRenderObject.depth);
+    expect(cellRenderObject.depth + 1, innerTableRenderObject.depth);
     expect(innerTableRenderObject.depth + 1, textRenderObject.depth);
   });
 

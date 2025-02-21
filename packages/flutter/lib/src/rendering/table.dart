@@ -641,6 +641,9 @@ class RenderTable extends RenderBox {
           children.skip(i * _columns).take(_columns).map((SemanticsNode cell) {
             // Shift the cell's rect to be relative to the row's rect.
             cell.rect = cell.rect.shift(Offset(-rowBox.left, -rowBox.top));
+            if (cell.role == SemanticsRole.none) {
+              cell.role = SemanticsRole.cell;
+            }
             return cell;
           }).toList();
       newRow

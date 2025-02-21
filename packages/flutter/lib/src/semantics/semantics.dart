@@ -2895,6 +2895,13 @@ class SemanticsNode with DiagnosticableTreeMixin {
   /// {@endtemplate}
   SemanticsRole get role => _role;
   SemanticsRole _role = _kEmptyConfig.role;
+  set role(SemanticsRole value) {
+    if (_role == value) {
+      return;
+    }
+    _role = value;
+    _markDirty();
+  }
 
   bool _canPerformAction(SemanticsAction action) => _actions.containsKey(action);
 

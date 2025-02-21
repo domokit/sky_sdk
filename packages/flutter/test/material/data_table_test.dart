@@ -1865,10 +1865,7 @@ void main() {
                       onSecondaryTapDown: (TapDownDetails details) {
                         secondaryTappedDown = true;
                       },
-                      child: Semantics(
-                        role: SemanticsRole.cell,
-                        child: const SizedBox(width: 100.0, height: 100.0),
-                      ),
+                      child: const SizedBox(width: 100.0, height: 100.0),
                     ),
                   ],
                 ),
