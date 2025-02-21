@@ -104,7 +104,7 @@ class ComplexityCalculatorHelper
   void setInvertColors(bool invert) override {}
   void setStrokeCap(DlStrokeCap cap) override {}
   void setStrokeJoin(DlStrokeJoin join) override {}
-  void setStrokeMiter(SkScalar limit) override {}
+  void setStrokeMiter(DlScalar limit) override {}
   void setColor(DlColor color) override {}
   void setBlendMode(DlBlendMode mode) override {}
   void setColorSource(const DlColorSource* source) override {}
@@ -122,7 +122,7 @@ class ComplexityCalculatorHelper
     current_paint_.setDrawStyle(style);
   }
 
-  void setStrokeWidth(SkScalar width) override {
+  void setStrokeWidth(DlScalar width) override {
     current_paint_.setStrokeWidth(width);
   }
 
@@ -153,7 +153,7 @@ class ComplexityCalculatorHelper
     if (IsComplex()) {
       return;
     }
-    ImageRect(image->dimensions(), image->isTextureBacked(),
+    ImageRect(image->GetBounds().GetSize(), image->isTextureBacked(),
               render_with_attributes,
               constraint == DlSrcRectConstraint::kStrict);
   }
@@ -173,7 +173,7 @@ class ComplexityCalculatorHelper
     // This API just does a series of drawImage calls from the atlas
     // This is equivalent to calling drawImageRect lots of times
     for (int i = 0; i < count; i++) {
-      ImageRect(SkISize::Make(tex[i].GetWidth(), tex[i].GetHeight()), true,
+      ImageRect(DlIRect::RoundOut(tex[i]).GetSize(), true,
                 render_with_attributes, true);
     }
   }
@@ -220,32 +220,30 @@ class ComplexityCalculatorHelper
                                        unsigned int quad_verb_cost,
                                        unsigned int conic_verb_cost,
                                        unsigned int cubic_verb_cost) {
-    const SkPath& path = dl_path.GetSkPath();
-    int verb_count = path.countVerbs();
-    std::vector<uint8_t> verbs(verb_count);
-    path.getVerbs(verbs.data(), verbs.size());
-
+    const impeller::Path& path = dl_path.GetPath();
     unsigned int complexity = 0;
-    for (int i = 0; i < verb_count; i++) {
-      switch (verbs[i]) {
-        case SkPath::Verb::kLine_Verb:
+    for (auto it = path.begin(), end = path.end(); it != end; ++it) {
+      switch (it.type()) {
+        case impeller::Path::ComponentType::kLinear:
           complexity += line_verb_cost;
           break;
-        case SkPath::Verb::kQuad_Verb:
+        case impeller::Path::ComponentType::kQuadratic:
           complexity += quad_verb_cost;
           break;
-        case SkPath::Verb::kConic_Verb:
+        case impeller::Path::ComponentType::kConic:
           complexity += conic_verb_cost;
           break;
-        case SkPath::Verb::kCubic_Verb:
+        case impeller::Path::ComponentType::kCubic:
           complexity += cubic_verb_cost;
+          break;
+        case impeller::Path::ComponentType::kContour:
           break;
       }
     }
     return complexity;
   }
 
-  virtual void ImageRect(const SkISize& size,
+  virtual void ImageRect(const DlISize& size,
                          bool texture_backed,
                          bool render_with_attributes,
                          bool enforce_src_edges) = 0;

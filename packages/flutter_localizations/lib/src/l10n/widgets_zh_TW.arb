@@ -4,5 +4,12 @@
   "reorderItemUp": "向上移",
   "reorderItemDown": "向下移",
   "reorderItemLeft": "向左移",
-  "reorderItemRight": "向右移"
+  "reorderItemRight": "向右移",
+  "copyButtonLabel": "複製",
+  "cutButtonLabel": "剪下",
+  "lookUpButtonLabel": "查詢",
+  "searchWebButtonLabel": "搜尋",
+  "shareButtonLabel": "分享",
+  "pasteButtonLabel": "貼上",
+  "selectAllButtonLabel": "全選"
 }

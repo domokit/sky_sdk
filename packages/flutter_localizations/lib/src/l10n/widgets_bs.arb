@@ -4,5 +4,12 @@
   "reorderItemUp": "Pomjeri nagore",
   "reorderItemDown": "Pomjeri nadolje",
   "reorderItemLeft": "Pomjeri lijevo",
-  "reorderItemRight": "Pomjeri desno"
+  "reorderItemRight": "Pomjeri desno",
+  "copyButtonLabel": "Kopiraj",
+  "cutButtonLabel": "Izreži",
+  "lookUpButtonLabel": "Pogled nagore",
+  "searchWebButtonLabel": "Pretraži Web",
+  "shareButtonLabel": "Dijeli",
+  "pasteButtonLabel": "Zalijepi",
+  "selectAllButtonLabel": "Odaberi sve"
 }

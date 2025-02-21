@@ -48,6 +48,11 @@ SkISize DlImageSkia::dimensions() const {
 }
 
 // |DlImage|
+DlISize DlImageSkia::GetSize() const {
+  return image_ ? ToDlISize(image_->dimensions()) : DlISize();
+}
+
+// |DlImage|
 size_t DlImageSkia::GetApproximateByteSize() const {
   auto size = sizeof(*this);
   if (image_) {

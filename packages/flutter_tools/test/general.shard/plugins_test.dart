@@ -1012,7 +1012,7 @@ dependencies:
         () async {
           androidProject.embeddingVersion = AndroidEmbeddingVersion.v2;
 
-          await injectPlugins(flutterProject, androidPlatform: true);
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
 
           final File registrant = flutterProject.directory
               .childDirectory(
@@ -1046,7 +1046,7 @@ dependencies:
 
           await expectLater(
             () async {
-              await injectPlugins(flutterProject, androidPlatform: true);
+              await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
             },
             throwsToolExit(
               message:
@@ -1075,7 +1075,7 @@ dependencies:
 
           createDualSupportJavaPlugin4();
 
-          await injectPlugins(flutterProject, androidPlatform: true);
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
 
           final File registrant = flutterProject.directory
               .childDirectory(
@@ -1106,7 +1106,7 @@ dependencies:
           flutterProject.isModule = true;
           androidProject.embeddingVersion = AndroidEmbeddingVersion.v2;
 
-          await injectPlugins(flutterProject, androidPlatform: true);
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
 
           final File registrant = flutterProject.directory
               .childDirectory(
@@ -1138,7 +1138,7 @@ dependencies:
 
           createNewJavaPlugin1();
 
-          await injectPlugins(flutterProject, androidPlatform: true);
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
 
           final File registrant = flutterProject.directory
               .childDirectory(
@@ -1169,7 +1169,7 @@ dependencies:
 
           createDualSupportJavaPlugin4();
 
-          await injectPlugins(flutterProject, androidPlatform: true);
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
 
           final File registrant = flutterProject.directory
               .childDirectory(
@@ -1200,7 +1200,7 @@ dependencies:
 
           createDualSupportJavaPlugin4();
 
-          await injectPlugins(flutterProject, androidPlatform: true);
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
 
           final File registrant = flutterProject.directory
               .childDirectory(
@@ -1228,7 +1228,7 @@ dependencies:
         () async {
           final File manifest = fs.file('AndroidManifest.xml');
           androidProject.appManifestFile = manifest;
-          await injectPlugins(flutterProject, androidPlatform: true);
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
         },
         overrides: <Type, Generator>{
           FileSystem: () => fs,
@@ -1372,7 +1372,7 @@ flutter:
         dartPluginClass: SomePlugin
     ''');
 
-          await injectPlugins(flutterProject, androidPlatform: true);
+          await injectPlugins(flutterProject, androidPlatform: true, releaseMode: false);
 
           final File registrantFile = androidProject.pluginRegistrantHost
               .childDirectory(fs.path.join('src', 'main', 'java', 'io', 'flutter', 'plugins'))
@@ -1406,6 +1406,7 @@ flutter:
               FakeDarwinDependencyManagement();
           await injectPlugins(
             flutterProject,
+            releaseMode: false,
             iosPlatform: true,
             darwinDependencyManagement: dependencyManagement,
           );
@@ -1440,6 +1441,7 @@ flutter:
               FakeDarwinDependencyManagement();
           await injectPlugins(
             flutterProject,
+            releaseMode: false,
             macOSPlatform: true,
             darwinDependencyManagement: dependencyManagement,
           );
@@ -1477,6 +1479,7 @@ flutter:
               FakeDarwinDependencyManagement();
           await injectPlugins(
             flutterProject,
+            releaseMode: false,
             macOSPlatform: true,
             darwinDependencyManagement: dependencyManagement,
           );
@@ -1510,6 +1513,7 @@ flutter:
               FakeDarwinDependencyManagement();
           await injectPlugins(
             flutterProject,
+            releaseMode: false,
             macOSPlatform: true,
             darwinDependencyManagement: dependencyManagement,
           );
@@ -1533,7 +1537,7 @@ flutter:
         () async {
           createFakePlugin(fs);
 
-          await injectPlugins(flutterProject, linuxPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, linuxPlatform: true);
 
           final File registrantHeader = linuxProject.managedDirectory.childFile(
             'generated_plugin_registrant.h',
@@ -1596,7 +1600,7 @@ dependencies:
 
           flutterProject.manifest = manifest;
 
-          await injectPlugins(flutterProject, linuxPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, linuxPlatform: true);
 
           final File registrantImpl = linuxProject.managedDirectory.childFile(
             'generated_plugin_registrant.cc',
@@ -1669,7 +1673,7 @@ dependencies:
 
           flutterProject.manifest = manifest;
 
-          await injectPlugins(flutterProject, linuxPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, linuxPlatform: true);
 
           final File registrantImpl = linuxProject.managedDirectory.childFile(
             'generated_plugin_registrant.cc',
@@ -1706,7 +1710,7 @@ flutter:
         dartPluginClass: SomePlugin
     ''');
 
-          await injectPlugins(flutterProject, linuxPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, linuxPlatform: true);
 
           final File registrantImpl = linuxProject.managedDirectory.childFile(
             'generated_plugin_registrant.cc',
@@ -1738,7 +1742,7 @@ flutter:
         dartPluginClass: SomePlugin
     ''');
 
-          await injectPlugins(flutterProject, linuxPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, linuxPlatform: true);
 
           final File registrantImpl = linuxProject.managedDirectory.childFile(
             'generated_plugin_registrant.cc',
@@ -1761,7 +1765,7 @@ flutter:
         () async {
           createFakePlugin(fs);
 
-          await injectPlugins(flutterProject, linuxPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, linuxPlatform: true);
 
           final File pluginMakefile = linuxProject.generatedPluginCmakeFile;
 
@@ -1799,7 +1803,7 @@ flutter:
             '/local_plugins/plugin_b',
           ]);
 
-          await injectPlugins(flutterProject, linuxPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, linuxPlatform: true);
 
           final File pluginCmakeFile = linuxProject.generatedPluginCmakeFile;
           final File pluginRegistrant = linuxProject.managedDirectory.childFile(
@@ -1825,7 +1829,7 @@ flutter:
         () async {
           createFakePlugin(fs);
 
-          await injectPlugins(flutterProject, windowsPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, windowsPlatform: true);
 
           final File registrantHeader = windowsProject.managedDirectory.childFile(
             'generated_plugin_registrant.h',
@@ -1859,7 +1863,7 @@ flutter:
         dartPluginClass: SomePlugin
     ''');
 
-          await injectPlugins(flutterProject, windowsPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, windowsPlatform: true);
 
           final File registrantImpl = windowsProject.managedDirectory.childFile(
             'generated_plugin_registrant.cc',
@@ -1890,7 +1894,7 @@ flutter:
         dartPluginClass: SomePlugin
     ''');
 
-          await injectPlugins(flutterProject, windowsPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, windowsPlatform: true);
 
           final File registrantImpl = windowsProject.managedDirectory.childFile(
             'generated_plugin_registrant.cc',
@@ -1918,7 +1922,7 @@ flutter:
             '/local_plugins/plugin_b',
           ]);
 
-          await injectPlugins(flutterProject, windowsPlatform: true);
+          await injectPlugins(flutterProject, releaseMode: false, windowsPlatform: true);
 
           final File pluginCmakeFile = windowsProject.generatedPluginCmakeFile;
           final File pluginRegistrant = windowsProject.managedDirectory.childFile(
@@ -1946,7 +1950,12 @@ flutter:
           setUpProject(fsWindows);
           createFakePlugin(fsWindows);
 
-          await injectPlugins(flutterProject, linuxPlatform: true, windowsPlatform: true);
+          await injectPlugins(
+            flutterProject,
+            releaseMode: false,
+            linuxPlatform: true,
+            windowsPlatform: true,
+          );
 
           for (final CmakeBasedProject? project in <CmakeBasedProject?>[
             linuxProject,
@@ -1974,6 +1983,7 @@ flutter:
               FakeDarwinDependencyManagement();
           await injectPlugins(
             flutterProject,
+            releaseMode: false,
             iosPlatform: true,
             macOSPlatform: true,
             darwinDependencyManagement: dependencyManagement,
@@ -1996,7 +2006,11 @@ flutter:
         () async {
           final FakeDarwinDependencyManagement dependencyManagement =
               FakeDarwinDependencyManagement();
-          await injectPlugins(flutterProject, darwinDependencyManagement: dependencyManagement);
+          await injectPlugins(
+            flutterProject,
+            releaseMode: false,
+            darwinDependencyManagement: dependencyManagement,
+          );
           expect(dependencyManagement.setupPlatforms, <SupportedPlatform>[]);
         },
         overrides: <Type, Generator>{

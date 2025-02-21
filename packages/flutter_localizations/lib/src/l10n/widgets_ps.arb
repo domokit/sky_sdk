@@ -4,5 +4,12 @@
   "reorderItemUp": "Move up",
   "reorderItemDown": "Move down",
   "reorderItemLeft": "Move left",
-  "reorderItemRight": "Move right"
+  "reorderItemRight": "Move right",
+  "copyButtonLabel": "کاپی",
+  "cutButtonLabel": "کم کړئ",
+  "lookUpButtonLabel": "Look Up",
+  "searchWebButtonLabel": "Search Web",
+  "shareButtonLabel": "Share...",
+  "pasteButtonLabel": "پیټ کړئ",
+  "selectAllButtonLabel": "غوره کړئ"
 }

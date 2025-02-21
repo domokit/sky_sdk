@@ -4,5 +4,12 @@
   "reorderItemUp": "Přesunout nahoru",
   "reorderItemDown": "Přesunout dolů",
   "reorderItemLeft": "Přesunout doleva",
-  "reorderItemRight": "Přesunout doprava"
+  "reorderItemRight": "Přesunout doprava",
+  "copyButtonLabel": "Kopírovat",
+  "cutButtonLabel": "Vyjmout",
+  "lookUpButtonLabel": "Vyhledat",
+  "searchWebButtonLabel": "Vyhledávat na webu",
+  "shareButtonLabel": "Sdílet",
+  "pasteButtonLabel": "Vložit",
+  "selectAllButtonLabel": "Vybrat vše"
 }

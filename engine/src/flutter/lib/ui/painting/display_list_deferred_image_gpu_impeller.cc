@@ -77,6 +77,11 @@ SkISize DlDeferredImageGPUImpeller::dimensions() const {
 }
 
 // |DlImage|
+DlISize DlDeferredImageGPUImpeller::GetSize() const {
+  return wrapper_ ? ToDlISize(wrapper_->size()) : DlISize();
+}
+
+// |DlImage|
 size_t DlDeferredImageGPUImpeller::GetApproximateByteSize() const {
   auto size = sizeof(DlDeferredImageGPUImpeller);
   if (wrapper_) {

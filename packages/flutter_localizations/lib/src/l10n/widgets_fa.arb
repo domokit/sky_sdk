@@ -4,5 +4,12 @@
   "reorderItemUp": "انتقال به بالا",
   "reorderItemDown": "انتقال به پایین",
   "reorderItemLeft": "انتقال به راست",
-  "reorderItemRight": "انتقال به چپ"
+  "reorderItemRight": "انتقال به چپ",
+  "copyButtonLabel": "کپی",
+  "cutButtonLabel": "برش",
+  "lookUpButtonLabel": "جستجو",
+  "searchWebButtonLabel": "جستجو در وب",
+  "shareButtonLabel": "هم‌رسانی کردن",
+  "pasteButtonLabel": "جای‌گذاری",
+  "selectAllButtonLabel": "انتخاب همه"
 }

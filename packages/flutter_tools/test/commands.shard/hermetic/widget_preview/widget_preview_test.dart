@@ -89,7 +89,6 @@ void main() {
         }
 
         expect(updated.shaders, root.shaders.map(WidgetPreviewStartCommand.transformAssetUri));
-        expect(updated.models, root.models.map(WidgetPreviewStartCommand.transformAssetUri));
 
         expect(updated.deferredComponents?.length, root.deferredComponents?.length);
         if (root.deferredComponents != null) {
@@ -161,8 +160,6 @@ flutter:
           asset: package/assetUri
   shaders:
     - shaderUri
-  models:
-    - modelUri
   deferred-components:
     - name: deferredComponent
       libraries:

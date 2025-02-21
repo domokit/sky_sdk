@@ -4,5 +4,12 @@
   "reorderItemUp": "Померите нагоре",
   "reorderItemDown": "Померите надоле",
   "reorderItemLeft": "Померите улево",
-  "reorderItemRight": "Померите удесно"
+  "reorderItemRight": "Померите удесно",
+  "copyButtonLabel": "Копирај",
+  "cutButtonLabel": "Исеци",
+  "lookUpButtonLabel": "Поглед нагоре",
+  "searchWebButtonLabel": "Претражи веб",
+  "shareButtonLabel": "Дели",
+  "pasteButtonLabel": "Налепи",
+  "selectAllButtonLabel": "Изабери све"
 }

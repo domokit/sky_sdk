@@ -19,7 +19,6 @@ import 'base/net.dart';
 import 'base/os.dart';
 import 'build_info.dart';
 import 'build_system/tools/asset_transformer.dart';
-import 'build_system/tools/scene_importer.dart';
 import 'build_system/tools/shader_compiler.dart';
 import 'compile.dart';
 import 'convert.dart' show base64, utf8;
@@ -476,7 +475,6 @@ class DevFS {
   final Directory rootDirectory;
   final Set<String> assetPathsToEvict = <String>{};
   final Set<String> shaderPathsToEvict = <String>{};
-  final Set<String> scenePathsToEvict = <String>{};
 
   // A flag to indicate whether we have called `setAssetDirectory` on the target device.
   bool hasSetAssetDirectory = false;
@@ -564,7 +562,6 @@ class DevFS {
     required PackageConfig packageConfig,
     required String dillOutputPath,
     required DevelopmentShaderCompiler shaderCompiler,
-    DevelopmentSceneImporter? sceneImporter,
     DevFSWriter? devFSWriter,
     String? target,
     AssetBundle? bundle,
@@ -652,23 +649,6 @@ class DevFS {
               syncedBytes += content.size;
               if (!bundleFirstUpload) {
                 shaderPathsToEvict.add(archivePath);
-              }
-            });
-          case AssetKind.model:
-            if (sceneImporter == null) {
-              break;
-            }
-            final Future<DevFSContent?> pending = sceneImporter.reimportScene(entry.content);
-            pendingAssetBuilds.add(pending);
-            pending.then((DevFSContent? content) {
-              if (content == null) {
-                assetBuildFailed = true;
-                return;
-              }
-              dirtyEntries[deviceUri] = content;
-              syncedBytes += content.size;
-              if (!bundleFirstUpload) {
-                scenePathsToEvict.add(archivePath);
               }
             });
           case AssetKind.regular:

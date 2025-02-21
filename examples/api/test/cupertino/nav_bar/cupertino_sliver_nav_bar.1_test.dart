@@ -39,8 +39,8 @@ void main() {
     // Middle, large title, and search field are visible.
     expect(tester.getBottomLeft(find.text('Contacts Group').first).dy, 30.5);
     expect(tester.getBottomLeft(find.text('Family').first).dy, 88.0);
-    expect(tester.getTopLeft(find.byType(CupertinoSearchTextField)).dy, 104.0);
-    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 139.0);
+    expect(tester.getTopLeft(find.byType(CupertinoSearchTextField)).dy, 96.0);
+    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 132.0);
 
     await tester.fling(find.text('Drag me up'), bottomDragUp, 50.0);
     await tester.pumpAndSettle();
@@ -48,8 +48,8 @@ void main() {
     // Search field is hidden, but large title and middle title are visible.
     expect(tester.getBottomLeft(find.text('Contacts Group').first).dy, 30.5);
     expect(tester.getBottomLeft(find.text('Family').first).dy, 88.0);
-    expect(tester.getTopLeft(find.byType(CupertinoSearchTextField)).dy, 104.0);
-    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 104.0);
+    expect(tester.getTopLeft(find.byType(CupertinoSearchTextField)).dy, 96.0);
+    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 96.0);
 
     await tester.fling(find.text('Drag me up'), titleDragUp, 50.0);
     await tester.pumpAndSettle();
@@ -60,7 +60,7 @@ void main() {
       tester.getBottomLeft(find.text('Family').first).dy,
       36.0 + 8.0,
     ); // Static part + _kNavBarBottomPadding.
-    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 52.0);
+    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 44.0);
   });
 
   testWidgets('Search field is always shown in bottom always mode', (WidgetTester tester) async {
@@ -75,8 +75,8 @@ void main() {
     // Middle, large title, and search field are visible.
     expect(tester.getBottomLeft(find.text('Contacts Group').first).dy, 30.5);
     expect(tester.getBottomLeft(find.text('Family').first).dy, 88.0);
-    expect(tester.getTopLeft(find.byType(CupertinoSearchTextField)).dy, 104.0);
-    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 139.0);
+    expect(tester.getTopLeft(find.byType(CupertinoSearchTextField)).dy, 96.0);
+    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 132.0);
 
     await tester.fling(find.text('Drag me up'), titleDragUp, 50.0);
     await tester.pumpAndSettle();
@@ -87,8 +87,8 @@ void main() {
       tester.getBottomLeft(find.text('Family').first).dy,
       36.0 + 8.0,
     ); // Static part + _kNavBarBottomPadding.
-    expect(tester.getTopLeft(find.byType(CupertinoSearchTextField)).dy, 52.0);
-    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 87.0);
+    expect(tester.getTopLeft(find.byType(CupertinoSearchTextField)).dy, 44.0);
+    expect(tester.getBottomLeft(find.byType(CupertinoSearchTextField)).dy, 80.0);
   });
 
   testWidgets('Opens the search view when the search field is tapped', (WidgetTester tester) async {

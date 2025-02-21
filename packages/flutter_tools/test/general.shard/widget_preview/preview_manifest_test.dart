@@ -106,7 +106,7 @@ void main() {
       // Simulate changing the root project's pubspec.yaml and verify that we should regenerate
       // the widget preview scaffold's pubspec.yaml.
       rootProject.replacePubspec(
-        rootProject.manifest.copyWith(logger: logger, models: <Uri>[Uri(host: 'Random')]),
+        rootProject.manifest.copyWith(logger: logger, shaders: <Uri>[Uri(host: 'Random')]),
       );
       expect(previewManifest.shouldRegeneratePubspec(), true);
 

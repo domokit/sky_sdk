@@ -149,8 +149,8 @@ DlISize DisplayListBuilder::GetBaseLayerDimensions() const {
 }
 
 SkImageInfo DisplayListBuilder::GetImageInfo() const {
-  SkISize size = GetBaseLayerSize();
-  return SkImageInfo::MakeUnknown(size.width(), size.height());
+  DlISize size = GetBaseLayerDimensions();
+  return SkImageInfo::MakeUnknown(size.width, size.height);
 }
 
 void DisplayListBuilder::onSetAntiAlias(bool aa) {
@@ -1288,7 +1288,7 @@ void DisplayListBuilder::drawPoints(DlPointMode mode,
   }
 
   FML_DCHECK(count < DlOpReceiver::kMaxDrawPointsCount);
-  int bytes = count * sizeof(SkPoint);
+  int bytes = count * sizeof(DlPoint);
   AccumulationRect accumulator;
   for (size_t i = 0; i < count; i++) {
     accumulator.accumulate(pts[i]);

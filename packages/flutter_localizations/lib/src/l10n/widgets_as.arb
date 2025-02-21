@@ -4,5 +4,12 @@
   "reorderItemUp": "ওপৰলৈ নিয়ক",
   "reorderItemDown": "তললৈ স্থানান্তৰ কৰক",
   "reorderItemLeft": "বাওঁফাললৈ স্থানান্তৰ কৰক",
-  "reorderItemRight": "সোঁফাললৈ স্থানান্তৰ কৰক"
+  "reorderItemRight": "সোঁফাললৈ স্থানান্তৰ কৰক",
+  "copyButtonLabel": "প্ৰতিলিপি কৰক",
+  "cutButtonLabel": "কাট কৰক",
+  "lookUpButtonLabel": "ওপৰলৈ চাওক",
+  "searchWebButtonLabel": "ৱেবত সন্ধান কৰক",
+  "shareButtonLabel": "শ্বেয়াৰ কৰক",
+  "pasteButtonLabel": "পে'ষ্ট কৰক",
+  "selectAllButtonLabel": "সকলো বাছনি কৰক"
 }

@@ -16,9 +16,6 @@ import 'base/utils.dart';
 import 'globals.dart' as globals;
 import 'plugins.dart';
 
-/// Whether or not Impeller Scene 3D model import is enabled.
-const bool kIs3dSceneSupported = true;
-
 const Set<String> _kValidPluginPlatforms = <String>{
   'android',
   'ios',
@@ -81,7 +78,6 @@ class FlutterManifest {
     List<AssetsEntry>? assets,
     List<Font>? fonts,
     List<Uri>? shaders,
-    List<Uri>? models,
     List<DeferredComponent>? deferredComponents,
   }) {
     final FlutterManifest copy = FlutterManifest._(logger: _logger);
@@ -103,12 +99,6 @@ class FlutterManifest {
     if (shaders != null && shaders.isNotEmpty) {
       copy._flutterDescriptor['shaders'] = YamlList.wrap(
         shaders.map((Uri uri) => uri.toString()).toList(),
-      );
-    }
-
-    if (models != null && models.isNotEmpty) {
-      copy._flutterDescriptor['models'] = YamlList.wrap(
-        models.map((Uri uri) => uri.toString()).toList(),
       );
     }
 
@@ -407,8 +397,6 @@ class FlutterManifest {
   }
 
   late final List<Uri> shaders = _extractAssetUris('shaders', 'Shader');
-  late final List<Uri> models =
-      kIs3dSceneSupported ? _extractAssetUris('models', 'Model') : <Uri>[];
 
   List<Uri> _extractAssetUris(String key, String singularName) {
     if (!_flutterDescriptor.containsKey(key)) {
@@ -560,18 +548,6 @@ void _validateFlutter(YamlMap? yaml, List<String> errors) {
       case 'assets':
         errors.addAll(_validateAssets(yamlValue));
       case 'shaders':
-        if (yamlValue is! YamlList) {
-          errors.add(
-            'Expected "$yamlKey" to be a list, but got $yamlValue (${yamlValue.runtimeType}).',
-          );
-        } else if (yamlValue.isEmpty) {
-          break;
-        } else if (yamlValue[0] is! String) {
-          errors.add(
-            'Expected "$yamlKey" to be a list of strings, but the first element is $yamlValue (${yamlValue.runtimeType}).',
-          );
-        }
-      case 'models':
         if (yamlValue is! YamlList) {
           errors.add(
             'Expected "$yamlKey" to be a list, but got $yamlValue (${yamlValue.runtimeType}).',

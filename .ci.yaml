@@ -1165,6 +1165,7 @@ targets:
       task_name: android_release_builds_exclude_dev_dependencies_test
     runIf:
       - dev/**
+      - packages/flutter_tools/**
       - bin/**
       - .ci.yaml
       - engine/**

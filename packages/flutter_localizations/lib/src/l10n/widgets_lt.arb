@@ -4,5 +4,12 @@
   "reorderItemUp": "Perkelti aukštyn",
   "reorderItemDown": "Perkelti žemyn",
   "reorderItemLeft": "Perkelti kairėn",
-  "reorderItemRight": "Perkelti dešinėn"
+  "reorderItemRight": "Perkelti dešinėn",
+  "copyButtonLabel": "Kopijuoti",
+  "cutButtonLabel": "Iškirpti",
+  "lookUpButtonLabel": "Ieškoti",
+  "searchWebButtonLabel": "Ieškoti žiniatinklyje",
+  "shareButtonLabel": "Bendrinti",
+  "pasteButtonLabel": "Įklijuoti",
+  "selectAllButtonLabel": "Pasirinkti viską"
 }

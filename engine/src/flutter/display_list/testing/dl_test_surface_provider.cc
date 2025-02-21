@@ -9,6 +9,7 @@
 #include "third_party/skia/include/core/SkImage.h"
 #include "third_party/skia/include/core/SkSurface.h"
 #include "third_party/skia/include/encode/SkPngEncoder.h"
+#include "third_party/skia/include/gpu/ganesh/GrDirectContext.h"
 
 namespace flutter::testing {
 
@@ -72,5 +73,16 @@ std::unique_ptr<DlSurfaceProvider> DlSurfaceProvider::CreateMetal() {
   return nullptr;
 }
 #endif
+
+void DlSurfaceInstance::FlushSubmitCpuSync() {
+  auto surface = sk_surface();
+  if (!surface) {
+    return;
+  }
+  if (GrDirectContext* dContext =
+          GrAsDirectContext(surface->recordingContext())) {
+    dContext->flushAndSubmit(surface.get(), GrSyncCpu::kYes);
+  }
+}
 
 }  // namespace flutter::testing

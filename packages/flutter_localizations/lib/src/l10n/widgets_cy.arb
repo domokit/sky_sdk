@@ -4,5 +4,12 @@
   "reorderItemUp": "Symud i fyny",
   "reorderItemDown": "Symud i lawr",
   "reorderItemLeft": "Symud i'r chwith",
-  "reorderItemRight": "Symud i'r dde"
+  "reorderItemRight": "Symud i'r dde",
+  "copyButtonLabel": "Copïo",
+  "cutButtonLabel": "Torri",
+  "lookUpButtonLabel": "Chwilio",
+  "searchWebButtonLabel": "Chwilio'r We",
+  "shareButtonLabel": "Rhannu",
+  "pasteButtonLabel": "Gludo",
+  "selectAllButtonLabel": "Dewis y Cyfan"
 }

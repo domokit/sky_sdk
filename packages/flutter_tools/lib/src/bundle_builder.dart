@@ -15,7 +15,6 @@ import 'build_info.dart';
 import 'build_system/build_system.dart';
 import 'build_system/depfile.dart';
 import 'build_system/tools/asset_transformer.dart';
-import 'build_system/tools/scene_importer.dart';
 import 'build_system/tools/shader_compiler.dart';
 import 'bundle.dart';
 import 'cache.dart';
@@ -166,13 +165,6 @@ Future<void> writeBundle(
     artifacts: artifacts,
   );
 
-  final SceneImporter sceneImporter = SceneImporter(
-    processManager: processManager,
-    logger: logger,
-    fileSystem: fileSystem,
-    artifacts: artifacts,
-  );
-
   final AssetTransformer assetTransformer = AssetTransformer(
     processManager: processManager,
     fileSystem: fileSystem,
@@ -225,8 +217,6 @@ Future<void> writeBundle(
                     outputPath: file.path,
                     targetPlatform: targetPlatform,
                   );
-            case AssetKind.model:
-              doCopy = !await sceneImporter.importScene(input: input, outputPath: file.path);
           }
           if (doCopy) {
             input.copySync(file.path);

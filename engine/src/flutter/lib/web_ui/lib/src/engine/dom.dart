@@ -735,6 +735,13 @@ extension DomElementExtension on DomElement {
   external void setPointerCapture(num? pointerId);
 }
 
+extension type DomCSS(JSObject _) implements JSObject {
+  external bool supports(String proeprty, String value);
+}
+
+@JS('CSS')
+external DomCSS get domCSS;
+
 @JS()
 @staticInterop
 class DomCSSStyleDeclaration {}
@@ -2132,6 +2139,10 @@ extension DomVisualViewportExtension on DomVisualViewport {
   @JS('width')
   external JSNumber? get _width;
   double? get width => _width?.toDartDouble;
+
+  @JS('scale')
+  external JSNumber? get _scale;
+  double? get scale => _scale?.toDartDouble;
 }
 
 @JS()

@@ -1545,6 +1545,39 @@ Future<void> testMain() async {
       hideKeyboard();
     });
 
+    test('Words capitalization: setClient, setEditingState, show', () {
+      // Create a configuration with an AutofillGroup of four text fields.
+      final Map<String, dynamic> capitalizeWordsConfig = createFlutterConfig(
+        'text',
+        textCapitalization: 'TextCapitalization.words',
+      );
+      final MethodCall setClient = MethodCall('TextInput.setClient', <dynamic>[
+        123,
+        capitalizeWordsConfig,
+      ]);
+      sendFrameworkMessage(codec.encodeMethodCall(setClient));
+
+      const MethodCall setEditingState1 = MethodCall('TextInput.setEditingState', <String, dynamic>{
+        'text': '',
+        'selectionBase': 0,
+        'selectionExtent': 0,
+      });
+      sendFrameworkMessage(codec.encodeMethodCall(setEditingState1));
+
+      const MethodCall show = MethodCall('TextInput.show');
+      sendFrameworkMessage(codec.encodeMethodCall(show));
+      spy.messages.clear();
+
+      // Test for mobile Safari.
+      if (ui_web.browser.browserEngine == ui_web.BrowserEngine.webkit &&
+          ui_web.browser.operatingSystem == ui_web.OperatingSystem.iOs) {
+        expect(textEditing!.strategy.domElement!.getAttribute('autocapitalize'), 'words');
+      }
+
+      spy.messages.clear();
+      hideKeyboard();
+    });
+
     test(
       'setClient, setEditableSizeAndTransform, setStyle, setEditingState, show, clearClient',
       () {

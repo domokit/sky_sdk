@@ -90,15 +90,33 @@ VSCode can provide some IDE features using the [C/C++ extension](https://marketp
 
 Intellisense can also use our `compile_commands.json` for more robust functionality. Either symlink `src/out/compile_commands.json` to the project root at `src` or provide an absolute path to it in the `c_cpp_properties.json` config file. See ["compile commands" in the c_cpp_properties.json reference](https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference). This will likely resolve the basic issues mentioned above.
 
-For example, in `src/.vscode/settings.json`:
+The easiest way to do this is create a [multi-root workspace](https://code.visualstudio.com/docs/editor/workspaces/workspaces#_multiroot-workspaces) that includes the Flutter SDK. For example, something like this:
 
 ```json
+# flutter.code-workspace
 {
-  "clangd.path": "buildtools/mac-arm64/clang/bin/clangd",
-  "clangd.arguments": [
-    "--compile-commands-dir=out/host_debug_unopt_arm64"
-  ],
-  "clang-format.executable": "buildtools/mac-arm64/clang/bin/clang-format"
+	"folders": [
+		{
+			"path": "path/to/the/flutter/sdk"
+		}
+	],
+	"settings": {}
+}
+```
+
+Then, edit the `"settings"` key:
+
+```json
+"settings": {
+    "html.format.enable": false,
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "master"
+    ],
+    "clangd.path": "engine/src/flutter/buildtools/mac-arm64/clang/bin/clangd",
+    "clangd.arguments": [
+        "--compile-commands-dir=engine/src/out/host_debug_unopt_arm64"
+    ],
+    "clang-format.executable": "engine/src/flutter/buildtools/mac-arm64/clang/bin/clang-format"
 }
 ```
 
@@ -106,8 +124,10 @@ For example, in `src/.vscode/settings.json`:
 
 ```shell
 # M1 Mac (host_debug_unopt_arm64)
-./tools/gn --unopt --mac-cpu arm64 --enable-impeller-vulkan --enable-impeller-opengles --enable-unittests
+et build -c host_debug_unopt_arm64
 ```
+
+Some files (such as the Android embedder) will require an Android `clangd` configuration.
 
 For adding IDE support to the Java code in the engine with VSCode, see ["Using VSCode as an IDE for the Android Embedding"](#using-vscode-as-an-ide-for-the-android-embedding-java).
 

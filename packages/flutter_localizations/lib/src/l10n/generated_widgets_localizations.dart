@@ -29,6 +29,18 @@ class WidgetsLocalizationAf extends GlobalWidgetsLocalizations {
   const WidgetsLocalizationAf() : super(TextDirection.ltr);
 
   @override
+  String get copyButtonLabel => 'Kopieer';
+
+  @override
+  String get cutButtonLabel => 'Knip';
+
+  @override
+  String get lookUpButtonLabel => 'Kyk op';
+
+  @override
+  String get pasteButtonLabel => 'Plak';
+
+  @override
   String get reorderItemDown => 'Skuif af';
 
   @override
@@ -45,6 +57,15 @@ class WidgetsLocalizationAf extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Skuif op';
+
+  @override
+  String get searchWebButtonLabel => 'Deursoek web';
+
+  @override
+  String get selectAllButtonLabel => 'Kies alles';
+
+  @override
+  String get shareButtonLabel => 'Deel';
 }
 
 /// The translations for Amharic (`am`).
@@ -53,6 +74,18 @@ class WidgetsLocalizationAm extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationAm() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'ቅዳ';
+
+  @override
+  String get cutButtonLabel => 'ቁረጥ';
+
+  @override
+  String get lookUpButtonLabel => 'ይመልከቱ';
+
+  @override
+  String get pasteButtonLabel => 'ለጥፍ';
 
   @override
   String get reorderItemDown => 'ወደ ታች ውሰድ';
@@ -71,6 +104,15 @@ class WidgetsLocalizationAm extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ወደ ላይ ውሰድ';
+
+  @override
+  String get searchWebButtonLabel => 'ድርን ፈልግ';
+
+  @override
+  String get selectAllButtonLabel => 'ሁሉንም ምረጥ';
+
+  @override
+  String get shareButtonLabel => 'አጋራ';
 }
 
 /// The translations for Arabic (`ar`).
@@ -79,6 +121,18 @@ class WidgetsLocalizationAr extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationAr() : super(TextDirection.rtl);
+
+  @override
+  String get copyButtonLabel => 'نسخ';
+
+  @override
+  String get cutButtonLabel => 'قص';
+
+  @override
+  String get lookUpButtonLabel => 'بحث عام';
+
+  @override
+  String get pasteButtonLabel => 'لصق';
 
   @override
   String get reorderItemDown => 'نقل لأسفل';
@@ -97,6 +151,15 @@ class WidgetsLocalizationAr extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'نقل لأعلى';
+
+  @override
+  String get searchWebButtonLabel => 'البحث على الويب';
+
+  @override
+  String get selectAllButtonLabel => 'اختيار الكل';
+
+  @override
+  String get shareButtonLabel => 'مشاركة';
 }
 
 /// The translations for Assamese (`as`).
@@ -105,6 +168,18 @@ class WidgetsLocalizationAs extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationAs() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'প্ৰতিলিপি কৰক';
+
+  @override
+  String get cutButtonLabel => 'কাট কৰক';
+
+  @override
+  String get lookUpButtonLabel => 'ওপৰলৈ চাওক';
+
+  @override
+  String get pasteButtonLabel => "পে'ষ্ট কৰক";
 
   @override
   String get reorderItemDown => 'তললৈ স্থানান্তৰ কৰক';
@@ -123,6 +198,15 @@ class WidgetsLocalizationAs extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ওপৰলৈ নিয়ক';
+
+  @override
+  String get searchWebButtonLabel => 'ৱেবত সন্ধান কৰক';
+
+  @override
+  String get selectAllButtonLabel => 'সকলো বাছনি কৰক';
+
+  @override
+  String get shareButtonLabel => 'শ্বেয়াৰ কৰক';
 }
 
 /// The translations for Azerbaijani (`az`).
@@ -131,6 +215,18 @@ class WidgetsLocalizationAz extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationAz() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopyalayın';
+
+  @override
+  String get cutButtonLabel => 'Kəsin';
+
+  @override
+  String get lookUpButtonLabel => 'Axtarın';
+
+  @override
+  String get pasteButtonLabel => 'Yerləşdirin';
 
   @override
   String get reorderItemDown => 'Aşağı köçürün';
@@ -149,6 +245,15 @@ class WidgetsLocalizationAz extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Yuxarı köçürün';
+
+  @override
+  String get searchWebButtonLabel => 'Vebdə axtarın';
+
+  @override
+  String get selectAllButtonLabel => 'Hamısını seçin';
+
+  @override
+  String get shareButtonLabel => 'Paylaşın';
 }
 
 /// The translations for Belarusian (`be`).
@@ -157,6 +262,18 @@ class WidgetsLocalizationBe extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationBe() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Капіраваць';
+
+  @override
+  String get cutButtonLabel => 'Выразаць';
+
+  @override
+  String get lookUpButtonLabel => 'Знайсці';
+
+  @override
+  String get pasteButtonLabel => 'Уставіць';
 
   @override
   String get reorderItemDown => 'Перамясціць уніз';
@@ -175,6 +292,15 @@ class WidgetsLocalizationBe extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Перамясціць уверх';
+
+  @override
+  String get searchWebButtonLabel => 'Пошук у сетцы';
+
+  @override
+  String get selectAllButtonLabel => 'Выбраць усе';
+
+  @override
+  String get shareButtonLabel => 'Абагуліць';
 }
 
 /// The translations for Bulgarian (`bg`).
@@ -183,6 +309,18 @@ class WidgetsLocalizationBg extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationBg() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Копиране';
+
+  @override
+  String get cutButtonLabel => 'Изрязване';
+
+  @override
+  String get lookUpButtonLabel => 'Look Up';
+
+  @override
+  String get pasteButtonLabel => 'Поставяне';
 
   @override
   String get reorderItemDown => 'Преместване надолу';
@@ -201,6 +339,15 @@ class WidgetsLocalizationBg extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Преместване нагоре';
+
+  @override
+  String get searchWebButtonLabel => 'Търсене в мрежата';
+
+  @override
+  String get selectAllButtonLabel => 'Избиране на всички';
+
+  @override
+  String get shareButtonLabel => 'Споделяне';
 }
 
 /// The translations for Bengali Bangla (`bn`).
@@ -209,6 +356,18 @@ class WidgetsLocalizationBn extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationBn() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'কপি করুন';
+
+  @override
+  String get cutButtonLabel => 'কাট করুন';
+
+  @override
+  String get lookUpButtonLabel => 'লুক-আপ';
+
+  @override
+  String get pasteButtonLabel => 'পেস্ট করুন';
 
   @override
   String get reorderItemDown => 'নিচের দিকে সরান';
@@ -227,6 +386,15 @@ class WidgetsLocalizationBn extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'উপরের দিকে সরান';
+
+  @override
+  String get searchWebButtonLabel => 'ওয়েবে সার্চ করুন';
+
+  @override
+  String get selectAllButtonLabel => 'সব বেছে নিন';
+
+  @override
+  String get shareButtonLabel => 'শেয়ার করুন';
 }
 
 /// The translations for Bosnian (`bs`).
@@ -235,6 +403,18 @@ class WidgetsLocalizationBs extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationBs() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiraj';
+
+  @override
+  String get cutButtonLabel => 'Izreži';
+
+  @override
+  String get lookUpButtonLabel => 'Pogled nagore';
+
+  @override
+  String get pasteButtonLabel => 'Zalijepi';
 
   @override
   String get reorderItemDown => 'Pomjeri nadolje';
@@ -253,6 +433,15 @@ class WidgetsLocalizationBs extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Pomjeri nagore';
+
+  @override
+  String get searchWebButtonLabel => 'Pretraži Web';
+
+  @override
+  String get selectAllButtonLabel => 'Odaberi sve';
+
+  @override
+  String get shareButtonLabel => 'Dijeli';
 }
 
 /// The translations for Catalan Valencian (`ca`).
@@ -261,6 +450,18 @@ class WidgetsLocalizationCa extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationCa() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Copia';
+
+  @override
+  String get cutButtonLabel => 'Retalla';
+
+  @override
+  String get lookUpButtonLabel => 'Mira amunt';
+
+  @override
+  String get pasteButtonLabel => 'Enganxa';
 
   @override
   String get reorderItemDown => 'Mou avall';
@@ -279,6 +480,15 @@ class WidgetsLocalizationCa extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Mou amunt';
+
+  @override
+  String get searchWebButtonLabel => 'Cerca al web';
+
+  @override
+  String get selectAllButtonLabel => 'Selecciona-ho tot';
+
+  @override
+  String get shareButtonLabel => 'Comparteix';
 }
 
 /// The translations for Czech (`cs`).
@@ -287,6 +497,18 @@ class WidgetsLocalizationCs extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationCs() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopírovat';
+
+  @override
+  String get cutButtonLabel => 'Vyjmout';
+
+  @override
+  String get lookUpButtonLabel => 'Vyhledat';
+
+  @override
+  String get pasteButtonLabel => 'Vložit';
 
   @override
   String get reorderItemDown => 'Přesunout dolů';
@@ -305,6 +527,15 @@ class WidgetsLocalizationCs extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Přesunout nahoru';
+
+  @override
+  String get searchWebButtonLabel => 'Vyhledávat na webu';
+
+  @override
+  String get selectAllButtonLabel => 'Vybrat vše';
+
+  @override
+  String get shareButtonLabel => 'Sdílet';
 }
 
 /// The translations for Welsh (`cy`).
@@ -313,6 +544,18 @@ class WidgetsLocalizationCy extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationCy() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Copïo';
+
+  @override
+  String get cutButtonLabel => 'Torri';
+
+  @override
+  String get lookUpButtonLabel => 'Chwilio';
+
+  @override
+  String get pasteButtonLabel => 'Gludo';
 
   @override
   String get reorderItemDown => 'Symud i lawr';
@@ -331,6 +574,15 @@ class WidgetsLocalizationCy extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Symud i fyny';
+
+  @override
+  String get searchWebButtonLabel => "Chwilio'r We";
+
+  @override
+  String get selectAllButtonLabel => 'Dewis y Cyfan';
+
+  @override
+  String get shareButtonLabel => 'Rhannu';
 }
 
 /// The translations for Danish (`da`).
@@ -339,6 +591,18 @@ class WidgetsLocalizationDa extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationDa() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiér';
+
+  @override
+  String get cutButtonLabel => 'Klip';
+
+  @override
+  String get lookUpButtonLabel => 'Slå op';
+
+  @override
+  String get pasteButtonLabel => 'Indsæt';
 
   @override
   String get reorderItemDown => 'Flyt ned';
@@ -357,6 +621,15 @@ class WidgetsLocalizationDa extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Flyt op';
+
+  @override
+  String get searchWebButtonLabel => 'Søg på nettet';
+
+  @override
+  String get selectAllButtonLabel => 'Markér alt';
+
+  @override
+  String get shareButtonLabel => 'Del';
 }
 
 /// The translations for German (`de`).
@@ -365,6 +638,18 @@ class WidgetsLocalizationDe extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationDe() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopieren';
+
+  @override
+  String get cutButtonLabel => 'Ausschneiden';
+
+  @override
+  String get lookUpButtonLabel => 'Nachschlagen';
+
+  @override
+  String get pasteButtonLabel => 'Einsetzen';
 
   @override
   String get reorderItemDown => 'Nach unten verschieben';
@@ -383,6 +668,15 @@ class WidgetsLocalizationDe extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Nach oben verschieben';
+
+  @override
+  String get searchWebButtonLabel => 'Im Web suchen';
+
+  @override
+  String get selectAllButtonLabel => 'Alle auswählen';
+
+  @override
+  String get shareButtonLabel => 'Teilen';
 }
 
 /// The translations for German, as used in Switzerland (`de_CH`).
@@ -401,6 +695,18 @@ class WidgetsLocalizationEl extends GlobalWidgetsLocalizations {
   const WidgetsLocalizationEl() : super(TextDirection.ltr);
 
   @override
+  String get copyButtonLabel => 'Αντιγραφή';
+
+  @override
+  String get cutButtonLabel => 'Αποκοπή';
+
+  @override
+  String get lookUpButtonLabel => 'Look Up';
+
+  @override
+  String get pasteButtonLabel => 'Επικόλληση';
+
+  @override
   String get reorderItemDown => 'Μετακίνηση προς τα κάτω';
 
   @override
@@ -417,6 +723,15 @@ class WidgetsLocalizationEl extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Μετακίνηση προς τα πάνω';
+
+  @override
+  String get searchWebButtonLabel => 'Αναζήτηση στον ιστό';
+
+  @override
+  String get selectAllButtonLabel => 'Επιλογή όλων';
+
+  @override
+  String get shareButtonLabel => 'Κοινή χρήση';
 }
 
 /// The translations for English (`en`).
@@ -425,6 +740,18 @@ class WidgetsLocalizationEn extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationEn() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Copy';
+
+  @override
+  String get cutButtonLabel => 'Cut';
+
+  @override
+  String get lookUpButtonLabel => 'Look Up';
+
+  @override
+  String get pasteButtonLabel => 'Paste';
 
   @override
   String get reorderItemDown => 'Move down';
@@ -443,6 +770,15 @@ class WidgetsLocalizationEn extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Move up';
+
+  @override
+  String get searchWebButtonLabel => 'Search Web';
+
+  @override
+  String get selectAllButtonLabel => 'Select all';
+
+  @override
+  String get shareButtonLabel => 'Share';
 }
 
 /// The translations for English, as used in Australia (`en_AU`).
@@ -457,6 +793,9 @@ class WidgetsLocalizationEnAu extends WidgetsLocalizationEn {
 
   @override
   String get reorderItemRight => 'Move to the right';
+
+  @override
+  String get lookUpButtonLabel => 'Look up';
 }
 
 /// The translations for English, as used in Canada (`en_CA`).
@@ -485,6 +824,9 @@ class WidgetsLocalizationEnGb extends WidgetsLocalizationEn {
 
   @override
   String get reorderItemRight => 'Move to the right';
+
+  @override
+  String get lookUpButtonLabel => 'Look up';
 }
 
 /// The translations for English, as used in Ireland (`en_IE`).
@@ -499,6 +841,9 @@ class WidgetsLocalizationEnIe extends WidgetsLocalizationEn {
 
   @override
   String get reorderItemRight => 'Move to the right';
+
+  @override
+  String get lookUpButtonLabel => 'Look up';
 }
 
 /// The translations for English, as used in India (`en_IN`).
@@ -513,6 +858,9 @@ class WidgetsLocalizationEnIn extends WidgetsLocalizationEn {
 
   @override
   String get reorderItemRight => 'Move to the right';
+
+  @override
+  String get lookUpButtonLabel => 'Look up';
 }
 
 /// The translations for English, as used in New Zealand (`en_NZ`).
@@ -527,6 +875,9 @@ class WidgetsLocalizationEnNz extends WidgetsLocalizationEn {
 
   @override
   String get reorderItemRight => 'Move to the right';
+
+  @override
+  String get lookUpButtonLabel => 'Look up';
 }
 
 /// The translations for English, as used in Singapore (`en_SG`).
@@ -541,6 +892,9 @@ class WidgetsLocalizationEnSg extends WidgetsLocalizationEn {
 
   @override
   String get reorderItemRight => 'Move to the right';
+
+  @override
+  String get lookUpButtonLabel => 'Look up';
 }
 
 /// The translations for English, as used in South Africa (`en_ZA`).
@@ -555,6 +909,9 @@ class WidgetsLocalizationEnZa extends WidgetsLocalizationEn {
 
   @override
   String get reorderItemRight => 'Move to the right';
+
+  @override
+  String get lookUpButtonLabel => 'Look up';
 }
 
 /// The translations for Spanish Castilian (`es`).
@@ -563,6 +920,18 @@ class WidgetsLocalizationEs extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationEs() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Copiar';
+
+  @override
+  String get cutButtonLabel => 'Cortar';
+
+  @override
+  String get lookUpButtonLabel => 'Buscador visual';
+
+  @override
+  String get pasteButtonLabel => 'Pegar';
 
   @override
   String get reorderItemDown => 'Mover hacia abajo';
@@ -581,6 +950,15 @@ class WidgetsLocalizationEs extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Mover hacia arriba';
+
+  @override
+  String get searchWebButtonLabel => 'Buscar en la Web';
+
+  @override
+  String get selectAllButtonLabel => 'Seleccionar todo';
+
+  @override
+  String get shareButtonLabel => 'Compartir';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -592,6 +970,9 @@ class WidgetsLocalizationEs419 extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Argentina (`es_AR`).
@@ -603,6 +984,9 @@ class WidgetsLocalizationEsAr extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Bolivia (`es_BO`).
@@ -614,6 +998,9 @@ class WidgetsLocalizationEsBo extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Chile (`es_CL`).
@@ -625,6 +1012,9 @@ class WidgetsLocalizationEsCl extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Colombia (`es_CO`).
@@ -636,6 +1026,9 @@ class WidgetsLocalizationEsCo extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Costa Rica (`es_CR`).
@@ -647,6 +1040,9 @@ class WidgetsLocalizationEsCr extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in the Dominican Republic (`es_DO`).
@@ -658,6 +1054,9 @@ class WidgetsLocalizationEsDo extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Ecuador (`es_EC`).
@@ -669,6 +1068,9 @@ class WidgetsLocalizationEsEc extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Guatemala (`es_GT`).
@@ -680,6 +1082,9 @@ class WidgetsLocalizationEsGt extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Honduras (`es_HN`).
@@ -691,6 +1096,9 @@ class WidgetsLocalizationEsHn extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Mexico (`es_MX`).
@@ -702,6 +1110,9 @@ class WidgetsLocalizationEsMx extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Nicaragua (`es_NI`).
@@ -713,6 +1124,9 @@ class WidgetsLocalizationEsNi extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Panama (`es_PA`).
@@ -724,6 +1138,9 @@ class WidgetsLocalizationEsPa extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Peru (`es_PE`).
@@ -735,6 +1152,9 @@ class WidgetsLocalizationEsPe extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Puerto Rico (`es_PR`).
@@ -746,6 +1166,9 @@ class WidgetsLocalizationEsPr extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Paraguay (`es_PY`).
@@ -757,6 +1180,9 @@ class WidgetsLocalizationEsPy extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in El Salvador (`es_SV`).
@@ -768,6 +1194,9 @@ class WidgetsLocalizationEsSv extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in the United States (`es_US`).
@@ -779,6 +1208,9 @@ class WidgetsLocalizationEsUs extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Uruguay (`es_UY`).
@@ -790,6 +1222,9 @@ class WidgetsLocalizationEsUy extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Spanish Castilian, as used in Venezuela (`es_VE`).
@@ -801,6 +1236,9 @@ class WidgetsLocalizationEsVe extends WidgetsLocalizationEs {
 
   @override
   String get reorderItemToStart => 'Mover al inicio';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar hacia arriba';
 }
 
 /// The translations for Estonian (`et`).
@@ -809,6 +1247,18 @@ class WidgetsLocalizationEt extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationEt() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopeeri';
+
+  @override
+  String get cutButtonLabel => 'Lõika';
+
+  @override
+  String get lookUpButtonLabel => 'Look Up';
+
+  @override
+  String get pasteButtonLabel => 'Kleebi';
 
   @override
   String get reorderItemDown => 'Teisalda alla';
@@ -827,6 +1277,15 @@ class WidgetsLocalizationEt extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Teisalda üles';
+
+  @override
+  String get searchWebButtonLabel => 'Otsi veebist';
+
+  @override
+  String get selectAllButtonLabel => 'Vali kõik';
+
+  @override
+  String get shareButtonLabel => 'Jagamine';
 }
 
 /// The translations for Basque (`eu`).
@@ -835,6 +1294,18 @@ class WidgetsLocalizationEu extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationEu() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiatu';
+
+  @override
+  String get cutButtonLabel => 'Ebaki';
+
+  @override
+  String get lookUpButtonLabel => 'Bilatu';
+
+  @override
+  String get pasteButtonLabel => 'Itsatsi';
 
   @override
   String get reorderItemDown => 'Eraman behera';
@@ -853,6 +1324,15 @@ class WidgetsLocalizationEu extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Eraman gora';
+
+  @override
+  String get searchWebButtonLabel => 'Bilatu sarean';
+
+  @override
+  String get selectAllButtonLabel => 'Hautatu guztiak';
+
+  @override
+  String get shareButtonLabel => 'Partekatu';
 }
 
 /// The translations for Persian (`fa`).
@@ -861,6 +1341,18 @@ class WidgetsLocalizationFa extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationFa() : super(TextDirection.rtl);
+
+  @override
+  String get copyButtonLabel => 'کپی';
+
+  @override
+  String get cutButtonLabel => 'برش';
+
+  @override
+  String get lookUpButtonLabel => 'جستجو';
+
+  @override
+  String get pasteButtonLabel => 'جای‌گذاری';
 
   @override
   String get reorderItemDown => 'انتقال به پایین';
@@ -879,6 +1371,15 @@ class WidgetsLocalizationFa extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'انتقال به بالا';
+
+  @override
+  String get searchWebButtonLabel => 'جستجو در وب';
+
+  @override
+  String get selectAllButtonLabel => 'انتخاب همه';
+
+  @override
+  String get shareButtonLabel => 'هم‌رسانی کردن';
 }
 
 /// The translations for Finnish (`fi`).
@@ -887,6 +1388,18 @@ class WidgetsLocalizationFi extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationFi() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopioi';
+
+  @override
+  String get cutButtonLabel => 'Leikkaa';
+
+  @override
+  String get lookUpButtonLabel => 'Hae';
+
+  @override
+  String get pasteButtonLabel => 'Liitä';
 
   @override
   String get reorderItemDown => 'Siirrä alas';
@@ -905,6 +1418,15 @@ class WidgetsLocalizationFi extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Siirrä ylös';
+
+  @override
+  String get searchWebButtonLabel => 'Hae verkosta';
+
+  @override
+  String get selectAllButtonLabel => 'Valitse kaikki';
+
+  @override
+  String get shareButtonLabel => 'Jaa';
 }
 
 /// The translations for Filipino Pilipino (`fil`).
@@ -913,6 +1435,18 @@ class WidgetsLocalizationFil extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationFil() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopyahin';
+
+  @override
+  String get cutButtonLabel => 'I-cut';
+
+  @override
+  String get lookUpButtonLabel => 'Tumingin sa Itaas';
+
+  @override
+  String get pasteButtonLabel => 'I-paste';
 
   @override
   String get reorderItemDown => 'Ilipat pababa';
@@ -931,6 +1465,15 @@ class WidgetsLocalizationFil extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Ilipat pataas';
+
+  @override
+  String get searchWebButtonLabel => 'Maghanap sa Web';
+
+  @override
+  String get selectAllButtonLabel => 'Piliin lahat';
+
+  @override
+  String get shareButtonLabel => 'I-share';
 }
 
 /// The translations for French (`fr`).
@@ -939,6 +1482,18 @@ class WidgetsLocalizationFr extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationFr() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Copier';
+
+  @override
+  String get cutButtonLabel => 'Couper';
+
+  @override
+  String get lookUpButtonLabel => 'Recherche visuelle';
+
+  @override
+  String get pasteButtonLabel => 'Coller';
 
   @override
   String get reorderItemDown => 'Déplacer vers le bas';
@@ -957,6 +1512,15 @@ class WidgetsLocalizationFr extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Déplacer vers le haut';
+
+  @override
+  String get searchWebButtonLabel => 'Rechercher sur le Web';
+
+  @override
+  String get selectAllButtonLabel => 'Tout sélectionner';
+
+  @override
+  String get shareButtonLabel => 'Partager';
 }
 
 /// The translations for French, as used in Canada (`fr_CA`).
@@ -971,6 +1535,9 @@ class WidgetsLocalizationFrCa extends WidgetsLocalizationFr {
 
   @override
   String get reorderItemToEnd => 'Déplacer à la fin';
+
+  @override
+  String get lookUpButtonLabel => 'Regarder en haut';
 }
 
 /// The translations for Galician (`gl`).
@@ -979,6 +1546,18 @@ class WidgetsLocalizationGl extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationGl() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Copiar';
+
+  @override
+  String get cutButtonLabel => 'Cortar';
+
+  @override
+  String get lookUpButtonLabel => 'Mirar cara arriba';
+
+  @override
+  String get pasteButtonLabel => 'Pegar';
 
   @override
   String get reorderItemDown => 'Mover cara abaixo';
@@ -997,6 +1576,15 @@ class WidgetsLocalizationGl extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Mover cara arriba';
+
+  @override
+  String get searchWebButtonLabel => 'Buscar na Web';
+
+  @override
+  String get selectAllButtonLabel => 'Seleccionar todo';
+
+  @override
+  String get shareButtonLabel => 'Compartir';
 }
 
 /// The translations for Swiss German Alemannic Alsatian (`gsw`).
@@ -1005,6 +1593,18 @@ class WidgetsLocalizationGsw extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationGsw() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopieren';
+
+  @override
+  String get cutButtonLabel => 'Ausschneiden';
+
+  @override
+  String get lookUpButtonLabel => 'Nachschlagen';
+
+  @override
+  String get pasteButtonLabel => 'Einsetzen';
 
   @override
   String get reorderItemDown => 'Nach unten verschieben';
@@ -1023,6 +1623,15 @@ class WidgetsLocalizationGsw extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Nach oben verschieben';
+
+  @override
+  String get searchWebButtonLabel => 'Im Web suchen';
+
+  @override
+  String get selectAllButtonLabel => 'Alle auswählen';
+
+  @override
+  String get shareButtonLabel => 'Teilen';
 }
 
 /// The translations for Gujarati (`gu`).
@@ -1031,6 +1640,18 @@ class WidgetsLocalizationGu extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationGu() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'કૉપિ કરો';
+
+  @override
+  String get cutButtonLabel => 'કાપો';
+
+  @override
+  String get lookUpButtonLabel => 'શોધો';
+
+  @override
+  String get pasteButtonLabel => 'પેસ્ટ કરો';
 
   @override
   String get reorderItemDown => 'નીચે ખસેડો';
@@ -1049,6 +1670,15 @@ class WidgetsLocalizationGu extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ઉપર ખસેડો';
+
+  @override
+  String get searchWebButtonLabel => 'વેબ પર શોધો';
+
+  @override
+  String get selectAllButtonLabel => 'બધા પસંદ કરો';
+
+  @override
+  String get shareButtonLabel => 'શેર કરો';
 }
 
 /// The translations for Hebrew (`he`).
@@ -1057,6 +1687,18 @@ class WidgetsLocalizationHe extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationHe() : super(TextDirection.rtl);
+
+  @override
+  String get copyButtonLabel => 'העתקה';
+
+  @override
+  String get cutButtonLabel => 'גזירה';
+
+  @override
+  String get lookUpButtonLabel => 'חיפוש';
+
+  @override
+  String get pasteButtonLabel => 'הדבקה';
 
   @override
   String get reorderItemDown => 'העברה למטה';
@@ -1075,6 +1717,15 @@ class WidgetsLocalizationHe extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'העברה למעלה';
+
+  @override
+  String get searchWebButtonLabel => 'חיפוש באינטרנט';
+
+  @override
+  String get selectAllButtonLabel => 'בחירת הכול';
+
+  @override
+  String get shareButtonLabel => 'שיתוף';
 }
 
 /// The translations for Hindi (`hi`).
@@ -1083,6 +1734,18 @@ class WidgetsLocalizationHi extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationHi() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'कॉपी करें';
+
+  @override
+  String get cutButtonLabel => 'काटें';
+
+  @override
+  String get lookUpButtonLabel => 'लुक अप बटन';
+
+  @override
+  String get pasteButtonLabel => 'चिपकाएं';
 
   @override
   String get reorderItemDown => 'नीचे ले जाएं';
@@ -1101,6 +1764,15 @@ class WidgetsLocalizationHi extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ऊपर ले जाएं';
+
+  @override
+  String get searchWebButtonLabel => 'वेब पर खोजें';
+
+  @override
+  String get selectAllButtonLabel => 'सभी को चुनें';
+
+  @override
+  String get shareButtonLabel => 'शेयर करें';
 }
 
 /// The translations for Croatian (`hr`).
@@ -1109,6 +1781,18 @@ class WidgetsLocalizationHr extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationHr() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiraj';
+
+  @override
+  String get cutButtonLabel => 'Izreži';
+
+  @override
+  String get lookUpButtonLabel => 'Pogled prema gore';
+
+  @override
+  String get pasteButtonLabel => 'Zalijepi';
 
   @override
   String get reorderItemDown => 'Pomakni prema dolje';
@@ -1127,6 +1811,15 @@ class WidgetsLocalizationHr extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Pomakni prema gore';
+
+  @override
+  String get searchWebButtonLabel => 'Pretraži web';
+
+  @override
+  String get selectAllButtonLabel => 'Odaberi sve';
+
+  @override
+  String get shareButtonLabel => 'Dijeli';
 }
 
 /// The translations for Hungarian (`hu`).
@@ -1135,6 +1828,18 @@ class WidgetsLocalizationHu extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationHu() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Másolás';
+
+  @override
+  String get cutButtonLabel => 'Kivágás';
+
+  @override
+  String get lookUpButtonLabel => 'Felfelé nézés';
+
+  @override
+  String get pasteButtonLabel => 'Beillesztés';
 
   @override
   String get reorderItemDown => 'Áthelyezés lefelé';
@@ -1153,6 +1858,15 @@ class WidgetsLocalizationHu extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Áthelyezés felfelé';
+
+  @override
+  String get searchWebButtonLabel => 'Keresés az interneten';
+
+  @override
+  String get selectAllButtonLabel => 'Összes kijelölése';
+
+  @override
+  String get shareButtonLabel => 'Megosztás';
 }
 
 /// The translations for Armenian (`hy`).
@@ -1161,6 +1875,18 @@ class WidgetsLocalizationHy extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationHy() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Պատճենել';
+
+  @override
+  String get cutButtonLabel => 'Կտրել';
+
+  @override
+  String get lookUpButtonLabel => 'Փնտրել';
+
+  @override
+  String get pasteButtonLabel => 'Տեղադրել';
 
   @override
   String get reorderItemDown => 'Տեղափոխել ներքև';
@@ -1179,6 +1905,15 @@ class WidgetsLocalizationHy extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Տեղափոխել վերև';
+
+  @override
+  String get searchWebButtonLabel => 'Որոնել համացանցում';
+
+  @override
+  String get selectAllButtonLabel => 'Նշել բոլորը';
+
+  @override
+  String get shareButtonLabel => 'Կիսվել';
 }
 
 /// The translations for Indonesian (`id`).
@@ -1187,6 +1922,18 @@ class WidgetsLocalizationId extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationId() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Salin';
+
+  @override
+  String get cutButtonLabel => 'Potong';
+
+  @override
+  String get lookUpButtonLabel => 'Cari';
+
+  @override
+  String get pasteButtonLabel => 'Tempel';
 
   @override
   String get reorderItemDown => 'Turunkan';
@@ -1205,6 +1952,15 @@ class WidgetsLocalizationId extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Naikkan';
+
+  @override
+  String get searchWebButtonLabel => 'Telusuri di Web';
+
+  @override
+  String get selectAllButtonLabel => 'Pilih semua';
+
+  @override
+  String get shareButtonLabel => 'Bagikan';
 }
 
 /// The translations for Icelandic (`is`).
@@ -1213,6 +1969,18 @@ class WidgetsLocalizationIs extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationIs() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Afrita';
+
+  @override
+  String get cutButtonLabel => 'Klippa';
+
+  @override
+  String get lookUpButtonLabel => 'Look Up';
+
+  @override
+  String get pasteButtonLabel => 'Líma';
 
   @override
   String get reorderItemDown => 'Færa niður';
@@ -1231,6 +1999,15 @@ class WidgetsLocalizationIs extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Færa upp';
+
+  @override
+  String get searchWebButtonLabel => 'Leita á vefnum';
+
+  @override
+  String get selectAllButtonLabel => 'Velja allt';
+
+  @override
+  String get shareButtonLabel => 'Deila';
 }
 
 /// The translations for Italian (`it`).
@@ -1239,6 +2016,18 @@ class WidgetsLocalizationIt extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationIt() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Copia';
+
+  @override
+  String get cutButtonLabel => 'Taglia';
+
+  @override
+  String get lookUpButtonLabel => 'Cerca';
+
+  @override
+  String get pasteButtonLabel => 'Incolla';
 
   @override
   String get reorderItemDown => 'Sposta giù';
@@ -1257,6 +2046,15 @@ class WidgetsLocalizationIt extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Sposta su';
+
+  @override
+  String get searchWebButtonLabel => 'Cerca sul web';
+
+  @override
+  String get selectAllButtonLabel => 'Seleziona tutto';
+
+  @override
+  String get shareButtonLabel => 'Condividi';
 }
 
 /// The translations for Japanese (`ja`).
@@ -1265,6 +2063,18 @@ class WidgetsLocalizationJa extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationJa() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'コピー';
+
+  @override
+  String get cutButtonLabel => '切り取り';
+
+  @override
+  String get lookUpButtonLabel => '調べる';
+
+  @override
+  String get pasteButtonLabel => '貼り付け';
 
   @override
   String get reorderItemDown => '下に移動';
@@ -1283,6 +2093,15 @@ class WidgetsLocalizationJa extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => '上に移動';
+
+  @override
+  String get searchWebButtonLabel => 'ウェブを検索';
+
+  @override
+  String get selectAllButtonLabel => 'すべてを選択';
+
+  @override
+  String get shareButtonLabel => '共有';
 }
 
 /// The translations for Georgian (`ka`).
@@ -1291,6 +2110,18 @@ class WidgetsLocalizationKa extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationKa() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'კოპირება';
+
+  @override
+  String get cutButtonLabel => 'ამოჭრა';
+
+  @override
+  String get lookUpButtonLabel => 'აიხედეთ ზემოთ';
+
+  @override
+  String get pasteButtonLabel => 'ჩასმა';
 
   @override
   String get reorderItemDown => 'ქვემოთ გადატანა';
@@ -1309,6 +2140,15 @@ class WidgetsLocalizationKa extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ზემოთ გადატანა';
+
+  @override
+  String get searchWebButtonLabel => 'ვებში ძიება';
+
+  @override
+  String get selectAllButtonLabel => 'ყველას არჩევა';
+
+  @override
+  String get shareButtonLabel => 'გაზიარება';
 }
 
 /// The translations for Kazakh (`kk`).
@@ -1317,6 +2157,18 @@ class WidgetsLocalizationKk extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationKk() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Көшіру';
+
+  @override
+  String get cutButtonLabel => 'Қию';
+
+  @override
+  String get lookUpButtonLabel => 'Іздеу';
+
+  @override
+  String get pasteButtonLabel => 'Қою';
 
   @override
   String get reorderItemDown => 'Төменге жылжыту';
@@ -1335,6 +2187,15 @@ class WidgetsLocalizationKk extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Жоғарыға жылжыту';
+
+  @override
+  String get searchWebButtonLabel => 'Интернеттен іздеу';
+
+  @override
+  String get selectAllButtonLabel => 'Барлығын таңдау';
+
+  @override
+  String get shareButtonLabel => 'Бөлісу';
 }
 
 /// The translations for Khmer Central Khmer (`km`).
@@ -1343,6 +2204,18 @@ class WidgetsLocalizationKm extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationKm() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'ចម្លង';
+
+  @override
+  String get cutButtonLabel => 'កាត់';
+
+  @override
+  String get lookUpButtonLabel => 'រកមើល';
+
+  @override
+  String get pasteButtonLabel => 'ដាក់​ចូល';
 
   @override
   String get reorderItemDown => 'ផ្លាស់ទី​ចុះ​ក្រោម';
@@ -1361,6 +2234,15 @@ class WidgetsLocalizationKm extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ផ្លាស់ទី​ឡើង​លើ';
+
+  @override
+  String get searchWebButtonLabel => 'ស្វែងរក​លើបណ្ដាញ';
+
+  @override
+  String get selectAllButtonLabel => 'ជ្រើសរើស​ទាំងអស់';
+
+  @override
+  String get shareButtonLabel => 'ចែករំលែក';
 }
 
 /// The translations for Kannada (`kn`).
@@ -1369,6 +2251,18 @@ class WidgetsLocalizationKn extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationKn() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => '\u{ca8}\u{c95}\u{cb2}\u{cbf}\u{cb8}\u{cbf}';
+
+  @override
+  String get cutButtonLabel => '\u{c95}\u{ca4}\u{ccd}\u{ca4}\u{cb0}\u{cbf}\u{cb8}\u{cbf}';
+
+  @override
+  String get lookUpButtonLabel => '\u{cae}\u{cc7}\u{cb2}\u{cc6}\u{20}\u{ca8}\u{ccb}\u{ca1}\u{cbf}';
+
+  @override
+  String get pasteButtonLabel => '\u{c85}\u{c82}\u{c9f}\u{cbf}\u{cb8}\u{cbf}';
 
   @override
   String get reorderItemDown => '\u{c95}\u{cc6}\u{cb3}\u{c97}\u{cc6}\u{20}\u{cb8}\u{cb0}\u{cbf}\u{cb8}\u{cbf}';
@@ -1387,6 +2281,15 @@ class WidgetsLocalizationKn extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => '\u{cae}\u{cc7}\u{cb2}\u{cc6}\u{20}\u{cb8}\u{cb0}\u{cbf}\u{cb8}\u{cbf}';
+
+  @override
+  String get searchWebButtonLabel => '\u{cb5}\u{cc6}\u{cac}\u{ccd}\u{200c}\u{ca8}\u{cb2}\u{ccd}\u{cb2}\u{cbf}\u{20}\u{cb9}\u{cc1}\u{ca1}\u{cc1}\u{c95}\u{cbf}';
+
+  @override
+  String get selectAllButtonLabel => '\u{c8e}\u{cb2}\u{ccd}\u{cb2}\u{cb5}\u{ca8}\u{ccd}\u{ca8}\u{cc2}\u{20}\u{c86}\u{caf}\u{ccd}\u{c95}\u{cc6}\u{20}\u{cae}\u{cbe}\u{ca1}\u{cbf}';
+
+  @override
+  String get shareButtonLabel => '\u{cb9}\u{c82}\u{c9a}\u{cbf}\u{c95}\u{cca}\u{cb3}\u{ccd}\u{cb3}\u{cbf}';
 }
 
 /// The translations for Korean (`ko`).
@@ -1395,6 +2298,18 @@ class WidgetsLocalizationKo extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationKo() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => '복사';
+
+  @override
+  String get cutButtonLabel => '잘라내기';
+
+  @override
+  String get lookUpButtonLabel => '찾기';
+
+  @override
+  String get pasteButtonLabel => '붙여넣기';
 
   @override
   String get reorderItemDown => '아래로 이동';
@@ -1413,6 +2328,15 @@ class WidgetsLocalizationKo extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => '위로 이동';
+
+  @override
+  String get searchWebButtonLabel => '웹 검색';
+
+  @override
+  String get selectAllButtonLabel => '전체 선택';
+
+  @override
+  String get shareButtonLabel => '공유';
 }
 
 /// The translations for Kirghiz Kyrgyz (`ky`).
@@ -1421,6 +2345,18 @@ class WidgetsLocalizationKy extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationKy() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Көчүрүү';
+
+  @override
+  String get cutButtonLabel => 'Кесүү';
+
+  @override
+  String get lookUpButtonLabel => 'Издөө';
+
+  @override
+  String get pasteButtonLabel => 'Чаптоо';
 
   @override
   String get reorderItemDown => 'Төмөн жылдыруу';
@@ -1439,6 +2375,15 @@ class WidgetsLocalizationKy extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Жогору жылдыруу';
+
+  @override
+  String get searchWebButtonLabel => 'Интернеттен издөө';
+
+  @override
+  String get selectAllButtonLabel => 'Баарын тандоо';
+
+  @override
+  String get shareButtonLabel => 'Бөлүшүү';
 }
 
 /// The translations for Lao (`lo`).
@@ -1447,6 +2392,18 @@ class WidgetsLocalizationLo extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationLo() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'ສຳເນົາ';
+
+  @override
+  String get cutButtonLabel => 'ຕັດ';
+
+  @override
+  String get lookUpButtonLabel => 'ຊອກຫາຂໍ້ມູນ';
+
+  @override
+  String get pasteButtonLabel => 'ວາງ';
 
   @override
   String get reorderItemDown => 'ຍ້າຍລົງ';
@@ -1465,6 +2422,15 @@ class WidgetsLocalizationLo extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ຍ້າຍຂຶ້ນ';
+
+  @override
+  String get searchWebButtonLabel => 'ຊອກຫາຢູ່ອິນເຕີເນັດ';
+
+  @override
+  String get selectAllButtonLabel => 'ເລືອກທັງໝົດ';
+
+  @override
+  String get shareButtonLabel => 'ແບ່ງປັນ';
 }
 
 /// The translations for Lithuanian (`lt`).
@@ -1473,6 +2439,18 @@ class WidgetsLocalizationLt extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationLt() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopijuoti';
+
+  @override
+  String get cutButtonLabel => 'Iškirpti';
+
+  @override
+  String get lookUpButtonLabel => 'Ieškoti';
+
+  @override
+  String get pasteButtonLabel => 'Įklijuoti';
 
   @override
   String get reorderItemDown => 'Perkelti žemyn';
@@ -1491,6 +2469,15 @@ class WidgetsLocalizationLt extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Perkelti aukštyn';
+
+  @override
+  String get searchWebButtonLabel => 'Ieškoti žiniatinklyje';
+
+  @override
+  String get selectAllButtonLabel => 'Pasirinkti viską';
+
+  @override
+  String get shareButtonLabel => 'Bendrinti';
 }
 
 /// The translations for Latvian (`lv`).
@@ -1499,6 +2486,18 @@ class WidgetsLocalizationLv extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationLv() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopēt';
+
+  @override
+  String get cutButtonLabel => 'Izgriezt';
+
+  @override
+  String get lookUpButtonLabel => 'Meklēt';
+
+  @override
+  String get pasteButtonLabel => 'Ielīmēt';
 
   @override
   String get reorderItemDown => 'Pārvietot uz leju';
@@ -1517,6 +2516,15 @@ class WidgetsLocalizationLv extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Pārvietot uz augšu';
+
+  @override
+  String get searchWebButtonLabel => 'Meklēt tīmeklī';
+
+  @override
+  String get selectAllButtonLabel => 'Atlasīt visu';
+
+  @override
+  String get shareButtonLabel => 'Kopīgot';
 }
 
 /// The translations for Macedonian (`mk`).
@@ -1525,6 +2533,18 @@ class WidgetsLocalizationMk extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationMk() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Копирај';
+
+  @override
+  String get cutButtonLabel => 'Исечи';
+
+  @override
+  String get lookUpButtonLabel => 'Погледнете нагоре';
+
+  @override
+  String get pasteButtonLabel => 'Залепи';
 
   @override
   String get reorderItemDown => 'Преместете надолу';
@@ -1543,6 +2563,15 @@ class WidgetsLocalizationMk extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Преместете нагоре';
+
+  @override
+  String get searchWebButtonLabel => 'Пребарајте на интернет';
+
+  @override
+  String get selectAllButtonLabel => 'Избери ги сите';
+
+  @override
+  String get shareButtonLabel => 'Сподели';
 }
 
 /// The translations for Malayalam (`ml`).
@@ -1551,6 +2580,18 @@ class WidgetsLocalizationMl extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationMl() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'പകർത്തുക';
+
+  @override
+  String get cutButtonLabel => 'മുറിക്കുക';
+
+  @override
+  String get lookUpButtonLabel => 'മുകളിലേക്ക് നോക്കുക';
+
+  @override
+  String get pasteButtonLabel => 'ഒട്ടിക്കുക';
 
   @override
   String get reorderItemDown => 'താഴോട്ട് നീക്കുക';
@@ -1569,6 +2610,15 @@ class WidgetsLocalizationMl extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'മുകളിലോട്ട് നീക്കുക';
+
+  @override
+  String get searchWebButtonLabel => 'വെബിൽ തിരയുക';
+
+  @override
+  String get selectAllButtonLabel => 'എല്ലാം തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get shareButtonLabel => 'പങ്കിടുക';
 }
 
 /// The translations for Mongolian (`mn`).
@@ -1577,6 +2627,18 @@ class WidgetsLocalizationMn extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationMn() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Хуулах';
+
+  @override
+  String get cutButtonLabel => 'Таслах';
+
+  @override
+  String get lookUpButtonLabel => 'Дээшээ харах';
+
+  @override
+  String get pasteButtonLabel => 'Буулгах';
 
   @override
   String get reorderItemDown => 'Доош зөөх';
@@ -1595,6 +2657,15 @@ class WidgetsLocalizationMn extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Дээш зөөх';
+
+  @override
+  String get searchWebButtonLabel => 'Вебээс хайх';
+
+  @override
+  String get selectAllButtonLabel => 'Бүгдийг сонгох';
+
+  @override
+  String get shareButtonLabel => 'Хуваалцах';
 }
 
 /// The translations for Marathi (`mr`).
@@ -1603,6 +2674,18 @@ class WidgetsLocalizationMr extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationMr() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'कॉपी करा';
+
+  @override
+  String get cutButtonLabel => 'कट करा';
+
+  @override
+  String get lookUpButtonLabel => 'शोध घ्या';
+
+  @override
+  String get pasteButtonLabel => 'पेस्ट करा';
 
   @override
   String get reorderItemDown => 'खाली हलवा';
@@ -1621,6 +2704,15 @@ class WidgetsLocalizationMr extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'वर हलवा';
+
+  @override
+  String get searchWebButtonLabel => 'वेबवर शोधा';
+
+  @override
+  String get selectAllButtonLabel => 'सर्व निवडा';
+
+  @override
+  String get shareButtonLabel => 'शेअर करा';
 }
 
 /// The translations for Malay (`ms`).
@@ -1629,6 +2721,18 @@ class WidgetsLocalizationMs extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationMs() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Salin';
+
+  @override
+  String get cutButtonLabel => 'Potong';
+
+  @override
+  String get lookUpButtonLabel => 'Lihat ke Atas';
+
+  @override
+  String get pasteButtonLabel => 'Tampal';
 
   @override
   String get reorderItemDown => 'Alih ke bawah';
@@ -1647,6 +2751,15 @@ class WidgetsLocalizationMs extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Alih ke atas';
+
+  @override
+  String get searchWebButtonLabel => 'Buat carian pada Web';
+
+  @override
+  String get selectAllButtonLabel => 'Pilih semua';
+
+  @override
+  String get shareButtonLabel => 'Kongsi';
 }
 
 /// The translations for Burmese (`my`).
@@ -1655,6 +2768,18 @@ class WidgetsLocalizationMy extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationMy() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'မိတ္တူကူးရန်';
+
+  @override
+  String get cutButtonLabel => 'ဖြတ်ယူရန်';
+
+  @override
+  String get lookUpButtonLabel => 'အပေါ်ကြည့်ရန်';
+
+  @override
+  String get pasteButtonLabel => 'ကူးထည့်ရန်';
 
   @override
   String get reorderItemDown => 'အောက်သို့ရွှေ့ရန်';
@@ -1673,6 +2798,15 @@ class WidgetsLocalizationMy extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'အပေါ်သို့ ရွှေ့ရန်';
+
+  @override
+  String get searchWebButtonLabel => 'ဝဘ်တွင်ရှာရန်';
+
+  @override
+  String get selectAllButtonLabel => 'အားလုံး ရွေးရန်';
+
+  @override
+  String get shareButtonLabel => 'မျှဝေရန်';
 }
 
 /// The translations for Norwegian Bokmål (`nb`).
@@ -1681,6 +2815,18 @@ class WidgetsLocalizationNb extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationNb() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiér';
+
+  @override
+  String get cutButtonLabel => 'Klipp ut';
+
+  @override
+  String get lookUpButtonLabel => 'Slå opp';
+
+  @override
+  String get pasteButtonLabel => 'Lim inn';
 
   @override
   String get reorderItemDown => 'Flytt ned';
@@ -1699,6 +2845,15 @@ class WidgetsLocalizationNb extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Flytt opp';
+
+  @override
+  String get searchWebButtonLabel => 'Søk på nettet';
+
+  @override
+  String get selectAllButtonLabel => 'Velg alle';
+
+  @override
+  String get shareButtonLabel => 'Del';
 }
 
 /// The translations for Nepali (`ne`).
@@ -1707,6 +2862,18 @@ class WidgetsLocalizationNe extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationNe() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'कपी गर्नुहोस्';
+
+  @override
+  String get cutButtonLabel => 'काट्नुहोस्';
+
+  @override
+  String get lookUpButtonLabel => 'माथितिर हेर्नुहोस्';
+
+  @override
+  String get pasteButtonLabel => 'टाँस्नुहोस्';
 
   @override
   String get reorderItemDown => 'तल सार्नुहोस्';
@@ -1725,6 +2892,15 @@ class WidgetsLocalizationNe extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'माथि सार्नुहोस्';
+
+  @override
+  String get searchWebButtonLabel => 'वेबमा खोज्नुहोस्';
+
+  @override
+  String get selectAllButtonLabel => 'सबै बटनहरू चयन गर्नुहोस्';
+
+  @override
+  String get shareButtonLabel => 'सेयर गर्नुहोस्';
 }
 
 /// The translations for Dutch Flemish (`nl`).
@@ -1733,6 +2909,18 @@ class WidgetsLocalizationNl extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationNl() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiëren';
+
+  @override
+  String get cutButtonLabel => 'Knippen';
+
+  @override
+  String get lookUpButtonLabel => 'Opzoeken';
+
+  @override
+  String get pasteButtonLabel => 'Plakken';
 
   @override
   String get reorderItemDown => 'Omlaag verplaatsen';
@@ -1751,6 +2939,15 @@ class WidgetsLocalizationNl extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Omhoog verplaatsen';
+
+  @override
+  String get searchWebButtonLabel => 'Op internet zoeken';
+
+  @override
+  String get selectAllButtonLabel => 'Alles selecteren';
+
+  @override
+  String get shareButtonLabel => 'Delen';
 }
 
 /// The translations for Norwegian (`no`).
@@ -1759,6 +2956,18 @@ class WidgetsLocalizationNo extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationNo() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiér';
+
+  @override
+  String get cutButtonLabel => 'Klipp ut';
+
+  @override
+  String get lookUpButtonLabel => 'Slå opp';
+
+  @override
+  String get pasteButtonLabel => 'Lim inn';
 
   @override
   String get reorderItemDown => 'Flytt ned';
@@ -1777,6 +2986,15 @@ class WidgetsLocalizationNo extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Flytt opp';
+
+  @override
+  String get searchWebButtonLabel => 'Søk på nettet';
+
+  @override
+  String get selectAllButtonLabel => 'Velg alle';
+
+  @override
+  String get shareButtonLabel => 'Del';
 }
 
 /// The translations for Oriya (`or`).
@@ -1785,6 +3003,18 @@ class WidgetsLocalizationOr extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationOr() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'କପି କରନ୍ତୁ';
+
+  @override
+  String get cutButtonLabel => 'କଟ୍ କରନ୍ତୁ';
+
+  @override
+  String get lookUpButtonLabel => 'ଉପରକୁ ଦେଖନ୍ତୁ';
+
+  @override
+  String get pasteButtonLabel => 'ପେଷ୍ଟ କରନ୍ତୁ';
 
   @override
   String get reorderItemDown => 'ତଳକୁ ଯାଆନ୍ତୁ';
@@ -1803,6 +3033,15 @@ class WidgetsLocalizationOr extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ଉପରକୁ ନିଅନ୍ତୁ';
+
+  @override
+  String get searchWebButtonLabel => 'ୱେବ ସର୍ଚ୍ଚ କରନ୍ତୁ';
+
+  @override
+  String get selectAllButtonLabel => 'ସବୁ ଚୟନ କରନ୍ତୁ';
+
+  @override
+  String get shareButtonLabel => 'ସେୟାର କରନ୍ତୁ';
 }
 
 /// The translations for Panjabi Punjabi (`pa`).
@@ -1811,6 +3050,18 @@ class WidgetsLocalizationPa extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationPa() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'ਕਾਪੀ ਕਰੋ';
+
+  @override
+  String get cutButtonLabel => 'ਕੱਟ ਕਰੋ';
+
+  @override
+  String get lookUpButtonLabel => 'ਖੋਜੋ';
+
+  @override
+  String get pasteButtonLabel => 'ਪੇਸਟ ਕਰੋ';
 
   @override
   String get reorderItemDown => 'ਹੇਠਾਂ ਲਿਜਾਓ';
@@ -1829,6 +3080,15 @@ class WidgetsLocalizationPa extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ਉੱਪਰ ਲਿਜਾਓ';
+
+  @override
+  String get searchWebButtonLabel => "ਵੈੱਬ 'ਤੇ ਖੋਜੋ";
+
+  @override
+  String get selectAllButtonLabel => 'ਸਭ ਚੁਣੋ';
+
+  @override
+  String get shareButtonLabel => 'ਸਾਂਝਾ ਕਰੋ';
 }
 
 /// The translations for Polish (`pl`).
@@ -1837,6 +3097,18 @@ class WidgetsLocalizationPl extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationPl() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiuj';
+
+  @override
+  String get cutButtonLabel => 'Wytnij';
+
+  @override
+  String get lookUpButtonLabel => 'Sprawdź';
+
+  @override
+  String get pasteButtonLabel => 'Wklej';
 
   @override
   String get reorderItemDown => 'Przenieś w dół';
@@ -1855,6 +3127,15 @@ class WidgetsLocalizationPl extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Przenieś w górę';
+
+  @override
+  String get searchWebButtonLabel => 'Szukaj w internecie';
+
+  @override
+  String get selectAllButtonLabel => 'Zaznacz wszystko';
+
+  @override
+  String get shareButtonLabel => 'Udostępnij';
 }
 
 /// The translations for Pushto Pashto (`ps`).
@@ -1863,6 +3144,18 @@ class WidgetsLocalizationPs extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationPs() : super(TextDirection.rtl);
+
+  @override
+  String get copyButtonLabel => 'کاپی';
+
+  @override
+  String get cutButtonLabel => 'کم کړئ';
+
+  @override
+  String get lookUpButtonLabel => 'Look Up';
+
+  @override
+  String get pasteButtonLabel => 'پیټ کړئ';
 
   @override
   String get reorderItemDown => 'Move down';
@@ -1881,6 +3174,15 @@ class WidgetsLocalizationPs extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Move up';
+
+  @override
+  String get searchWebButtonLabel => 'Search Web';
+
+  @override
+  String get selectAllButtonLabel => 'غوره کړئ';
+
+  @override
+  String get shareButtonLabel => 'Share...';
 }
 
 /// The translations for Portuguese (`pt`).
@@ -1889,6 +3191,18 @@ class WidgetsLocalizationPt extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationPt() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Copiar';
+
+  @override
+  String get cutButtonLabel => 'Cortar';
+
+  @override
+  String get lookUpButtonLabel => 'Pesquisar';
+
+  @override
+  String get pasteButtonLabel => 'Colar';
 
   @override
   String get reorderItemDown => 'Mover para baixo';
@@ -1907,6 +3221,15 @@ class WidgetsLocalizationPt extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Mover para cima';
+
+  @override
+  String get searchWebButtonLabel => 'Pesquisar na Web';
+
+  @override
+  String get selectAllButtonLabel => 'Selecionar tudo';
+
+  @override
+  String get shareButtonLabel => 'Compartilhar';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1918,6 +3241,12 @@ class WidgetsLocalizationPtPt extends WidgetsLocalizationPt {
 
   @override
   String get reorderItemToEnd => 'Mover para o fim';
+
+  @override
+  String get lookUpButtonLabel => 'Procurar';
+
+  @override
+  String get shareButtonLabel => 'Partilhar';
 }
 
 /// The translations for Romanian Moldavian Moldovan (`ro`).
@@ -1926,6 +3255,18 @@ class WidgetsLocalizationRo extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationRo() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Copiați';
+
+  @override
+  String get cutButtonLabel => 'Decupați';
+
+  @override
+  String get lookUpButtonLabel => 'Privire în sus';
+
+  @override
+  String get pasteButtonLabel => 'Inserați';
 
   @override
   String get reorderItemDown => 'Mutați în jos';
@@ -1944,6 +3285,15 @@ class WidgetsLocalizationRo extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Mutați în sus';
+
+  @override
+  String get searchWebButtonLabel => 'Căutați pe web';
+
+  @override
+  String get selectAllButtonLabel => 'Selectați tot';
+
+  @override
+  String get shareButtonLabel => 'Trimiteți';
 }
 
 /// The translations for Russian (`ru`).
@@ -1952,6 +3302,18 @@ class WidgetsLocalizationRu extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationRu() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Копировать';
+
+  @override
+  String get cutButtonLabel => 'Вырезать';
+
+  @override
+  String get lookUpButtonLabel => 'Найти';
+
+  @override
+  String get pasteButtonLabel => 'Вставить';
 
   @override
   String get reorderItemDown => 'Переместить вниз';
@@ -1970,6 +3332,15 @@ class WidgetsLocalizationRu extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Переместить вверх';
+
+  @override
+  String get searchWebButtonLabel => 'Искать в интернете';
+
+  @override
+  String get selectAllButtonLabel => 'Выбрать все';
+
+  @override
+  String get shareButtonLabel => 'Поделиться';
 }
 
 /// The translations for Sinhala Sinhalese (`si`).
@@ -1978,6 +3349,18 @@ class WidgetsLocalizationSi extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationSi() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'පිටපත් කරන්න';
+
+  @override
+  String get cutButtonLabel => 'කපන්න';
+
+  @override
+  String get lookUpButtonLabel => 'උඩ බලන්න';
+
+  @override
+  String get pasteButtonLabel => 'අලවන්න';
 
   @override
   String get reorderItemDown => 'පහළට ගෙන යන්න';
@@ -1996,6 +3379,15 @@ class WidgetsLocalizationSi extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ඉහළට ගෙන යන්න';
+
+  @override
+  String get searchWebButtonLabel => 'වෙබය සොයන්න';
+
+  @override
+  String get selectAllButtonLabel => 'සියල්ල තෝරන්න';
+
+  @override
+  String get shareButtonLabel => 'බෙදා ගන්න';
 }
 
 /// The translations for Slovak (`sk`).
@@ -2004,6 +3396,18 @@ class WidgetsLocalizationSk extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationSk() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopírovať';
+
+  @override
+  String get cutButtonLabel => 'Vystrihnúť';
+
+  @override
+  String get lookUpButtonLabel => 'Pohľad nahor';
+
+  @override
+  String get pasteButtonLabel => 'Prilepiť';
 
   @override
   String get reorderItemDown => 'Presunúť nadol';
@@ -2022,6 +3426,15 @@ class WidgetsLocalizationSk extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Presunúť nahor';
+
+  @override
+  String get searchWebButtonLabel => 'Hľadať na webe';
+
+  @override
+  String get selectAllButtonLabel => 'Vybrať všetko';
+
+  @override
+  String get shareButtonLabel => 'Zdieľať';
 }
 
 /// The translations for Slovenian (`sl`).
@@ -2030,6 +3443,18 @@ class WidgetsLocalizationSl extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationSl() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiraj';
+
+  @override
+  String get cutButtonLabel => 'Izreži';
+
+  @override
+  String get lookUpButtonLabel => 'Pogled gor';
+
+  @override
+  String get pasteButtonLabel => 'Prilepi';
 
   @override
   String get reorderItemDown => 'Premakni navzdol';
@@ -2048,6 +3473,15 @@ class WidgetsLocalizationSl extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Premakni navzgor';
+
+  @override
+  String get searchWebButtonLabel => 'Iskanje v spletu';
+
+  @override
+  String get selectAllButtonLabel => 'Izberi vse';
+
+  @override
+  String get shareButtonLabel => 'Deli';
 }
 
 /// The translations for Albanian (`sq`).
@@ -2056,6 +3490,18 @@ class WidgetsLocalizationSq extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationSq() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopjo';
+
+  @override
+  String get cutButtonLabel => 'Prit';
+
+  @override
+  String get lookUpButtonLabel => 'Kërko';
+
+  @override
+  String get pasteButtonLabel => 'Ngjit';
 
   @override
   String get reorderItemDown => 'Lëvize poshtë';
@@ -2074,6 +3520,15 @@ class WidgetsLocalizationSq extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Lëvize lart';
+
+  @override
+  String get searchWebButtonLabel => 'Kërko në ueb';
+
+  @override
+  String get selectAllButtonLabel => 'Zgjidh të gjitha';
+
+  @override
+  String get shareButtonLabel => 'Ndaj';
 }
 
 /// The translations for Serbian (`sr`).
@@ -2082,6 +3537,18 @@ class WidgetsLocalizationSr extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationSr() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Копирај';
+
+  @override
+  String get cutButtonLabel => 'Исеци';
+
+  @override
+  String get lookUpButtonLabel => 'Поглед нагоре';
+
+  @override
+  String get pasteButtonLabel => 'Налепи';
 
   @override
   String get reorderItemDown => 'Померите надоле';
@@ -2100,6 +3567,15 @@ class WidgetsLocalizationSr extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Померите нагоре';
+
+  @override
+  String get searchWebButtonLabel => 'Претражи веб';
+
+  @override
+  String get selectAllButtonLabel => 'Изабери све';
+
+  @override
+  String get shareButtonLabel => 'Дели';
 }
 
 /// The translations for Serbian, using the Cyrillic script (`sr_Cyrl`).
@@ -2118,6 +3594,18 @@ class WidgetsLocalizationSrLatn extends WidgetsLocalizationSr {
   const WidgetsLocalizationSrLatn();
 
   @override
+  String get copyButtonLabel => 'Kopiraj';
+
+  @override
+  String get cutButtonLabel => 'Iseci';
+
+  @override
+  String get lookUpButtonLabel => 'Pogled nagore';
+
+  @override
+  String get pasteButtonLabel => 'Nalepi';
+
+  @override
   String get reorderItemDown => 'Pomerite nadole';
 
   @override
@@ -2134,6 +3622,15 @@ class WidgetsLocalizationSrLatn extends WidgetsLocalizationSr {
 
   @override
   String get reorderItemUp => 'Pomerite nagore';
+
+  @override
+  String get searchWebButtonLabel => 'Pretraži veb';
+
+  @override
+  String get selectAllButtonLabel => 'Izaberi sve';
+
+  @override
+  String get shareButtonLabel => 'Deli';
 }
 
 /// The translations for Swedish (`sv`).
@@ -2142,6 +3639,18 @@ class WidgetsLocalizationSv extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationSv() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopiera';
+
+  @override
+  String get cutButtonLabel => 'Klipp ut';
+
+  @override
+  String get lookUpButtonLabel => 'Titta upp';
+
+  @override
+  String get pasteButtonLabel => 'Klistra in';
 
   @override
   String get reorderItemDown => 'Flytta nedåt';
@@ -2160,6 +3669,15 @@ class WidgetsLocalizationSv extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Flytta uppåt';
+
+  @override
+  String get searchWebButtonLabel => 'Sök på webben';
+
+  @override
+  String get selectAllButtonLabel => 'Markera allt';
+
+  @override
+  String get shareButtonLabel => 'Dela';
 }
 
 /// The translations for Swahili (`sw`).
@@ -2168,6 +3686,18 @@ class WidgetsLocalizationSw extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationSw() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Nakili';
+
+  @override
+  String get cutButtonLabel => 'Kata';
+
+  @override
+  String get lookUpButtonLabel => 'Tafuta';
+
+  @override
+  String get pasteButtonLabel => 'Bandika';
 
   @override
   String get reorderItemDown => 'Sogeza chini';
@@ -2186,6 +3716,15 @@ class WidgetsLocalizationSw extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Sogeza juu';
+
+  @override
+  String get searchWebButtonLabel => 'Tafuta kwenye Wavuti';
+
+  @override
+  String get selectAllButtonLabel => 'Chagua vyote';
+
+  @override
+  String get shareButtonLabel => 'Tuma';
 }
 
 /// The translations for Tamil (`ta`).
@@ -2194,6 +3733,18 @@ class WidgetsLocalizationTa extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationTa() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'நகலெடு';
+
+  @override
+  String get cutButtonLabel => 'வெட்டு';
+
+  @override
+  String get lookUpButtonLabel => 'தேடு';
+
+  @override
+  String get pasteButtonLabel => 'ஒட்டு';
 
   @override
   String get reorderItemDown => 'கீழே நகர்த்தவும்';
@@ -2212,6 +3763,15 @@ class WidgetsLocalizationTa extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'மேலே நகர்த்தவும்';
+
+  @override
+  String get searchWebButtonLabel => 'இணையத்தில் தேடு';
+
+  @override
+  String get selectAllButtonLabel => 'அனைத்தையும் தேர்ந்தெடு';
+
+  @override
+  String get shareButtonLabel => 'பகிர்';
 }
 
 /// The translations for Telugu (`te`).
@@ -2220,6 +3780,18 @@ class WidgetsLocalizationTe extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationTe() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'కాపీ చేయి';
+
+  @override
+  String get cutButtonLabel => 'కత్తిరించండి';
+
+  @override
+  String get lookUpButtonLabel => 'వెతకండి';
+
+  @override
+  String get pasteButtonLabel => 'పేస్ట్ చేయండి';
 
   @override
   String get reorderItemDown => 'కిందికు జరుపు';
@@ -2238,6 +3810,15 @@ class WidgetsLocalizationTe extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'పైకి జరపండి';
+
+  @override
+  String get searchWebButtonLabel => 'వెబ్‌లో సెర్చ్ చేయండి';
+
+  @override
+  String get selectAllButtonLabel => 'అన్నింటినీ ఎంచుకోండి';
+
+  @override
+  String get shareButtonLabel => 'షేర్ చేయండి';
 }
 
 /// The translations for Thai (`th`).
@@ -2246,6 +3827,18 @@ class WidgetsLocalizationTh extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationTh() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'คัดลอก';
+
+  @override
+  String get cutButtonLabel => 'ตัด';
+
+  @override
+  String get lookUpButtonLabel => 'ค้นหา';
+
+  @override
+  String get pasteButtonLabel => 'วาง';
 
   @override
   String get reorderItemDown => 'ย้ายลง';
@@ -2264,6 +3857,15 @@ class WidgetsLocalizationTh extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'ย้ายขึ้น';
+
+  @override
+  String get searchWebButtonLabel => 'ค้นหาบนอินเทอร์เน็ต';
+
+  @override
+  String get selectAllButtonLabel => 'เลือกทั้งหมด';
+
+  @override
+  String get shareButtonLabel => 'แชร์';
 }
 
 /// The translations for Tagalog (`tl`).
@@ -2272,6 +3874,18 @@ class WidgetsLocalizationTl extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationTl() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopyahin';
+
+  @override
+  String get cutButtonLabel => 'I-cut';
+
+  @override
+  String get lookUpButtonLabel => 'Tumingin sa Itaas';
+
+  @override
+  String get pasteButtonLabel => 'I-paste';
 
   @override
   String get reorderItemDown => 'Ilipat pababa';
@@ -2290,6 +3904,15 @@ class WidgetsLocalizationTl extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Ilipat pataas';
+
+  @override
+  String get searchWebButtonLabel => 'Maghanap sa Web';
+
+  @override
+  String get selectAllButtonLabel => 'Piliin lahat';
+
+  @override
+  String get shareButtonLabel => 'I-share';
 }
 
 /// The translations for Turkish (`tr`).
@@ -2298,6 +3921,18 @@ class WidgetsLocalizationTr extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationTr() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopyala';
+
+  @override
+  String get cutButtonLabel => 'Kes';
+
+  @override
+  String get lookUpButtonLabel => 'Ara';
+
+  @override
+  String get pasteButtonLabel => 'Yapıştır';
 
   @override
   String get reorderItemDown => 'Aşağı taşı';
@@ -2316,6 +3951,15 @@ class WidgetsLocalizationTr extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Yukarı taşı';
+
+  @override
+  String get searchWebButtonLabel => "Web'de Ara";
+
+  @override
+  String get selectAllButtonLabel => 'Tümünü seç';
+
+  @override
+  String get shareButtonLabel => 'Paylaş';
 }
 
 /// The translations for Ukrainian (`uk`).
@@ -2324,6 +3968,18 @@ class WidgetsLocalizationUk extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationUk() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Копіювати';
+
+  @override
+  String get cutButtonLabel => 'Вирізати';
+
+  @override
+  String get lookUpButtonLabel => 'Шукати';
+
+  @override
+  String get pasteButtonLabel => 'Вставити';
 
   @override
   String get reorderItemDown => 'Перемістити вниз';
@@ -2342,6 +3998,15 @@ class WidgetsLocalizationUk extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Перемістити вгору';
+
+  @override
+  String get searchWebButtonLabel => 'Пошук в Інтернеті';
+
+  @override
+  String get selectAllButtonLabel => 'Вибрати всі';
+
+  @override
+  String get shareButtonLabel => 'Поділитися';
 }
 
 /// The translations for Urdu (`ur`).
@@ -2350,6 +4015,18 @@ class WidgetsLocalizationUr extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationUr() : super(TextDirection.rtl);
+
+  @override
+  String get copyButtonLabel => 'کاپی کریں';
+
+  @override
+  String get cutButtonLabel => 'کٹ کریں';
+
+  @override
+  String get lookUpButtonLabel => 'تفصیل دیکھیں';
+
+  @override
+  String get pasteButtonLabel => 'پیسٹ کریں';
 
   @override
   String get reorderItemDown => 'نیچے منتقل کریں';
@@ -2368,6 +4045,15 @@ class WidgetsLocalizationUr extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'اوپر منتقل کریں';
+
+  @override
+  String get searchWebButtonLabel => 'ویب تلاش کریں';
+
+  @override
+  String get selectAllButtonLabel => 'سبھی کو منتخب کریں';
+
+  @override
+  String get shareButtonLabel => 'اشتراک کریں';
 }
 
 /// The translations for Uzbek (`uz`).
@@ -2376,6 +4062,18 @@ class WidgetsLocalizationUz extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationUz() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Nusxa olish';
+
+  @override
+  String get cutButtonLabel => 'Kesib olish';
+
+  @override
+  String get lookUpButtonLabel => 'Tepaga qarang';
+
+  @override
+  String get pasteButtonLabel => 'Joylash';
 
   @override
   String get reorderItemDown => 'Pastga siljitish';
@@ -2394,6 +4092,15 @@ class WidgetsLocalizationUz extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Tepaga siljitish';
+
+  @override
+  String get searchWebButtonLabel => 'Internetdan qidirish';
+
+  @override
+  String get selectAllButtonLabel => 'Hammasi';
+
+  @override
+  String get shareButtonLabel => 'Ulashish';
 }
 
 /// The translations for Vietnamese (`vi`).
@@ -2402,6 +4109,18 @@ class WidgetsLocalizationVi extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationVi() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Sao chép';
+
+  @override
+  String get cutButtonLabel => 'Cắt';
+
+  @override
+  String get lookUpButtonLabel => 'Tra cứu';
+
+  @override
+  String get pasteButtonLabel => 'Dán';
 
   @override
   String get reorderItemDown => 'Di chuyển xuống';
@@ -2420,6 +4139,15 @@ class WidgetsLocalizationVi extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Di chuyển lên';
+
+  @override
+  String get searchWebButtonLabel => 'Tìm kiếm trên web';
+
+  @override
+  String get selectAllButtonLabel => 'Chọn tất cả';
+
+  @override
+  String get shareButtonLabel => 'Chia sẻ';
 }
 
 /// The translations for Chinese (`zh`).
@@ -2428,6 +4156,18 @@ class WidgetsLocalizationZh extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationZh() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => '复制';
+
+  @override
+  String get cutButtonLabel => '剪切';
+
+  @override
+  String get lookUpButtonLabel => '查询';
+
+  @override
+  String get pasteButtonLabel => '粘贴';
 
   @override
   String get reorderItemDown => '下移';
@@ -2446,6 +4186,15 @@ class WidgetsLocalizationZh extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => '上移';
+
+  @override
+  String get searchWebButtonLabel => '搜索';
+
+  @override
+  String get selectAllButtonLabel => '全选';
+
+  @override
+  String get shareButtonLabel => '分享';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2464,6 +4213,18 @@ class WidgetsLocalizationZhHant extends WidgetsLocalizationZh {
   const WidgetsLocalizationZhHant();
 
   @override
+  String get copyButtonLabel => '複製';
+
+  @override
+  String get cutButtonLabel => '剪下';
+
+  @override
+  String get lookUpButtonLabel => '查詢';
+
+  @override
+  String get pasteButtonLabel => '貼上';
+
+  @override
   String get reorderItemDown => '向下移';
 
   @override
@@ -2480,6 +4241,12 @@ class WidgetsLocalizationZhHant extends WidgetsLocalizationZh {
 
   @override
   String get reorderItemUp => '向上移';
+
+  @override
+  String get searchWebButtonLabel => '搜尋';
+
+  @override
+  String get selectAllButtonLabel => '全部選取';
 }
 
 /// The translations for Chinese, as used in Hong Kong, using the Han script (`zh_Hant_HK`).
@@ -2502,6 +4269,9 @@ class WidgetsLocalizationZhHantTw extends WidgetsLocalizationZhHant {
 
   @override
   String get reorderItemToEnd => '移至結尾';
+
+  @override
+  String get selectAllButtonLabel => '全選';
 }
 
 /// The translations for Zulu (`zu`).
@@ -2510,6 +4280,18 @@ class WidgetsLocalizationZu extends GlobalWidgetsLocalizations {
   ///
   /// For details on the meaning of the arguments, see [GlobalWidgetsLocalizations].
   const WidgetsLocalizationZu() : super(TextDirection.ltr);
+
+  @override
+  String get copyButtonLabel => 'Kopisha';
+
+  @override
+  String get cutButtonLabel => 'Sika';
+
+  @override
+  String get lookUpButtonLabel => 'Bheka Phezulu';
+
+  @override
+  String get pasteButtonLabel => 'Namathisela';
 
   @override
   String get reorderItemDown => 'Iya phansi';
@@ -2528,6 +4310,15 @@ class WidgetsLocalizationZu extends GlobalWidgetsLocalizations {
 
   @override
   String get reorderItemUp => 'Iya phezulu';
+
+  @override
+  String get searchWebButtonLabel => 'Sesha Iwebhu';
+
+  @override
+  String get selectAllButtonLabel => 'Khetha konke';
+
+  @override
+  String get shareButtonLabel => 'Yabelana';
 }
 
 /// The set of supported languages, as language code strings.

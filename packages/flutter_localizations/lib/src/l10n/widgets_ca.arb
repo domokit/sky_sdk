@@ -4,5 +4,12 @@
   "reorderItemUp": "Mou amunt",
   "reorderItemDown": "Mou avall",
   "reorderItemLeft": "Mou cap a l'esquerra",
-  "reorderItemRight": "Mou cap a la dreta"
+  "reorderItemRight": "Mou cap a la dreta",
+  "copyButtonLabel": "Copia",
+  "cutButtonLabel": "Retalla",
+  "lookUpButtonLabel": "Mira amunt",
+  "searchWebButtonLabel": "Cerca al web",
+  "shareButtonLabel": "Comparteix",
+  "pasteButtonLabel": "Enganxa",
+  "selectAllButtonLabel": "Selecciona-ho tot"
 }

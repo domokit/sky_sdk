@@ -4,5 +4,12 @@
   "reorderItemUp": "Μετακίνηση προς τα πάνω",
   "reorderItemDown": "Μετακίνηση προς τα κάτω",
   "reorderItemLeft": "Μετακίνηση αριστερά",
-  "reorderItemRight": "Μετακίνηση δεξιά"
+  "reorderItemRight": "Μετακίνηση δεξιά",
+  "copyButtonLabel": "Αντιγραφή",
+  "cutButtonLabel": "Αποκοπή",
+  "lookUpButtonLabel": "Look Up",
+  "searchWebButtonLabel": "Αναζήτηση στον ιστό",
+  "shareButtonLabel": "Κοινή χρήση",
+  "pasteButtonLabel": "Επικόλληση",
+  "selectAllButtonLabel": "Επιλογή όλων"
 }

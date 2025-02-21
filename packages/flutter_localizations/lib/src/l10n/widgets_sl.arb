@@ -4,5 +4,12 @@
   "reorderItemUp": "Premakni navzgor",
   "reorderItemDown": "Premakni navzdol",
   "reorderItemLeft": "Premakni levo",
-  "reorderItemRight": "Premakni desno"
+  "reorderItemRight": "Premakni desno",
+  "copyButtonLabel": "Kopiraj",
+  "cutButtonLabel": "Izreži",
+  "lookUpButtonLabel": "Pogled gor",
+  "searchWebButtonLabel": "Iskanje v spletu",
+  "shareButtonLabel": "Deli",
+  "pasteButtonLabel": "Prilepi",
+  "selectAllButtonLabel": "Izberi vse"
 }

@@ -83,7 +83,7 @@ void main() {
     expect(
       tester.getTopLeft(find.text('initial')) -
           tester.getTopLeft(find.byType(CupertinoSearchTextField)),
-      const Offset(31.5, 8.0),
+      const Offset(31.5, 9.5),
     );
   });
 
@@ -251,6 +251,32 @@ void main() {
 
     expect(find.text('text input'), findsOneWidget);
     expect(find.byIcon(CupertinoIcons.xmark_circle_fill), findsNothing);
+  });
+
+  testWidgets('Default prefix and suffix insets are aligned', (WidgetTester tester) async {
+    await tester.pumpWidget(const CupertinoApp(home: Center(child: CupertinoSearchTextField())));
+
+    expect(find.byIcon(CupertinoIcons.search), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.xmark_circle_fill), findsNothing);
+
+    await tester.enterText(find.byType(CupertinoSearchTextField), 'text input');
+    await tester.pump();
+
+    expect(find.text('text input'), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.search), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.xmark_circle_fill), findsOneWidget);
+
+    expect(tester.getTopLeft(find.byIcon(CupertinoIcons.search)), const Offset(6.0, 290.0));
+    expect(
+      tester.getTopLeft(find.byIcon(CupertinoIcons.xmark_circle_fill)),
+      const Offset(775.0, 290.0),
+    );
+
+    expect(tester.getBottomRight(find.byIcon(CupertinoIcons.search)), const Offset(26.0, 310.0));
+    expect(
+      tester.getBottomRight(find.byIcon(CupertinoIcons.xmark_circle_fill)),
+      const Offset(795.0, 310.0),
+    );
   });
 
   testWidgets('clear button shows with right visibility mode', (WidgetTester tester) async {

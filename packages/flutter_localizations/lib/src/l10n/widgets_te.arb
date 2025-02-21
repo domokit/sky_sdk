@@ -4,5 +4,12 @@
   "reorderItemUp": "పైకి జరపండి",
   "reorderItemDown": "కిందికు జరుపు",
   "reorderItemLeft": "ఎడమవైపుగా జరపండి",
-  "reorderItemRight": "కుడివైపుగా జరపండి"
+  "reorderItemRight": "కుడివైపుగా జరపండి",
+  "copyButtonLabel": "కాపీ చేయి",
+  "cutButtonLabel": "కత్తిరించండి",
+  "lookUpButtonLabel": "వెతకండి",
+  "searchWebButtonLabel": "వెబ్‌లో సెర్చ్ చేయండి",
+  "shareButtonLabel": "షేర్ చేయండి",
+  "pasteButtonLabel": "పేస్ట్ చేయండి",
+  "selectAllButtonLabel": "అన్నింటినీ ఎంచుకోండి"
 }

@@ -4,5 +4,12 @@
   "reorderItemUp": "အပေါ်သို့ ရွှေ့ရန်",
   "reorderItemDown": "အောက်သို့ရွှေ့ရန်",
   "reorderItemLeft": "ဘယ်ဘက်သို့ရွှေ့ရန်",
-  "reorderItemRight": "ညာဘက်သို့ရွှေ့ရန်"
+  "reorderItemRight": "ညာဘက်သို့ရွှေ့ရန်",
+  "copyButtonLabel": "မိတ္တူကူးရန်",
+  "cutButtonLabel": "ဖြတ်ယူရန်",
+  "lookUpButtonLabel": "အပေါ်ကြည့်ရန်",
+  "searchWebButtonLabel": "ဝဘ်တွင်ရှာရန်",
+  "shareButtonLabel": "မျှဝေရန်",
+  "pasteButtonLabel": "ကူးထည့်ရန်",
+  "selectAllButtonLabel": "အားလုံး ရွေးရန်"
 }

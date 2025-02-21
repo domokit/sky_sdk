@@ -4,5 +4,12 @@
   "reorderItemUp": "上に移動",
   "reorderItemDown": "下に移動",
   "reorderItemLeft": "左に移動",
-  "reorderItemRight": "右に移動"
+  "reorderItemRight": "右に移動",
+  "copyButtonLabel": "コピー",
+  "cutButtonLabel": "切り取り",
+  "lookUpButtonLabel": "調べる",
+  "searchWebButtonLabel": "ウェブを検索",
+  "shareButtonLabel": "共有",
+  "pasteButtonLabel": "貼り付け",
+  "selectAllButtonLabel": "すべてを選択"
 }

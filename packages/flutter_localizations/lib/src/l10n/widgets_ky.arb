@@ -4,5 +4,12 @@
   "reorderItemUp": "Жогору жылдыруу",
   "reorderItemDown": "Төмөн жылдыруу",
   "reorderItemLeft": "Солго жылдыруу",
-  "reorderItemRight": "Оңго жылдыруу"
+  "reorderItemRight": "Оңго жылдыруу",
+  "copyButtonLabel": "Көчүрүү",
+  "cutButtonLabel": "Кесүү",
+  "lookUpButtonLabel": "Издөө",
+  "searchWebButtonLabel": "Интернеттен издөө",
+  "shareButtonLabel": "Бөлүшүү",
+  "pasteButtonLabel": "Чаптоо",
+  "selectAllButtonLabel": "Баарын тандоо"
 }

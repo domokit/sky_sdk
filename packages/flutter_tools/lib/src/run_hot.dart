@@ -557,7 +557,6 @@ class HotRunner extends ResidentRunner {
       }
       devFS.assetPathsToEvict.clear();
       devFS.shaderPathsToEvict.clear();
-      devFS.scenePathsToEvict.clear();
     }
   }
 
@@ -1163,9 +1162,7 @@ class HotRunner extends ResidentRunner {
   Future<void> evictDirtyAssets() async {
     final List<Future<void>> futures = <Future<void>>[];
     for (final FlutterDevice? device in flutterDevices) {
-      if (device!.devFS!.assetPathsToEvict.isEmpty &&
-          device.devFS!.shaderPathsToEvict.isEmpty &&
-          device.devFS!.scenePathsToEvict.isEmpty) {
+      if (device!.devFS!.assetPathsToEvict.isEmpty && device.devFS!.shaderPathsToEvict.isEmpty) {
         continue;
       }
       final List<FlutterView> views = await device.vmService!.getFlutterViews();
@@ -1215,14 +1212,8 @@ class HotRunner extends ResidentRunner {
           device.vmService!.flutterEvictShader(assetPath, isolateId: views.first.uiIsolate!.id!),
         );
       }
-      for (final String assetPath in device.devFS!.scenePathsToEvict) {
-        futures.add(
-          device.vmService!.flutterEvictScene(assetPath, isolateId: views.first.uiIsolate!.id!),
-        );
-      }
       device.devFS!.assetPathsToEvict.clear();
       device.devFS!.shaderPathsToEvict.clear();
-      device.devFS!.scenePathsToEvict.clear();
     }
     await Future.wait<void>(futures);
   }

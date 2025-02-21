@@ -4,5 +4,12 @@
   "reorderItemUp": "Eraman gora",
   "reorderItemDown": "Eraman behera",
   "reorderItemLeft": "Eraman ezkerrera",
-  "reorderItemRight": "Eraman eskuinera"
+  "reorderItemRight": "Eraman eskuinera",
+  "copyButtonLabel": "Kopiatu",
+  "cutButtonLabel": "Ebaki",
+  "lookUpButtonLabel": "Bilatu",
+  "searchWebButtonLabel": "Bilatu sarean",
+  "shareButtonLabel": "Partekatu",
+  "pasteButtonLabel": "Itsatsi",
+  "selectAllButtonLabel": "Hautatu guztiak"
 }

@@ -10,7 +10,13 @@
 namespace flutter {
 namespace testing {
 
-TEST(AndroidPlatformView, SelectsVulkanBasedOnApiLevel) {
+// TODO(matanlurey): Re-enable.
+//
+// This test (and the entire suite) was skipped on CI (see
+// https://github.com/flutter/flutter/issues/163742) and has since bit rotted
+// (we fallback to OpenGLES on emulators for performance reasons); either fix
+// the test, or remove it.
+TEST(AndroidPlatformView, DISABLED_SelectsVulkanBasedOnApiLevel) {
   Settings settings;
   settings.enable_software_rendering = false;
   settings.enable_impeller = true;

@@ -4,5 +4,12 @@
   "reorderItemUp": "ઉપર ખસેડો",
   "reorderItemDown": "નીચે ખસેડો",
   "reorderItemLeft": "ડાબે ખસેડો",
-  "reorderItemRight": "જમણે ખસેડો"
+  "reorderItemRight": "જમણે ખસેડો",
+  "copyButtonLabel": "કૉપિ કરો",
+  "cutButtonLabel": "કાપો",
+  "lookUpButtonLabel": "શોધો",
+  "searchWebButtonLabel": "વેબ પર શોધો",
+  "shareButtonLabel": "શેર કરો",
+  "pasteButtonLabel": "પેસ્ટ કરો",
+  "selectAllButtonLabel": "બધા પસંદ કરો"
 }

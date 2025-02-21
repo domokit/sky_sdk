@@ -4,5 +4,12 @@
   "reorderItemUp": "மேலே நகர்த்தவும்",
   "reorderItemDown": "கீழே நகர்த்தவும்",
   "reorderItemLeft": "இடப்புறம் நகர்த்தவும்",
-  "reorderItemRight": "வலப்புறம் நகர்த்தவும்"
+  "reorderItemRight": "வலப்புறம் நகர்த்தவும்",
+  "copyButtonLabel": "நகலெடு",
+  "cutButtonLabel": "வெட்டு",
+  "lookUpButtonLabel": "தேடு",
+  "searchWebButtonLabel": "இணையத்தில் தேடு",
+  "shareButtonLabel": "பகிர்",
+  "pasteButtonLabel": "ஒட்டு",
+  "selectAllButtonLabel": "அனைத்தையும் தேர்ந்தெடு"
 }

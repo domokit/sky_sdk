@@ -4,5 +4,12 @@
   "reorderItemUp": "Yukarı taşı",
   "reorderItemDown": "Aşağı taşı",
   "reorderItemLeft": "Sola taşı",
-  "reorderItemRight": "Sağa taşı"
+  "reorderItemRight": "Sağa taşı",
+  "copyButtonLabel": "Kopyala",
+  "cutButtonLabel": "Kes",
+  "lookUpButtonLabel": "Ara",
+  "searchWebButtonLabel": "Web'de Ara",
+  "shareButtonLabel": "Paylaş",
+  "pasteButtonLabel": "Yapıştır",
+  "selectAllButtonLabel": "Tümünü seç"
 }

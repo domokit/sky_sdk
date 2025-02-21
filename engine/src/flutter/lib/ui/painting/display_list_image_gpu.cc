@@ -57,6 +57,12 @@ SkISize DlImageGPU::dimensions() const {
 }
 
 // |DlImage|
+DlISize DlImageGPU::GetSize() const {
+  const auto image = skia_image();
+  return image ? ToDlISize(image->dimensions()) : DlISize();
+}
+
+// |DlImage|
 size_t DlImageGPU::GetApproximateByteSize() const {
   auto size = sizeof(*this);
   if (auto image = skia_image()) {

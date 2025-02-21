@@ -2487,6 +2487,31 @@ void main() {
     expect(testWidth, equals(largestWidth));
     expect(widths.indexOf(largestWidth), equals(1));
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/39998
+
+  // Regression test for https://github.com/flutter/flutter/issues/161773
+  testWidgets('CupertinoDatePicker date value baseline alignment', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Center(
+          child: SizedBox(
+            width: 400,
+            height: 400,
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.date,
+              onDateTimeChanged: (_) {},
+              initialDateTime: DateTime(2025, 2, 14),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Offset lastOffset = tester.getTopLeft(find.text('November'));
+    expect(tester.getTopLeft(find.text('11')).dy, lastOffset.dy);
+
+    lastOffset = tester.getTopLeft(find.text('11'));
+    expect(tester.getTopLeft(find.text('2022')).dy, lastOffset.dy);
+  });
 }
 
 Widget _buildPicker({

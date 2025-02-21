@@ -4,5 +4,12 @@
   "reorderItemUp": "ऊपर ले जाएं",
   "reorderItemDown": "नीचे ले जाएं",
   "reorderItemLeft": "बाएं ले जाएं",
-  "reorderItemRight": "दाएं ले जाएं"
+  "reorderItemRight": "दाएं ले जाएं",
+  "copyButtonLabel": "कॉपी करें",
+  "cutButtonLabel": "काटें",
+  "lookUpButtonLabel": "लुक अप बटन",
+  "searchWebButtonLabel": "वेब पर खोजें",
+  "shareButtonLabel": "शेयर करें",
+  "pasteButtonLabel": "चिपकाएं",
+  "selectAllButtonLabel": "सभी को चुनें"
 }

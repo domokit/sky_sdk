@@ -110,6 +110,13 @@ SkISize DlImageImpeller::dimensions() const {
 }
 
 // |DlImage|
+flutter::DlISize DlImageImpeller::GetSize() const {
+  // texture |GetSize()| returns a 64-bit size, but we need a 32-bit size,
+  // so we need to convert to DlISize (the 32-bit variant) either way.
+  return texture_ ? flutter::DlISize(texture_->GetSize()) : flutter::DlISize();
+}
+
+// |DlImage|
 size_t DlImageImpeller::GetApproximateByteSize() const {
   auto size = sizeof(*this);
   if (texture_) {

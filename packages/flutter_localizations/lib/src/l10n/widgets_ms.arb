@@ -4,5 +4,12 @@
   "reorderItemUp": "Alih ke atas",
   "reorderItemDown": "Alih ke bawah",
   "reorderItemLeft": "Alih ke kiri",
-  "reorderItemRight": "Alih ke kanan"
+  "reorderItemRight": "Alih ke kanan",
+  "copyButtonLabel": "Salin",
+  "cutButtonLabel": "Potong",
+  "lookUpButtonLabel": "Lihat ke Atas",
+  "searchWebButtonLabel": "Buat carian pada Web",
+  "shareButtonLabel": "Kongsi",
+  "pasteButtonLabel": "Tampal",
+  "selectAllButtonLabel": "Pilih semua"
 }

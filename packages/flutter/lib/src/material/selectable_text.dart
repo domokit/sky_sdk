@@ -183,6 +183,7 @@ class SelectableText extends StatefulWidget {
     this.cursorHeight,
     this.cursorRadius,
     this.cursorColor,
+    this.selectionColor,
     this.selectionHeightStyle = ui.BoxHeightStyle.tight,
     this.selectionWidthStyle = ui.BoxWidthStyle.tight,
     this.dragStartBehavior = DragStartBehavior.start,
@@ -241,6 +242,7 @@ class SelectableText extends StatefulWidget {
     this.cursorHeight,
     this.cursorRadius,
     this.cursorColor,
+    this.selectionColor,
     this.selectionHeightStyle = ui.BoxHeightStyle.tight,
     this.selectionWidthStyle = ui.BoxWidthStyle.tight,
     this.dragStartBehavior = DragStartBehavior.start,
@@ -361,6 +363,15 @@ class SelectableText extends StatefulWidget {
   /// Otherwise [ColorScheme.primary] of [ThemeData.colorScheme] is used.
   final Color? cursorColor;
 
+  /// The color to use when painting the selection.
+  ///
+  /// If this property is null, this widget gets the selection color from the
+  /// inherited [DefaultSelectionStyle] (if any); if none, the selection
+  /// color is derived from the [CupertinoThemeData.primaryColor] on
+  /// Apple platforms and [ColorScheme.primary] of [ThemeData.colorScheme] on
+  /// other platforms.
+  final Color? selectionColor;
+
   /// Controls how tall the selection highlight boxes are computed to be.
   ///
   /// See [ui.BoxHeightStyle] for details on available styles.
@@ -472,6 +483,9 @@ class SelectableText extends StatefulWidget {
     properties.add(DoubleProperty('cursorHeight', cursorHeight, defaultValue: null));
     properties.add(DiagnosticsProperty<Radius>('cursorRadius', cursorRadius, defaultValue: null));
     properties.add(DiagnosticsProperty<Color>('cursorColor', cursorColor, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<Color>('selectionColor', selectionColor, defaultValue: null),
+    );
     properties.add(
       FlagProperty(
         'selectionEnabled',
@@ -761,7 +775,7 @@ class _SelectableTextState extends State<SelectableText>
         forceLine: false,
         minLines: widget.minLines,
         maxLines: widget.maxLines ?? defaultTextStyle.maxLines,
-        selectionColor: selectionColor,
+        selectionColor: widget.selectionColor ?? selectionColor,
         selectionControls: widget.selectionEnabled ? textSelectionControls : null,
         onSelectionChanged: _handleSelectionChanged,
         onSelectionHandleTapped: _handleSelectionHandleTapped,

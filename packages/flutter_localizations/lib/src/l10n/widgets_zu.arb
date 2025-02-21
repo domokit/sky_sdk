@@ -4,5 +4,12 @@
   "reorderItemUp": "Iya phezulu",
   "reorderItemDown": "Iya phansi",
   "reorderItemLeft": "Hambisa kwesokunxele",
-  "reorderItemRight": "Yisa kwesokudla"
+  "reorderItemRight": "Yisa kwesokudla",
+  "copyButtonLabel": "Kopisha",
+  "cutButtonLabel": "Sika",
+  "lookUpButtonLabel": "Bheka Phezulu",
+  "searchWebButtonLabel": "Sesha Iwebhu",
+  "shareButtonLabel": "Yabelana",
+  "pasteButtonLabel": "Namathisela",
+  "selectAllButtonLabel": "Khetha konke"
 }

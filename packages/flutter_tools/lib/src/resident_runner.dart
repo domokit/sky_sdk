@@ -24,7 +24,6 @@ import 'base/terminal.dart';
 import 'base/utils.dart';
 import 'build_info.dart';
 import 'build_system/build_system.dart';
-import 'build_system/tools/scene_importer.dart';
 import 'build_system/tools/shader_compiler.dart';
 import 'bundle.dart';
 import 'cache.dart';
@@ -51,7 +50,6 @@ class FlutterDevice {
     ResidentCompiler? generator,
     this.userIdentifier,
     required this.developmentShaderCompiler,
-    this.developmentSceneImporter,
   }) : generator =
            generator ??
            ResidentCompiler(
@@ -92,16 +90,6 @@ class FlutterDevice {
     }
     final DevelopmentShaderCompiler shaderCompiler = DevelopmentShaderCompiler(
       shaderCompiler: ShaderCompiler(
-        artifacts: globals.artifacts!,
-        logger: globals.logger,
-        processManager: globals.processManager,
-        fileSystem: globals.fs,
-      ),
-      fileSystem: globals.fs,
-    );
-
-    final DevelopmentSceneImporter sceneImporter = DevelopmentSceneImporter(
-      sceneImporter: SceneImporter(
         artifacts: globals.artifacts!,
         logger: globals.logger,
         processManager: globals.processManager,
@@ -205,7 +193,6 @@ class FlutterDevice {
       buildInfo: buildInfo,
       userIdentifier: userIdentifier,
       developmentShaderCompiler: shaderCompiler,
-      developmentSceneImporter: sceneImporter,
     );
   }
 
@@ -215,7 +202,6 @@ class FlutterDevice {
   final BuildInfo buildInfo;
   final String? userIdentifier;
   final DevelopmentShaderCompiler developmentShaderCompiler;
-  final DevelopmentSceneImporter? developmentSceneImporter;
 
   DevFSWriter? devFSWriter;
   Stream<Uri?>? vmServiceUris;
@@ -557,7 +543,6 @@ class FlutterDevice {
         packageConfig: packageConfig,
         devFSWriter: devFSWriter,
         shaderCompiler: developmentShaderCompiler,
-        sceneImporter: developmentSceneImporter,
         dartPluginRegistrant: FlutterProject.current().dartPluginRegistrant,
       );
     } on DevFSException {
