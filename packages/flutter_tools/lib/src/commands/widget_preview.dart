@@ -525,8 +525,6 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
 
     final List<Uri> shaders = rootManifest.shaders.map(transformAssetUri).toList();
 
-    final List<Uri> models = rootManifest.models.map(transformAssetUri).toList();
-
     final List<DeferredComponent>? deferredComponents =
         rootManifest.deferredComponents?.map(transformDeferredComponent).toList();
 
@@ -535,7 +533,6 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
       assets: assets,
       fonts: fonts,
       shaders: shaders,
-      models: models,
       deferredComponents: deferredComponents,
     );
   }
