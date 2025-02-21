@@ -29,6 +29,7 @@ INTERNAL NOTE
 
 ### [3.29.0](https://github.com/flutter/flutter/releases/tag/3.29.0)
 
+- [flutter/162969](https://github.com/flutter/flutter/issues/162969) DrawVertices may crash when using shaders built with certain parameters.
 - [flutter/161625](https://github.com/flutter/flutter/pull/161625) - Adds text
   tests.
 - [flutter/162351](https://github.com/flutter/flutter/pull/162351) - Fixes
