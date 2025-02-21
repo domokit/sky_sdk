@@ -41,6 +41,7 @@ INTERNAL NOTE
   subpixel alignment of glyphs.
 - [flutter/163304](https://github.com/flutter/flutter/issues/163304) Fixes crash when using backdrop filter on GLES backend.
 - [flutter/161334](https://github.com/flutter/flutter/issues/161334) Disable Vulkan on certain Xclipse GPU models.
+- [flutter/163315](https://github.com/flutter/flutter/issues/163315) Fixes OpenGLES texture readback resulting in "flipped" textures.
 - [flutter/163730](https://github.com/flutter/flutter/issues/163730) Fixes text rendering artifacts when returning application to foreground.
 - [flutter/163429](https://github.com/flutter/flutter/issues/163429) Fixes jittery scrolling on iOS devices.
 - [flutter/163236](https://github.com/flutter/flutter/pull/163236) Disable Vulkan on older Exynos SoC to work around Android HardwareBuffer import error.
