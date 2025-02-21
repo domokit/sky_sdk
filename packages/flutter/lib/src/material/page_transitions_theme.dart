@@ -763,7 +763,7 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
         Animation<double> secondaryAnimation,
         bool allowSnapshotting,
         Widget? child,
-      ) => _delegatedTransition(context, animation, backgroundColor, child);
+      ) => _delegatedTransition(context, secondaryAnimation, backgroundColor, child);
 
   // Used by all of the sliding transition animations.
   static const Curve _transitionCurve = Curves.easeInOutCubicEmphasized;
