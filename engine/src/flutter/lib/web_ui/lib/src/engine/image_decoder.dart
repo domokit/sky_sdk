@@ -8,23 +8,6 @@ import 'package:meta/meta.dart';
 import 'package:ui/src/engine.dart';
 import 'package:ui/ui.dart' as ui;
 
-Duration _kDefaultWebDecoderExpireDuration = const Duration(seconds: 3);
-Duration _kWebDecoderExpireDuration = _kDefaultWebDecoderExpireDuration;
-
-/// Overrides the inactivity duration after which the web decoder is closed.
-///
-/// This should only be used in tests.
-void debugOverrideWebDecoderExpireDuration(Duration override) {
-  _kWebDecoderExpireDuration = override;
-}
-
-/// Restores the web decoder inactivity expiry duration to its original value.
-///
-/// This should only be used in tests.
-void debugRestoreWebDecoderExpireDuration() {
-  _kWebDecoderExpireDuration = _kDefaultWebDecoderExpireDuration;
-}
-
 /// Image decoder backed by the browser's `ImageDecoder`.
 abstract class BrowserImageDecoder implements ui.Codec {
   BrowserImageDecoder({
@@ -58,17 +41,10 @@ abstract class BrowserImageDecoder implements ui.Codec {
     _cachedWebDecoder = null;
   }
 
-  void _debugCheckNotDisposed() {
-    assert(!_isDisposed, 'Cannot use this image decoder. It has been disposed of.');
-  }
-
   /// The index of the frame that will be decoded on the next call of [getNextFrame];
   int _nextFrameIndex = 0;
 
   /// Creating a new decoder is expensive, so we cache the decoder for reuse.
-  ///
-  /// This decoder is closed and the field is nulled out after some time of
-  /// inactivity.
   ///
   // TODO(jacksongardner): Evaluate whether this complexity is necessary.
   // See https://github.com/flutter/flutter/issues/127548
@@ -83,22 +59,11 @@ abstract class BrowserImageDecoder implements ui.Codec {
   @visibleForTesting
   ImageDecoder? get debugCachedWebDecoder => _cachedWebDecoder;
 
-  final AlarmClock _cacheExpirationClock = AlarmClock(() => DateTime.now());
+  Future<void> initialize() async {
+    _cachedWebDecoder = await _createWebDecoder();
+  }
 
-  Future<void> initialize() => _getOrCreateWebDecoder();
-
-  Future<ImageDecoder> _getOrCreateWebDecoder() async {
-    if (_cachedWebDecoder != null) {
-      // Give the cached value some time for reuse, e.g. if the image is
-      // currently animating.
-      _cacheExpirationClock.datetime = DateTime.now().add(_kWebDecoderExpireDuration);
-      return _cachedWebDecoder!;
-    }
-
-    // Null out the callback so the clock doesn't try to expire the decoder
-    // while it's initializing. There's no way to tell how long the
-    // initialization will take place. We just let it proceed at its own pace.
-    _cacheExpirationClock.callback = null;
+  Future<ImageDecoder> _createWebDecoder() async {
     try {
       final ImageDecoder webDecoder = ImageDecoder(
         ImageDecoderOptions(
@@ -131,23 +96,6 @@ abstract class BrowserImageDecoder implements ui.Codec {
       // `NaN`.
       final double rawRepetitionCount = webDecoder.tracks.selectedTrack!.repetitionCount;
       repetitionCount = rawRepetitionCount == double.infinity ? -1 : rawRepetitionCount.toInt();
-      _cachedWebDecoder = webDecoder;
-
-      // Expire the decoder if it's not used for several seconds. If the image is
-      // not animated, it could mean that the framework has cached the frame and
-      // therefore doesn't need the decoder any more, or it could mean that the
-      // widget is gone and it's time to collect resources associated with it.
-      // If it's an animated image it means the animation has stopped, otherwise
-      // we'd see calls to [getNextFrame] which would update the expiry date on
-      // the decoder. If the animation is stopped for long enough, it's better
-      // to collect resources. If and when the animation resumes, a new decoder
-      // will be instantiated.
-      _cacheExpirationClock.callback = () {
-        _cachedWebDecoder?.close();
-        _cachedWebDecoder = null;
-        _cacheExpirationClock.callback = null;
-      };
-      _cacheExpirationClock.datetime = DateTime.now().add(_kWebDecoderExpireDuration);
 
       return webDecoder;
     } catch (error) {
@@ -169,8 +117,20 @@ abstract class BrowserImageDecoder implements ui.Codec {
 
   @override
   Future<ui.FrameInfo> getNextFrame() async {
-    _debugCheckNotDisposed();
-    final ImageDecoder webDecoder = await _getOrCreateWebDecoder();
+    if (_isDisposed) {
+      throw ImageCodecException(
+        'Cannot decode image. The image decoder has been disposed.\n'
+        'Image source: $debugSource',
+      );
+    }
+    final ImageDecoder? webDecoder = _cachedWebDecoder;
+    if (webDecoder == null) {
+      throw ImageCodecException(
+        'Cannot decode image. The image decoder has not been initialized.\n'
+        'Image source: $debugSource',
+      );
+    }
+
     final DecodeResult result = await promiseToFuture<DecodeResult>(
       webDecoder.decode(DecodeOptions(frameIndex: _nextFrameIndex.toJS)),
     );
