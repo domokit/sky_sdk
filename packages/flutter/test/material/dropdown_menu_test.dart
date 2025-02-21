@@ -4194,6 +4194,7 @@ void main() {
                         SemanticsAction.focus,
                         SemanticsAction.setSelection,
                         SemanticsAction.setText,
+                        if (kIsWeb) SemanticsAction.paste,
                       ],
                       textDirection: TextDirection.ltr,
                       textSelection: const TextSelection(baseOffset: 0, extentOffset: 0),
