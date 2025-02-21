@@ -40,6 +40,14 @@ class SegmentedButtonThemeData with Diagnosticable {
   /// values override the default values used by [SegmentedButton].
   ///
   /// If [style] is null, then this theme doesn't override anything.
+  ///
+  /// If [ButtonStyle.side] is provided, [WidgetStateProperty.resolve] is used
+  /// for the following [WidgetState]s:
+  ///
+  ///  * [WidgetState.focused].
+  ///  * [WidgetState.hovered].
+  ///  * [WidgetState.disabled].
+  ///  * [WidgetState.selected].
   final ButtonStyle? style;
 
   /// Override for [SegmentedButton.selectedIcon] property.
