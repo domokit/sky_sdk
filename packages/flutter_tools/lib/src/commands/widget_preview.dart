@@ -300,6 +300,7 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
   Future<void> initialBuild({required FlutterProject widgetPreviewScaffoldProject}) async {
     // TODO(bkonyi): handle error case where desktop device isn't enabled.
     await widgetPreviewScaffoldProject.ensureReadyForPlatformSpecificTooling(
+      releaseMode: false,
       linuxPlatform: platform.isLinux && !isWeb,
       macOSPlatform: platform.isMacOS && !isWeb,
       windowsPlatform: platform.isWindows && !isWeb,

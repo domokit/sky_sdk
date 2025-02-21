@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:ui/ui_web/src/ui_web.dart' as ui_web;
-
 import '../dom.dart';
 
 /// Controls the capitalization of the text.
@@ -62,14 +60,7 @@ class TextCapitalizationConfig {
     String autocapitalize = '';
     switch (textCapitalization) {
       case TextCapitalization.words:
-        // TODO(mdebbar): There is a bug for `words` level capitalization in IOS now.
-        // For now go back to default. Remove the check after bug is resolved.
-        // https://bugs.webkit.org/show_bug.cgi?id=148504
-        if (ui_web.browser.browserEngine == ui_web.BrowserEngine.webkit) {
-          autocapitalize = 'sentences';
-        } else {
-          autocapitalize = 'words';
-        }
+        autocapitalize = 'words';
       case TextCapitalization.characters:
         autocapitalize = 'characters';
       case TextCapitalization.sentences:

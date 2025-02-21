@@ -366,6 +366,8 @@ class FakeFlutterVersion implements FlutterVersion {
     this.devToolsVersion = '2.8.0',
     this.engineRevision = 'abcdefghijklmnopqrstuvwxyz',
     this.engineRevisionShort = 'abcde',
+    this.engineAge = '0 hours ago',
+    this.engineCommitDate = '12/01/01',
     this.repositoryUrl = 'https://github.com/flutter/flutter.git',
     this.frameworkVersion = '0.0.0',
     this.frameworkRevision = '11111111111111111111',
@@ -416,6 +418,12 @@ class FakeFlutterVersion implements FlutterVersion {
 
   @override
   final String engineRevisionShort;
+
+  @override
+  final String? engineCommitDate;
+
+  @override
+  final String engineAge;
 
   @override
   final String? repositoryUrl;

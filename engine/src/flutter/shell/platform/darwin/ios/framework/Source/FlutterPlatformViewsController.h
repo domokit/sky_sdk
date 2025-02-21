@@ -14,7 +14,6 @@
 #include "flutter/fml/task_runner.h"
 #include "flutter/fml/trace_event.h"
 #include "impeller/base/thread_safety.h"
-#include "third_party/skia/include/core/SkRect.h"
 
 #import "flutter/shell/platform/darwin/common/framework/Headers/FlutterChannels.h"
 #import "flutter/shell/platform/darwin/ios/framework/Headers/FlutterPlatformViews.h"
@@ -99,8 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// Called from the raster thread.
 - (BOOL)submitFrame:(std::unique_ptr<flutter::SurfaceFrame>)frame
-     withIosContext:(const std::shared_ptr<flutter::IOSContext>&)iosContext
-          grContext:(GrDirectContext* _Nullable)grContext;
+     withIosContext:(const std::shared_ptr<flutter::IOSContext>&)iosContext;
 
 /// @brief Handler for platform view message channels.
 - (void)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result;

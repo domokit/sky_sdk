@@ -1851,7 +1851,10 @@ Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and 
     }
 
     if (regeneratePlatformSpecificToolingDuringVerify) {
-      await regeneratePlatformSpecificToolingIfApplicable(project);
+      await regeneratePlatformSpecificToolingIfApplicable(
+        project,
+        releaseMode: getBuildMode().isRelease,
+      );
     }
 
     setupApplicationPackages();
@@ -1873,10 +1876,6 @@ Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and 
 
   /// Runs [FlutterProject.regeneratePlatformSpecificTooling] for [project] with appropriate configuration.
   ///
-  /// By default, this uses [getBuildMode] to determine and provide whether a release build is being made,
-  /// but sub-commands (such as commands that do _meta_ builds, or builds that make multiple different builds
-  /// sequentially in one-go) may choose to overide this and make the call at a different point in time.
-  ///
   /// This method should only be called when [shouldRunPub] is `true`:
   /// ```dart
   /// if (shouldRunPub) {
@@ -1891,23 +1890,13 @@ Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and 
   @nonVirtual
   Future<void> regeneratePlatformSpecificToolingIfApplicable(
     FlutterProject project, {
-    bool? releaseMode,
+    required bool releaseMode,
   }) async {
     if (!shouldRunPub) {
       return;
     }
-
     await project.regeneratePlatformSpecificTooling(
-      // TODO(matanlurey): Move this up, i.e. releaseMode ??= getBuildMode().release.
-      //
-      // As it stands, this is a breaking change until https://github.com/flutter/flutter/issues/162704 is
-      // implemented, as the build_ios_framework command (and similar) will start querying
-      // for getBuildMode(), causing an error (meta-build commands like build ios-framework do not have
-      // a single build mode). Once ios-framework and macos-framework are migrated, then this can be
-      // cleaned up.
-      releaseMode:
-          featureFlags.isExplicitPackageDependenciesEnabled &&
-          (releaseMode ?? getBuildMode().isRelease),
+      releaseMode: featureFlags.isExplicitPackageDependenciesEnabled && releaseMode,
     );
   }
 

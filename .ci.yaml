@@ -252,6 +252,10 @@ platform_properties:
       os: Mac-13|Mac-14
       cpu: x86
       device_type: "mokey"
+      $flutter/osx_sdk : >-
+        {
+          "skip_xcode_install": true
+        }
   mac_arm64_mokey:
     properties:
       dependencies: >-
@@ -262,6 +266,10 @@ platform_properties:
       os: Mac-13|Mac-14
       cpu: arm64
       device_type: "mokey"
+      $flutter/osx_sdk : >-
+        {
+          "skip_xcode_install": true
+        }
 
   mac_pixel_7pro:
     properties:
@@ -1157,6 +1165,7 @@ targets:
       task_name: android_release_builds_exclude_dev_dependencies_test
     runIf:
       - dev/**
+      - packages/flutter_tools/**
       - bin/**
       - .ci.yaml
       - engine/**

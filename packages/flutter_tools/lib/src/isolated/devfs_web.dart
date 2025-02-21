@@ -41,6 +41,7 @@ import '../web/chrome.dart';
 import '../web/compile.dart';
 import '../web/memory_fs.dart';
 import '../web/module_metadata.dart';
+import '../web/web_constants.dart';
 import '../web_template.dart';
 
 typedef DwdsLauncher =
@@ -1315,11 +1316,8 @@ class ReleaseAssetServer {
           'Content-Type': mimeType,
           'Cross-Origin-Resource-Policy': 'cross-origin',
           'Access-Control-Allow-Origin': '*',
-          if (_needsCoopCoep &&
-              _fileSystem.path.extension(file.path) == '.html') ...<String, String>{
-            'Cross-Origin-Opener-Policy': 'same-origin',
-            'Cross-Origin-Embedder-Policy': 'credentialless',
-          },
+          if (_needsCoopCoep && _fileSystem.path.extension(file.path) == '.html')
+            ...kMultiThreadedHeaders,
         },
       );
     }
@@ -1329,10 +1327,7 @@ class ReleaseAssetServer {
       file.readAsBytesSync(),
       headers: <String, String>{
         'Content-Type': 'text/html',
-        if (_needsCoopCoep) ...<String, String>{
-          'Cross-Origin-Opener-Policy': 'same-origin',
-          'Cross-Origin-Embedder-Policy': 'credentialless',
-        },
+        if (_needsCoopCoep) ...kMultiThreadedHeaders,
       },
     );
   }

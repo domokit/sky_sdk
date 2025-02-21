@@ -97,9 +97,6 @@ class PlatformViewIOS final : public PlatformView {
   std::shared_ptr<ExternalViewEmbedder> CreateExternalViewEmbedder() override;
 
   // |PlatformView|
-  sk_sp<GrDirectContext> CreateResourceContext() const override;
-
-  // |PlatformView|
   std::shared_ptr<impeller::Context> GetImpellerContext() const override;
 
   // |PlatformView|

@@ -5,6 +5,7 @@
 import 'package:file_testing/file_testing.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/io.dart';
+import 'package:flutter_tools/src/features.dart';
 
 import '../integration.shard/test_utils.dart';
 import '../src/common.dart';
@@ -14,6 +15,20 @@ void main() {
 
   setUpAll(() {
     processManager.runSync(<String>[flutterBin, 'config', '--enable-macos-desktop']);
+
+    // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
+    // See https://github.com/flutter/flutter/issues/160257 for details.
+    if (!explicitPackageDependencies.master.enabledByDefault) {
+      processManager.runSync(<String>[flutterBin, 'config', '--explicit-package-dependencies']);
+    }
+  });
+
+  tearDownAll(() {
+    // TODO(matanlurey): Remove after `explicit-package-dependencies` is enabled by default.
+    // See https://github.com/flutter/flutter/issues/160257 for details.
+    if (!explicitPackageDependencies.master.enabledByDefault) {
+      processManager.runSync(<String>[flutterBin, 'config', '--no-explicit-package-dependencies']);
+    }
   });
 
   for (final String buildMode in <String>['Debug', 'Release']) {

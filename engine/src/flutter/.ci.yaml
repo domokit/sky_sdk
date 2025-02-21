@@ -56,6 +56,26 @@ targets:
     # local_engine schedules a bunch of other builds, so it's likely to timeout waiting for those builds to run.
     timeout: 180
 
+  - name: Linux linux_android_emulator_tests
+    bringup: true
+    enabled_branches:
+      - master
+    recipe: engine_v2/engine_v2
+    properties:
+      config_name: linux_android_emulator
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:720a542f6fe4f92922c3b8f0fdcc4d2ac6bb83cd"}
+        ]
+    timeout: 90
+    runIf:
+      - DEPS
+      - engine/src/flutter/.ci.yaml
+      - engine/src/flutter/ci/builders/linux_android_emulator.json
+      - engine/src/flutter/lib/ui/**
+      - engine/src/flutter/shell/platform/android/**
+      - engine/src/flutter/testing/skia_gold_client/**
+
   - name: Linux builder_cache
     enabled_branches:
       - master

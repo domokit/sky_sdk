@@ -2608,6 +2608,69 @@ void main() {
     expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
   });
 
+  testWidgets('CupertinoSliverNavigationBar.search golden tests', (WidgetTester tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 850));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      const CupertinoApp(
+        home: RepaintBoundary(
+          child: CustomScrollView(
+            slivers: <Widget>[
+              CupertinoSliverNavigationBar.search(
+                largeTitle: Text('Large title'),
+                searchField: CupertinoSearchTextField(),
+              ),
+              SliverFillRemaining(child: SizedBox(height: 300.0)),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await expectLater(
+      find.byType(CupertinoSliverNavigationBar),
+      matchesGoldenFile('nav_bar.search.inactive.png'),
+    );
+
+    // Tap the search field.
+    await tester.tap(find.byType(CupertinoSearchTextField), warnIfMissed: false);
+    await tester.pump();
+    // Pump halfway through the animation.
+    await tester.pump(const Duration(milliseconds: 150));
+
+    await expectLater(
+      find.byType(CupertinoSliverNavigationBar),
+      matchesGoldenFile('nav_bar.search.transition_forward.png'),
+    );
+
+    // Pump to the end of the animation.
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await expectLater(
+      find.byType(CupertinoSliverNavigationBar),
+      matchesGoldenFile('nav_bar.search.active.png'),
+    );
+
+    // Tap the 'Cancel' button to exit the search view.
+    await tester.tap(find.widgetWithText(CupertinoButton, 'Cancel'));
+    await tester.pump();
+    // Pump halfway through the animation.
+    await tester.pump(const Duration(milliseconds: 150));
+
+    await expectLater(
+      find.byType(CupertinoSliverNavigationBar),
+      matchesGoldenFile('nav_bar.search.transition_backward.png'),
+    );
+
+    // Pump for the duration of the search field animation.
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await expectLater(
+      find.byType(CupertinoSliverNavigationBar),
+      matchesGoldenFile('nav_bar.search.inactive.png'),
+    );
+  });
+
   testWidgets('onSearchableBottomTap callback', (WidgetTester tester) async {
     const Color activeSearchColor = Color(0x0000000A);
     const Color inactiveSearchColor = Color(0x0000000B);

@@ -145,17 +145,12 @@ std::unique_ptr<Surface> PlatformViewIOS::CreateRenderingSurface() {
                       "has no ViewController.";
     return nullptr;
   }
-  return ios_surface_->CreateGPUSurface(ios_context_->GetMainContext().get());
+  return ios_surface_->CreateGPUSurface();
 }
 
 // |PlatformView|
 std::shared_ptr<ExternalViewEmbedder> PlatformViewIOS::CreateExternalViewEmbedder() {
   return std::make_shared<IOSExternalViewEmbedder>(platform_views_controller_, ios_context_);
-}
-
-// |PlatformView|
-sk_sp<GrDirectContext> PlatformViewIOS::CreateResourceContext() const {
-  return ios_context_->CreateResourceContext();
 }
 
 // |PlatformView|

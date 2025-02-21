@@ -168,6 +168,33 @@ void main() {
               ],
               stdout: getChannelUpToDateVersion().toString(),
             ),
+            const FakeCommand(
+              command: <String>[
+                'git',
+                '-c',
+                'log.showSignature=false',
+                'log',
+                '-n',
+                '1',
+                '--pretty=format:%ar',
+                'abcdefg',
+              ],
+              stdout: '2 seconds ago',
+            ),
+            FakeCommand(
+              command: const <String>[
+                'git',
+                '-c',
+                'log.showSignature=false',
+                'log',
+                'abcdefg',
+                '-n',
+                '1',
+                '--pretty=format:%ad',
+                '--date=iso',
+              ],
+              stdout: getChannelUpToDateVersion().toString(),
+            ),
           ]);
 
           final FlutterVersion flutterVersion = FlutterVersion(
@@ -185,7 +212,7 @@ void main() {
             flutterVersion.toString(),
             'Flutter • channel $channel • $flutterUpstreamUrl\n'
             'Framework • revision 1234abcd (1 second ago) • ${getChannelUpToDateVersion()}\n'
-            'Engine • revision abcdefg\n'
+            'Engine • revision abcdefg (2 seconds ago) • ${getChannelUpToDateVersion()}\n'
             'Tools • Dart 2.12.0 • DevTools 2.8.0',
           );
           expect(flutterVersion.frameworkAge, '1 second ago');
@@ -689,6 +716,23 @@ void main() {
                   .ago(VersionFreshnessValidator.versionAgeConsideredUpToDate('stable') ~/ 2)
                   .toString(),
         ),
+        FakeCommand(
+          command: const <String>[
+            'git',
+            '-c',
+            'log.showSignature=false',
+            'log',
+            'abcdefg',
+            '-n',
+            '1',
+            '--pretty=format:%ad',
+            '--date=iso',
+          ],
+          stdout:
+              _testClock
+                  .ago(VersionFreshnessValidator.versionAgeConsideredUpToDate('stable') ~/ 2)
+                  .toString(),
+        ),
       ]);
 
       final MemoryFileSystem fs = MemoryFileSystem.test();
@@ -713,6 +757,7 @@ void main() {
   "frameworkRevision": "1234abcd",
   "frameworkCommitDate": "2014-10-02 00:00:00.000Z",
   "engineRevision": "abcdefg",
+  "engineCommitDate": "2014-10-02 00:00:00.000Z",
   "dartSdkVersion": "2.12.0",
   "devToolsVersion": "2.8.0",
   "flutterVersion": "0.0.0-unknown"
@@ -794,6 +839,67 @@ void main() {
   );
 
   testUsingContext(
+    '_FlutterVersionFromFile ignores engineCommitDate if historically omitted',
+    () async {
+      final MemoryFileSystem fs = MemoryFileSystem.test();
+      final Directory flutterRoot = fs.directory('/path/to/flutter');
+      final Directory cacheDir = flutterRoot.childDirectory('bin').childDirectory('cache')
+        ..createSync(recursive: true);
+
+      const Map<String, Object> versionJson = <String, Object>{
+        'channel': 'stable',
+        'frameworkVersion': '1.2.3',
+        'repositoryUrl': 'https://github.com/flutter/flutter.git',
+        'frameworkRevision': '1234abcd',
+        'frameworkCommitDate': '2023-04-28 12:34:56 -0400',
+        'engineRevision': 'deadbeef',
+        'dartSdkVersion': 'deadbeef2',
+        'devToolsVersion': '0000000',
+        'flutterVersion': 'foo',
+      };
+      cacheDir.childFile('flutter.version.json').writeAsStringSync(jsonEncode(versionJson));
+
+      processManager.addCommands(<FakeCommand>[
+        const FakeCommand(
+          command: <String>[
+            'git',
+            '-c',
+            'log.showSignature=false',
+            'log',
+            '-n',
+            '1',
+            '--pretty=format:%ar',
+          ],
+          stdout: '1 second ago',
+        ),
+        const FakeCommand(
+          command: <String>[
+            'git',
+            '-c',
+            'log.showSignature=false',
+            'log',
+            '-n',
+            '1',
+            '--pretty=format:%ar',
+            'deadbeef',
+          ],
+          stdout: '1 second ago',
+        ),
+      ]);
+
+      final FlutterVersion flutterVersion = FlutterVersion(
+        clock: _testClock,
+        fs: fs,
+        flutterRoot: flutterRoot.path,
+      );
+      expect(flutterVersion.engineCommitDate, isNull);
+      expect(flutterVersion.toJson(), isNot(contains('engineCommitDate')));
+      expect(flutterVersion.toString(), contains('Engine • revision deadbeef (1 second ago)\n'));
+    },
+    overrides: <Type, Generator>{ProcessManager: () => processManager, Cache: () => cache},
+  );
+
+  testUsingContext(
     'FlutterVersion() falls back to git if .version.json is malformed',
     () async {
       final MemoryFileSystem fs = MemoryFileSystem.test();
@@ -836,6 +942,23 @@ void main() {
             'log.showSignature=false',
             'log',
             'HEAD',
+            '-n',
+            '1',
+            '--pretty=format:%ad',
+            '--date=iso',
+          ],
+          stdout:
+              _testClock
+                  .ago(VersionFreshnessValidator.versionAgeConsideredUpToDate('stable') ~/ 2)
+                  .toString(),
+        ),
+        FakeCommand(
+          command: const <String>[
+            'git',
+            '-c',
+            'log.showSignature=false',
+            'log',
+            'abcdefg',
             '-n',
             '1',
             '--pretty=format:%ad',

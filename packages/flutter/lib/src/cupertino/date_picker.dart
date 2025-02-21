@@ -1458,6 +1458,7 @@ class _CupertinoDatePickerDateState extends State<CupertinoDatePicker> {
         useMagnifier: _kUseMagnifier,
         magnification: _kMagnification,
         backgroundColor: widget.backgroundColor,
+        squeeze: _kSqueeze,
         onSelectedItemChanged: (int index) {
           selectedYear = index;
           if (_isCurrentDateValid) {

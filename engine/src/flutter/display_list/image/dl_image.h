@@ -85,6 +85,11 @@ class DlImage : public SkRefCnt {
   virtual SkISize dimensions() const = 0;
 
   //----------------------------------------------------------------------------
+  /// @return     The dimensions of the pixel grid.
+  ///
+  virtual DlISize GetSize() const = 0;
+
+  //----------------------------------------------------------------------------
   /// @return     The approximate byte size of the allocation of this image.
   ///             This takes into account details such as mip-mapping. The
   ///             allocation is usually resident in device memory.

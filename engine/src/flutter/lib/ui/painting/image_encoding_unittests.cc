@@ -44,6 +44,7 @@ class MockDlImage : public DlImage {
   MOCK_METHOD(bool, isTextureBacked, (), (const, override));
   MOCK_METHOD(bool, isUIThreadSafe, (), (const, override));
   MOCK_METHOD(SkISize, dimensions, (), (const, override));
+  MOCK_METHOD(DlISize, GetSize, (), (const, override));
   MOCK_METHOD(size_t, GetApproximateByteSize, (), (const, override));
 };
 
