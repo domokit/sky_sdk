@@ -58,6 +58,7 @@
 ../../../flutter/flow/layers/clip_path_layer_unittests.cc
 ../../../flutter/flow/layers/clip_rect_layer_unittests.cc
 ../../../flutter/flow/layers/clip_rrect_layer_unittests.cc
+../../../flutter/flow/layers/clip_rsuperellipse_layer_unittests.cc
 ../../../flutter/flow/layers/color_filter_layer_unittests.cc
 ../../../flutter/flow/layers/container_layer_unittests.cc
 ../../../flutter/flow/layers/display_list_layer_unittests.cc

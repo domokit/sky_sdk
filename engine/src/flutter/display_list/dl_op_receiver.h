@@ -291,6 +291,9 @@ class DlOpReceiver {
   virtual void clipRoundRect(const DlRoundRect& rrect,
                              DlClipOp clip_op,
                              bool is_aa) = 0;
+  virtual void clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                                     DlClipOp clip_op,
+                                     bool is_aa) = 0;
   virtual void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) = 0;
 
   // The following rendering methods all take their rendering attributes
@@ -313,6 +316,7 @@ class DlOpReceiver {
   virtual void drawRoundRect(const DlRoundRect& rrect) = 0;
   virtual void drawDiffRoundRect(const DlRoundRect& outer,
                                  const DlRoundRect& inner) = 0;
+  virtual void drawRoundSuperellipse(const DlRoundSuperellipse& rse) = 0;
   virtual void drawPath(const DlPath& path) = 0;
   virtual void drawArc(const DlRect& oval_bounds,
                        DlScalar start_degrees,

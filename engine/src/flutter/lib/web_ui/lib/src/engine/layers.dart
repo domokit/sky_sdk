@@ -226,6 +226,56 @@ class ClipRRectOperation implements LayerOperation {
   String toString() => 'ClipRRectOperation(rrect: $rrect, clip: $clip)';
 }
 
+class ClipRSuperellipseLayer with PictureEngineLayer implements ui.ClipRSuperellipseEngineLayer {
+  ClipRSuperellipseLayer(this.operation);
+
+  @override
+  final ClipRSuperellipseOperation operation;
+
+  @override
+  ClipRSuperellipseLayer emptyClone() => ClipRSuperellipseLayer(operation);
+}
+
+class ClipRSuperellipseOperation implements LayerOperation {
+  const ClipRSuperellipseOperation(this.rse, this.clip);
+
+  final ui.RSuperellipse rse;
+  final ui.Clip clip;
+
+  @override
+  ui.Rect mapRect(ui.Rect contentRect) => contentRect.intersect(rse.outerRect);
+
+  @override
+  void pre(SceneCanvas canvas) {
+    canvas.save();
+    canvas.clipRSuperellipse(rse, doAntiAlias: clip != ui.Clip.hardEdge);
+    if (clip == ui.Clip.antiAliasWithSaveLayer) {
+      canvas.saveLayer(rse.outerRect, ui.Paint());
+    }
+  }
+
+  @override
+  void post(SceneCanvas canvas) {
+    if (clip == ui.Clip.antiAliasWithSaveLayer) {
+      canvas.restore();
+    }
+    canvas.restore();
+  }
+
+  @override
+  PlatformViewStyling createPlatformViewStyling() {
+    // TODO(dkwingsmt): Properly implement clipRSE on Web instead of falling
+    // back to RRect.  https://github.com/flutter/flutter/issues/163718
+    return PlatformViewStyling(clip: PlatformViewRRectClip(rse.toApproximateRRect()));
+  }
+
+  @override
+  bool get affectsBackdrop => false;
+
+  @override
+  String toString() => 'ClipRSuperellipseOperation(rse: $rse, clip: $clip)';
+}
+
 class ColorFilterLayer with PictureEngineLayer implements ui.ColorFilterEngineLayer {
   ColorFilterLayer(this.operation);
 

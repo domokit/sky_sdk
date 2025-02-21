@@ -1783,6 +1783,93 @@ class ClipRRectLayer extends ContainerLayer {
   }
 }
 
+/// A composite layer that clips its children using a rounded superellipse.
+///
+/// When debugging, setting [debugDisableClipLayers] to true will cause this
+/// layer to be skipped (directly replaced by its children). This can be helpful
+/// to track down the cause of performance problems.
+class ClipRSuperellipseLayer extends ContainerLayer {
+  /// Creates a layer with a rounded-rectangular clip.
+  ///
+  /// The [clipRRect] and [clipBehavior] properties must be non-null before the
+  /// compositing phase of the pipeline.
+  ClipRSuperellipseLayer({RSuperellipse? clipRSuperellipse, Clip clipBehavior = Clip.antiAlias})
+    : _clipRSuperellipse = clipRSuperellipse,
+      _clipBehavior = clipBehavior,
+      assert(clipBehavior != Clip.none);
+
+  /// The rounded-rect to clip in the parent's coordinate system.
+  ///
+  /// The scene must be explicitly recomposited after this property is changed
+  /// (as described at [Layer]).
+  RSuperellipse? get clipRSuperellipse => _clipRSuperellipse;
+  RSuperellipse? _clipRSuperellipse;
+  set clipRSuperellipse(RSuperellipse? value) {
+    if (value != _clipRSuperellipse) {
+      _clipRSuperellipse = value;
+      markNeedsAddToScene();
+    }
+  }
+
+  @override
+  Rect? describeClipBounds() => clipRSuperellipse?.outerRect;
+
+  /// {@macro flutter.rendering.ClipRectLayer.clipBehavior}
+  ///
+  /// Defaults to [Clip.antiAlias].
+  Clip get clipBehavior => _clipBehavior;
+  Clip _clipBehavior;
+  set clipBehavior(Clip value) {
+    assert(value != Clip.none);
+    if (value != _clipBehavior) {
+      _clipBehavior = value;
+      markNeedsAddToScene();
+    }
+  }
+
+  @override
+  bool findAnnotations<S extends Object>(
+    AnnotationResult<S> result,
+    Offset localPosition, {
+    required bool onlyFirst,
+  }) {
+    if (!clipRSuperellipse!.contains(localPosition)) {
+      return false;
+    }
+    return super.findAnnotations<S>(result, localPosition, onlyFirst: onlyFirst);
+  }
+
+  @override
+  void addToScene(ui.SceneBuilder builder) {
+    assert(clipRSuperellipse != null);
+    bool enabled = true;
+    assert(() {
+      enabled = !debugDisableClipLayers;
+      return true;
+    }());
+    if (enabled) {
+      engineLayer = builder.pushClipRSuperellipse(
+        clipRSuperellipse!,
+        clipBehavior: clipBehavior,
+        oldLayer: _engineLayer as ui.ClipRSuperellipseEngineLayer?,
+      );
+    } else {
+      engineLayer = null;
+    }
+    addChildrenToScene(builder);
+    if (enabled) {
+      builder.pop();
+    }
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<RSuperellipse>('clipRSuperellipse', clipRSuperellipse));
+    properties.add(DiagnosticsProperty<Clip>('clipBehavior', clipBehavior));
+  }
+}
+
 /// A composite layer that clips its children using a path.
 ///
 /// When debugging, setting [debugDisableClipLayers] to true will cause this

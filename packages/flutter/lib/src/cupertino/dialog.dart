@@ -719,13 +719,13 @@ class CupertinoPopupSurface extends StatelessWidget {
     }
 
     if (filter != null) {
-      return ClipRRect(
+      return ClipRSuperellipse(
         borderRadius: _clipper,
         child: BackdropFilter(filter: filter, child: contents),
       );
     }
 
-    return ClipRRect(borderRadius: _clipper, child: contents);
+    return ClipRSuperellipse(borderRadius: _clipper, child: contents);
   }
 }
 
@@ -1299,7 +1299,7 @@ class _CupertinoActionSheetState extends State<CupertinoActionSheet> {
 
     final List<Widget> children = <Widget>[
       Flexible(
-        child: ClipRRect(
+        child: ClipRSuperellipse(
           borderRadius: const BorderRadius.all(Radius.circular(12.0)),
           child: BackdropFilter(
             filter: ImageFilter.blur(

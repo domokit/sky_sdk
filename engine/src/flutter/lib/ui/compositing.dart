@@ -174,6 +174,15 @@ class ClipRRectEngineLayer extends _EngineLayerWrapper {
   ClipRRectEngineLayer._(super.nativeLayer) : super._();
 }
 
+/// An opaque handle to a clip rounded superellipse engine layer.
+///
+/// Instances of this class are created by [SceneBuilder.pushClipRSuperellipse].
+///
+/// {@macro dart.ui.sceneBuilder.oldLayerCompatibility}
+class ClipRSuperellipseEngineLayer extends _EngineLayerWrapper {
+  ClipRSuperellipseEngineLayer._(super.nativeLayer) : super._();
+}
+
 /// An opaque handle to a clip path engine layer.
 ///
 /// Instances of this class are created by [SceneBuilder.pushClipPath].
@@ -323,6 +332,22 @@ abstract class SceneBuilder {
     RRect rrect, {
     Clip clipBehavior = Clip.antiAlias,
     ClipRRectEngineLayer? oldLayer,
+  });
+
+  /// Pushes a rounded-superellipse clip operation onto the operation stack.
+  ///
+  /// Rasterization outside the given rounded superellipse is discarded.
+  ///
+  /// {@macro dart.ui.sceneBuilder.oldLayer}
+  ///
+  /// {@macro dart.ui.sceneBuilder.oldLayerVsRetained}
+  ///
+  /// See [pop] for details about the operation stack, and [Clip] for different clip modes.
+  /// By default, the clip will be anti-aliased (clip = [Clip.antiAlias]).
+  ClipRSuperellipseEngineLayer pushClipRSuperellipse(
+    RSuperellipse rse, {
+    Clip clipBehavior = Clip.antiAlias,
+    ClipRSuperellipseEngineLayer? oldLayer,
   });
 
   /// Pushes a path clip operation onto the operation stack.
@@ -714,6 +739,36 @@ base class _NativeSceneBuilder extends NativeFieldWrapperClass1 implements Scene
     symbol: 'SceneBuilder::pushClipRRect',
   )
   external void _pushClipRRect(
+    EngineLayer layer,
+    Float32List rrect,
+    int clipBehavior,
+    EngineLayer? oldLayer,
+  );
+
+  @override
+  ClipRSuperellipseEngineLayer pushClipRSuperellipse(
+    RSuperellipse rse, {
+    Clip clipBehavior = Clip.antiAlias,
+    ClipRSuperellipseEngineLayer? oldLayer,
+  }) {
+    assert(clipBehavior != Clip.none);
+    assert(_debugCheckCanBeUsedAsOldLayer(oldLayer, 'pushClipRSuperellipse'));
+    final EngineLayer engineLayer = _NativeEngineLayer._();
+    _pushClipRSuperellipse(
+      engineLayer,
+      rse._getValue32(),
+      clipBehavior.index,
+      oldLayer?._nativeLayer,
+    );
+    final ClipRSuperellipseEngineLayer layer = ClipRSuperellipseEngineLayer._(engineLayer);
+    assert(_debugPushLayer(layer));
+    return layer;
+  }
+
+  @Native<Void Function(Pointer<Void>, Handle, Handle, Int32, Handle)>(
+    symbol: 'SceneBuilder::pushClipRSuperellipse',
+  )
+  external void _pushClipRSuperellipse(
     EngineLayer layer,
     Float32List rrect,
     int clipBehavior,

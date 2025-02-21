@@ -116,6 +116,22 @@ class ClipRRectEngineLayer extends ContainerLayer implements ui.ClipRRectEngineL
   }
 }
 
+/// A layer that clips its child layers by a given [RRect].
+class ClipRSuperellipseEngineLayer extends ContainerLayer
+    implements ui.ClipRSuperellipseEngineLayer {
+  ClipRSuperellipseEngineLayer(this.clipRSuperellipse, this.clipBehavior)
+    : assert(clipBehavior != ui.Clip.none);
+
+  /// The rounded superellipse used to clip child layers.
+  final ui.RSuperellipse clipRSuperellipse;
+  final ui.Clip? clipBehavior;
+
+  @override
+  void accept(LayerVisitor visitor) {
+    visitor.visitClipRSuperellipse(this);
+  }
+}
+
 /// A layer that paints its children with the given opacity.
 class OpacityEngineLayer extends ContainerLayer implements ui.OpacityEngineLayer {
   OpacityEngineLayer(this.alpha, this.offset);

@@ -186,6 +186,71 @@ class PersistedClipRRect extends PersistedContainerSurface
   bool get isClipping => true;
 }
 
+/// A surface that creates a rounded superellipse clip.
+///
+/// Implemented by falling back to RRect.
+class PersistedClipRSuperellipse extends PersistedContainerSurface
+    with _DomClip
+    implements ui.ClipRSuperellipseEngineLayer {
+  PersistedClipRSuperellipse(ui.EngineLayer? oldLayer, this.rse, this.clipBehavior)
+    : super(oldLayer as PersistedSurface?);
+
+  final ui.RSuperellipse rse;
+  // TODO(yjbanov): can this be controlled in the browser?
+  final ui.Clip? clipBehavior;
+
+  @override
+  void recomputeTransformAndClip() {
+    transform = parent!.transform;
+    if (clipBehavior != ui.Clip.none) {
+      localClipBounds = rse.outerRect;
+    } else {
+      localClipBounds = null;
+    }
+    projectedClip = null;
+  }
+
+  @override
+  DomElement createElement() {
+    // Fall back to rrect.
+    return super.createElement()..setAttribute('clip-type', 'rrect');
+  }
+
+  @override
+  void apply() {
+    final DomCSSStyleDeclaration style = rootElement!.style;
+    style
+      ..left = '${rse.left}px'
+      ..top = '${rse.top}px'
+      ..width = '${rse.width}px'
+      ..height = '${rse.height}px'
+      ..borderTopLeftRadius = '${rse.tlRadiusX}px'
+      ..borderTopRightRadius = '${rse.trRadiusX}px'
+      ..borderBottomRightRadius = '${rse.brRadiusX}px'
+      ..borderBottomLeftRadius = '${rse.blRadiusX}px';
+    applyOverflow(rootElement!, clipBehavior);
+
+    // Translate the child container in the opposite direction to compensate for
+    // the shift in the coordinate system introduced by the translation of the
+    // rootElement. Clipping in Flutter has no effect on the coordinate system.
+    childContainer!.style
+      ..left = '${-rse.left}px'
+      ..top = '${-rse.top}px';
+  }
+
+  @override
+  void update(PersistedClipRSuperellipse oldSurface) {
+    super.update(oldSurface);
+    if (rse != oldSurface.rse || clipBehavior != oldSurface.clipBehavior) {
+      localClipBounds = null;
+      apply();
+    }
+  }
+
+  @override
+  bool get isClipping => true;
+}
+
 /// A surface that clips it's children.
 class PersistedClipPath extends PersistedContainerSurface implements ui.ClipPathEngineLayer {
   PersistedClipPath(PersistedClipPath? super.oldLayer, this.clipPath, this.clipBehavior);

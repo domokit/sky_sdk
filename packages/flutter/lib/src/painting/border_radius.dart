@@ -383,6 +383,23 @@ class BorderRadius extends BorderRadiusGeometry {
     );
   }
 
+  /// Creates an [RSuperellipse] from the current border radius and a [Rect].
+  ///
+  /// If any of the radii have negative values in x or y, those values will be
+  /// clamped to zero in order to produce a valid [RRect].
+  RSuperellipse toRSuperellipse(Rect rect) {
+    // Because the current radii could be negative, we must clamp them before
+    // converting them to an RRect to be rendered, since negative radii on
+    // RRects don't make sense.
+    return RSuperellipse.fromRectAndCorners(
+      rect,
+      topLeft: topLeft.clamp(minimum: Radius.zero),
+      topRight: topRight.clamp(minimum: Radius.zero),
+      bottomLeft: bottomLeft.clamp(minimum: Radius.zero),
+      bottomRight: bottomRight.clamp(minimum: Radius.zero),
+    );
+  }
+
   @override
   BorderRadiusGeometry subtract(BorderRadiusGeometry other) {
     if (other is BorderRadius) {
