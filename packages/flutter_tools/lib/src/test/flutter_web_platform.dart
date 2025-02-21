@@ -32,6 +32,7 @@ import '../web/bootstrap.dart';
 import '../web/chrome.dart';
 import '../web/compile.dart';
 import '../web/memory_fs.dart';
+import '../web/web_constants.dart';
 import 'test_compiler.dart';
 import 'test_golden_comparator.dart';
 import 'test_time_recorder.dart';
@@ -57,10 +58,7 @@ shelf.Handler createDirectoryHandler(Directory directory, {required bool crossOr
       file.openRead(),
       headers: <String, String>{
         if (contentType != null) 'Content-Type': contentType,
-        if (needsCrossOriginIsolated) ...<String, String>{
-          'Cross-Origin-Opener-Policy': 'same-origin',
-          'Cross-Origin-Embedder-Policy': 'credentialless',
-        },
+        if (needsCrossOriginIsolated) ...kMultiThreadedHeaders,
       },
     );
   };
@@ -551,10 +549,7 @@ class FlutterWebPlatform extends PlatformPlugin {
       ''',
         headers: <String, String>{
           'Content-Type': 'text/html',
-          if (webRenderer == WebRendererMode.skwasm) ...<String, String>{
-            'Cross-Origin-Opener-Policy': 'same-origin',
-            'Cross-Origin-Embedder-Policy': 'credentialless',
-          },
+          if (webRenderer == WebRendererMode.skwasm) ...kMultiThreadedHeaders,
         },
       );
     }

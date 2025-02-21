@@ -29,19 +29,6 @@ IOSRenderingBackend IOSContextMetalImpeller::GetBackend() const {
   return IOSRenderingBackend::kImpeller;
 }
 
-sk_sp<GrDirectContext> IOSContextMetalImpeller::GetMainContext() const {
-  return nullptr;
-}
-
-sk_sp<GrDirectContext> IOSContextMetalImpeller::GetResourceContext() const {
-  return nullptr;
-}
-
-// |IOSContext|
-sk_sp<GrDirectContext> IOSContextMetalImpeller::CreateResourceContext() {
-  return nullptr;
-}
-
 // |IOSContext|
 std::shared_ptr<impeller::Context> IOSContextMetalImpeller::GetImpellerContext() const {
   return darwin_context_metal_impeller_.context;
@@ -50,12 +37,6 @@ std::shared_ptr<impeller::Context> IOSContextMetalImpeller::GetImpellerContext()
 // |IOSContext|
 std::shared_ptr<impeller::AiksContext> IOSContextMetalImpeller::GetAiksContext() const {
   return aiks_context_;
-}
-
-// |IOSContext|
-std::unique_ptr<GLContextResult> IOSContextMetalImpeller::MakeCurrent() {
-  // This only makes sense for contexts that need to be bound to a specific thread.
-  return std::make_unique<GLContextDefaultResult>(true);
 }
 
 // |IOSContext|

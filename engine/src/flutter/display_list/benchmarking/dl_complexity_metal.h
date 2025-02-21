@@ -85,7 +85,7 @@ class DisplayListMetalComplexityCalculator
                     DlScalar dpr) override;
 
    protected:
-    void ImageRect(const SkISize& size,
+    void ImageRect(const DlISize& size,
                    bool texture_backed,
                    bool render_with_attributes,
                    bool enforce_src_edges) override;

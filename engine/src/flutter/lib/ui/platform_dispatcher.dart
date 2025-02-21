@@ -1508,6 +1508,216 @@ class PlatformDispatcher {
   external static double _getScaledFontSize(double unscaledFontSize, int configurationId);
 }
 
+/// A color specified in the operating system UI color palette.
+///
+/// The static getters in this class, such as [accentColor] and [buttonText],
+/// provide standard system colors defined by the
+/// [W3C CSS specification](https://drafts.csswg.org/css-color/#css-system-colors).
+///
+/// As of the current release, system colors are supported on web only. To check
+/// if the current platform supports system colors, use the static
+/// [platformProvidesSystemColors] field. If the field is `false`, other
+/// functions in this class will throw [UnsupportedError].
+///
+/// This class is typically used in conjunction with
+/// [AccessibilityFeatures.highContrast]. In particular, on Windows, when a user
+/// enables high-contrast mode, they may also pick specific colors that should
+/// be used by application user interfaces. While it is common for applications
+/// to use custom color themes and design languages, in high-contrast mode it is
+/// recommended that widgets use system-specified colors to make content more
+/// legible for users.
+///
+/// See also:
+///
+///   * https://drafts.csswg.org/css-color/#css-system-colors
+///   * https://developer.mozilla.org/en-US/docs/Web/CSS/system-color
+///   * https://developer.mozilla.org/en-US/docs/Web/CSS/@media/forced-colors
+final class SystemColor {
+  /// Creates an instance of a system color.
+  ///
+  /// [name] is the name of the color. System colors provided by static getters
+  /// in this class, such as [accentColor] and [buttonText], use standard names
+  /// defined by the [W3C CSS specification](https://drafts.csswg.org/css-color/#css-system-colors).
+  ///
+  /// [value] is the color value, if this color name is supported, and null if
+  /// it's unsupported.
+  const SystemColor({required this.name, this.value});
+
+  /// Standard system color name, as defined by W3C CSS specification.
+  ///
+  /// System color names in Flutter are case-sensitive. This is so that color
+  /// names can be easily used as [Map] keys. This is in contrast to CSS, where
+  /// system color names are not case-sensitive. That is, specifying
+  /// `background-color: aCcEnTcOlOr` is equivalent to specifying
+  /// `background-color: AccentColor`.
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  final String name;
+
+  /// The color value used for the color named [name], if supported.
+  ///
+  /// If [isSupported] is false, the [value] is null. If [isSupported] is true,
+  /// the [value] is not null.
+  final Color? value;
+
+  /// Returns true if the current platform provides the system color with the
+  /// given [name].
+  ///
+  /// See also:
+  ///
+  ///   * [platformProvidesSystemColors], which returns whether the current
+  ///     platform provides system colors.
+  bool get isSupported => value != null;
+
+  /// Returns true if the current platform provides system colors.
+  ///
+  /// As of the current release, system colors are supported on web only.
+  ///
+  /// See also:
+  ///
+  ///   * [isSupported], which returns whether a specific color is supported.
+  static bool get platformProvidesSystemColors => false;
+
+  static UnsupportedError _systemColorUnsupportedError() {
+    return UnsupportedError('SystemColor not supported on the current platform.');
+  }
+
+  /// Returns system color named "AccentColor".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get accentColor => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "AccentColorText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get accentColorText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "ActiveText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get activeText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "ButtonBorder".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get buttonBorder => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "ButtonFace".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get buttonFace => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "ButtonText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get buttonText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "Canvas".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get canvas => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "CanvasText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get canvasText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "Field".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get field => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "FieldText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get fieldText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "GrayText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get grayText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "Highlight".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get highlight => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "HighlightText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get highlightText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "LinkText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get linkText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "Mark".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get mark => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "MarkText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get markText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "SelectedItem".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get selectedItem => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "SelectedItemText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get selectedItemText => throw _systemColorUnsupportedError();
+
+  /// Returns system color named "VisitedText".
+  ///
+  /// See also:
+  ///
+  ///   * https://drafts.csswg.org/css-color/#css-system-colors
+  static SystemColor get visitedText => throw _systemColorUnsupportedError();
+}
+
 /// Configuration of the platform.
 ///
 /// Immutable class (but can't use @immutable in dart:ui)

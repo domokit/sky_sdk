@@ -67,6 +67,7 @@ export 'engine/font_fallbacks.dart';
 export 'engine/fonts.dart';
 export 'engine/frame_service.dart';
 export 'engine/frame_timing_recorder.dart';
+export 'engine/high_contrast.dart';
 export 'engine/html/backdrop_filter.dart';
 export 'engine/html/bitmap_canvas.dart';
 export 'engine/html/canvas.dart';

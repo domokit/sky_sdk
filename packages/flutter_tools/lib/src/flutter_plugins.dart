@@ -89,12 +89,7 @@ Future<Plugin?> _pluginFromPackage(
 /// Returns a list of all plugins to be registered with the provided [project].
 ///
 /// If [throwOnError] is `true`, an empty package configuration is an error.
-Future<List<Plugin>> findPlugins(
-  FlutterProject project, {
-  bool throwOnError = true,
-  bool? determineDevDependencies,
-}) async {
-  determineDevDependencies ??= featureFlags.isExplicitPackageDependenciesEnabled;
+Future<List<Plugin>> findPlugins(FlutterProject project, {bool throwOnError = true}) async {
   final List<Plugin> plugins = <Plugin>[];
   final FileSystem fs = project.directory.fileSystem;
   final File packageConfigFile = findPackageConfigFileOrDefault(project.directory);
@@ -104,7 +99,7 @@ Future<List<Plugin>> findPlugins(
     throwOnError: throwOnError,
   );
   final Set<String> devDependencies;
-  if (!determineDevDependencies) {
+  if (!featureFlags.isExplicitPackageDependenciesEnabled) {
     devDependencies = <String>{};
   } else {
     devDependencies = await computeExclusiveDevDependencies(
@@ -244,9 +239,8 @@ bool _writeFlutterPluginsList(
   final String? oldPluginsFileStringContent = _readFileContent(pluginsFile);
   bool pluginsChanged = true;
   if (oldPluginsFileStringContent != null) {
-    Object? decodedJson;
     try {
-      decodedJson = jsonDecode(oldPluginsFileStringContent);
+      final Object? decodedJson = jsonDecode(oldPluginsFileStringContent);
       if (decodedJson is Map<String, Object?>) {
         final String jsonOfNewPluginsMap = jsonEncode(pluginsMap);
         final String jsonOfOldPluginsMap = jsonEncode(decodedJson[_kFlutterPluginsPluginListKey]);
@@ -1100,18 +1094,19 @@ void _createPlatformPluginSymlinks(
 /// dependencies declared in `pubspec.yaml`.
 ///
 /// Assumes `pub get` has been executed since last change to `pubspec.yaml`.
+///
+/// Unless explicitly specified, [determineDevDependencies] is disabled by
+/// default; if set to `true`, plugins that are development-only dependencies
+/// may be labeled or, depending on the platform, omitted from metadata or
+/// platform-specific artifacts.
 Future<void> refreshPluginsList(
   FlutterProject project, {
   bool iosPlatform = false,
   bool macOSPlatform = false,
   bool forceCocoaPodsOnly = false,
-  bool? determineDevDependencies,
   bool? generateLegacyPlugins,
 }) async {
-  final List<Plugin> plugins = await findPlugins(
-    project,
-    determineDevDependencies: determineDevDependencies,
-  );
+  final List<Plugin> plugins = await findPlugins(project);
   // Sort the plugins by name to keep ordering stable in generated files.
   plugins.sort((Plugin left, Plugin right) => left.name.compareTo(right.name));
   // TODO(matanlurey): Remove once migration is complete.
@@ -1188,19 +1183,23 @@ Future<void> injectBuildTimePluginFilesForWebPlatform(
 /// current build (temp) directory, and doesn't modify the users' working copy.
 ///
 /// Assumes [refreshPluginsList] has been called since last change to `pubspec.yaml`.
+///
+/// If [releaseMode] is `true`, platform-specific tooling and metadata generated
+/// may apply optimizations or changes that are only specific to release builds,
+/// such as not including dev-only dependencies.
 Future<void> injectPlugins(
   FlutterProject project, {
+  required bool releaseMode,
   bool androidPlatform = false,
   bool iosPlatform = false,
   bool linuxPlatform = false,
   bool macOSPlatform = false,
   bool windowsPlatform = false,
   DarwinDependencyManagement? darwinDependencyManagement,
-  bool? releaseMode,
 }) async {
   List<Plugin> plugins = await findPlugins(project);
 
-  if (releaseMode ?? false) {
+  if (releaseMode) {
     plugins = plugins.where((Plugin p) => !p.isDevDependency).toList();
   }
 

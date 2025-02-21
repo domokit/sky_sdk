@@ -35,11 +35,6 @@ struct OverlayLayer {
   // Whether a frame for this layer was submitted.
   bool did_submit_last_frame;
 
-  // The GrContext that is currently used by the overlay surfaces.
-  // We track this to know when the GrContext for the Flutter app has changed
-  // so we can update the overlay with the new context.
-  GrDirectContext* gr_context;
-
   void UpdateViewState(UIView* flutter_view, SkRect rect, int64_t view_id, int64_t overlay_id);
 };
 
@@ -63,8 +58,7 @@ class OverlayLayerPool {
   /// @brief Create a new overlay layer.
   ///
   /// This method can only be called on the Platform thread.
-  void CreateLayer(GrDirectContext* gr_context,
-                   const std::shared_ptr<IOSContext>& ios_context,
+  void CreateLayer(const std::shared_ptr<IOSContext>& ios_context,
                    MTLPixelFormat pixel_format,
                    CGFloat screenScale);
 

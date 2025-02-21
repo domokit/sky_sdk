@@ -39,7 +39,7 @@ class SK_API_AVAILABLE_CA_METAL_LAYER IOSSurfaceMetalImpeller final
   void UpdateStorageSizeIfNecessary() override;
 
   // |IOSSurface|
-  std::unique_ptr<Surface> CreateGPUSurface(GrDirectContext* gr_context) override;
+  std::unique_ptr<Surface> CreateGPUSurface() override;
 
   // |GPUSurfaceMetalDelegate|
   GPUCAMetalLayerHandle GetCAMetalLayer(const SkISize& frame_info) const override

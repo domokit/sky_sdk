@@ -8,8 +8,6 @@
 #import "flutter/shell/platform/darwin/ios/ios_context.h"
 #import "flutter/shell/platform/darwin/ios/ios_surface.h"
 
-#include "third_party/skia/include/core/SkSurface.h"
-
 @class CALayer;
 
 namespace flutter {
@@ -32,7 +30,7 @@ class IOSSurfaceNoop final : public IOSSurface {
   void UpdateStorageSizeIfNecessary() override;
 
   // |IOSSurface|
-  std::unique_ptr<Surface> CreateGPUSurface(GrDirectContext* gr_context = nullptr) override;
+  std::unique_ptr<Surface> CreateGPUSurface() override;
 
  private:
   IOSSurfaceNoop(const IOSSurfaceNoop&) = delete;
