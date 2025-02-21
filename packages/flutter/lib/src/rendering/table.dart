@@ -637,8 +637,16 @@ class RenderTable extends RenderBox {
           SemanticsConfiguration()
             ..indexInParent = i
             ..role = SemanticsRole.row;
+
+      final Iterable<MapEntry<int, SemanticsNode>> rawCells =
+          children.skip(i * _columns).take(_columns).toList().asMap().entries;
+
       final List<SemanticsNode> cells =
-          children.skip(i * _columns).take(_columns).map((SemanticsNode cell) {
+          rawCells.map((MapEntry<int, SemanticsNode> entry) {
+            final SemanticsNode cell = entry.value;
+            // Get the index of the cell.
+            cell.indexInParent = entry.key;
+
             // Shift the cell's transform to be relative to the row.
             final Offset offset = (cell.transform != null
                     ? MatrixUtils.getAsTranslation(cell.transform!) ?? Offset.zero
