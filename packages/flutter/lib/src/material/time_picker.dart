@@ -3144,19 +3144,13 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// ```
 /// {@end-tool}
 ///
-/// {@tool snippet} Show a dialog with time unconditionally displayed in 24 hour
-/// format.
+/// {@tool snippet} Show a dialog with time displayed in 24 hour format.
 ///
 /// ```dart
 /// Future<TimeOfDay?> selectedTime24Hour = showTimePicker(
 ///   context: context,
+///   show24HourFormat: true,
 ///   initialTime: const TimeOfDay(hour: 10, minute: 47),
-///   builder: (BuildContext context, Widget? child) {
-///     return MediaQuery(
-///       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-///       child: child!,
-///     );
-///   },
 /// );
 /// ```
 /// {@end-tool}
@@ -3197,6 +3191,7 @@ Future<TimeOfDay?> showTimePicker({
   Orientation? orientation,
   Icon? switchToInputEntryModeIcon,
   Icon? switchToTimerEntryModeIcon,
+  bool use24HourFormat = false,
 }) async {
   assert(debugCheckHasMaterialLocalizations(context));
 
@@ -3221,6 +3216,14 @@ Future<TimeOfDay?> showTimePicker({
     barrierLabel: barrierLabel,
     useRootNavigator: useRootNavigator,
     builder: (BuildContext context) {
+      if (use24HourFormat) {
+        // Override MediaQuery with specified 24-hour format
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: builder == null ? dialog : builder(context, dialog),
+        );
+      }
+      // No 24-hour format override - preserve existing MediaQuery settings
       return builder == null ? dialog : builder(context, dialog);
     },
     routeSettings: routeSettings,
