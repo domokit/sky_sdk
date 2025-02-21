@@ -490,9 +490,11 @@ void main() {
     }
 
     await tester.pumpWidget(buildFrame(appIconColor: Colors.lime));
+    await tester.pumpAndSettle();
     expect(getIconText().text.style!.color, Colors.lime);
 
     await tester.pumpWidget(buildFrame(appIconColor: Colors.lime, appBarIconColor: Colors.purple));
+    await tester.pumpAndSettle();
     expect(getIconText().text.style!.color, Colors.purple);
   });
 

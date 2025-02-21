@@ -7,11 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Widget boilerplate({required Widget child}) {
-  return Directionality(textDirection: TextDirection.ltr, child: Center(child: child));
-}
-
 void main() {
+  Widget boilerplate({required Widget child}) {
+    return Directionality(textDirection: TextDirection.ltr, child: Center(child: child));
+  }
+
+  TextStyle iconStyle(WidgetTester tester, IconData icon) {
+    final RichText iconRichText = tester.widget<RichText>(
+      find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)),
+    );
+    return iconRichText.text.style!;
+  }
+
   test('ToggleButtonsThemeData copyWith, ==, hashCode basics', () {
     expect(const ToggleButtonsThemeData(), const ToggleButtonsThemeData().copyWith());
     expect(
@@ -256,15 +263,6 @@ void main() {
           .style;
     }
 
-    IconTheme iconTheme(IconData icon) {
-      return tester.widget(
-        find.descendant(
-          of: find.widgetWithIcon(TextButton, icon),
-          matching: find.byType(IconTheme),
-        ),
-      );
-    }
-
     final ThemeData theme = ThemeData();
     const Color enabledColor = Colors.lime;
     const Color selectedColor = Colors.green;
@@ -292,7 +290,7 @@ void main() {
     // Custom theme enabled color
     expect(theme.colorScheme.onSurface, isNot(enabledColor));
     expect(buttonTextStyle('First child').color, enabledColor);
-    expect(iconTheme(Icons.check).data.color, enabledColor);
+    expect(iconStyle(tester, Icons.check).color, enabledColor);
 
     await tester.pumpWidget(
       Material(
@@ -315,7 +313,7 @@ void main() {
     // Custom theme selected color
     expect(theme.colorScheme.primary, isNot(selectedColor));
     expect(buttonTextStyle('First child').color, selectedColor);
-    expect(iconTheme(Icons.check).data.color, selectedColor);
+    expect(iconStyle(tester, Icons.check).color, selectedColor);
 
     await tester.pumpWidget(
       Material(
@@ -337,7 +335,7 @@ void main() {
     // Custom theme disabled color
     expect(theme.disabledColor, isNot(disabledColor));
     expect(buttonTextStyle('First child').color, disabledColor);
-    expect(iconTheme(Icons.check).data.color, disabledColor);
+    expect(iconStyle(tester, Icons.check).color, disabledColor);
   });
 
   testWidgets('Theme button fillColor', (WidgetTester tester) async {

@@ -8700,7 +8700,7 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(getIconStyle(tester, prefixIcon)?.color, iconColor);
   });
@@ -8742,7 +8742,7 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(getIconStyle(tester, suffixIcon)?.color, iconColor);
   });

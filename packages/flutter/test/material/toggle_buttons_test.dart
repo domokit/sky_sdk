@@ -333,10 +333,9 @@ void main() {
 
     IconTheme iconTheme(IconData icon) {
       return tester.widget(
-        find.descendant(
-          of: find.widgetWithIcon(TextButton, icon),
-          matching: find.byType(IconTheme),
-        ),
+        find
+            .descendant(of: find.widgetWithIcon(TextButton, icon), matching: find.byType(IconTheme))
+            .last,
       );
     }
 
@@ -405,10 +404,9 @@ void main() {
 
     IconTheme iconTheme(IconData icon) {
       return tester.widget(
-        find.descendant(
-          of: find.widgetWithIcon(TextButton, icon),
-          matching: find.byType(IconTheme),
-        ),
+        find
+            .descendant(of: find.widgetWithIcon(TextButton, icon), matching: find.byType(IconTheme))
+            .last,
       );
     }
 
