@@ -641,6 +641,8 @@ class RenderTable extends RenderBox {
           children.skip(i * _columns).take(_columns).map((SemanticsNode cell) {
             // Shift the cell's rect to be relative to the row's rect.
             cell.rect = cell.rect.shift(Offset(-rowBox.left, -rowBox.top));
+            // If the cell has no role, set it to cell. This happens when users add a basic widget like
+            // Text directly to the table row without wrapping it in a TableCell.
             if (cell.role == SemanticsRole.none) {
               cell.role = SemanticsRole.cell;
             }
