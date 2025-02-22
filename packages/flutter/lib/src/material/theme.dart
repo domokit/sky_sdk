@@ -161,6 +161,42 @@ class Theme extends StatelessWidget {
         .resolveFrom(context);
   }
 
+  /// Retrieves the [Brightness] to use for descendant Material widgets, based
+  /// on the value of [ThemeData.brightness] in the given [context].
+  ///
+  /// If no [InheritedTheme] can be found in the given [context], or its `brightness`
+  /// is null, it will fall back to [MediaQueryData.platformBrightness].
+  ///
+  /// See also:
+  ///
+  /// * [maybeBrightnessOf], which returns null if no valid [InheritedTheme] or
+  ///   [MediaQuery] exists.
+  /// * [ThemeData.brightness], the property that takes precedence over
+  ///   [MediaQueryData.platformBrightness] for descendant Material widgets.
+  static Brightness brightnessOf(BuildContext context) {
+    final _InheritedTheme? inheritedTheme =
+        context.dependOnInheritedWidgetOfExactType<_InheritedTheme>();
+    return inheritedTheme?.theme.data.brightness ?? MediaQuery.platformBrightnessOf(context);
+  }
+
+  /// Retrieves the [Brightness] to use for descendant Material widgets, based
+  /// on the value of [ThemeData.brightness] in the given [context].
+  ///
+  /// If no [InheritedTheme] or [MediaQuery] can be found in the given [context], it will
+  /// return null.
+  ///
+  /// See also:
+  ///
+  /// * [ThemeData.brightness], the property that takes precedence over
+  ///   [MediaQueryData.platformBrightness] for descendant Material widgets.
+  /// * [brightnessOf], which return a default value if no valid [InheritedTheme] or
+  ///   [MediaQuery] exists, instead of returning null.
+  static Brightness? maybeBrightnessOf(BuildContext context) {
+    final _InheritedTheme? inheritedTheme =
+        context.dependOnInheritedWidgetOfExactType<_InheritedTheme>();
+    return inheritedTheme?.theme.data.brightness ?? MediaQuery.maybePlatformBrightnessOf(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return _InheritedTheme(
