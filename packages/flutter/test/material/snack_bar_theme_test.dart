@@ -139,7 +139,7 @@ void main() {
     WidgetTester tester,
   ) async {
     const String text = 'I am a snack bar.';
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
@@ -174,11 +174,9 @@ void main() {
       content.text.style,
       Typography.material2021().englishLike.bodyMedium
           ?.merge(Typography.material2021().black.bodyMedium)
-          .copyWith(
-            color: theme.colorScheme.onInverseSurface,
-            decorationColor: theme.colorScheme.onSurface,
-          ),
+          .copyWith(color: theme.colorScheme.onInverseSurface),
     );
+
     expect(material.color, theme.colorScheme.inverseSurface);
     expect(material.elevation, 6.0);
     expect(material.shape, null);

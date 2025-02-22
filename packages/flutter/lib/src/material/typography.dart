@@ -199,8 +199,8 @@ class Typography with Diagnosticable {
     final Color light =
         colorScheme.brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface;
     return base.copyWith(
-      black: base.black.apply(displayColor: dark, bodyColor: dark, decorationColor: dark),
-      white: base.white.apply(displayColor: light, bodyColor: light, decorationColor: light),
+      black: base.black.apply(displayColor: dark, bodyColor: dark),
+      white: base.white.apply(displayColor: light, bodyColor: light),
     );
   }
 

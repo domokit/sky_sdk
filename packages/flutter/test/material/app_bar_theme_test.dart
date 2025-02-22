@@ -113,10 +113,7 @@ void main() {
       text.style,
       Typography.material2021().englishLike.bodyMedium!
           .merge(Typography.material2021().black.bodyMedium)
-          .copyWith(
-            color: theme.colorScheme.onSurface,
-            decorationColor: theme.colorScheme.onSurface,
-          ),
+          .copyWith(color: theme.colorScheme.onSurface),
     );
     expect(tester.getSize(find.byType(AppBar)).height, kToolbarHeight);
     expect(tester.getSize(find.byType(AppBar)).width, 800);
@@ -452,10 +449,7 @@ void main() {
       text.style,
       Typography.material2021().englishLike.bodyMedium!
           .merge(Typography.material2021().black.bodyMedium)
-          .copyWith(
-            color: darkTheme.colorScheme.onSurface,
-            decorationColor: darkTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: darkTheme.colorScheme.onSurface),
     );
   });
 
