@@ -134,8 +134,8 @@ List<String> generateMethodParameters(
     final Placeholder? localePlaceholder = localePlaceholders?[e.key];
     if (localePlaceholder != null && placeholder.type != localePlaceholder.type) {
       throw L10nException(
-        'The placeholder, ${placeholder.name}, has its "type" resource attribute set to '
-        'the "${localePlaceholder.type}" type in locale "$locale", but it is "${placeholder.type}" '
+        'For the message "${message.resourceId}" the placeholder "${placeholder.name}" has its "type" resource attribute set to '
+        'the type "${localePlaceholder.type}" in locale "$locale", but it is "${placeholder.type}" '
         'in the template placeholder. For compatibility with template placeholder, change '
         'the "type" attribute to "${placeholder.type}".',
       );
@@ -163,8 +163,8 @@ String generateDateFormattingLogic(Message message, LocaleInfo locale) {
         final String? placeholderFormat = placeholder.format;
         if (placeholderFormat == null) {
           throw L10nException(
-            'The placeholder, ${placeholder.name}, has its "type" resource attribute set to '
-            'the "${placeholder.type}" type. To properly resolve for the right '
+            'For the message "${message.resourceId}" the placeholder "${placeholder.name}" has its "type" resource attribute set to '
+            'the type "${placeholder.type}" in locale "$locale". To properly resolve for the right '
             '${placeholder.type} format, the "format" attribute needs to be set '
             'to determine which DateFormat to use. \n'
             "Check the intl library's DateFormat class constructors for allowed "
@@ -176,8 +176,8 @@ String generateDateFormattingLogic(Message message, LocaleInfo locale) {
             (isCustomDateFormat == null || !isCustomDateFormat)) {
           if (placeholder.dateFormatParts.length > 1) {
             throw L10nException(
-              'Date format "$placeholderFormat" for placeholder '
-              '${placeholder.name} contains at least one invalid date format. '
+              'For the message "${message.resourceId}" the Date format "$placeholderFormat" for placeholder '
+              '${placeholder.name} contains at least one invalid date format in locale "$locale". '
               'Ensure all date formats joined by a "+" character have '
               'a corresponding DateFormat constructor.\n Check the intl '
               "library's DateFormat class constructors for allowed date formats.",
@@ -185,9 +185,9 @@ String generateDateFormattingLogic(Message message, LocaleInfo locale) {
           }
 
           throw L10nException(
-            'Date format "$placeholderFormat" for placeholder '
+            'For the message "${message.resourceId}" the Date format "$placeholderFormat" for placeholder '
             '${placeholder.name} does not have a corresponding DateFormat '
-            "constructor\n. Check the intl library's DateFormat class "
+            'constructor in locale "$locale". Check the intl library\'s DateFormat class '
             'constructors for allowed date formats, or set "isCustomDateFormat" attribute '
             'to "true".',
           );
@@ -228,8 +228,8 @@ String generateNumberFormattingLogic(Message message, LocaleInfo locale) {
         final String? placeholderFormat = placeholder.format;
         if (!placeholder.hasValidNumberFormat || placeholderFormat == null) {
           throw L10nException(
-            'Number format $placeholderFormat for the ${placeholder.name} '
-            'placeholder does not have a corresponding NumberFormat constructor.\n'
+            'For the message "${message.resourceId}" the number format $placeholderFormat for the ${placeholder.name} '
+            'placeholder does not have a corresponding NumberFormat constructor in locale "$locale".\n'
             "Check the intl library's NumberFormat class constructors for allowed "
             'number formats.',
           );
@@ -1406,9 +1406,9 @@ The plural cases must be one of "=0", "=1", "=2", "zero", "one", "two", "few", "
             // Check that formatType is a valid intl.DateFormat.
             if (!validDateFormats.contains(formatType.value)) {
               throw L10nParserException(
-                'Date format "${formatType.value!}" for placeholder '
+                'For message "${message.resourceId}" the date format "${formatType.value!}" for placeholder '
                 '$identifierName does not have a corresponding DateFormat '
-                "constructor\n. Check the intl library's DateFormat class "
+                'constructor in locale "$locale"\n. Check the intl library\'s DateFormat class '
                 'constructors for allowed date formats, or set "isCustomDateFormat" attribute '
                 'to "true".',
                 _inputFileNames[locale]!,

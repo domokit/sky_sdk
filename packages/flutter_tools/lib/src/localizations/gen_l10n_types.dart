@@ -505,7 +505,7 @@ class Message {
     }
     if (allPlaceholdersMap is! Map<String, Object?>) {
       throw L10nException(
-        'The "placeholders" attribute for message $resourceId, is not '
+        'The "placeholders" attribute for message "$resourceId", is not '
         'properly formatted. Ensure that it is a map with string valued keys.',
       );
     }
