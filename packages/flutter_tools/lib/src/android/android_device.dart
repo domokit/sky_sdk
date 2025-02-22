@@ -601,14 +601,20 @@ class AndroidDevice extends Device {
     }
 
     final bool traceStartup = platformArgs['trace-startup'] as bool? ?? false;
+
+    // Avoid using getLogReader, which returns a singleton instance, because
+    // "startApp" will dispose this reader at the end. Creating a new log reader
+    // here allows logs to be surfaced normally during `flutter drive`.
+    final AdbLogReader startupLogReader = await AdbLogReader.createLogReader(
+      this,
+      _processManager,
+      _logger,
+    );
     ProtocolDiscovery? vmServiceDiscovery;
 
     if (debuggingOptions.debuggingEnabled) {
       vmServiceDiscovery = ProtocolDiscovery.vmService(
-        // Avoid using getLogReader, which returns a singleton instance, because the
-        // VM Service discovery will dispose at the end. creating a new logger here allows
-        // logs to be surfaced normally during `flutter drive`.
-        await AdbLogReader.createLogReader(this, _processManager, _logger),
+        startupLogReader,
         portForwarder: portForwarder,
         hostPort: debuggingOptions.hostVmServicePort,
         devicePort: debuggingOptions.deviceVmServicePort,
@@ -691,15 +697,44 @@ class AndroidDevice extends Device {
       ],
       builtPackage.launchActivity,
     ];
-    final String result = (await runAdbCheckedAsync(cmd)).stdout;
-    // This invocation returns 0 even when it fails.
-    if (result.contains('Error: ')) {
-      _logger.printError(result.trim(), wrap: false);
-      return LaunchResult.failed();
+
+    // Start listening to logs that are output as a result of starting the activity.
+    final List<String> startupLogs = <String>[];
+    final StreamSubscription<void> startupLogSub = startupLogReader.logLines.listen(
+      startupLogs.add,
+    );
+
+    // Checks startupLogs, returning a string of the logs if an error is detected.
+    final RegExp errorPattern = RegExp('Error:', caseSensitive: false);
+    @useResult
+    String? checkErrorFromStartupLogs() {
+      if (startupLogs.any((String line) => line.contains(errorPattern))) {
+        return startupLogs.join('\n');
+      }
+      return null;
     }
+
+    // It is normal for this command to succeed (i.e. exit code = 0) and for the
+    // stdout/stderr to only retain a tiny amount of information, which is not
+    // guaranteed. Instead startupLogs (above) will capture any relevant output
+    // from the launch.
+    await runAdbCheckedAsync(cmd);
 
     _package = builtPackage;
     if (!debuggingOptions.debuggingEnabled) {
+      // For a release mode application, there is no strong signal that the
+      // application launch succeeded, other than visibily seeing it on a
+      // screen. "startupLogs" is not guaranteed to have any errors (an error
+      // could happen literally a microsecond from now, or a second, or any
+      // other duration).
+      //
+      // So, do a best effort "has there been a failure _yet_" check and report
+      // success. The app *did* launch, it just might already be terminiating at
+      // this point.
+      if (checkErrorFromStartupLogs() case final String error) {
+        _logger.printError(error.trim(), wrap: false);
+        return LaunchResult.failed();
+      }
       return LaunchResult.succeeded();
     }
 
@@ -710,6 +745,13 @@ class AndroidDevice extends Device {
       Uri? vmServiceUri;
       if (debuggingOptions.buildInfo.isDebug || debuggingOptions.buildInfo.isProfile) {
         vmServiceUri = await vmServiceDiscovery?.uri;
+        // For apps that use the VM service protocol, we *do* have a signal that the app
+        // appears to have started, and can wait until the VM service is discovered, and
+        // then check "startupLogs" to see if an error was detected so far.
+        if (checkErrorFromStartupLogs() case final String error) {
+          _logger.printError(error.trim(), wrap: false);
+          return LaunchResult.failed();
+        }
         if (vmServiceUri == null) {
           _logger.printError(
             'Error waiting for a debug connection: '
@@ -724,6 +766,8 @@ class AndroidDevice extends Device {
       return LaunchResult.failed();
     } finally {
       await vmServiceDiscovery?.cancel();
+      await startupLogSub.cancel();
+      startupLogReader.dispose();
     }
   }
 
