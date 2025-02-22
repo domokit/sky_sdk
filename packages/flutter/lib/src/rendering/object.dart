@@ -2588,7 +2588,6 @@ abstract class RenderObject with DiagnosticableTreeMixin implements HitTestTarge
   @pragma('vm:notify-debugger-on-exception')
   void _layoutWithoutResize() {
     assert(_needsLayout);
-    assert(_relayoutBoundary == this);
     RenderObject? debugPreviousActiveLayout;
     assert(!_debugMutationsLocked);
     assert(!_doingThisLayoutWithCallback);
@@ -4105,6 +4104,64 @@ mixin RenderObjectWithChildMixin<ChildType extends RenderObject> on RenderObject
     return child != null
         ? <DiagnosticsNode>[child!.toDiagnosticsNode(name: 'child')]
         : <DiagnosticsNode>[];
+  }
+}
+
+/// A mixin for [RenderObject] subclasses with a layout callback. The mixin
+/// guarantees the layout callback will be called even if this [RenderObject]
+/// skips doing layout, unless the [RenderObject] has never been laid out and
+/// does not have valid [constraints].
+///
+/// A layout callback is a callback that mutates the [RenderObject]'s render
+/// subtree, invoked within an [invokeLayoutCallback] during the [RenderObject]'s
+/// layout process. Sometimes such callbacks involve rebuilding dirty widgets,
+/// especially if the widget configuration depends on the layout process (most
+/// notably, the [LayoutBuilder] widget). Unlike render subtrees, typically all
+/// dirty widgets (even the off-screen ones) in a widget tree must be rebuilt.
+/// This mixin makes sure the layout callback will be invoked (such that dirty
+/// [Element]s are rebuilt) even when an ancestor [RenderObject] chose to skip
+/// laying out this [RenderObject].
+///
+/// Subclasses must not invoke the layout callback directly. Instead, call
+/// `super.performLayout` in the [performLayout] implementation.
+///
+/// See also:
+///
+///  * [LayoutBuilder] and [SliverLayoutBuilder], which use the mixin.
+mixin RenderObjectWithLayoutCallbackMixin on RenderObject {
+  // The initial value of this flag must be set to true to prevent the layout
+  // callback from being scheduled when the subtree has never been laid out
+  // (in which case the `constraints` is unknown).
+  bool _needsRebuild = true;
+
+  @mustCallSuper
+  @override
+  void performLayout() {
+    invokeLayoutCallback(runLayoutCallback);
+    _needsRebuild = false;
+  }
+
+  /// The layout callback to be invoked during [performLayout].
+  ///
+  /// This method should not be invoked directly. Instead, call
+  /// `super.performLayout` in the [performLayout] implementation. This
+  /// implementation will be invoked within [invokeLayoutCallback].
+  @visibleForOverriding
+  void runLayoutCallback(covariant Constraints constraints);
+
+  /// Informs the framework that the layout callback has been updated and must
+  /// be invoked again.
+  void scheduleLayoutCallback() {
+    if (_needsRebuild) {
+      assert(debugNeedsLayout);
+      return;
+    }
+    _needsRebuild = true;
+    // This ensures that the layout callback will be run even if an ancestor
+    // chooses to not lay out this subtree (for example, OverlayEntries with
+    // `maintainState` set to true).
+    owner?._nodesNeedingLayout.add(this);
+    super.markNeedsLayout();
   }
 }
 
