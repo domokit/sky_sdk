@@ -561,6 +561,7 @@ class SemanticsData with Diagnosticable {
     required this.headingLevel,
     required this.linkUrl,
     required this.role,
+    required this.controlsVisibilityOfNodes,
     this.tags,
     this.transform,
     this.customSemanticsActionIds,
@@ -821,6 +822,9 @@ class SemanticsData with Diagnosticable {
   /// {@macro flutter.semantics.SemanticsNode.role}
   final SemanticsRole role;
 
+  /// {@macro flutter.semantics.SemanticsNode.controlsVisibilityOfNodes}
+  final Set<String>? controlsVisibilityOfNodes;
+
   /// Whether [flags] contains the given flag.
   bool hasFlag(SemanticsFlag flag) => (flags & flag.index) != 0;
 
@@ -878,6 +882,11 @@ class SemanticsData with Diagnosticable {
     properties.add(DoubleProperty('scrollExtentMax', scrollExtentMax, defaultValue: null));
     properties.add(IntProperty('headingLevel', headingLevel, defaultValue: 0));
     properties.add(DiagnosticsProperty<Uri>('linkUrl', linkUrl, defaultValue: null));
+    if (controlsVisibilityOfNodes != null) {
+      properties.add(
+        IterableProperty<String>('controls', controlsVisibilityOfNodes, ifEmpty: null),
+      );
+    }
   }
 
   @override
@@ -910,7 +919,8 @@ class SemanticsData with Diagnosticable {
         other.headingLevel == headingLevel &&
         other.linkUrl == linkUrl &&
         other.role == role &&
-        _sortedListsEqual(other.customSemanticsActionIds, customSemanticsActionIds);
+        _sortedListsEqual(other.customSemanticsActionIds, customSemanticsActionIds) &&
+        setEquals<String>(controlsVisibilityOfNodes, other.controlsVisibilityOfNodes);
   }
 
   @override
@@ -944,6 +954,7 @@ class SemanticsData with Diagnosticable {
       linkUrl,
       customSemanticsActionIds == null ? null : Object.hashAll(customSemanticsActionIds!),
       role,
+      controlsVisibilityOfNodes == null ? null : Object.hashAll(controlsVisibilityOfNodes!),
     ),
   );
 
@@ -1112,6 +1123,7 @@ class SemanticsProperties extends DiagnosticableTree {
     this.onDismiss,
     this.customSemanticsActions,
     this.role,
+    this.controlsVisibilityOfNodes,
   }) : assert(
          label == null || attributedLabel == null,
          'Only one of label or attributedLabel should be provided',
@@ -1912,6 +1924,17 @@ class SemanticsProperties extends DiagnosticableTree {
   /// For a list of available roles, see [SemanticsRole].
   /// {@endtemplate}
   final SemanticsRole? role;
+
+  /// A set of [SemanticsNode.identifier]s' visibilities that this subtree
+  /// controls
+  ///
+  /// If a widget is controlling the visibility of the other widget, for example,
+  /// [Tab]s controls children visibilities of [TabBarView] or [ExpansionTile]
+  /// controls visibility of its expanded content. One must assign a
+  /// [SemanticsNode.identifier] to the hidden content and also provide a
+  /// set of identifiers include the hidden content's identifier to this
+  /// property.
+  final Set<String>? controlsVisibilityOfNodes;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -2870,6 +2893,20 @@ class SemanticsNode with DiagnosticableTreeMixin {
   SemanticsRole get role => _role;
   SemanticsRole _role = _kEmptyConfig.role;
 
+  /// {@template flutter.semantics.SemanticsNode.controlsVisibilityOfNodes}
+  /// A set of [SemanticsNode.identifier]s' visibilities that this node
+  /// controls
+  ///
+  /// If a widget is controlling the visibility of the other widget, for example,
+  /// [Tab]s controls children visibilities of [TabBarView] or [ExpansionTile]
+  /// controls visibility of its expanded content. One must assign a
+  /// [SemanticsNode.identifier] to the hidden content and also provide a
+  /// set of identifiers include the hidden content's identifier to this
+  /// property.
+  /// {@endtemplate}
+  Set<String>? get controlsVisibilityOfNodes => _controlsVisibilityOfNodes;
+  Set<String>? _controlsVisibilityOfNodes = _kEmptyConfig.controlsVisibilityOfNodes;
+
   bool _canPerformAction(SemanticsAction action) => _actions.containsKey(action);
 
   static final SemanticsConfiguration _kEmptyConfig = SemanticsConfiguration();
@@ -2936,6 +2973,7 @@ class SemanticsNode with DiagnosticableTreeMixin {
     _headingLevel = config._headingLevel;
     _linkUrl = config._linkUrl;
     _role = config._role;
+    _controlsVisibilityOfNodes = config._controlsVisibilityOfNodes;
     _replaceChildren(childrenInInversePaintOrder ?? const <SemanticsNode>[]);
 
     if (mergeAllDescendantsIntoThisNodeValueChanged) {
@@ -2985,6 +3023,7 @@ class SemanticsNode with DiagnosticableTreeMixin {
     double thickness = _thickness;
     Uri? linkUrl = _linkUrl;
     SemanticsRole role = _role;
+    Set<String>? controlsVisibilityOfNodes = _controlsVisibilityOfNodes;
     final Set<int> customSemanticsActionIds = <int>{};
     for (final CustomSemanticsAction action in _customSemanticsActions.keys) {
       customSemanticsActionIds.add(CustomSemanticsAction.getIdentifier(action));
@@ -3084,6 +3123,12 @@ class SemanticsNode with DiagnosticableTreeMixin {
 
         thickness = math.max(thickness, node._thickness + node._elevation);
 
+        if (controlsVisibilityOfNodes == null) {
+          controlsVisibilityOfNodes = node._controlsVisibilityOfNodes;
+        } else if (node._controlsVisibilityOfNodes != null) {
+          controlsVisibilityOfNodes!.addAll(node._controlsVisibilityOfNodes!);
+        }
+
         return true;
       });
     }
@@ -3117,6 +3162,7 @@ class SemanticsNode with DiagnosticableTreeMixin {
       headingLevel: headingLevel,
       linkUrl: linkUrl,
       role: role,
+      controlsVisibilityOfNodes: controlsVisibilityOfNodes,
     );
   }
 
@@ -3202,6 +3248,7 @@ class SemanticsNode with DiagnosticableTreeMixin {
       headingLevel: data.headingLevel,
       linkUrl: data.linkUrl?.toString() ?? '',
       role: data.role,
+      controlsVisibilityOfNodes: data.controlsVisibilityOfNodes?.toList(),
     );
     _dirty = false;
   }
@@ -5355,6 +5402,15 @@ class SemanticsConfiguration {
     _hasBeenAnnotated = true;
   }
 
+  /// A set of [SemanticsNode.identifier]s' visibilities that this node controls
+  Set<String>? get controlsVisibilityOfNodes => _controlsVisibilityOfNodes;
+  Set<String>? _controlsVisibilityOfNodes;
+  set controlsVisibilityOfNodes(Set<String>? value) {
+    assert(value != null);
+    _controlsVisibilityOfNodes = value;
+    _hasBeenAnnotated = true;
+  }
+
   // TAGS
 
   /// The set of tags that this configuration wants to add to all child
@@ -5519,6 +5575,12 @@ class SemanticsConfiguration {
 
     _thickness = math.max(_thickness, child._thickness + child._elevation);
 
+    if (_controlsVisibilityOfNodes == null) {
+      _controlsVisibilityOfNodes = child._controlsVisibilityOfNodes;
+    } else if (child._controlsVisibilityOfNodes != null) {
+      _controlsVisibilityOfNodes!.addAll(child._controlsVisibilityOfNodes!);
+    }
+
     _hasBeenAnnotated = hasBeenAnnotated || child.hasBeenAnnotated;
   }
 
@@ -5560,7 +5622,8 @@ class SemanticsConfiguration {
       ..isBlockingUserActions = isBlockingUserActions
       .._headingLevel = _headingLevel
       .._linkUrl = _linkUrl
-      .._role = _role;
+      .._role = _role
+      .._controlsVisibilityOfNodes = _controlsVisibilityOfNodes;
   }
 }
 

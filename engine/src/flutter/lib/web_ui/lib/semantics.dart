@@ -370,6 +370,7 @@ class SemanticsUpdateBuilder {
     int headingLevel = 0,
     String? linkUrl,
     SemanticsRole role = SemanticsRole.none,
+    required List<String>? controlsVisibilityOfNodes,
   }) {
     if (transform.length != 16) {
       throw ArgumentError('transform argument must have 16 entries.');
@@ -412,6 +413,7 @@ class SemanticsUpdateBuilder {
         headingLevel: headingLevel,
         linkUrl: linkUrl,
         role: role,
+        controlsVisibilityOfNodes: controlsVisibilityOfNodes,
       ),
     );
   }
