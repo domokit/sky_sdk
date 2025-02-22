@@ -112,10 +112,11 @@ class ScrollBehavior {
 
   /// The device kinds that the scrollable will accept drag gestures from.
   ///
-  /// By default only [PointerDeviceKind.touch], [PointerDeviceKind.stylus], and
-  /// [PointerDeviceKind.invertedStylus] are configured to create drag gestures.
-  /// Enabling this for [PointerDeviceKind.mouse] will make it difficult or
-  /// impossible to select text in scrollable containers and is not recommended.
+  /// By default only [PointerDeviceKind.touch], [PointerDeviceKind.stylus],
+  /// [PointerDeviceKind.invertedStylus], and [PointerDeviceKind.trackpad]
+  /// are configured to create drag gestures. Enabling this for
+  /// [PointerDeviceKind.mouse] will make it difficult or impossible to select
+  /// text in scrollable containers and is not recommended.
   Set<PointerDeviceKind> get dragDevices => _kTouchLikeDeviceTypes;
 
   /// {@macro flutter.gestures.monodrag.DragGestureRecognizer.multitouchDragStrategy}
