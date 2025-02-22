@@ -765,7 +765,7 @@ G_MODULE_EXPORT FlView* fl_view_new(FlDartProject* project) {
   fl_engine_set_update_semantics_handler(self->engine, update_semantics_cb,
                                          self, nullptr);
   self->on_pre_engine_restart_cb_id =
-      g_signal_connect_swapped(engine, "on-pre-engine-restart",
+      g_signal_connect_swapped(self->engine, "on-pre-engine-restart",
                                G_CALLBACK(on_pre_engine_restart_cb), self);
 
   g_signal_connect_swapped(self->gl_area, "create-context",
@@ -790,7 +790,7 @@ G_MODULE_EXPORT FlView* fl_view_new_for_engine(FlEngine* engine) {
       g_signal_connect_swapped(engine, "on-pre-engine-restart",
                                G_CALLBACK(on_pre_engine_restart_cb), self);
 
-  self->view_id = fl_engine_add_view(self->engine, 1, 1, 1.0, self->cancellable,
+  self->view_id = fl_engine_add_view(engine, 1, 1, 1.0, self->cancellable,
                                      view_added_cb, self);
   fl_renderer_add_renderable(FL_RENDERER(self->renderer), self->view_id,
                              FL_RENDERABLE(self));
