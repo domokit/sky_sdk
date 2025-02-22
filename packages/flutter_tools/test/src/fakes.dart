@@ -493,6 +493,7 @@ class TestFeatureFlags implements FeatureFlags {
     this.isCliAnimationEnabled = true,
     this.isNativeAssetsEnabled = false,
     this.isSwiftPackageManagerEnabled = false,
+    this.isSwiftPackageManagerMigrationEnabled = false,
     this.isExplicitPackageDependenciesEnabled = false,
   });
 
@@ -528,6 +529,9 @@ class TestFeatureFlags implements FeatureFlags {
 
   @override
   final bool isSwiftPackageManagerEnabled;
+
+  @override
+  final bool isSwiftPackageManagerMigrationEnabled;
 
   @override
   final bool isExplicitPackageDependenciesEnabled;
