@@ -1413,6 +1413,8 @@ const char* ToString(ax::mojom::StringAttribute string_attribute) {
       return "accessKey";
     case ax::mojom::StringAttribute::kAriaInvalidValue:
       return "ariaInvalidValue";
+    case ax::mojom::StringAttribute::kAuthorUniqueId:
+      return "authorUniqueId";
     case ax::mojom::StringAttribute::kAutoComplete:
       return "autoComplete";
     case ax::mojom::StringAttribute::kChildTreeId:
@@ -1473,6 +1475,8 @@ ax::mojom::StringAttribute ParseStringAttribute(const char* string_attribute) {
     return ax::mojom::StringAttribute::kAccessKey;
   if (0 == strcmp(string_attribute, "ariaInvalidValue"))
     return ax::mojom::StringAttribute::kAriaInvalidValue;
+  if (0 == strcmp(string_attribute, "authorUniqueId"))
+    return ax::mojom::StringAttribute::kAuthorUniqueId;
   if (0 == strcmp(string_attribute, "autoComplete"))
     return ax::mojom::StringAttribute::kAutoComplete;
   if (0 == strcmp(string_attribute, "childTreeId"))

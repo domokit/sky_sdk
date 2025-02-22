@@ -523,6 +523,7 @@ enum class StringAttribute {
   kAccessKey,
   // Only used when invalid_state == invalid_state_other.
   kAriaInvalidValue,
+  kAuthorUniqueId,
   kAutoComplete,
   kChildTreeId,
   kClassName,
