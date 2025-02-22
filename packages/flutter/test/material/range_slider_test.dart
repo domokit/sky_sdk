@@ -2810,4 +2810,317 @@ void main() {
 
     semantics.dispose();
   }, semanticsEnabled: false);
+
+  testWidgets('Default RangeSlider when year2023 is false', (WidgetTester tester) async {
+    final ThemeData theme = ThemeData();
+    final ColorScheme colorScheme = theme.colorScheme;
+    final Color activeTrackColor = colorScheme.primary;
+    final Color inactiveTrackColor = colorScheme.secondaryContainer;
+    final Color disabledActiveTrackColor = colorScheme.onSurface.withOpacity(0.38);
+    final Color disabledInactiveTrackColor = colorScheme.onSurface.withOpacity(0.12);
+    final Color activeTickMarkColor = colorScheme.onPrimary;
+    final Color inactiveTickMarkColor = colorScheme.onSecondaryContainer;
+    final Color disabledActiveTickMarkColor = colorScheme.onInverseSurface;
+    final Color disabledInactiveTickMarkColor = colorScheme.onSurface;
+    final Color thumbColor = colorScheme.primary;
+    final Color disabledThumbColor = colorScheme.onSurface.withOpacity(0.38);
+    final Color valueIndicatorColor = colorScheme.inverseSurface;
+    RangeValues values = const RangeValues(25.0, 75.0);
+    Widget buildApp({int? divisions, bool enabled = true}) {
+      final ValueChanged<RangeValues>? onChanged =
+          !enabled
+              ? null
+              : (RangeValues newValues) {
+                values = newValues;
+              };
+      return MaterialApp(
+        home: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Material(
+            child: Center(
+              child: Theme(
+                data: theme,
+                child: RangeSlider(
+                  year2023: false,
+                  values: values,
+                  max: 100,
+                  labels: RangeLabels(
+                    values.start.round().toString(),
+                    values.end.round().toString(),
+                  ),
+                  divisions: divisions,
+                  onChanged: onChanged,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildApp());
+
+    final MaterialInkController material = Material.of(tester.element(find.byType(RangeSlider)));
+
+    // Test default track shape.
+    const Radius trackOuterCornerRadius = Radius.circular(8.0);
+    const Radius trackInnerCornerRadius = Radius.circular(2.0);
+    expect(
+      material,
+      paints
+        // Inactive track.
+        ..rrect(
+          rrect: RRect.fromLTRBAndCorners(
+            24.0,
+            292.0,
+            206.0,
+            308.0,
+            topLeft: trackOuterCornerRadius,
+            topRight: trackInnerCornerRadius,
+            bottomRight: trackInnerCornerRadius,
+            bottomLeft: trackOuterCornerRadius,
+          ),
+          color: inactiveTrackColor,
+        )
+        // Inactive track.
+        ..rrect(
+          rrect: RRect.fromLTRBAndCorners(
+            594.0,
+            292.0,
+            776.0,
+            308.0,
+            topLeft: trackInnerCornerRadius,
+            topRight: trackOuterCornerRadius,
+            bottomRight: trackOuterCornerRadius,
+            bottomLeft: trackInnerCornerRadius,
+          ),
+          color: inactiveTrackColor,
+        )
+        // Active track.
+        ..rrect(
+          rrect: RRect.fromLTRBR(218.0, 292.0, 582.0, 308.0, trackInnerCornerRadius),
+          color: activeTrackColor,
+        ),
+    );
+
+    // Test default colors for enabled slider.
+    expect(
+      material,
+      paints
+        ..circle()
+        ..circle()
+        ..rrect(color: thumbColor)
+        ..rrect(color: thumbColor),
+    );
+    expect(
+      material,
+      isNot(
+        paints
+          ..circle()
+          ..circle()
+          ..rrect(color: disabledThumbColor)
+          ..rrect(color: disabledThumbColor),
+      ),
+    );
+    expect(material, isNot(paints..rrect(color: disabledActiveTrackColor)));
+    expect(material, isNot(paints..rrect(color: disabledInactiveTrackColor)));
+
+    // Test defaults colors for discrete slider.
+    await tester.pumpWidget(buildApp(divisions: 4));
+    expect(
+      material,
+      paints
+        ..rrect(color: inactiveTrackColor)
+        ..rrect(color: inactiveTrackColor)
+        ..rrect(color: activeTrackColor)
+        ..circle(color: inactiveTickMarkColor)
+        ..circle(color: activeTickMarkColor)
+        ..circle(color: inactiveTickMarkColor),
+    );
+    expect(material, isNot(paints..rrect(color: disabledThumbColor)));
+    expect(material, isNot(paints..rrect(color: disabledActiveTrackColor)));
+    expect(material, isNot(paints..rrect(color: disabledInactiveTrackColor)));
+
+    // Test defaults colors for disabled slider.
+    await tester.pumpWidget(buildApp(enabled: false));
+    await tester.pumpAndSettle();
+    expect(
+      material,
+      paints
+        ..rrect(color: disabledInactiveTrackColor)
+        ..rrect(color: disabledInactiveTrackColor)
+        ..rrect(color: disabledActiveTrackColor)
+        ..rrect(color: disabledThumbColor)
+        ..rrect(color: disabledThumbColor),
+    );
+    expect(
+      material,
+      isNot(
+        paints
+          ..rrect(color: thumbColor)
+          ..rrect(color: thumbColor),
+      ),
+    );
+    expect(material, isNot(paints..rrect(color: activeTrackColor)));
+    expect(material, isNot(paints..rrect(color: inactiveTrackColor)));
+
+    // Test defaults colors for disabled discrete slider.
+    await tester.pumpWidget(buildApp(divisions: 4, enabled: false));
+    expect(
+      material,
+      paints
+        ..rrect(color: disabledInactiveTrackColor)
+        ..rrect(color: disabledInactiveTrackColor)
+        ..rrect(color: disabledActiveTrackColor)
+        ..circle(color: disabledInactiveTickMarkColor)
+        ..circle(color: disabledActiveTickMarkColor)
+        ..circle(color: disabledInactiveTickMarkColor)
+        ..rrect(color: disabledThumbColor)
+        ..rrect(color: disabledThumbColor),
+    );
+    expect(
+      material,
+      isNot(
+        paints
+          ..rrect(color: thumbColor)
+          ..rrect(color: thumbColor),
+      ),
+    );
+    expect(material, isNot(paints..rrect(color: activeTrackColor)));
+    expect(material, isNot(paints..rrect(color: inactiveTrackColor)));
+
+    await tester.pumpWidget(buildApp(divisions: 4));
+    await tester.pumpAndSettle();
+
+    final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider));
+    final TestGesture gesture = await tester.startGesture(topLeft);
+    // Wait for value indicator animation to finish.
+    await tester.pumpAndSettle();
+
+    final RenderBox valueIndicatorBox = tester.renderObject(find.byType(Overlay));
+    expect(
+      valueIndicatorBox,
+      paints
+        ..scale()
+        ..rrect(color: valueIndicatorColor),
+    );
+    await gesture.up();
+  });
+
+  testWidgets('RangeSlider value indicator text when year2023 is false', (
+    WidgetTester tester,
+  ) async {
+    const RangeValues values = RangeValues(25.0, 75.0);
+    final List<InlineSpan> log = <InlineSpan>[];
+    final LoggingRangeSliderValueIndicatorShape loggingValueIndicatorShape =
+        LoggingRangeSliderValueIndicatorShape(log);
+    final ThemeData theme = ThemeData(
+      sliderTheme: SliderThemeData(rangeValueIndicatorShape: loggingValueIndicatorShape),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: Material(
+          child: Center(
+            child: RangeSlider(
+              year2023: false,
+              values: values,
+              max: 100,
+              labels: RangeLabels(values.start.round().toString(), values.end.round().toString()),
+              divisions: 4,
+              onChanged: (RangeValues value) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider));
+    final TestGesture gesture = await tester.startGesture(topLeft);
+    await tester.pumpAndSettle();
+
+    expect(log.last.toPlainText(), '25');
+    expect(log.last.style!.fontSize, 14.0);
+    expect(log.last.style!.color, theme.colorScheme.onInverseSurface);
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('RangeSlider supports DropRangeSliderValueIndicatorShape', (
+    WidgetTester tester,
+  ) async {
+    const RangeValues values = RangeValues(25.0, 75.0);
+    const Color valueIndicatorColor = Color(0XFFFF0000);
+    final ThemeData theme = ThemeData(
+      sliderTheme: const SliderThemeData(
+        rangeValueIndicatorShape: DropRangeSliderValueIndicatorShape(),
+        valueIndicatorColor: valueIndicatorColor,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: Material(
+          child: Center(
+            child: RangeSlider(
+              year2023: false,
+              values: values,
+              max: 100,
+              labels: RangeLabels(values.start.round().toString(), values.end.round().toString()),
+              divisions: 4,
+              onChanged: (RangeValues value) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider));
+    final TestGesture gesture = await tester.startGesture(topLeft);
+    await tester.pumpAndSettle();
+
+    final RenderBox valueIndicatorBox = tester.renderObject(find.byType(Overlay));
+    expect(valueIndicatorBox, paints..path(color: valueIndicatorColor));
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
+}
+
+// A value indicator shape to log labelPainter text.
+class LoggingRangeSliderValueIndicatorShape extends RangeSliderValueIndicatorShape {
+  LoggingRangeSliderValueIndicatorShape(this.logLabel);
+
+  final List<InlineSpan> logLabel;
+
+  @override
+  Size getPreferredSize(
+    bool isEnabled,
+    bool isDiscrete, {
+    required TextPainter labelPainter,
+    required double textScaleFactor,
+  }) {
+    return const Size(10.0, 10.0);
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    bool? isDiscrete,
+    bool? isOnTop,
+    required TextPainter labelPainter,
+    double? textScaleFactor,
+    Size? sizeWithOverflow,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    TextDirection? textDirection,
+    double? value,
+    Thumb? thumb,
+  }) {
+    logLabel.add(labelPainter.text!);
+  }
 }
