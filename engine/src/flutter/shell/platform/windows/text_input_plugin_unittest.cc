@@ -20,6 +20,22 @@
 #include "gtest/gtest.h"
 
 namespace flutter {
+
+class TextInputPluginModifier {
+ public:
+  explicit TextInputPluginModifier(TextInputPlugin* text_input_plugin)
+      : text_input_plugin(text_input_plugin) {}
+
+  void SetViewId(FlutterViewId view_id) {
+    text_input_plugin->view_id_ = view_id;
+  }
+
+ private:
+  TextInputPlugin* text_input_plugin;
+
+  FML_DISALLOW_COPY_AND_ASSIGN(TextInputPluginModifier);
+};
+
 namespace testing {
 
 namespace {
@@ -33,6 +49,7 @@ static constexpr int kDefaultClientId = 42;
 // Should be identical to constants in text_input_plugin.cc.
 static constexpr char kChannelName[] = "flutter/textinput";
 static constexpr char kEnableDeltaModel[] = "enableDeltaModel";
+static constexpr char kViewId[] = "viewId";
 static constexpr char kSetClientMethod[] = "TextInput.setClient";
 static constexpr char kAffinityDownstream[] = "TextAffinity.downstream";
 static constexpr char kTextKey[] = "text";
@@ -63,6 +80,7 @@ static std::unique_ptr<rapidjson::Document> EncodedClientConfig(
   rapidjson::Value config(rapidjson::kObjectType);
   config.AddMember("inputAction", input_action, allocator);
   config.AddMember(kEnableDeltaModel, false, allocator);
+  config.AddMember(kViewId, 456, allocator);
   rapidjson::Value type_info(rapidjson::kObjectType);
   type_info.AddMember("name", type_name, allocator);
   config.AddMember("inputType", type_info, allocator);
@@ -149,7 +167,7 @@ class TextInputPluginTest : public WindowsTest {
                                                      std::move(window));
 
     EngineModifier modifier{engine_.get()};
-    modifier.SetImplicitView(view_.get());
+    modifier.SetViewById(view_.get(), 456);
   }
 
  private:
@@ -194,6 +212,8 @@ TEST_F(TextInputPluginTest, ClearClientResetsComposing) {
   BinaryReply reply_handler = [](const uint8_t* reply, size_t reply_size) {};
 
   TextInputPlugin handler(&messenger, engine());
+  TextInputPluginModifier modifier(&handler);
+  modifier.SetViewId(456);
 
   EXPECT_CALL(*view(), OnResetImeComposing());
 
@@ -253,6 +273,7 @@ TEST_F(TextInputPluginTest, VerifyComposingSendStateUpdate) {
   config.AddMember("inputAction", "done", allocator);
   config.AddMember("inputType", "text", allocator);
   config.AddMember(kEnableDeltaModel, false, allocator);
+  config.AddMember(kViewId, 456, allocator);
   arguments->PushBack(config, allocator);
   auto message =
       codec.EncodeMethodCall({"TextInput.setClient", std::move(arguments)});
@@ -392,6 +413,81 @@ TEST_F(TextInputPluginTest, VerifyInputActionSendDoesNotInsertNewLine) {
                          messages.front().begin()));
 }
 
+TEST_F(TextInputPluginTest, SetClientRequiresViewId) {
+  UseEngineWithView();
+
+  auto handled_message = CreateResponse(true);
+  auto unhandled_message = CreateResponse(false);
+  int received_scancode = 0;
+
+  TestBinaryMessenger messenger(
+      [&received_scancode, &handled_message, &unhandled_message](
+          const std::string& channel, const uint8_t* message,
+          size_t message_size, BinaryReply reply) {});
+
+  TextInputPlugin handler(&messenger, engine());
+
+  auto args = std::make_unique<rapidjson::Document>(rapidjson::kArrayType);
+  auto& allocator = args->GetAllocator();
+  args->PushBack(123, allocator);  // client_id
+
+  rapidjson::Value client_config(rapidjson::kObjectType);
+
+  args->PushBack(client_config, allocator);
+  auto encoded = JsonMethodCodec::GetInstance().EncodeMethodCall(
+      MethodCall<rapidjson::Document>(kSetClientMethod, std::move(args)));
+
+  std::string reply;
+  BinaryReply reply_handler = [&reply](const uint8_t* reply_bytes,
+                                       size_t reply_size) {
+    reply = std::string(reinterpret_cast<const char*>(reply_bytes), reply_size);
+  };
+
+  EXPECT_TRUE(messenger.SimulateEngineMessage(kChannelName, encoded->data(),
+                                              encoded->size(), reply_handler));
+  EXPECT_EQ(
+      reply,
+      "[\"Bad Arguments\",\"Could not set client, view ID is null.\",null]");
+}
+
+TEST_F(TextInputPluginTest, SetClientRequiresViewIdToBeInteger) {
+  UseEngineWithView();
+
+  auto handled_message = CreateResponse(true);
+  auto unhandled_message = CreateResponse(false);
+  int received_scancode = 0;
+
+  TestBinaryMessenger messenger(
+      [&received_scancode, &handled_message, &unhandled_message](
+          const std::string& channel, const uint8_t* message,
+          size_t message_size, BinaryReply reply) {});
+
+  TextInputPlugin handler(&messenger, engine());
+
+  auto args = std::make_unique<rapidjson::Document>(rapidjson::kArrayType);
+  auto& allocator = args->GetAllocator();
+  args->PushBack(123, allocator);  // client_id
+
+  rapidjson::Value client_config(rapidjson::kObjectType);
+  client_config.AddMember(kViewId, "Not an integer", allocator);  // view_id
+
+  args->PushBack(client_config, allocator);
+  auto encoded = JsonMethodCodec::GetInstance().EncodeMethodCall(
+      MethodCall<rapidjson::Document>(kSetClientMethod, std::move(args)));
+
+  std::string reply;
+  BinaryReply reply_handler = [&reply](const uint8_t* reply_bytes,
+                                       size_t reply_size) {
+    reply = std::string(reinterpret_cast<const char*>(reply_bytes), reply_size);
+  };
+
+  EXPECT_TRUE(messenger.SimulateEngineMessage(kChannelName, encoded->data(),
+                                              encoded->size(), reply_handler));
+  EXPECT_EQ(
+      reply,
+      "[\"Bad Arguments\",\"Could not set client, view ID is null.\",null]");
+}
+
 TEST_F(TextInputPluginTest, TextEditingWorksWithDeltaModel) {
   UseEngineWithView();
 
@@ -413,6 +509,7 @@ TEST_F(TextInputPluginTest, TextEditingWorksWithDeltaModel) {
 
   rapidjson::Value client_config(rapidjson::kObjectType);
   client_config.AddMember(kEnableDeltaModel, true, allocator);
+  client_config.AddMember(kViewId, 456, allocator);
 
   args->PushBack(client_config, allocator);
   auto encoded = JsonMethodCodec::GetInstance().EncodeMethodCall(
@@ -479,6 +576,7 @@ TEST_F(TextInputPluginTest, CompositionCursorPos) {
   auto& allocator = args->GetAllocator();
   args->PushBack(123, allocator);  // client_id
   rapidjson::Value client_config(rapidjson::kObjectType);
+  client_config.AddMember(kViewId, 456, allocator);
   args->PushBack(client_config, allocator);
   auto encoded = JsonMethodCodec::GetInstance().EncodeMethodCall(
       MethodCall<rapidjson::Document>(kSetClientMethod, std::move(args)));
@@ -535,6 +633,8 @@ TEST_F(TextInputPluginTest, TransformCursorRect) {
   BinaryReply reply_handler = [](const uint8_t* reply, size_t reply_size) {};
 
   TextInputPlugin handler(&messenger, engine());
+  TextInputPluginModifier modifier(&handler);
+  modifier.SetViewId(456);
 
   auto& codec = JsonMethodCodec::GetInstance();
 
