@@ -39,6 +39,10 @@ class SafariMacOsEnvironment extends BrowserEnvironment {
       try {
         if (retryCount > 0) {
           print('Retry #$retryCount');
+          ProcessResult killDriver = Process.runSync('killall', <String>['-9', 'safaridriver']);
+          print('Killed safaridriver: ${killDriver.exitCode}');
+          ProcessResult killSafari = Process.runSync('killall', <String>['-9', 'Safari']);
+          print('Killed Safari: ${killSafari.exitCode}');
         }
         retryCount += 1;
         await _startDriverProcess();
@@ -70,6 +74,7 @@ $stackTrace
   Future<void> _startDriverProcess() async {
     _portNumber = await pickUnusedPort();
     print('Starting safaridriver on port $_portNumber');
+    int maxRetryCount = 2;
 
     try {
       _driverProcess = await Process.start('safaridriver', <String>['-p', _portNumber.toString()]);
@@ -88,40 +93,27 @@ $stackTrace
 
       await _waitForSafariDriverServerReady();
 
-      // Smoke-test the web driver process by connecting to it and asking for a
-      // list of windows. It doesn't matter how many windows there are.
-      webDriver = await createDriver(
-        uri: _driverUri,
-        desired: <String, dynamic>{'browserName': packageTestRuntime.identifier},
-      );
+      for (int retryCount = 0; retryCount < maxRetryCount; retryCount++) {
+        try {
+          print('Starting web driver on $_driverUri');
+          // Smoke-test the web driver process by connecting to it and asking for a
+          // list of windows. It doesn't matter how many windows there are.
+          webDriver = await createDriver(
+            uri: _driverUri,
+            desired: <String, dynamic>{'browserName': packageTestRuntime.identifier},
+          );
 
-      await webDriver!.windows.toList();
+          await webDriver!.windows.toList();
+          break;
+        } catch (_) {
+          await _closeWebDriver();
+          rethrow;
+        }
+      }
     } catch (_) {
       print('safaridriver failed to start.');
 
-      final badDriver = webDriver;
-      webDriver = null; // let's not keep faulty driver around
-
-      if (badDriver != null) {
-        // This means the launch process got to a point where a WebDriver
-        // instance was created, but it failed the smoke test. To make sure no
-        // stray driver sessions are left hanging, try to close the session.
-        try {
-          // The method is called "quit" but all it does is close the session.
-          //
-          // See: https://www.w3.org/TR/webdriver2/#delete-session
-          await badDriver.quit();
-        } catch (error, stackTrace) {
-          // Just print. Do not rethrow. The attempt to close the session is
-          // only a best-effort thing.
-          print('''
-Failed to close driver session. Will try to kill the safaridriver process.
-
-Error: $error
-$stackTrace
-''');
-        }
-      }
+      await _closeWebDriver();
 
       // Try to kill gracefully using SIGTERM first.
       _driverProcess.kill();
@@ -138,6 +130,32 @@ $stackTrace
 
       // Rethrow the error to allow the caller to retry, if need be.
       rethrow;
+    }
+  }
+
+  Future<void> _closeWebDriver() async {
+    final badDriver = webDriver;
+    webDriver = null; // let's not keep faulty driver around
+
+    if (badDriver != null) {
+      // This means the launch process got to a point where a WebDriver
+      // instance was created, but it failed the smoke test. To make sure no
+      // stray driver sessions are left hanging, try to close the session.
+      try {
+        // The method is called "quit" but all it does is close the session.
+        //
+        // See: https://www.w3.org/TR/webdriver2/#delete-session
+        await badDriver.quit();
+      } catch (error, stackTrace) {
+        // Just print. Do not rethrow. The attempt to close the session is
+        // only a best-effort thing.
+        print('''
+Failed to close driver session. Will try to kill the safaridriver process.
+
+Error: $error
+$stackTrace
+''');
+      }
     }
   }
 
