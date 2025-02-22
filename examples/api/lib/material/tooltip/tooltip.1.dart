@@ -34,7 +34,7 @@ class TooltipSample extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         gradient: const LinearGradient(colors: <Color>[Colors.amber, Colors.red]),
       ),
-      height: 50,
+      constraints: const BoxConstraints(minWidth: 250),
       padding: const EdgeInsets.all(8.0),
       preferBelow: true,
       textStyle: const TextStyle(fontSize: 24),
