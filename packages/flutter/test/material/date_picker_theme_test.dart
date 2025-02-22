@@ -32,6 +32,7 @@ void main() {
     yearForegroundColor: MaterialStatePropertyAll<Color>(Color(0xfffffffa)),
     yearBackgroundColor: MaterialStatePropertyAll<Color>(Color(0xfffffffb)),
     yearOverlayColor: MaterialStatePropertyAll<Color>(Color(0xfffffffc)),
+    yearShape: MaterialStatePropertyAll<OutlinedBorder>(RoundedRectangleBorder()),
     rangePickerBackgroundColor: Color(0xfffffffd),
     rangePickerElevation: 7,
     rangePickerShadowColor: Color(0xfffffffe),
@@ -69,11 +70,11 @@ void main() {
     );
   }
 
-  BoxDecoration? findTextDecoration(WidgetTester tester, String date) {
+  ShapeDecoration? findTextDecoration(WidgetTester tester, String date) {
     final Container container = tester.widget<Container>(
       find.ancestor(of: find.text(date), matching: find.byType(Container)).first,
     );
-    return container.decoration as BoxDecoration?;
+    return container.decoration as ShapeDecoration?;
   }
 
   ShapeDecoration? findDayDecoration(WidgetTester tester, String day) {
@@ -501,6 +502,7 @@ void main() {
         'yearForegroundColor: WidgetStatePropertyAll(${const Color(0xfffffffa)})',
         'yearBackgroundColor: WidgetStatePropertyAll(${const Color(0xfffffffb)})',
         'yearOverlayColor: WidgetStatePropertyAll(${const Color(0xfffffffc)})',
+        'yearShape: WidgetStatePropertyAll(RoundedRectangleBorder(BorderSide(width: 0.0, style: none), BorderRadius.zero))',
         'rangePickerBackgroundColor: ${const Color(0xfffffffd)}',
         'rangePickerElevation: 7.0',
         'rangePickerShadowColor: ${const Color(0xfffffffe)}',
@@ -608,7 +610,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final Text year2022 = tester.widget<Text>(find.text('2022'));
-    final BoxDecoration year2022Decoration = findTextDecoration(tester, '2022')!;
+    final ShapeDecoration year2022Decoration = findTextDecoration(tester, '2022')!;
     expect(year2022.style?.fontSize, datePickerTheme.yearStyle?.fontSize);
     expect(year2022.style?.color, datePickerTheme.yearForegroundColor?.resolve(<MaterialState>{}));
     expect(
@@ -617,21 +619,18 @@ void main() {
     );
 
     final Text year2023 = tester.widget<Text>(find.text('2023')); // DatePickerDialog.currentDate
-    final BoxDecoration year2023Decoration = findTextDecoration(tester, '2023')!;
+    final ShapeDecoration year2023Decoration = findTextDecoration(tester, '2023')!;
     expect(year2023.style?.fontSize, datePickerTheme.yearStyle?.fontSize);
     expect(year2023.style?.color, datePickerTheme.todayForegroundColor?.resolve(<MaterialState>{}));
     expect(
       year2023Decoration.color,
       datePickerTheme.todayBackgroundColor?.resolve(<MaterialState>{}),
     );
-    expect(year2023Decoration.border?.top.width, datePickerTheme.todayBorder?.width);
-    expect(year2023Decoration.border?.bottom.width, datePickerTheme.todayBorder?.width);
+    final RoundedRectangleBorder roundedRectangleBorder =
+        year2023Decoration.shape as RoundedRectangleBorder;
+    expect(roundedRectangleBorder.side.width, datePickerTheme.todayBorder?.width);
     expect(
-      year2023Decoration.border?.top.color,
-      datePickerTheme.todayForegroundColor?.resolve(<MaterialState>{}),
-    );
-    expect(
-      year2023Decoration.border?.bottom.color,
+      roundedRectangleBorder.side.color,
       datePickerTheme.todayForegroundColor?.resolve(<MaterialState>{}),
     );
 
