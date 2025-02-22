@@ -65,6 +65,15 @@ FLUTTER_EXPORT void FlutterDesktopEngineRegisterPlatformViewType(
     const char* view_type_name,
     FlutterPlatformViewTypeEntry view_type);
 
+// Returns the engine associated with the given identifier. Engine identifier
+// must be valid and for a running engine, otherwise the behavior is undefined.
+//
+// Identifier can be obtained from PlatformDispatcher.instance.engineId.
+//
+// This method must be called from the platform thread.
+FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineForId(
+    int64_t engine_id);
+
 #if defined(__cplusplus)
 }
 #endif

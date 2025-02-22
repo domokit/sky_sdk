@@ -96,6 +96,12 @@ class FlutterWindowsEngine {
 
   virtual ~FlutterWindowsEngine();
 
+  // Returns the engine associated with the given identifier.
+  // The engine_id must be valid and for a running engine, otherwise
+  // the behavior is undefined.
+  // Must be called on the platform thread.
+  static FlutterWindowsEngine* GetEngineForId(int64_t engine_id);
+
   // Starts running the entrypoint function specifed in the project bundle. If
   // unspecified, defaults to main().
   //

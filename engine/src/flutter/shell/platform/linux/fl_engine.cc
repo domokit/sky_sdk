@@ -552,6 +552,7 @@ static FlEngine* fl_engine_new_full(FlDartProject* project,
   g_return_val_if_fail(FL_IS_RENDERER(renderer), nullptr);
 
   FlEngine* self = FL_ENGINE(g_object_new(fl_engine_get_type(), nullptr));
+
   self->project = FL_DART_PROJECT(g_object_ref(project));
   self->renderer = FL_RENDERER(g_object_ref(renderer));
   if (binary_messenger != nullptr) {
@@ -566,6 +567,12 @@ static FlEngine* fl_engine_new_full(FlDartProject* project,
   fl_renderer_set_engine(self->renderer, self);
 
   return self;
+}
+
+FlEngine* fl_engine_for_id(int64_t id) {
+  void* engine = reinterpret_cast<void*>(id);
+  g_return_val_if_fail(FL_IS_ENGINE(engine), nullptr);
+  return FL_ENGINE(engine);
 }
 
 FlEngine* fl_engine_new_with_renderer(FlDartProject* project,
@@ -656,6 +663,7 @@ gboolean fl_engine_start(FlEngine* self, GError** error) {
       dart_entrypoint_args != nullptr ? g_strv_length(dart_entrypoint_args) : 0;
   args.dart_entrypoint_argv =
       reinterpret_cast<const char* const*>(dart_entrypoint_args);
+  args.engine_id = reinterpret_cast<int64_t>(self);
 
   FlutterCompositor compositor = {};
   compositor.struct_size = sizeof(FlutterCompositor);

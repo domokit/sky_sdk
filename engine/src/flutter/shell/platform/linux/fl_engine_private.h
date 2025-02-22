@@ -606,6 +606,20 @@ FlTextInputHandler* fl_engine_get_text_input_handler(FlEngine* engine);
  */
 FlMouseCursorHandler* fl_engine_get_mouse_cursor_handler(FlEngine* engine);
 
+/**
+ * fl_engine_for_id:
+ * @handle: an engine identifier obtained through
+ * PlatformDispatcher.instance.engineId.
+ *
+ * Returns Flutter engine associated with the identifier. The identifier
+ * must be valid and for a running engine otherwise the behavior is
+ * undefined.
+ * Must be called from the main thread.
+ *
+ * Returns: a #FlEngine or NULL.
+ */
+FlEngine* fl_engine_for_id(int64_t handle);
+
 G_END_DECLS
 
 #endif  // FLUTTER_SHELL_PLATFORM_LINUX_FL_ENGINE_PRIVATE_H_

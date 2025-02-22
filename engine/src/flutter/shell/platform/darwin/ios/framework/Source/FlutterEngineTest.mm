@@ -273,6 +273,20 @@ FLUTTER_ASSERT_ARC
   XCTAssertNotNil(spawn);
 }
 
+- (void)testEngineId {
+  FlutterEngine* engine = [[FlutterEngine alloc] initWithName:@"foobar"];
+  [engine run];
+  int64_t id1 = engine.engineId;
+  XCTAssertTrue(id1 != 0);
+  FlutterEngine* spawn = [engine spawnWithEntrypoint:nil
+                                          libraryURI:nil
+                                        initialRoute:nil
+                                      entrypointArgs:nil];
+  int64_t id2 = spawn.engineId;
+  XCTAssertEqual([FlutterEngine engineForIdentifier:id1], engine);
+  XCTAssertEqual([FlutterEngine engineForIdentifier:id2], spawn);
+}
+
 - (void)testSetHandlerAfterRun {
   FlutterEngine* engine = [[FlutterEngine alloc] initWithName:@"foobar"];
   XCTestExpectation* gotMessage = [self expectationWithDescription:@"gotMessage"];
