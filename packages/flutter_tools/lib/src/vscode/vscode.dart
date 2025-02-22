@@ -71,7 +71,7 @@ class VsCode {
   }) {
     final String packageJsonPath = fileSystem.path.join(
       installPath,
-      'resources',
+      'Resources',
       'app',
       'package.json',
     );

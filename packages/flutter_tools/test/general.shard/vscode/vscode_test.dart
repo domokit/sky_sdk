@@ -51,7 +51,7 @@ void main() {
   testWithoutContext('VsCode.fromDirectory does not crash when packages.json is malformed', () {
     final MemoryFileSystem fileSystem = MemoryFileSystem.test();
     // Create invalid JSON file.
-    fileSystem.file(fileSystem.path.join('', 'resources', 'app', 'package.json'))
+    fileSystem.file(fileSystem.path.join('', 'Resources', 'app', 'package.json'))
       ..createSync(recursive: true)
       ..writeAsStringSync('{');
 
