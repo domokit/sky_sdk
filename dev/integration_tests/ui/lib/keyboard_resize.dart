@@ -9,6 +9,7 @@ import 'keys.dart' as keys;
 
 void main() {
   enableFlutterDriverExtension(
+    enableTextEntryEmulation: false,
     handler: (String? message) async {
       // TODO(cbernaschina): remove when test flakiness is resolved
       return 'keyboard_resize';
@@ -46,21 +47,24 @@ class _MyHomePageState extends State<MyHomePage> {
       key: const Key(keys.kDefaultTextField),
       controller: _controller,
       focusNode: FocusNode(),
+      decoration: const InputDecoration(border: OutlineInputBorder()),
     );
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return Center(
-                child: Text('${constraints.biggest.height}', key: const Key(keys.kHeightText)),
-              );
-            },
-          ),
-          textField,
-        ],
+      body: SafeArea(
+        child: Stack(
+          fit: StackFit.expand,
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                return Center(
+                  child: Text('${constraints.biggest.height}', key: const Key(keys.kHeightText)),
+                );
+              },
+            ),
+            textField,
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         key: const Key(keys.kUnfocusButton),
