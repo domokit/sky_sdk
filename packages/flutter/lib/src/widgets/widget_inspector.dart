@@ -2078,7 +2078,7 @@ mixin WidgetInspectorService {
       }
       final Object? value = node.value;
       if (value is Element) {
-        final RenderObject? renderObject = value.renderObject;
+        final RenderObject? renderObject = _renderObjectOrNull(value);
         if (renderObject is RenderParagraph) {
           additionalPropertiesJson['textPreview'] = renderObject.text.toPlainText();
         }
@@ -2170,7 +2170,7 @@ mixin WidgetInspectorService {
       return null;
     }
     final RenderObject? renderObject =
-        object is Element ? object.renderObject : (object as RenderObject?);
+        object is Element ? _renderObjectOrNull(object) : (object as RenderObject?);
     if (renderObject == null || !renderObject.attached) {
       return null;
     }
@@ -2234,7 +2234,7 @@ mixin WidgetInspectorService {
           InspectorSerializationDelegate delegate,
         ) {
           final Object? value = node.value;
-          final RenderObject? renderObject = value is Element ? value.renderObject : null;
+          final RenderObject? renderObject = value is Element ? _renderObjectOrNull(value) : null;
           if (renderObject == null) {
             return const <String, Object>{};
           }
@@ -2330,7 +2330,7 @@ mixin WidgetInspectorService {
     final Object? object = toObject(id);
     bool succeed = false;
     if (object != null && object is Element) {
-      final RenderObject? render = object.renderObject;
+      final RenderObject? render = _renderObjectOrNull(object);
       final ParentData? parentData = render?.parentData;
       if (parentData is FlexParentData) {
         parentData.fit = flexFit;
@@ -2348,7 +2348,7 @@ mixin WidgetInspectorService {
     final dynamic object = toObject(id);
     bool succeed = false;
     if (object != null && object is Element) {
-      final RenderObject? render = object.renderObject;
+      final RenderObject? render = _renderObjectOrNull(object);
       final ParentData? parentData = render?.parentData;
       if (parentData is FlexParentData) {
         parentData.flex = factor;
@@ -2372,7 +2372,7 @@ mixin WidgetInspectorService {
     final Object? object = toObject(id);
     bool succeed = false;
     if (object != null && object is Element) {
-      final RenderObject? render = object.renderObject;
+      final RenderObject? render = _renderObjectOrNull(object);
       if (render is RenderFlex) {
         render.mainAxisAlignment = mainAxisAlignment;
         render.crossAxisAlignment = crossAxisAlignment;
@@ -2552,6 +2552,19 @@ mixin WidgetInspectorService {
   void performReassemble() {
     _clearStats();
     _resetErrorCount();
+  }
+
+  /// Safely get the render object of an [Element].
+  ///
+  /// If the call to get the render object throws, the result will be null.
+  RenderObject? _renderObjectOrNull(Element element) {
+    RenderObject? renderObject;
+    try {
+      renderObject = element.renderObject;
+    } catch (_) {
+      // If the render object was unmounted, this could throw.
+    }
+    return renderObject;
   }
 }
 
