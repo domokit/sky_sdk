@@ -201,14 +201,12 @@ class DefaultTextEditingShortcuts extends StatelessWidget {
     },
 
     // Arrow: Move selection.
-    const SingleActivator(LogicalKeyboardKey.arrowLeft): const ExtendSelectionByCharacterIntent(
-      forward: false,
-      collapseSelection: true,
-    ),
-    const SingleActivator(LogicalKeyboardKey.arrowRight): const ExtendSelectionByCharacterIntent(
-      forward: true,
-      collapseSelection: true,
-    ),
+    const SingleActivator(
+      LogicalKeyboardKey.arrowLeft,
+    ): const HorizontalExtendSelectionByCharacterIntent(right: false, collapseSelection: true),
+    const SingleActivator(
+      LogicalKeyboardKey.arrowRight,
+    ): const HorizontalExtendSelectionByCharacterIntent(right: true, collapseSelection: true),
     const SingleActivator(
       LogicalKeyboardKey.arrowUp,
     ): const ExtendSelectionVerticallyToAdjacentLineIntent(forward: false, collapseSelection: true),
@@ -220,11 +218,11 @@ class DefaultTextEditingShortcuts extends StatelessWidget {
     const SingleActivator(
       LogicalKeyboardKey.arrowLeft,
       shift: true,
-    ): const ExtendSelectionByCharacterIntent(forward: false, collapseSelection: false),
+    ): const HorizontalExtendSelectionByCharacterIntent(right: false, collapseSelection: false),
     const SingleActivator(
       LogicalKeyboardKey.arrowRight,
       shift: true,
-    ): const ExtendSelectionByCharacterIntent(forward: true, collapseSelection: false),
+    ): const HorizontalExtendSelectionByCharacterIntent(right: true, collapseSelection: false),
     const SingleActivator(
       LogicalKeyboardKey.arrowUp,
       shift: true,
@@ -601,14 +599,12 @@ class DefaultTextEditingShortcuts extends StatelessWidget {
       ): const DeleteToLineBreakIntent(forward: true),
     },
 
-    const SingleActivator(LogicalKeyboardKey.arrowLeft): const ExtendSelectionByCharacterIntent(
-      forward: false,
-      collapseSelection: true,
-    ),
-    const SingleActivator(LogicalKeyboardKey.arrowRight): const ExtendSelectionByCharacterIntent(
-      forward: true,
-      collapseSelection: true,
-    ),
+    const SingleActivator(
+      LogicalKeyboardKey.arrowLeft,
+    ): const HorizontalExtendSelectionByCharacterIntent(right: false, collapseSelection: true),
+    const SingleActivator(
+      LogicalKeyboardKey.arrowRight,
+    ): const HorizontalExtendSelectionByCharacterIntent(right: true, collapseSelection: true),
     const SingleActivator(
       LogicalKeyboardKey.arrowUp,
     ): const ExtendSelectionVerticallyToAdjacentLineIntent(forward: false, collapseSelection: true),
@@ -620,11 +616,11 @@ class DefaultTextEditingShortcuts extends StatelessWidget {
     const SingleActivator(
       LogicalKeyboardKey.arrowLeft,
       shift: true,
-    ): const ExtendSelectionByCharacterIntent(forward: false, collapseSelection: false),
+    ): const HorizontalExtendSelectionByCharacterIntent(right: false, collapseSelection: false),
     const SingleActivator(
       LogicalKeyboardKey.arrowRight,
       shift: true,
-    ): const ExtendSelectionByCharacterIntent(forward: true, collapseSelection: false),
+    ): const HorizontalExtendSelectionByCharacterIntent(right: true, collapseSelection: false),
     const SingleActivator(
       LogicalKeyboardKey.arrowUp,
       shift: true,
@@ -1091,8 +1087,8 @@ Intent? intentForMacOSSelector(String selectorName) {
     'deleteWordForward:': DeleteToNextWordBoundaryIntent(forward: true),
     'deleteToEndOfLine:': DeleteToLineBreakIntent(forward: true),
 
-    'moveLeft:': ExtendSelectionByCharacterIntent(forward: false, collapseSelection: true),
-    'moveRight:': ExtendSelectionByCharacterIntent(forward: true, collapseSelection: true),
+    'moveLeft:': HorizontalExtendSelectionByCharacterIntent(right: false, collapseSelection: true),
+    'moveRight:': HorizontalExtendSelectionByCharacterIntent(right: true, collapseSelection: true),
     'moveForward:': ExtendSelectionByCharacterIntent(forward: true, collapseSelection: true),
     'moveBackward:': ExtendSelectionByCharacterIntent(forward: false, collapseSelection: true),
 
@@ -1105,12 +1101,12 @@ Intent? intentForMacOSSelector(String selectorName) {
       collapseSelection: true,
     ),
 
-    'moveLeftAndModifySelection:': ExtendSelectionByCharacterIntent(
-      forward: false,
+    'moveLeftAndModifySelection:': HorizontalExtendSelectionByCharacterIntent(
+      right: false,
       collapseSelection: false,
     ),
-    'moveRightAndModifySelection:': ExtendSelectionByCharacterIntent(
-      forward: true,
+    'moveRightAndModifySelection:': HorizontalExtendSelectionByCharacterIntent(
+      right: true,
       collapseSelection: false,
     ),
     'moveUpAndModifySelection:': ExtendSelectionVerticallyToAdjacentLineIntent(

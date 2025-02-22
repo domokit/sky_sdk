@@ -17505,6 +17505,60 @@ void main() {
     },
     variant: TargetPlatformVariant.all(),
   );
+
+  testWidgets(
+    'The behavior of the left arrow and right arrow in an RTL text field should be reversed.',
+    (WidgetTester tester) async {
+      final TextEditingController controller = TextEditingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TextField(
+              controller: controller,
+              textAlign: TextAlign.right,
+              textDirection: TextDirection.rtl,
+            ),
+          ),
+        ),
+      );
+
+      await tester.showKeyboard(find.byType(TextField));
+
+      const String testValue = 'RTL-test';
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(text: testValue, selection: TextSelection.collapsed(offset: 3)),
+      );
+      await tester.pump();
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pump();
+
+      expect(controller.selection.base.offset, 4);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pump();
+
+      expect(controller.selection.base.offset, 3);
+
+      // Shift
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shift);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pump();
+
+      expect(controller.selection.base.offset, 3);
+      expect(controller.selection.extent.offset, 4);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pump();
+
+      expect(controller.selection.base.offset, 3);
+      expect(controller.selection.extent.offset, 3);
+
+      controller.dispose();
+    },
+  );
 }
 
 /// A Simple widget for testing the obscure text.

@@ -571,6 +571,39 @@ class GranularlyExtendSelectionEvent extends SelectionEvent {
   final TextGranularity granularity;
 }
 
+/// Extends the start or end of the selection horizontally by a given [TextGranularity].
+///
+/// To handle this event, move the associated selection edge, as dictated by
+/// [isEnd], according to the [granularity] and the [textDirection].
+/// The [right] parameter determines the direction of the extension in the
+/// horizontal axis, which is then translated to a forward or backward
+/// extension based on the [textDirection].
+class HorizontalGranularlyExtendSelectionEvent extends GranularlyExtendSelectionEvent {
+  /// Creates a [HorizontalGranularlyExtendSelectionEvent].
+  HorizontalGranularlyExtendSelectionEvent({
+    required this.right,
+    required super.isEnd,
+    required super.granularity,
+    this.textDirection = TextDirection.ltr,
+  }) : super(forward: textDirection == TextDirection.rtl ? !right : right);
+
+  /// Whether to extend the selection to the right.
+  bool right;
+
+  /// The text direction for which the selection extend.
+  TextDirection textDirection;
+
+  /// Creates a new instance of [HorizontalGranularlyExtendSelectionEvent] with the
+  /// specified [textDirection].
+  HorizontalGranularlyExtendSelectionEvent withTextDirection(TextDirection textDirection) =>
+      HorizontalGranularlyExtendSelectionEvent(
+        right: right,
+        textDirection: textDirection,
+        isEnd: isEnd,
+        granularity: granularity,
+      );
+}
+
 /// The direction to extend a selection.
 ///
 /// The [DirectionallyExtendSelectionEvent] uses this enum to describe how
