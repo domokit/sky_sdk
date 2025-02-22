@@ -37,6 +37,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.systemchannels.LifecycleChannel;
 import io.flutter.plugin.platform.PlatformPlugin;
+import io.flutter.plugin.view.SensitiveContentPlugin;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -366,6 +367,13 @@ public class FlutterAndroidComponentTest {
     @Nullable
     @Override
     public PlatformPlugin providePlatformPlugin(
+        @Nullable Activity activity, @NonNull FlutterEngine flutterEngine) {
+      return null;
+    }
+
+    @Nullable
+    @Override
+    public SensitiveContentPlugin provideSensitiveContentPlugin(
         @Nullable Activity activity, @NonNull FlutterEngine flutterEngine) {
       return null;
     }

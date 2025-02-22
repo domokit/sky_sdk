@@ -45,6 +45,7 @@ export 'src/services/raw_keyboard_web.dart';
 export 'src/services/raw_keyboard_windows.dart';
 export 'src/services/restoration.dart';
 export 'src/services/scribe.dart';
+export 'src/services/sensitive_content.dart';
 export 'src/services/service_extensions.dart';
 export 'src/services/spell_check.dart';
 export 'src/services/system_channels.dart';

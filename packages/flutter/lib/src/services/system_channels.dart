@@ -15,6 +15,7 @@
 /// @docImport 'raw_keyboard_android.dart';
 /// @docImport 'raw_keyboard_fuchsia.dart';
 /// @docImport 'scribe.dart';
+/// @docImport 'sensitive_content.dart';
 /// @docImport 'system_chrome.dart';
 /// @docImport 'system_navigator.dart';
 /// @docImport 'system_sound.dart';
@@ -576,4 +577,21 @@ abstract final class SystemChannels {
   ///  * [HardwareKeyboard.syncKeyboardState], which uses this channel to synchronize
   ///    the `HardwareKeyboard` pressed state.
   static const MethodChannel keyboard = OptionalMethodChannel('flutter/keyboard');
+
+  /// A [MethodChannel] for setting and getting the content sensitivity of a Flutter Android View.
+  ///
+  /// The following outgoing methods are defined for this channel (invoked using
+  /// [OptionalMethodChannel.invokeMethod]):
+  ///
+  ///  * `setContentSensitivity`: Sets the content sensitivity level of the Flutter Android View
+  ///     containing the widget tree to one of the [ContentSensitivity] levels. The second
+  ///     argument is the ID of the `ContentSensitivity` level that the channel
+  ///     should set for the relevant Flutter view.
+  ///
+  ///  * `getContentSensitivity`: Gets the content sensitivity level of the Flutter Android View
+  ///     containing the widget tree, which will be the ID of one of the [ContentSensitivity] levels.
+  ///
+  ///  * `isSupported`: Returns whether or not setting content sensitivity levels is supported on the
+  ///     device.
+  static const MethodChannel sensitiveContent = OptionalMethodChannel('flutter/sensitivecontent');
 }
