@@ -2334,7 +2334,7 @@ class _TimePickerDialogState extends State<TimePickerDialog> with RestorationMix
   static const Size _kTimePickerPortraitSize = Size(310, 468);
   static const Size _kTimePickerLandscapeSize = Size(524, 342);
   static const Size _kTimePickerLandscapeSizeM2 = Size(508, 300);
-  static const Size _kTimePickerInputSize = Size(312, 216);
+  static const Size _kTimePickerInputSize = Size(312, 236);
 
   // Absolute minimum dialog sizes, which is the point at which it begins
   // scrolling to fit everything in.
