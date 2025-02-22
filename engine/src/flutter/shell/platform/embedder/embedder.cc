@@ -2226,6 +2226,24 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
     };
   }
 
+  flutter::PlatformViewEmbedder::ViewFocusChangeRequestCallback
+      view_focus_change_request_callback = nullptr;
+  if (SAFE_ACCESS(args, view_focus_change_request_callback, nullptr) !=
+      nullptr) {
+    view_focus_change_request_callback =
+        [ptr = args->view_focus_change_request_callback,
+         user_data](const flutter::ViewFocusChangeRequest& request) {
+          FlutterViewFocusChangeRequest embedder_request{
+              .struct_size = sizeof(FlutterViewFocusChangeRequest),
+              .view_id = request.view_id(),
+              .state = static_cast<FlutterViewFocusState>(request.state()),
+              .direction =
+                  static_cast<FlutterViewFocusDirection>(request.direction()),
+          };
+          ptr(&embedder_request, user_data);
+        };
+  }
+
   auto external_view_embedder_result = InferExternalViewEmbedderFromArgs(
       SAFE_ACCESS(args, compositor, nullptr), settings.enable_impeller);
   if (external_view_embedder_result.second) {
@@ -2241,6 +2259,7 @@ FlutterEngineResult FlutterEngineInitialize(size_t version,
           compute_platform_resolved_locale_callback,  //
           on_pre_engine_restart_callback,             //
           channel_update_callback,                    //
+          view_focus_change_request_callback,         //
       };
 
   auto on_create_platform_view = InferPlatformViewCreationCallback(
@@ -2553,6 +2572,38 @@ FlutterEngineResult FlutterEngineRemoveView(FLUTTER_API_SYMBOL(FlutterEngine)
 
   embedder_engine->GetShell().GetPlatformView()->RemoveView(info->view_id,
                                                             callback);
+  return kSuccess;
+}
+
+FlutterEngineResult FlutterEngineSendViewFocusEvent(
+    FLUTTER_API_SYMBOL(FlutterEngine) engine,
+    const FlutterViewFocusEvent* event) {
+  if (!engine) {
+    return LOG_EMBEDDER_ERROR(kInvalidArguments, "Engine handle was invalid.");
+  }
+  if (!event) {
+    return LOG_EMBEDDER_ERROR(kInvalidArguments,
+                              "View focus event must not be null.");
+  }
+  // The engine must be running to remove a view.
+  auto embedder_engine = reinterpret_cast<flutter::EmbedderEngine*>(engine);
+  if (!embedder_engine->IsValid()) {
+    return LOG_EMBEDDER_ERROR(kInvalidArguments, "Engine handle was invalid.");
+  }
+
+  int64_t view_id = SAFE_ACCESS(event, view_id, kFlutterImplicitViewId);
+  FlutterViewFocusState state = SAFE_ACCESS(event, state, kUnfocused);
+  FlutterViewFocusDirection direction =
+      SAFE_ACCESS(event, direction, kUndefined);
+
+  flutter::ViewFocusEvent flutter_event(
+      view_id,  //
+      static_cast<flutter::ViewFocusState>(state),
+      static_cast<flutter::ViewFocusDirection>(direction));
+
+  embedder_engine->GetShell().GetPlatformView()->SendViewFocusEvent(
+      flutter_event);
+
   return kSuccess;
 }
 
@@ -3657,6 +3708,7 @@ FlutterEngineResult FlutterEngineGetProcAddresses(
   SET_PROC(SetNextFrameCallback, FlutterEngineSetNextFrameCallback);
   SET_PROC(AddView, FlutterEngineAddView);
   SET_PROC(RemoveView, FlutterEngineRemoveView);
+  SET_PROC(SendViewFocusEvent, FlutterEngineSendViewFocusEvent);
 #undef SET_PROC
 
   return kSuccess;

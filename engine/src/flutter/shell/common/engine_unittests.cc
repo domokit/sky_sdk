@@ -90,6 +90,10 @@ class MockDelegate : public Engine::Delegate {
               GetScaledFontSize,
               (double font_size, int configuration_id),
               (const, override));
+  MOCK_METHOD(void,
+              RequestViewFocusChange,
+              (const ViewFocusChangeRequest&),
+              (override));
 };
 
 class MockResponse : public PlatformMessageResponse {
@@ -137,6 +141,10 @@ class MockRuntimeDelegate : public RuntimeDelegate {
               GetScaledFontSize,
               (double font_size, int configuration_id),
               (const, override));
+  MOCK_METHOD(void,
+              RequestViewFocusChange,
+              (const ViewFocusChangeRequest&),
+              (override));
 };
 
 class MockRuntimeController : public RuntimeController {

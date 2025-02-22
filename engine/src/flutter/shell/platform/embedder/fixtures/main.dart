@@ -1600,3 +1600,30 @@ Future<void> render_impeller_image_snapshot_test() async {
   final bool result = (pixel & 0xFF) == color.alpha && ((pixel >> 8) & 0xFF) == color.blue;
   notifyBoolValue(result);
 }
+
+@pragma('vm:entry-point')
+void testSendViewFocusEvent() {
+  PlatformDispatcher.instance.onViewFocusChange = (ViewFocusEvent event) {
+    notifyStringValue("${event.viewId} ${event.state} ${event.direction}");
+  };
+  signalNativeTest();
+}
+
+@pragma('vm:entry-point')
+void testSendViewFocusChangeRequest() {
+  PlatformDispatcher.instance.requestViewFocusChange(
+    viewId: 1,
+    state: ViewFocusState.unfocused,
+    direction: ViewFocusDirection.undefined,
+  );
+  PlatformDispatcher.instance.requestViewFocusChange(
+    viewId: 2,
+    state: ViewFocusState.focused,
+    direction: ViewFocusDirection.forward,
+  );
+  PlatformDispatcher.instance.requestViewFocusChange(
+    viewId: 3,
+    state: ViewFocusState.focused,
+    direction: ViewFocusDirection.backward,
+  );
+}

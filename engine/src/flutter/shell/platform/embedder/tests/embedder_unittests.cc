@@ -2045,6 +2045,124 @@ TEST_F(EmbedderTest, CanRenderMultipleViews) {
   latch123.Wait();
 }
 
+bool operator==(const FlutterViewFocusChangeRequest& lhs,
+                const FlutterViewFocusChangeRequest& rhs) {
+  return lhs.view_id == rhs.view_id && lhs.state == rhs.state &&
+         lhs.direction == rhs.direction;
+}
+
+TEST_F(EmbedderTest, SendsViewFocusChangeRequest) {
+  auto& context = GetEmbedderContext<EmbedderTestContextSoftware>();
+  auto platform_task_runner = CreateNewThread("test_platform_thread");
+  UniqueEngine engine;
+  static std::mutex engine_mutex;
+  EmbedderTestTaskRunner test_platform_task_runner(
+      platform_task_runner, [&](FlutterTask task) {
+        std::scoped_lock lock(engine_mutex);
+        if (!engine.is_valid()) {
+          return;
+        }
+        FlutterEngineRunTask(engine.get(), &task);
+      });
+  fml::CountDownLatch latch(3);
+  std::vector<FlutterViewFocusChangeRequest> received_requests;
+  platform_task_runner->PostTask([&]() {
+    EmbedderConfigBuilder builder(context);
+    builder.SetSurface(SkISize::Make(1, 1));
+    builder.SetDartEntrypoint("testSendViewFocusChangeRequest");
+    const auto platform_task_runner_description =
+        test_platform_task_runner.GetFlutterTaskRunnerDescription();
+    builder.SetPlatformTaskRunner(&platform_task_runner_description);
+    builder.SetViewFocusChangeRequestCallback(
+        [&](const FlutterViewFocusChangeRequest* request) {
+          EXPECT_TRUE(platform_task_runner->RunsTasksOnCurrentThread());
+          received_requests.push_back(*request);
+          latch.CountDown();
+        });
+    engine = builder.LaunchEngine();
+    ASSERT_TRUE(engine.is_valid());
+  });
+  latch.Wait();
+
+  std::vector<FlutterViewFocusChangeRequest> expected_requests{
+      {.view_id = 1, .state = kUnfocused, .direction = kUndefined},
+      {.view_id = 2, .state = kFocused, .direction = kForward},
+      {.view_id = 3, .state = kFocused, .direction = kBackward},
+  };
+
+  ASSERT_EQ(received_requests.size(), expected_requests.size());
+  for (size_t i = 0; i < received_requests.size(); ++i) {
+    ASSERT_TRUE(received_requests[i] == expected_requests[i]);
+  }
+
+  fml::AutoResetWaitableEvent kill_latch;
+  platform_task_runner->PostTask(fml::MakeCopyable([&]() mutable {
+    std::scoped_lock lock(engine_mutex);
+    engine.reset();
+
+    // There may still be pending tasks on the platform thread that were queued
+    // by the test_task_runner.  Signal the latch after these tasks have been
+    // consumed.
+    platform_task_runner->PostTask([&kill_latch] { kill_latch.Signal(); });
+  }));
+  kill_latch.Wait();
+}
+
+TEST_F(EmbedderTest, CanSendViewFocusEvent) {
+  auto& context = GetEmbedderContext<EmbedderTestContextSoftware>();
+  EmbedderConfigBuilder builder(context);
+  builder.SetSurface(SkISize::Make(1, 1));
+  builder.SetDartEntrypoint("testSendViewFocusEvent");
+
+  fml::AutoResetWaitableEvent latch;
+  std::string last_event;
+
+  context.AddNativeCallback(
+      "SignalNativeTest",
+      CREATE_NATIVE_ENTRY(
+          [&latch](Dart_NativeArguments args) { latch.Signal(); }));
+  context.AddNativeCallback("NotifyStringValue",
+                            CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
+                              const auto message_from_dart =
+                                  tonic::DartConverter<std::string>::FromDart(
+                                      Dart_GetNativeArgument(args, 0));
+                              last_event = message_from_dart;
+                              latch.Signal();
+                            }));
+
+  auto engine = builder.LaunchEngine();
+  ASSERT_TRUE(engine.is_valid());
+  // Wait until the focus change handler is attached.
+  latch.Wait();
+  latch.Reset();
+
+  FlutterViewFocusEvent event1{
+      .struct_size = sizeof(FlutterViewFocusEvent),
+      .view_id = 1,
+      .state = kFocused,
+      .direction = kUndefined,
+  };
+  FlutterEngineResult result =
+      FlutterEngineSendViewFocusEvent(engine.get(), &event1);
+  ASSERT_EQ(result, kSuccess);
+  latch.Wait();
+  ASSERT_EQ(last_event,
+            "1 ViewFocusState.focused ViewFocusDirection.undefined");
+
+  FlutterViewFocusEvent event2{
+      .struct_size = sizeof(FlutterViewFocusEvent),
+      .view_id = 2,
+      .state = kUnfocused,
+      .direction = kBackward,
+  };
+  latch.Reset();
+  result = FlutterEngineSendViewFocusEvent(engine.get(), &event2);
+  ASSERT_EQ(result, kSuccess);
+  latch.Wait();
+  ASSERT_EQ(last_event,
+            "2 ViewFocusState.unfocused ViewFocusDirection.backward");
+}
+
 //------------------------------------------------------------------------------
 /// Test that the backing store is created with the correct view ID, is used
 /// for the correct view, and is cached according to their views.

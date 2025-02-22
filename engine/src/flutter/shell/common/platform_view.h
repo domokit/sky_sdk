@@ -121,6 +121,12 @@ class PlatformView {
     virtual void OnPlatformViewRemoveView(int64_t view_id,
                                           RemoveViewCallback callback) = 0;
 
+    /// @brief Notify the delegate that platform view focus state has changed.
+    ///
+    /// @param[in]  event  The focus event describing the change.
+    virtual void OnPlatformViewSendViewFocusEvent(
+        const ViewFocusEvent& event) = 0;
+
     //--------------------------------------------------------------------------
     /// @brief      Notifies the delegate that the specified callback needs to
     ///             be invoked after the rasterizer is done rendering the next
@@ -605,6 +611,8 @@ class PlatformView {
   ///
   void RemoveView(int64_t view_id, RemoveViewCallback callback);
 
+  void SendViewFocusEvent(const ViewFocusEvent& event);
+
   //----------------------------------------------------------------------------
   /// @brief      Used by the shell to obtain a Skia GPU context that is capable
   ///             of operating on the IO thread. The context must be in the same
@@ -953,6 +961,15 @@ class PlatformView {
   ///
   virtual double GetScaledFontSize(double unscaled_font_size,
                                    int configuration_id) const;
+
+  //--------------------------------------------------------------------------
+  /// @brief      Notifies the client that the Flutter view focus state has
+  ///             changed and the platform view should be updated.
+  ///
+  ///             Called on platform thread.
+  ///
+  /// @param[in]  request  The request to change the focus state of the view.
+  virtual void RequestViewFocusChange(const ViewFocusChangeRequest& request);
 
  protected:
   // This is the only method called on the raster task runner.

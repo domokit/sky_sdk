@@ -97,6 +97,10 @@ void PlatformView::RemoveView(int64_t view_id, RemoveViewCallback callback) {
   delegate_.OnPlatformViewRemoveView(view_id, std::move(callback));
 }
 
+void PlatformView::SendViewFocusEvent(const ViewFocusEvent& event) {
+  delegate_.OnPlatformViewSendViewFocusEvent(event);
+}
+
 sk_sp<GrDirectContext> PlatformView::CreateResourceContext() const {
   FML_DLOG(WARNING) << "This platform does not set up the resource "
                        "context on the IO thread for async texture uploads.";
@@ -217,6 +221,11 @@ double PlatformView::GetScaledFontSize(double unscaled_font_size,
   // and the Flutter application never invokes this method.
   FML_UNREACHABLE();
   return -1;
+}
+
+void PlatformView::RequestViewFocusChange(
+    const ViewFocusChangeRequest& request) {
+  // No-op by default.
 }
 
 }  // namespace flutter

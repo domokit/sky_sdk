@@ -312,6 +312,10 @@ bool Engine::RemoveView(int64_t view_id) {
   return runtime_controller_->RemoveView(view_id);
 }
 
+bool Engine::SendViewFocusEvent(const ViewFocusEvent& event) {
+  return runtime_controller_->SendViewFocusEvent(event);
+}
+
 void Engine::SetViewportMetrics(int64_t view_id,
                                 const ViewportMetrics& metrics) {
   runtime_controller_->SetViewportMetrics(view_id, metrics);
@@ -520,6 +524,10 @@ std::unique_ptr<std::vector<std::string>> Engine::ComputePlatformResolvedLocale(
 double Engine::GetScaledFontSize(double unscaled_font_size,
                                  int configuration_id) const {
   return delegate_.GetScaledFontSize(unscaled_font_size, configuration_id);
+}
+
+void Engine::RequestViewFocusChange(const ViewFocusChangeRequest& request) {
+  delegate_.RequestViewFocusChange(request);
 }
 
 void Engine::SetNeedsReportTimings(bool needs_reporting) {

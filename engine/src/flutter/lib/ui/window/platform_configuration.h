@@ -16,6 +16,7 @@
 #include "flutter/lib/ui/semantics/semantics_update.h"
 #include "flutter/lib/ui/window/platform_message_response.h"
 #include "flutter/lib/ui/window/pointer_data_packet.h"
+#include "flutter/lib/ui/window/view_focus.h"
 #include "flutter/lib/ui/window/viewport_metrics.h"
 #include "flutter/shell/common/display.h"
 #include "fml/macros.h"
@@ -257,6 +258,14 @@ class PlatformConfigurationClient {
   virtual double GetScaledFontSize(double unscaled_font_size,
                                    int configuration_id) const = 0;
 
+  //--------------------------------------------------------------------------
+  /// @brief      Notifies the client that the Flutter view focus state has
+  ///             changed and the platform view should be updated.
+  ///
+  /// @param[in]  request  The request to change the focus state of the view.
+  virtual void RequestViewFocusChange(
+      const ViewFocusChangeRequest& request) = 0;
+
   virtual std::shared_ptr<PlatformIsolateManager>
   GetPlatformIsolateManager() = 0;
 
@@ -337,6 +346,8 @@ class PlatformConfiguration final {
   /// @return     Whether the view was removed.
   ///
   bool RemoveView(int64_t view_id);
+
+  bool SendFocusEvent(const ViewFocusEvent& event);
 
   //----------------------------------------------------------------------------
   /// @brief      Update the view metrics for the specified view.
@@ -529,6 +540,7 @@ class PlatformConfiguration final {
   tonic::DartPersistentValue on_error_;
   tonic::DartPersistentValue add_view_;
   tonic::DartPersistentValue remove_view_;
+  tonic::DartPersistentValue send_view_focus_event_;
   tonic::DartPersistentValue update_window_metrics_;
   tonic::DartPersistentValue update_displays_;
   tonic::DartPersistentValue update_locales_;
@@ -616,6 +628,10 @@ class PlatformConfigurationNativeApi {
                                        const tonic::DartByteData& data);
 
   static void SendChannelUpdate(const std::string& name, bool listening);
+
+  static void RequestViewFocusChange(int64_t view_id,
+                                     int64_t state,
+                                     int64_t direction);
 
   //--------------------------------------------------------------------------
   /// @brief      Requests the Dart VM to adjusts the GC heuristics based on
