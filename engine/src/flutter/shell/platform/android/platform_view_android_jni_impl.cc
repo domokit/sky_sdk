@@ -20,16 +20,13 @@
 #include "flutter/fml/platform/android/jni_util.h"
 #include "flutter/fml/platform/android/jni_weak_ref.h"
 #include "flutter/fml/platform/android/scoped_java_ref.h"
+#include "flutter/impeller/toolkit/android/proc_table.h"
 #include "flutter/lib/ui/plugins/callback_cache.h"
-#include "flutter/runtime/dart_service_isolate.h"
-#include "flutter/shell/common/run_configuration.h"
 #include "flutter/shell/platform/android/android_shell_holder.h"
 #include "flutter/shell/platform/android/apk_asset_provider.h"
 #include "flutter/shell/platform/android/flutter_main.h"
-#include "flutter/shell/platform/android/image_external_texture_gl.h"
 #include "flutter/shell/platform/android/jni/platform_view_android_jni.h"
 #include "flutter/shell/platform/android/platform_view_android.h"
-#include "impeller/toolkit/android/proc_table.h"
 
 #define ANDROID_SHELL_HOLDER \
   (reinterpret_cast<AndroidShellHolder*>(shell_holder))
@@ -169,7 +166,8 @@ static jlong AttachJNI(JNIEnv* env, jclass clazz, jobject flutterJNI) {
   std::shared_ptr<PlatformViewAndroidJNI> jni_facade =
       std::make_shared<PlatformViewAndroidJNIImpl>(java_object);
   auto shell_holder = std::make_unique<AndroidShellHolder>(
-      FlutterMain::Get().GetSettings(), jni_facade);
+      FlutterMain::Get().GetSettings(), jni_facade,
+      FlutterMain::Get().GetAndroidRenderingAPI());
   if (shell_holder->IsValid()) {
     return reinterpret_cast<jlong>(shell_holder.release());
   } else {
