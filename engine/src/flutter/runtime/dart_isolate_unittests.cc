@@ -735,6 +735,7 @@ class FakePlatformConfigurationClient : public PlatformConfigurationClient {
                            int configuration_id) const override {
     return 0;
   }
+  void RequestViewFocusChange(const ViewFocusChangeRequest& request) override {}
 };
 
 TEST_F(DartIsolateTest, PlatformIsolateCreationAndShutdown) {

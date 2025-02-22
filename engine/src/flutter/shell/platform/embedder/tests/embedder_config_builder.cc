@@ -37,6 +37,7 @@ EmbedderConfigBuilder::EmbedderConfigBuilder(
     SetLogMessageCallbackHook();
     SetLocalizationCallbackHooks();
     SetChannelUpdateCallbackHook();
+    SetViewFocusChangeRequestHook();
     AddCommandLineArgument("--disable-vm-service");
 
     if (preference == InitializationPreference::kSnapshotsInitialize ||
@@ -110,6 +111,11 @@ void EmbedderConfigBuilder::SetLogMessageCallbackHook() {
 void EmbedderConfigBuilder::SetChannelUpdateCallbackHook() {
   project_args_.channel_update_callback =
       context_.GetChannelUpdateCallbackHook();
+}
+
+void EmbedderConfigBuilder::SetViewFocusChangeRequestHook() {
+  project_args_.view_focus_change_request_callback =
+      context_.GetViewFocusChangeRequestCallbackHook();
 }
 
 void EmbedderConfigBuilder::SetLogTag(std::string tag) {
@@ -192,6 +198,11 @@ void EmbedderConfigBuilder::SetRenderTaskRunner(
 void EmbedderConfigBuilder::SetPlatformMessageCallback(
     const std::function<void(const FlutterPlatformMessage*)>& callback) {
   context_.SetPlatformMessageCallback(callback);
+}
+
+void EmbedderConfigBuilder::SetViewFocusChangeRequestCallback(
+    const std::function<void(const FlutterViewFocusChangeRequest*)>& callback) {
+  context_.SetViewFocusChangeRequestCallback(callback);
 }
 
 void EmbedderConfigBuilder::SetCompositor(bool avoid_backing_store_cache,

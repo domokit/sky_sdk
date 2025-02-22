@@ -323,6 +323,14 @@ class Engine final : public RuntimeDelegate, PointerDataDispatcher::Delegate {
     ///
     virtual double GetScaledFontSize(double unscaled_font_size,
                                      int configuration_id) const = 0;
+
+    //--------------------------------------------------------------------------
+    /// @brief      Notifies the client that the Flutter view focus state has
+    ///             changed and the platform view should be updated.
+    ///
+    /// @param[in]  request  The request to change the focus state of the view.
+    virtual void RequestViewFocusChange(
+        const ViewFocusChangeRequest& request) = 0;
   };
 
   //----------------------------------------------------------------------------
@@ -748,6 +756,13 @@ class Engine final : public RuntimeDelegate, PointerDataDispatcher::Delegate {
   bool RemoveView(int64_t view_id);
 
   //----------------------------------------------------------------------------
+  /// @brief      Notify the Flutter application that the focus state of a
+  ///             native view has changed.
+  ///
+  /// @param[in]  event  The focus event describing the change.
+  bool SendViewFocusEvent(const ViewFocusEvent& event);
+
+  //----------------------------------------------------------------------------
   /// @brief      Updates the viewport metrics for a view. The viewport metrics
   ///             detail the size of the rendering viewport in texels as well as
   ///             edge insets if present.
@@ -1023,6 +1038,9 @@ class Engine final : public RuntimeDelegate, PointerDataDispatcher::Delegate {
   // |RuntimeDelegate|
   double GetScaledFontSize(double unscaled_font_size,
                            int configuration_id) const override;
+
+  // |RuntimeDelegate|
+  void RequestViewFocusChange(const ViewFocusChangeRequest& request) override;
 
   void SetNeedsReportTimings(bool value) override;
 

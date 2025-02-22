@@ -45,6 +45,8 @@ class PlatformViewEmbedder final : public PlatformView {
           const std::vector<std::string>& supported_locale_data)>;
   using OnPreEngineRestartCallback = std::function<void()>;
   using ChanneUpdateCallback = std::function<void(const std::string&, bool)>;
+  using ViewFocusChangeRequestCallback =
+      std::function<void(const ViewFocusChangeRequest&)>;
 
   struct PlatformDispatchTable {
     UpdateSemanticsCallback update_semantics_callback;  // optional
@@ -55,6 +57,8 @@ class PlatformViewEmbedder final : public PlatformView {
         compute_platform_resolved_locale_callback;
     OnPreEngineRestartCallback on_pre_engine_restart_callback;  // optional
     ChanneUpdateCallback on_channel_update;                     // optional
+    ViewFocusChangeRequestCallback
+        view_focus_change_request_callback;  // optional
   };
 
   // Create a platform view that sets up a software rasterizer.
@@ -141,6 +145,9 @@ class PlatformViewEmbedder final : public PlatformView {
 
   // |PlatformView|
   void SendChannelUpdate(const std::string& name, bool listening) override;
+
+  // |PlatformView|
+  void RequestViewFocusChange(const ViewFocusChangeRequest& request) override;
 
   FML_DISALLOW_COPY_AND_ASSIGN(PlatformViewEmbedder);
 };

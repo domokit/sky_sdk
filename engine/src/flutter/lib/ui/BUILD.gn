@@ -156,6 +156,8 @@ source_set("ui") {
     "window/pointer_data_packet.h",
     "window/pointer_data_packet_converter.cc",
     "window/pointer_data_packet_converter.h",
+    "window/view_focus.cc",
+    "window/view_focus.h",
     "window/viewport_metrics.cc",
     "window/viewport_metrics.h",
   ]
