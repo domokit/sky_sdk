@@ -621,6 +621,27 @@ void main() {
       ),
     );
   });
+
+  testWithoutContext(
+    'Finds app bundle when archiveName / archiveBaseName is not standart "app"',
+    () {
+      final FlutterProject project = generateFakeAppBundle('debug', 'foo-debug.aab', fileSystem);
+      final File bundle = findBundleFile(
+        project,
+        const BuildInfo(
+          BuildMode.debug,
+          null,
+          treeShakeIcons: false,
+          packageConfigPath: '.dart_tool/package_config.json',
+        ),
+        BufferLogger.test(),
+        fakeAnalytics,
+      );
+
+      expect(bundle, isNotNull);
+      expect(bundle.path, '/build/app/outputs/bundle/debug/foo-debug.aab');
+    },
+  );
 }
 
 /// Generates a fake app bundle at the location [directoryName]/[fileName].
