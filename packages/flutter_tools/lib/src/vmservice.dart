@@ -560,21 +560,6 @@ class FlutterVmService {
       }
     }
 
-    // TODO(andrewkolos): this is to assist in troubleshooting
-    //  https://github.com/flutter/flutter/issues/152220 and should be reverted
-    //  once this issue is resolved.
-    final StreamSubscription<String> onReceiveSubscription = service.onReceive.listen((
-      String message,
-    ) {
-      globals.logger.printTrace('runInView VM service onReceive listener received "$message"');
-      final dynamic messageAsJson = jsonDecode(message);
-      // ignore: avoid_dynamic_calls -- Temporary code.
-      final dynamic messageKind = messageAsJson['params']?['event']?['kind'];
-      if (messageKind == 'IsolateRunnable') {
-        globals.logger.printTrace('Received IsolateRunnable event from onReceive.');
-      }
-    });
-
     final Future<void> onRunnable = service.onIsolateEvent.firstWhere((vm_service.Event event) {
       return event.kind == vm_service.EventKind.kIsolateRunnable;
     });
@@ -587,7 +572,6 @@ class FlutterVmService {
       },
     );
     await onRunnable;
-    await onReceiveSubscription.cancel();
   }
 
   Future<String> flutterDebugDumpApp({required String isolateId}) async {
