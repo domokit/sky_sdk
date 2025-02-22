@@ -1919,6 +1919,22 @@ abstract class ModalRoute<T> extends TransitionRoute<T> with LocalHistoryRoute<T
   // declared with any supertype of T.
   final Set<PopEntry<Object?>> _popEntries = <PopEntry<Object?>>{};
 
+  @override
+  bool get willHandlePopInternally {
+    // TODO(justinmc): Need a clear distinction between willHandlePopInt and popDisposition. Currently, popDisposition uses willhandlePopInternally in LocalHistoryRoute.
+    // stackoverflow
+    //return super.willHandlePopInternally || popDisposition == RoutePopDisposition.doNotPop;
+    if (super.willHandlePopInternally) {
+      return true;
+    }
+    for (final PopEntry<Object?> popEntry in _popEntries) {
+      if (!popEntry.canPopNotifier.value) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /// Returns [RoutePopDisposition.doNotPop] if any of callbacks added with
   /// [addScopedWillPopCallback] returns either false or null. If they all
   /// return true, the base [Route.willPop]'s result will be returned. The
