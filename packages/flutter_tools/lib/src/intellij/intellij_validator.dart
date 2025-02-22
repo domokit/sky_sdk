@@ -109,7 +109,7 @@ abstract class IntelliJValidator extends DoctorValidator {
       );
       plugins.validatePackage(
         messages,
-        <String>['Dart'],
+        <String>['Dart', 'dart'],
         'Dart',
         IntelliJPlugins.kIntellijDartPluginUrl,
       );

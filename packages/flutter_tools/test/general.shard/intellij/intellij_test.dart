@@ -52,7 +52,7 @@ void main() {
     );
 
     final List<ValidationMessage> messages = <ValidationMessage>[];
-    plugins.validatePackage(messages, <String>['Dart'], 'Dart', 'download-Dart');
+    plugins.validatePackage(messages, <String>['Dart', 'dart'], 'Dart', 'download-Dart');
     plugins.validatePackage(
       messages,
       <String>['flutter-intellij', 'flutter-intellij.jar'],
@@ -156,7 +156,7 @@ Manifest-Version: 1.0
     final IntelliJPlugins plugins = IntelliJPlugins(_kPluginsPath, fileSystem: fileSystem);
 
     final List<ValidationMessage> messages = <ValidationMessage>[];
-    plugins.validatePackage(messages, <String>['Dart'], 'Dart', 'download-Dart');
+    plugins.validatePackage(messages, <String>['Dart', 'dart'], 'Dart', 'download-Dart');
     plugins.validatePackage(
       messages,
       <String>['flutter-intellij', 'flutter-intellij.jar'],
@@ -188,11 +188,38 @@ Manifest-Version: 1.0
     );
 
     expect(
-      () =>
-          plugins.validatePackage(<ValidationMessage>[], <String>['Dart'], 'Dart', 'download-Dart'),
+      () => plugins.validatePackage(
+        <ValidationMessage>[],
+        <String>['Dart', 'dart'],
+        'Dart',
+        'download-Dart',
+      ),
       returnsNormally,
     );
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/163214
+  testWithoutContext(
+    'IntelliJPlugins can find the Dart plugin with a lowercase package name',
+    () async {
+      final IntelliJPlugins plugins = IntelliJPlugins(_kPluginsPath, fileSystem: fileSystem);
+      final Archive dartJarArchive = buildSingleFileArchive('META-INF/plugin.xml', r'''
+<idea-plugin>
+  <name>Dart</name>
+  <version>242.24931</version>
+</idea-plugin>''');
+      writeFileCreatingDirectories(
+        fileSystem.path.join(_kPluginsPath, 'dart', 'lib', 'dart.jar'),
+        ZipEncoder().encode(dartJarArchive)!,
+      );
+
+      final List<ValidationMessage> messages = <ValidationMessage>[];
+      plugins.validatePackage(messages, <String>['Dart', 'dart'], 'Dart', 'download-Dart');
+
+      expect(messages.length, equals(1));
+      expect(messages.single.message, equals('Dart plugin version 242.24931'));
+    },
+  );
 }
 
 const String _kPluginsPath = '/data/intellij/plugins';
