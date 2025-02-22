@@ -19,6 +19,7 @@ import 'package:test/fake.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
+import '../../src/package_config.dart';
 import '../../src/test_flutter_command_runner.dart';
 
 void main() {
@@ -273,10 +274,8 @@ FlutterProject setupProjectUnderTest(Directory currentDirectory, bool setupXcode
         .createSync(recursive: true);
   }
   projectUnderTest.dartTool.createSync(recursive: true);
-  projectUnderTest.directory
-      .childDirectory('.dart_tool')
-      .childFile('package_config.jon')
-      .createSync(recursive: true);
+  writePackageConfigFile(directory: projectUnderTest.directory);
+
   projectUnderTest.android.ephemeralDirectory.createSync(recursive: true);
 
   projectUnderTest.ios.ephemeralDirectory.createSync(recursive: true);

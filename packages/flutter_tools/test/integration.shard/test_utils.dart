@@ -56,21 +56,6 @@ void writeBytesFile(String path, List<int> content) {
     ..writeAsBytesSync(content, flush: true);
 }
 
-void writePackageConfig(String folder) {
-  writeFile(fileSystem.path.join(folder, '.dart_tool', 'package_config.json'), '''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "test",
-      "rootUri": "fileSystem.currentDirectory.path"
-      "packageUri": "lib/",
-    }
-  ]
-}
-''');
-}
-
 Future<void> getPackages(String folder) async {
   final List<String> command = <String>[
     fileSystem.path.join(getFlutterRoot(), 'bin', 'flutter'),

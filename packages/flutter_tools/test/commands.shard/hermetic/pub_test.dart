@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:args/command_runner.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
@@ -16,8 +18,8 @@ import 'package:test/fake.dart';
 import 'package:unified_analytics/unified_analytics.dart';
 
 import '../../src/context.dart';
-import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 import '../../src/test_flutter_command_runner.dart';
 
 const String minimalV2EmbeddingManifest = r'''
@@ -48,7 +50,7 @@ void main() {
   setUp(() {
     Cache.disableLocking();
     fileSystem = MemoryFileSystem.test();
-    pub = FakePub(fileSystem);
+    pub = FakePub();
     logger = BufferLogger.test();
   });
 
@@ -73,7 +75,7 @@ void main() {
   testUsingContext(
     'pub get usage values are resilient to missing package config files before running "pub get"',
     () async {
-      fileSystem.currentDirectory.childFile('pubspec.yaml').createSync();
+      fileSystem.currentDirectory.childFile('pubspec.yaml').writeAsStringSync('name: my_app');
       fileSystem.currentDirectory.childFile('.flutter-plugins').createSync();
       fileSystem.currentDirectory.childFile('.flutter-plugins-dependencies').createSync();
       fileSystem.currentDirectory.childDirectory('android').childFile('AndroidManifest.xml')
@@ -152,8 +154,19 @@ void main() {
       await commandRunner.run(<String>['get', '--directory=${targetDirectory.path}']);
       final FlutterProject rootProject = FlutterProject.fromDirectory(targetDirectory);
       final File packageConfigFile = rootProject.dartTool.childFile('package_config.json');
+
       expect(packageConfigFile.existsSync(), true);
-      expect(packageConfigFile.readAsStringSync(), '{"configVersion":2,"packages":[]}');
+      expect(json.decode(packageConfigFile.readAsStringSync()), <String, Object>{
+        'configVersion': 2,
+        'packages': <Object?>[
+          <String, Object?>{
+            'name': 'my_app',
+            'rootUri': '../',
+            'packageUri': 'lib/',
+            'languageVersion': '3.7',
+          },
+        ],
+      });
     },
     overrides: <Type, Generator>{
       Pub: () => pub,
@@ -328,9 +341,8 @@ void main() {
 }
 
 class FakePub extends Fake implements Pub {
-  FakePub(this.fileSystem);
+  FakePub();
 
-  final FileSystem fileSystem;
   List<String>? expectedArguments;
 
   @override
@@ -347,17 +359,7 @@ class FakePub extends Fake implements Pub {
       expect(arguments, expectedArguments);
     }
     if (project != null) {
-      fileSystem
-          .directory(project.directory)
-          .childDirectory('.dart_tool')
-          .childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('{"configVersion":2,"packages":[]}');
+      writePackageConfigFile(directory: project.directory);
     }
-  }
-
-  @override
-  Future<Map<String, Object?>> deps(FlutterProject project) {
-    return FakePubWithPrimedDeps().deps(project);
   }
 }

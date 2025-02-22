@@ -14,6 +14,7 @@ import 'package:flutter_tools/src/features.dart';
 import '../../../src/context.dart'; // legacy
 import '../../../src/fake_pub_deps.dart';
 import '../../../src/fakes.dart';
+import '../../../src/package_config.dart';
 import '../../../src/test_build_system.dart';
 import '../../../src/test_flutter_command_runner.dart'; // legacy
 
@@ -284,4 +285,9 @@ flutter:
 class UrlLauncherPlugin {}
 ''');
   fileSystem.file(fileSystem.path.join('lib', 'main.dart')).writeAsStringSync('void main() { }');
+  writePackageConfigFile(
+    directory: fileSystem.currentDirectory,
+    mainLibName: 'foo',
+    packages: <String, String>{'bar': 'bar'},
+  );
 }
