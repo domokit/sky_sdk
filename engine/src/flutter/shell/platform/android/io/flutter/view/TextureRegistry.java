@@ -94,6 +94,16 @@ public interface TextureRegistry {
     Surface getSurface();
 
     /**
+     * Whether to respond to {@link android.app.Activity#onTrimMemory(int)} requests.
+     *
+     * <p>If set, backends <em>may</em>, based on memory pressure and internal platform details,
+     * release surfaces, invoking {@link SurfaceProducer.Callback#onSurfaceCleanup()}.
+     *
+     * @param enable Whether enabled; defaults to {@code false}.
+     */
+    void setReleaseMemoryIfRequested(boolean enable);
+
+    /**
      * Sets a callback that is notified when a previously created {@link Surface} returned by {@link
      * SurfaceProducer#getSurface()} is no longer valid due to being destroyed, or a new surface is
      * now available (after the previous one was destroyed) for rendering.
