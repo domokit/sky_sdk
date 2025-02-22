@@ -1295,6 +1295,9 @@ class AutomatedTestWidgetsFlutterBinding extends TestWidgetsFlutterBinding {
     return AutomatedTestWidgetsFlutterBinding.instance;
   }
 
+  @override
+  SamplingClock get samplingClock =>  _TestSamplingClock(_clock!);
+
   FakeAsync? _currentFakeAsync; // set in runTest; cleared in postTest
   Completer<void>? _pendingAsyncTasks;
 
