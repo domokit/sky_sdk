@@ -132,6 +132,7 @@ class BoxDecoration extends Decoration {
   bool debugAssertIsValid() {
     assert(
       shape != BoxShape.circle || borderRadius == null,
+      'A borderRadius cannot be given when shape is a BoxShape.circle.',
     ); // Can't have a border radius if you're a circle.
     return super.debugAssertIsValid();
   }
@@ -427,7 +428,10 @@ class _BoxDecorationPainter extends BoxPainter {
   void _paintBox(Canvas canvas, Rect rect, Paint paint, TextDirection? textDirection) {
     switch (_decoration.shape) {
       case BoxShape.circle:
-        assert(_decoration.borderRadius == null);
+        assert(
+          _decoration.borderRadius == null,
+          'A borderRadius cannot be given when shape is a BoxShape.circle.',
+        );
         final Offset center = rect.center;
         final double radius = rect.shortestSide / 2.0;
         canvas.drawCircle(center, radius, paint);
@@ -536,7 +540,10 @@ class _BoxDecorationPainter extends BoxPainter {
     Path? clipPath;
     switch (_decoration.shape) {
       case BoxShape.circle:
-        assert(_decoration.borderRadius == null);
+        assert(
+          _decoration.borderRadius == null,
+          'A borderRadius cannot be given when shape is a BoxShape.circle.',
+        );
         final Offset center = rect.center;
         final double radius = rect.shortestSide / 2.0;
         final Rect square = Rect.fromCircle(center: center, radius: radius);
