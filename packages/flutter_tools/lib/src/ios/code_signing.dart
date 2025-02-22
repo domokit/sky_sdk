@@ -87,7 +87,7 @@ final RegExp _securityFindIdentityDeveloperIdentityExtractionPattern = RegExp(
   r'^\s*\d+\).+"(.+Develop(ment|er).+)"$',
 );
 final RegExp _securityFindIdentityCertificateCnExtractionPattern = RegExp(r'.*\(([a-zA-Z0-9]+)\)');
-final RegExp _certificateOrganizationalUnitExtractionPattern = RegExp(r'OU=([a-zA-Z0-9]+)');
+final RegExp _certificateOrganizationalUnitExtractionPattern = RegExp(r'OU[\s]*=[\s]*([a-zA-Z0-9]+)');
 
 /// Given a [BuildableIOSApp], this will try to find valid development code
 /// signing identities in the user's keychain prompting a choice if multiple
