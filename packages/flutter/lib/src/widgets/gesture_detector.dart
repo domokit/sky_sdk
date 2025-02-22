@@ -1703,8 +1703,8 @@ class _DefaultSemanticsGestureDelegate extends SemanticsGestureDelegate {
     }
 
     return () {
-      tap.onTapDown?.call(TapDownDetails());
-      tap.onTapUp?.call(TapUpDetails(kind: PointerDeviceKind.unknown));
+      tap.onTapDown?.call(const TapDownDetails());
+      tap.onTapUp?.call(const TapUpDetails(kind: PointerDeviceKind.unknown));
       tap.onTap?.call();
     };
   }
@@ -1736,8 +1736,8 @@ class _DefaultSemanticsGestureDelegate extends SemanticsGestureDelegate {
         horizontal == null
             ? null
             : (DragUpdateDetails details) {
-              horizontal.onDown?.call(DragDownDetails());
-              horizontal.onStart?.call(DragStartDetails());
+              horizontal.onDown?.call(const DragDownDetails());
+              horizontal.onStart?.call(const DragStartDetails());
               horizontal.onUpdate?.call(details);
               horizontal.onEnd?.call(DragEndDetails(primaryVelocity: 0.0));
             };
@@ -1746,8 +1746,8 @@ class _DefaultSemanticsGestureDelegate extends SemanticsGestureDelegate {
         pan == null
             ? null
             : (DragUpdateDetails details) {
-              pan.onDown?.call(DragDownDetails());
-              pan.onStart?.call(DragStartDetails());
+              pan.onDown?.call(const DragDownDetails());
+              pan.onStart?.call(const DragStartDetails());
               pan.onUpdate?.call(details);
               pan.onEnd?.call(DragEndDetails());
             };
@@ -1772,8 +1772,8 @@ class _DefaultSemanticsGestureDelegate extends SemanticsGestureDelegate {
         vertical == null
             ? null
             : (DragUpdateDetails details) {
-              vertical.onDown?.call(DragDownDetails());
-              vertical.onStart?.call(DragStartDetails());
+              vertical.onDown?.call(const DragDownDetails());
+              vertical.onStart?.call(const DragStartDetails());
               vertical.onUpdate?.call(details);
               vertical.onEnd?.call(DragEndDetails(primaryVelocity: 0.0));
             };
@@ -1782,8 +1782,8 @@ class _DefaultSemanticsGestureDelegate extends SemanticsGestureDelegate {
         pan == null
             ? null
             : (DragUpdateDetails details) {
-              pan.onDown?.call(DragDownDetails());
-              pan.onStart?.call(DragStartDetails());
+              pan.onDown?.call(const DragDownDetails());
+              pan.onStart?.call(const DragStartDetails());
               pan.onUpdate?.call(details);
               pan.onEnd?.call(DragEndDetails());
             };

@@ -262,7 +262,7 @@ void main() {
         () =>
             ScrollDragController(
               delegate: _ScrollActivityDelegate(),
-              details: DragStartDetails(),
+              details: const DragStartDetails(),
             ).dispose(),
         ScrollDragController,
       ),

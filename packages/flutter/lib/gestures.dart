@@ -26,6 +26,7 @@ export 'src/gestures/multidrag.dart';
 export 'src/gestures/multitap.dart';
 export 'src/gestures/pointer_router.dart';
 export 'src/gestures/pointer_signal_resolver.dart';
+export 'src/gestures/positioned_details.dart';
 export 'src/gestures/recognizer.dart';
 export 'src/gestures/resampler.dart';
 export 'src/gestures/scale.dart';
