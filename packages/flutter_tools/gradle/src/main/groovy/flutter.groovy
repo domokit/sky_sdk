@@ -4,6 +4,11 @@
 // found in the LICENSE file.
 
 import com.android.build.OutputFile
+import com.android.build.gradle.api.BaseVariantOutput
+import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import com.android.build.gradle.tasks.PackageAndroidArtifact
+import com.android.build.gradle.tasks.ProcessAndroidResources
+import com.android.builder.model.BuildType
 import com.flutter.gradle.BaseApplicationNameHandler
 import com.flutter.gradle.Deeplink
 import com.flutter.gradle.DependencyVersionChecker
@@ -11,6 +16,8 @@ import com.flutter.gradle.IntentFilterCheck
 import com.flutter.gradle.VersionUtils
 import groovy.json.JsonGenerator
 import groovy.xml.QName
+import org.gradle.api.file.Directory
+
 import java.nio.file.Paths
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.DefaultTask
@@ -467,7 +474,8 @@ class FlutterPlugin implements Plugin<Project> {
     //
     // The output file is parsed and used by devtool.
     private static void addTasksForOutputsAppLinkSettings(Project project) {
-        project.android.applicationVariants.all { variant ->
+        BaseAppModuleExtension android = project.extensions.findByType(BaseAppModuleExtension.class)
+        android.applicationVariants.configureEach { variant ->
             // Warning: The name of this task is used by AndroidBuilder.outputsAppLinkSettings
             project.tasks.register("output${variant.name.capitalize()}AppLinkSettings") {
                 description "stores app links settings for the given build variant of this Android project into a json file."
@@ -485,7 +493,7 @@ class FlutterPlugin implements Plugin<Project> {
                     variant.outputs.configureEach { output ->
                         Object processResources = output.hasProperty(propProcessResourcesProvider) ?
                                 output.processResourcesProvider.get() : output.processResources
-                        def manifest = new XmlParser().parse(processResources.manifestFile)
+                        Node manifest = new XmlParser().parse(processResources.manifestFile)
                         manifest.application.activity.each { activity ->
                             activity."meta-data".each { metadata ->
                                 boolean nameAttribute = metadata.attributes().find { it.key == 'android:name' }?.value == 'flutter_deeplinking_enabled'
@@ -567,11 +575,9 @@ class FlutterPlugin implements Plugin<Project> {
     /**
      * Returns a Flutter build mode suitable for the specified Android buildType.
      *
-     * The BuildType DSL type is not public, and is therefore omitted from the signature.
-     *
      * @return "debug", "profile", or "release" (fall-back).
      */
-    private static String buildModeFor(buildType) {
+    private static String buildModeFor(BuildType buildType) {
         if (buildType.name == "profile") {
             return "profile"
         } else if (buildType.debuggable) {
@@ -586,7 +592,7 @@ class FlutterPlugin implements Plugin<Project> {
      *    1. The embedding
      *    2. libflutter.so
      */
-    void addFlutterDependencies(buildType) {
+    void addFlutterDependencies(BuildType buildType) {
         String flutterBuildMode = buildModeFor(buildType)
         if (!supportsBuildMode(flutterBuildMode)) {
             return
@@ -750,7 +756,7 @@ class FlutterPlugin implements Plugin<Project> {
             }
         }
 
-        Closure addEmbeddingDependencyToPlugin = { buildType ->
+        Closure addEmbeddingDependencyToPlugin = { BuildType buildType ->
             String flutterBuildMode = buildModeFor(buildType)
             // In AGP 3.5, the embedding must be added as an API implementation,
             // so java8 features are desugared against the runtime classpath.
@@ -1124,11 +1130,6 @@ class FlutterPlugin implements Plugin<Project> {
         return false
     }
 
-    private static Task getAssembleTask(variant) {
-        // `assemble` became `assembleProvider` in AGP 3.3.0.
-        return variant.hasProperty("assembleProvider") ? variant.assembleProvider.get() : variant.assemble
-    }
-
     private boolean isFlutterAppProject() {
         return project.android.hasProperty("applicationVariants")
     }
@@ -1289,11 +1290,11 @@ class FlutterPlugin implements Plugin<Project> {
             TaskProvider<Jar> packJniLibsTaskProvider = project.tasks.register("packJniLibs${FLUTTER_BUILD_PREFIX}${variant.name.capitalize()}", Jar) {
                 destinationDirectory = libJar.parentFile
                 archiveFileName = libJar.name
-                dependsOn compileTask
+                dependsOn(compileTask)
                 targetPlatforms.each { targetPlatform ->
                     String abi = PLATFORM_ARCH_MAP[targetPlatform]
                     from("${compileTask.intermediateDir}/${abi}") {
-                        include "*.so"
+                        include("*.so")
                         // Move `app.so` to `lib/<abi>/libapp.so`
                         rename { String filename ->
                             return "lib/${abi}/lib${filename}"
@@ -1304,7 +1305,7 @@ class FlutterPlugin implements Plugin<Project> {
                     String buildDir = "${getFlutterSourceDirectory()}/build"
                     String nativeAssetsDir = "${buildDir}/native_assets/android/jniLibs/lib"
                     from("${nativeAssetsDir}/${abi}") {
-                        include "*.so"
+                        include("*.so")
                         rename { String filename ->
                             return "lib/${abi}/${filename}"
                         }
@@ -1376,14 +1377,15 @@ class FlutterPlugin implements Plugin<Project> {
             return copyFlutterAssetsTask
         } // end def addFlutterDeps
         if (isFlutterAppProject()) {
-            project.android.applicationVariants.all { variant ->
-                Task assembleTask = getAssembleTask(variant)
+            BaseAppModuleExtension android = project.extensions.findByType(BaseAppModuleExtension.class)
+            android.applicationVariants.configureEach { variant ->
+                Task assembleTask = variant.assembleProvider.get()
                 if (!shouldConfigureFlutterTask(assembleTask)) {
                     return
                 }
                 Task copyFlutterAssetsTask = addFlutterDeps(variant)
-                def variantOutput = variant.outputs.first()
-                def processResources = variantOutput.hasProperty(propProcessResourcesProvider) ?
+                BaseVariantOutput variantOutput = variant.outputs.first()
+                ProcessAndroidResources processResources = variantOutput.hasProperty(propProcessResourcesProvider) ?
                     variantOutput.processResourcesProvider.get() : variantOutput.processResources
                 processResources.dependsOn(copyFlutterAssetsTask)
 
@@ -1395,16 +1397,11 @@ class FlutterPlugin implements Plugin<Project> {
                 //   * `abi` can be `armeabi-v7a|arm64-v8a|x86|x86_64` only if the flag `split-per-abi` is set.
                 //   * `flavor-name` is the flavor used to build the app in lower case if the assemble task is called.
                 //   * `build-mode` can be `release|debug|profile`.
-                variant.outputs.all { output ->
+                variant.outputs.each { output ->
                     assembleTask.doLast {
-                        // `packageApplication` became `packageApplicationProvider` in AGP 3.3.0.
-                        def outputDirectory = variant.hasProperty("packageApplicationProvider")
-                            ? variant.packageApplicationProvider.get().outputDirectory
-                            : variant.packageApplication.outputDirectory
-                        //  `outputDirectory` is a `DirectoryProperty` in AGP 4.1.
-                        String outputDirectoryStr = outputDirectory.metaClass.respondsTo(outputDirectory, "get")
-                            ? outputDirectory.get()
-                            : outputDirectory
+                        PackageAndroidArtifact packageApplicationProvider = variant.packageApplicationProvider.get()
+                        Directory outputDirectory = packageApplicationProvider.outputDirectory.get()
+                        String outputDirectoryStr = outputDirectory.toString()
                         String filename = "app"
                         String abi = output.getFilter(OutputFile.ABI)
                         if (abi != null && !abi.isEmpty()) {
@@ -1429,7 +1426,7 @@ class FlutterPlugin implements Plugin<Project> {
             // If support for flavors is added to native assets, then they must only be added
             // once per flavor; see https://github.com/dart-lang/native/issues/1359.
             String nativeAssetsDir = "${project.layout.buildDirectory.get()}/../native_assets/android/jniLibs/lib/"
-            project.android.sourceSets.main.jniLibs.srcDir(nativeAssetsDir)
+            android.sourceSets.main.jniLibs.srcDir(nativeAssetsDir)
             configurePlugins(project)
             detectLowCompileSdkVersionOrNdkVersion()
             return
@@ -1440,11 +1437,12 @@ class FlutterPlugin implements Plugin<Project> {
         assert(appProject != null) : "Project :${hostAppProjectName} doesn't exist. To customize the host app project name, set `flutter.hostAppProjectName=<project-name>` in gradle.properties."
         // Wait for the host app project configuration.
         appProject.afterEvaluate {
+            // AndroidComponentsExtension android = appProject.extensions.findByType(AndroidComponentsExtension.class)
             assert(appProject.android != null)
             project.android.libraryVariants.all { libraryVariant ->
                 Task copyFlutterAssetsTask
                 appProject.android.applicationVariants.all { appProjectVariant ->
-                    Task appAssembleTask = getAssembleTask(appProjectVariant)
+                    Task appAssembleTask = appProjectVariant.assembleProvider.get()
                     if (!shouldConfigureFlutterTask(appAssembleTask)) {
                         return
                     }
