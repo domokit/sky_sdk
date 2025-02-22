@@ -240,6 +240,7 @@ class GestureDetector extends StatelessWidget {
     this.onTapDown,
     this.onTapUp,
     this.onTap,
+    this.onTapMove,
     this.onTapCancel,
     this.onSecondaryTap,
     this.onSecondaryTapDown,
@@ -372,6 +373,15 @@ class GestureDetector extends StatelessWidget {
   ///  * [onTapUp], which is called at the same time but includes details
   ///    regarding the pointer position.
   final GestureTapCallback? onTap;
+
+  /// A pointer that triggered a tap has moved.
+  ///
+  /// This triggers when the pointer moves after the tap gesture has been recognized.
+  ///
+  /// See also:
+  ///
+  ///  * [kPrimaryButton], the button this callback responds to.
+  final GestureTapMoveCallback? onTapMove;
 
   /// The pointer that previously triggered [onTapDown] will not end up causing
   /// a tap.
