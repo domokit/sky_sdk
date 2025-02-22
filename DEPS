@@ -6,6 +6,8 @@
 #
 # When adding a new dependency, please update the top-level .gitignore file
 # to list the dependency's destination directory.
+#
+# This is a release branch.
 
 vars = {
   'chromium_git': 'https://chromium.googlesource.com',
