@@ -1006,15 +1006,15 @@ void main() {
       final Key level4 = UniqueKey();
 
       await tester.pumpWidget(
-        Container(
+        SizedBox(
           key: level0,
-          child: Container(
+          child: SizedBox(
             key: level1,
             child: LookupBoundary(
               key: level2,
-              child: Container(
+              child: SizedBox(
                 key: level3,
-                child: Container(
+                child: SizedBox(
                   key: level4,
                   child: Builder(
                     builder: (BuildContext context) {

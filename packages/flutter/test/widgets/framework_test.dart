@@ -361,8 +361,8 @@ void main() {
       Stack(
         textDirection: TextDirection.ltr,
         children: <Widget>[
-          Container(key: const ValueKey<int>(1), child: SizedBox(key: key)),
-          Container(key: const ValueKey<int>(2), child: Placeholder(key: key)),
+          _Wrapper(key: const ValueKey<int>(1), child: SizedBox(key: key)),
+          _Wrapper(key: const ValueKey<int>(2), child: Placeholder(key: key)),
         ],
       ),
     );
@@ -373,8 +373,8 @@ void main() {
       equalsIgnoringHashCodes(
         'Multiple widgets used the same GlobalKey.\n'
         'The key [GlobalKey#00000 problematic] was used by multiple widgets. The parents of those widgets were:\n'
-        '- Container-[<1>]\n'
-        '- Container-[<2>]\n'
+        '- _Wrapper-[<1>]\n'
+        '- _Wrapper-[<2>]\n'
         'A GlobalKey can only be specified on one widget at a time in the widget tree.',
       ),
     );
@@ -391,9 +391,9 @@ void main() {
         Stack(
           textDirection: TextDirection.ltr,
           children: <Widget>[
-            Container(key: const ValueKey<int>(1)),
-            Container(key: const ValueKey<int>(2)),
-            Container(key: key),
+            const _Wrapper(key: ValueKey<int>(1)),
+            const _Wrapper(key: ValueKey<int>(2)),
+            _Wrapper(key: key),
           ],
         ),
       );
@@ -402,8 +402,8 @@ void main() {
         Stack(
           textDirection: TextDirection.ltr,
           children: <Widget>[
-            Container(key: const ValueKey<int>(1), child: SizedBox(key: key)),
-            Container(key: const ValueKey<int>(2), child: Placeholder(key: key)),
+            _Wrapper(key: const ValueKey<int>(1), child: SizedBox(key: key)),
+            _Wrapper(key: const ValueKey<int>(2), child: Placeholder(key: key)),
           ],
         ),
       );
@@ -415,8 +415,8 @@ void main() {
         equalsIgnoringHashCodes(
           'Multiple widgets used the same GlobalKey.\n'
           'The key [GlobalKey#00000 problematic] was used by multiple widgets. The parents of those widgets were:\n'
-          '- Container-[<1>]\n'
-          '- Container-[<2>]\n'
+          '- _Wrapper-[<1>]\n'
+          '- _Wrapper-[<2>]\n'
           'A GlobalKey can only be specified on one widget at a time in the widget tree.',
         ),
       );
@@ -1219,20 +1219,20 @@ void main() {
       element.toStringDeep(wrapWidth: 200),
       equalsIgnoringHashCodes(
         'Column-[GlobalKey#00000](direction: vertical, mainAxisAlignment: start, crossAxisAlignment: center, renderObject: RenderFlex#00000)\n'
-        '├Container\n'
+        '├Container(state: _ContainerState#00000)\n'
         '│└LimitedBox(maxWidth: 0.0, maxHeight: 0.0, renderObject: RenderLimitedBox#00000 relayoutBoundary=up1)\n'
         '│ └ConstrainedBox(BoxConstraints(biggest), renderObject: RenderConstrainedBox#00000 relayoutBoundary=up2)\n'
-        '├Container-[GlobalKey#00000]\n'
+        '├Container-[GlobalKey#00000](state: _ContainerState#00000)\n'
         '│└LimitedBox(maxWidth: 0.0, maxHeight: 0.0, renderObject: RenderLimitedBox#00000 relayoutBoundary=up1)\n'
         '│ └ConstrainedBox(BoxConstraints(biggest), renderObject: RenderConstrainedBox#00000 relayoutBoundary=up2)\n'
         '├ColoredBox(color: MaterialColor(primary value: ${const Color(0xff4caf50)}), renderObject: _RenderColoredBox#00000 relayoutBoundary=up1)\n'
-        '│└Container\n'
+        '│└Container(state: _ContainerState#00000)\n'
         '│ └LimitedBox(maxWidth: 0.0, maxHeight: 0.0, renderObject: RenderLimitedBox#00000 relayoutBoundary=up2)\n'
         '│  └ConstrainedBox(BoxConstraints(biggest), renderObject: RenderConstrainedBox#00000 relayoutBoundary=up3)\n'
-        '├Container-[GlobalKey#00000]\n'
+        '├Container-[GlobalKey#00000](state: _ContainerState#00000)\n'
         '│└LimitedBox(maxWidth: 0.0, maxHeight: 0.0, renderObject: RenderLimitedBox#00000 relayoutBoundary=up1)\n'
         '│ └ConstrainedBox(BoxConstraints(biggest), renderObject: RenderConstrainedBox#00000 relayoutBoundary=up2)\n'
-        '└Container\n'
+        '└Container(state: _ContainerState#00000)\n'
         ' └LimitedBox(maxWidth: 0.0, maxHeight: 0.0, renderObject: RenderLimitedBox#00000 relayoutBoundary=up1)\n'
         '  └ConstrainedBox(BoxConstraints(biggest), renderObject: RenderConstrainedBox#00000 relayoutBoundary=up2)\n',
       ),
@@ -1607,13 +1607,13 @@ void main() {
     final int initialCount = tester.binding.buildOwner!.globalKeyCount;
     final GlobalKey key1 = GlobalKey();
     final GlobalKey key2 = GlobalKey();
-    await tester.pumpWidget(Container(key: key1));
+    await tester.pumpWidget(SizedBox(key: key1));
     expect(tester.binding.buildOwner!.globalKeyCount, initialCount + 1);
-    await tester.pumpWidget(Container(key: key1, child: Container()));
+    await tester.pumpWidget(SizedBox(key: key1, child: const SizedBox()));
     expect(tester.binding.buildOwner!.globalKeyCount, initialCount + 1);
-    await tester.pumpWidget(Container(key: key1, child: Container(key: key2)));
+    await tester.pumpWidget(SizedBox(key: key1, child: SizedBox(key: key2)));
     expect(tester.binding.buildOwner!.globalKeyCount, initialCount + 2);
-    await tester.pumpWidget(Container());
+    await tester.pumpWidget(const SizedBox());
     expect(tester.binding.buildOwner!.globalKeyCount, initialCount + 0);
   });
 
@@ -1932,6 +1932,21 @@ The findRenderObject() method was called for the following element:
       ),
     );
   });
+}
+
+class _Wrapper extends StatelessWidget {
+  const _Wrapper({super.key, this.child});
+
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (child != null) {
+      return child!;
+    }
+
+    return const SizedBox.shrink();
+  }
 }
 
 class _TestInheritedElement extends InheritedElement {

@@ -205,20 +205,20 @@ void main() {
             '           │ heightFactor: expand\n'
             '           │\n'
             '           └─child: RenderConstrainedBox#49805 relayoutBoundary=up1\n'
-            '             │ creator: SizedBox ← Align ← Padding ← ColoredBox ← '
-            'DecoratedBox ← ConstrainedBox ← Padding ← Container ← Align ← '
-            '_FocusInheritedScope ← _FocusScopeWithExternalFocusNode ← '
-            '_FocusInheritedScope ← ⋯\n'
+            '             │ creator: SizedBox ← KeyedSubtree-[GlobalKey#33333] ← '
+            'Align ← Padding ← ColoredBox ← DecoratedBox ← ConstrainedBox ← '
+            'Padding ← Container ← Align ← _FocusInheritedScope ← '
+            '_FocusScopeWithExternalFocusNode ← ⋯\n'
             '             │ parentData: offset=Offset(14.0, 31.0) (can use size)\n'
             '             │ constraints: BoxConstraints(0.0<=w<=39.0, 0.0<=h<=64.0)\n'
             '             │ size: Size(25.0, 33.0)\n'
             '             │ additionalConstraints: BoxConstraints(w=25.0, h=33.0)\n'
             '             │\n'
             '             └─child: RenderDecoratedBox#7843f\n'
-            '                 creator: DecoratedBox ← SizedBox ← Align ← '
-            'Padding ← ColoredBox ← DecoratedBox ← ConstrainedBox ← Padding ← '
-            'Container ← Align ← _FocusInheritedScope ← '
-            '_FocusScopeWithExternalFocusNode ← ⋯\n'
+            '                 creator: DecoratedBox ← SizedBox ← '
+            'KeyedSubtree-[GlobalKey#33333] ← Align ← Padding ← ColoredBox ← '
+            'DecoratedBox ← ConstrainedBox ← Padding ← Container ← Align ← '
+            '_FocusInheritedScope ← ⋯\n'
             '                 parentData: <none> (can use size)\n'
             '                 constraints: BoxConstraints(w=25.0, h=33.0)\n'
             '                 size: Size(25.0, 33.0)\n'
@@ -326,10 +326,10 @@ void main() {
             '           │ heightFactor: expand\n'
             '           │\n'
             '           └─child: RenderConstrainedBox#16613 relayoutBoundary=up1\n'
-            '             │ creator: SizedBox ← Align ← Padding ← ColoredBox ← '
-            'DecoratedBox ← ConstrainedBox ← Padding ← Container ← Align ← '
-            '_FocusInheritedScope ← _FocusScopeWithExternalFocusNode ← '
-            '_FocusInheritedScope ← ⋯\n'
+            '             │ creator: SizedBox ← KeyedSubtree-[GlobalKey#33333] ← '
+            'Align ← Padding ← ColoredBox ← DecoratedBox ← ConstrainedBox ← '
+            'Padding ← Container ← Align ← _FocusInheritedScope ← '
+            '_FocusScopeWithExternalFocusNode ← ⋯\n'
             '             │ parentData: offset=Offset(14.0, 31.0) (can use size)\n'
             '             │ constraints: BoxConstraints(0.0<=w<=39.0, 0.0<=h<=64.0)\n'
             '             │ layer: null\n'
@@ -338,10 +338,10 @@ void main() {
             '             │ additionalConstraints: BoxConstraints(w=25.0, h=33.0)\n'
             '             │\n'
             '             └─child: RenderDecoratedBox#52bc3\n'
-            '                 creator: DecoratedBox ← SizedBox ← Align ← '
-            'Padding ← ColoredBox ← DecoratedBox ← ConstrainedBox ← Padding ← '
-            'Container ← Align ← _FocusInheritedScope ← '
-            '_FocusScopeWithExternalFocusNode ← ⋯\n'
+            '                 creator: DecoratedBox ← SizedBox ← '
+            'KeyedSubtree-[GlobalKey#33333] ← Align ← Padding ← ColoredBox ← '
+            'DecoratedBox ← ConstrainedBox ← Padding ← Container ← Align ← '
+            '_FocusInheritedScope ← ⋯\n'
             '                 parentData: <none> (can use size)\n'
             '                 constraints: BoxConstraints(w=25.0, h=33.0)\n'
             '                 layer: null\n'
@@ -476,10 +476,10 @@ void main() {
             '           │\n'
             '           └─child: RenderConstrainedBox#81408 relayoutBoundary=up1\n'
             '             │ needsCompositing: false\n'
-            '             │ creator: SizedBox ← Align ← Padding ← ColoredBox ← '
-            'DecoratedBox ← ConstrainedBox ← Padding ← Container ← Align ← '
-            '_FocusInheritedScope ← _FocusScopeWithExternalFocusNode ← '
-            '_FocusInheritedScope ← ⋯\n'
+            '             │ creator: SizedBox ← KeyedSubtree-[GlobalKey#33333] ← '
+            'Align ← Padding ← ColoredBox ← DecoratedBox ← ConstrainedBox ← '
+            'Padding ← Container ← Align ← _FocusInheritedScope ← '
+            '_FocusScopeWithExternalFocusNode ← ⋯\n'
             '             │ parentData: offset=Offset(14.0, 31.0) (can use size)\n'
             '             │ constraints: BoxConstraints(0.0<=w<=39.0, 0.0<=h<=64.0)\n'
             '             │ layer: null\n'
@@ -491,10 +491,10 @@ void main() {
             '             │\n'
             '             └─child: RenderDecoratedBox#b5693\n'
             '                 needsCompositing: false\n'
-            '                 creator: DecoratedBox ← SizedBox ← Align ← '
-            'Padding ← ColoredBox ← DecoratedBox ← ConstrainedBox ← Padding ← '
-            'Container ← Align ← _FocusInheritedScope ← '
-            '_FocusScopeWithExternalFocusNode ← ⋯\n'
+            '                 creator: DecoratedBox ← SizedBox ← '
+            'KeyedSubtree-[GlobalKey#33333] ← Align ← Padding ← ColoredBox ← '
+            'DecoratedBox ← ConstrainedBox ← Padding ← Container ← Align ← '
+            '_FocusInheritedScope ← ⋯\n'
             '                 parentData: <none> (can use size)\n'
             '                 constraints: BoxConstraints(w=25.0, h=33.0)\n'
             '                 layer: null\n'
@@ -754,6 +754,32 @@ void main() {
       matchesGoldenFile('container.clipBehaviour.with.shadow.png'),
     );
   });
+
+  testWidgets('Container preserves child state despite internal structural changes', (
+    WidgetTester tester,
+  ) async {
+    const Widget statefulChild = _StatefulChild();
+
+    final Finder buttonFinder = find.byType(ElevatedButton);
+
+    await tester.pumpWidget(
+      Container(alignment: Alignment.center, color: Colors.red, child: statefulChild),
+    );
+
+    expect(find.text('0'), findsOneWidget);
+
+    await tester.tap(buttonFinder);
+    await tester.pump();
+    expect(find.text('1'), findsOneWidget);
+
+    await tester.pumpWidget(Container(alignment: Alignment.center, child: statefulChild));
+
+    expect(find.text('1'), findsOneWidget);
+
+    await tester.tap(buttonFinder);
+    await tester.pump();
+    expect(find.text('2'), findsOneWidget);
+  });
 }
 
 class _MockPaintingContext extends Fake implements PaintingContext {
@@ -771,4 +797,35 @@ class _MockCanvas extends Fake implements Canvas {
 
   @override
   void drawRect(Rect rect, Paint paint) {}
+}
+
+class _StatefulChild extends StatefulWidget {
+  const _StatefulChild();
+
+  @override
+  State<_StatefulChild> createState() => _StatefulChildState();
+}
+
+class _StatefulChildState extends State<_StatefulChild> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text('$_count'),
+          ElevatedButton(
+            onPressed: () {
+              setState(() => _count += 1);
+            },
+            child: const Text('Increment'),
+          ),
+        ],
+      ),
+    );
+  }
 }
