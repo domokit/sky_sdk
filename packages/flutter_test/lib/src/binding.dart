@@ -1361,7 +1361,7 @@ class AutomatedTestWidgetsFlutterBinding extends TestWidgetsFlutterBinding {
     final Zone realAsyncZone = Zone.current.fork(
       specification: ZoneSpecification(
         scheduleMicrotask: (Zone self, ZoneDelegate parent, Zone zone, void Function() f) {
-          Zone.root.scheduleMicrotask(f);
+          _rootDelegate.scheduleMicrotask(zone, f);
         },
         createTimer: (
           Zone self,
@@ -1370,7 +1370,7 @@ class AutomatedTestWidgetsFlutterBinding extends TestWidgetsFlutterBinding {
           Duration duration,
           void Function() f,
         ) {
-          return Zone.root.createTimer(duration, f);
+          return _rootDelegate.createTimer(zone, duration, f);
         },
         createPeriodicTimer: (
           Zone self,
@@ -1379,7 +1379,7 @@ class AutomatedTestWidgetsFlutterBinding extends TestWidgetsFlutterBinding {
           Duration period,
           void Function(Timer timer) f,
         ) {
-          return Zone.root.createPeriodicTimer(period, f);
+          return _rootDelegate.createPeriodicTimer(zone, period, f);
         },
       ),
     );
@@ -1440,6 +1440,26 @@ class AutomatedTestWidgetsFlutterBinding extends TestWidgetsFlutterBinding {
     _currentFakeAsync!.flushMicrotasks();
     handleDrawFrame();
     _currentFakeAsync!.flushMicrotasks();
+  }
+
+  /// The [ZoneDelegate] for [Zone.root].
+  ///
+  /// Used to schedule (real) microtasks and timers in the root zone,
+  /// to be run in the correct zone.
+  static final ZoneDelegate _rootDelegate = _captureRootZoneDelegate();
+
+  /// Hack to extract the [ZoneDelegate] for [Zone.root].
+  static ZoneDelegate _captureRootZoneDelegate() {
+    final Zone captureZone = Zone.root.fork(
+      specification: ZoneSpecification(
+        run: <R>(Zone self, ZoneDelegate parent, Zone zone, R Function() f) {
+          return parent as R;
+        },
+      ),
+    );
+    // The `_captureRootZoneDelegate` argument just happens to be a constant
+    // function with the necessary type. It's not called recursively.
+    return captureZone.run<ZoneDelegate>(_captureRootZoneDelegate);
   }
 
   @override
