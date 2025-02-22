@@ -9,7 +9,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'dart:io' show Platform;
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,28 +17,39 @@ import 'package:integration_test/integration_test.dart';
 
 import 'package:integration_test_example/main.dart' as app;
 
+import 'package:path/path.dart' as p;
+
 void main() {
   final IntegrationTestWidgetsFlutterBinding binding =
       IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('verify text', (WidgetTester tester) async {
-    // Build our app.
-    app.main();
+  String _adbPath() {
+  final String? androidHome =
+      Platform.environment['ANDROID_HOME'] ?? Platform.environment['ANDROID_SDK_ROOT'];
+  if (androidHome == null) {
+    return 'adb';
+  } else {
+    return p.join(androidHome, 'platform-tools', 'adb');
+  }
+}
 
-    // Pump a frame.
-    await tester.pumpAndSettle();
-
-    // Verify that platform version is retrieved.
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is Text && widget.data!.startsWith('Platform: ${Platform.operatingSystem}'),
-      ),
-      findsOneWidget,
-    );
-  });
-
+  // CAMILLE: would we need a driver?
   testWidgets('verify screenshot', (WidgetTester tester) async {
+    /////// SANITY CHECK:
+    /////////////// CAMILLE: this will not work because test runs on device
+    // print('>>>> CAMILLE adb path: ${_adbPath()}'); // equals 'adb' because androidHome is null
+    // final Process run = await Process.start(_adbPath(), const <String>[
+    //     'shell',
+    //     'screencap',
+    //   ]);
+    // await run.exitCode;
+    ////////////////////////////////////////////////////////////////////////
+    // CAMILLE: we may be able to call screncap without adb shell, adb shell means run this command on the device
+    // if dart:ui is used it has to be on device (flutter, flutter_test -- flutter_tester device, integration_test) (so if any are in transitive deps, you know what it is)
+    // flutter driver is a termainl, we know what vm service is being used on the app so let's connect to it and do stuff, so when we see FlutterDriver.connect() all this is doing
+    // is looking at env var (FLUTTER_VM_URL) and connecting to app via VM service protocol. so really flutter_driver test is a dart script and you are running from host machine.
+    // there, adb is available. platform channels or ffi or dart:ui, then it has to be integration_test, flutter, flutter_test (things running on device)
+
     // Build our app.
     app.main();
 

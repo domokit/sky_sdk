@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 
 /** IntegrationTestPlugin */
 public class IntegrationTestPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware {
+  // CAMILLE: this is the method channel used to communicate with Java screenshot code
   private static final String CHANNEL = "plugins.flutter.io/integration_test";
   private static final SettableFuture<Map<String, String>> testResultsSettable =
       SettableFuture.create();
@@ -107,6 +108,7 @@ public class IntegrationTestPlugin implements MethodCallHandler, FlutterPlugin, 
           result.error("Could not capture screenshot", "Activity not initialized", null);
           return;
         }
+        // CAMILLE: the current path because hasInstrumentation == false
         FlutterDeviceScreenshot.captureView(flutterActivity, methodChannel, result);
         return;
       default:

@@ -32,6 +32,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.StringBuilder;
 
+import android.content.ContextWrapper;
+import java.io.FileOutputStream;
+import 	java.io.File;
+import android.content.Context;
+import io.flutter.Log;
+import android.os.Environment;
+
 /**
  * FlutterDeviceScreenshot is a utility class that allows to capture a screenshot
  * that includes both Android views and the Flutter UI.
@@ -76,6 +83,7 @@ class FlutterDeviceScreenshot {
     // However, Flutter adds test dependencies to release builds.
     // As a result, disable screenshots with instrumentation until the issue is fixed.
     // https://github.com/flutter/flutter/issues/56591
+    // CAMILLE: this is what John was trying to enable in https://github.com/flutter/flutter/pull/159910?
     return false;
   }
 
@@ -85,6 +93,7 @@ class FlutterDeviceScreenshot {
    * @return byte array containing the screenshot.
    */
   static byte[] captureWithUiAutomation() throws IOException {
+    // CAMILLE: this is where we could implement screenshots with what John was implementing?
     return new byte[0];
   }
 
@@ -101,6 +110,8 @@ class FlutterDeviceScreenshot {
   static void convertFlutterSurfaceToImage(@NonNull Activity activity) {
     final FlutterView flutterView = getFlutterView(activity);
     if (flutterView != null && !flutterSurfaceConvertedToImage) {
+      // CAMILLE: this call ensures an FlutterImageView is ready to capture screenshot.
+      // See FlutterImageView
       flutterView.convertToImageView();
       flutterSurfaceConvertedToImage = true;
     }
@@ -135,6 +146,7 @@ class FlutterDeviceScreenshot {
    * @param methodChannel the method channel to call into Dart.
    * @param result the result for the method channel that will contain the byte array.
    */
+  // CAMILLE: how capturing screenshots currently works
   static void captureView(
       @NonNull Activity activity, @NonNull MethodChannel methodChannel, @NonNull Result result) {
     final FlutterView flutterView = getFlutterView(activity);
@@ -190,6 +202,7 @@ class FlutterDeviceScreenshot {
       @NonNull Handler mainHandler,
       @NonNull FlutterView view,
       @NonNull Result result) {
+    // CAMILLE: how a "screenshot" is "taken". Implemented in FlutterView
     final boolean acquired = view.acquireLatestImageViewFrame();
     // The next frame may already have already been committed.
     // The next frame is guaranteed to have the Flutter image.
@@ -223,6 +236,30 @@ class FlutterDeviceScreenshot {
               flutterView.getWidth(), flutterView.getHeight(), Bitmap.Config.RGB_565);
       final Canvas canvas = new Canvas(bitmap);
       flutterView.draw(canvas);
+      final Activity flutterActivity = (Activity) flutterView.getContext();
+
+      // TODO(camsim99): try saving image to check out what is going on.
+      ContextWrapper cw = new ContextWrapper(flutterActivity.getApplicationContext());
+      // path to /data/data/yourapp/app_data/imageDir
+      File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+      // Create imageDir
+      File mypath=new File(directory,"camille_image_1.jpg");
+
+      FileOutputStream fos = null;
+      try {
+          fos = new FileOutputStream(mypath);
+      // Use the compress method on the BitMap object to write image to the OutputStream
+          bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+      } catch (Exception e) {
+            e.printStackTrace();
+      } finally {
+          try {
+            fos.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+      }
+      Log.e("CAMILLE: image directory:", directory.getAbsolutePath());
 
       final ByteArrayOutputStream output = new ByteArrayOutputStream();
       bitmap.compress(Bitmap.CompressFormat.PNG, /*quality=*/ 100, output);
@@ -233,6 +270,31 @@ class FlutterDeviceScreenshot {
     final Bitmap bitmap =
         Bitmap.createBitmap(
             flutterView.getWidth(), flutterView.getHeight(), Bitmap.Config.ARGB_8888);
+    final Activity flutterActivity = (Activity) flutterView.getContext();
+
+      // TODO(camsim99): try saving image to check out what is going on.
+      ContextWrapper cw = new ContextWrapper(flutterActivity.getApplicationContext());
+      // path to /data/data/yourapp/app_data/imageDir
+      // File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+      // Create imageDir
+      File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+      File mypath=new File(directory,"camille_image_2.png");
+
+      FileOutputStream fos = null;
+      try {
+          fos = new FileOutputStream(mypath);
+      // Use the compress method on the BitMap object to write image to the OutputStream
+          bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+      } catch (Exception e) {
+            e.printStackTrace();
+      } finally {
+          try {
+            fos.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+      }
+      Log.e("CAMILLE: image directory:", directory.getAbsolutePath());
 
     final int[] flutterViewLocation = new int[2];
     flutterView.getLocationInWindow(flutterViewLocation);
@@ -246,7 +308,6 @@ class FlutterDeviceScreenshot {
             flutterViewLeft + flutterView.getWidth(),
             flutterViewTop + flutterView.getHeight());
 
-    final Activity flutterActivity = (Activity) flutterView.getContext();
     PixelCopy.request(
         flutterActivity.getWindow(),
         flutterViewRect,

@@ -863,6 +863,7 @@ class AndroidDevice extends Device {
   @override
   bool get supportsScreenshot => true;
 
+  // CAMILLE: `flutter screenshot` takes exact screenshot that we want
   @override
   Future<void> takeScreenshot(File outputFile) async {
     const String remotePath = '/data/local/tmp/flutter_screenshot.png';
