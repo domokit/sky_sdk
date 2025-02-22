@@ -89,4 +89,59 @@ void main() {
       ),
     );
   });
+
+  test('Compute intrinsic height uses constraints for RenderConstrainedBox', () {
+    const double boxSize = 50.0;
+    final RenderConstrainedBox renderConstrainedBox = RenderConstrainedBox(
+      additionalConstraints: const BoxConstraints(maxWidth: 200),
+      child: RenderWrap(
+        children: <RenderBox>[
+          for (int i = 0; i < 10; i++)
+            RenderConstrainedBox(
+              additionalConstraints: const BoxConstraints(minWidth: boxSize, minHeight: boxSize),
+            ),
+        ],
+      ),
+    );
+
+    expect(renderConstrainedBox.computeMaxIntrinsicHeight(double.infinity), 3 * boxSize);
+    expect(renderConstrainedBox.computeMaxIntrinsicHeight(600), 3 * boxSize);
+    expect(renderConstrainedBox.computeMaxIntrinsicHeight(200), 3 * boxSize);
+    expect(renderConstrainedBox.computeMaxIntrinsicHeight(150), 4 * boxSize);
+    expect(renderConstrainedBox.computeMaxIntrinsicHeight(100), 5 * boxSize);
+
+    expect(renderConstrainedBox.computeMinIntrinsicHeight(double.infinity), 3 * boxSize);
+    expect(renderConstrainedBox.computeMinIntrinsicHeight(600), 3 * boxSize);
+    expect(renderConstrainedBox.computeMinIntrinsicHeight(200), 3 * boxSize);
+    expect(renderConstrainedBox.computeMinIntrinsicHeight(150), 4 * boxSize);
+    expect(renderConstrainedBox.computeMinIntrinsicHeight(100), 5 * boxSize);
+  });
+
+  test('Compute intrinsic width uses constraints for RenderConstrainedBox', () {
+    const double boxSize = 50.0;
+    final RenderConstrainedBox renderConstrainedBox = RenderConstrainedBox(
+      additionalConstraints: const BoxConstraints(maxHeight: 200),
+      child: RenderWrap(
+        direction: Axis.vertical,
+        children: <RenderBox>[
+          for (int i = 0; i < 10; i++)
+            RenderConstrainedBox(
+              additionalConstraints: const BoxConstraints(minWidth: boxSize, minHeight: boxSize),
+            ),
+        ],
+      ),
+    );
+
+    expect(renderConstrainedBox.computeMaxIntrinsicWidth(double.infinity), 3 * boxSize);
+    expect(renderConstrainedBox.computeMaxIntrinsicWidth(600), 3 * boxSize);
+    expect(renderConstrainedBox.computeMaxIntrinsicWidth(200), 3 * boxSize);
+    expect(renderConstrainedBox.computeMaxIntrinsicWidth(150), 4 * boxSize);
+    expect(renderConstrainedBox.computeMaxIntrinsicWidth(100), 5 * boxSize);
+
+    expect(renderConstrainedBox.computeMinIntrinsicWidth(double.infinity), 3 * boxSize);
+    expect(renderConstrainedBox.computeMinIntrinsicWidth(600), 3 * boxSize);
+    expect(renderConstrainedBox.computeMinIntrinsicWidth(200), 3 * boxSize);
+    expect(renderConstrainedBox.computeMinIntrinsicWidth(150), 4 * boxSize);
+    expect(renderConstrainedBox.computeMinIntrinsicWidth(100), 5 * boxSize);
+  });
 }
