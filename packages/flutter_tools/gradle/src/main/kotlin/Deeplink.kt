@@ -4,6 +4,10 @@
 
 package com.flutter.gradle
 
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+
 // TODO(gmackall): Identify which of these can be val instead of var.
 class Deeplink(var scheme: String?, var host: String?, var path: String?, var intentFilterCheck: IntentFilterCheck?) {
     // TODO(gmackall): This behavior was kept identical to the original Groovy behavior as part of
@@ -23,5 +27,14 @@ class Deeplink(var scheme: String?, var host: String?, var path: String?, var in
 
     override fun hashCode(): Int {
         return scheme.hashCode() + host.hashCode() + path.hashCode()
+    }
+
+    fun toJson(): JsonObject {
+        return buildJsonObject {
+            put("scheme", scheme)
+            put("host", host)
+            put("path", path)
+            intentFilterCheck?.let { put("intentFilterCheck", it.toJson()) }
+        }
     }
 }

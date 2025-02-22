@@ -1,3 +1,4 @@
 gradlew
 gradlew.bat
 gradle/**
+local.properties
