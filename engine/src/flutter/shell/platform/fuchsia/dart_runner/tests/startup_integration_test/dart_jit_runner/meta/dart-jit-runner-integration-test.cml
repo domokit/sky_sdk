@@ -19,8 +19,6 @@
             // Offer capabilities needed by components in this test realm.
             // Keep it minimal, describe only what's actually needed.
             protocol: [
-                "fuchsia.inspect.InspectSink",
-                "fuchsia.logger.LogSink",
                 "fuchsia.sysmem.Allocator",
                 "fuchsia.sysmem2.Allocator",
                 "fuchsia.tracing.provider.Registry",

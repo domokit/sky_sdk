@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file
 {
+    include: [ "syslog/client.shard.cml", "inspect/client.shard.cml" ],
     use: [
         // This is used by the Dart VM to communicate from Dart code to C++ code.
         {
@@ -33,9 +34,7 @@
                 "fuchsia.device.NameProvider",
                 "fuchsia.feedback.CrashReporter",
                 "fuchsia.fonts.Provider",
-                "fuchsia.inspect.InspectSink", // Copied from inspect/client.shard.cml.
                 "fuchsia.intl.PropertyProvider",
-                "fuchsia.logger.LogSink", // Copied from syslog/client.shard.cml.
                 "fuchsia.media.ProfileProvider",
                 "fuchsia.memorypressure.Provider",
                 "fuchsia.scheduler.RoleManager",

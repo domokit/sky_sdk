@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 {
-    include: [ "syslog/client.shard.cml" ],
+    include: [ "syslog/client.shard.cml", "inspect/client.shard.cml" ],
     program: {
         data: "data/dart-aot-echo-server",
         runner: "dart_aot_runner",
