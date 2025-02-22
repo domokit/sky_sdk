@@ -9,6 +9,7 @@
 #include "flutter/impeller/geometry/path.h"
 #include "flutter/impeller/geometry/rect.h"
 #include "flutter/impeller/geometry/round_rect.h"
+#include "flutter/impeller/geometry/round_superellipse.h"
 #include "flutter/impeller/geometry/rstransform.h"
 #include "flutter/impeller/geometry/scalar.h"
 
@@ -32,6 +33,7 @@ using DlISize = impeller::ISize32;
 using DlRect = impeller::Rect;
 using DlIRect = impeller::IRect32;
 using DlRoundRect = impeller::RoundRect;
+using DlRoundSuperellipse = impeller::RoundSuperellipse;
 using DlRoundingRadii = impeller::RoundingRadii;
 using DlMatrix = impeller::Matrix;
 using DlQuad = impeller::Quad;
@@ -201,6 +203,16 @@ inline const SkRRect ToSkRRect(const DlRoundRect& round_rect) {
   SkRRect rrect;
   rrect.setRectRadii(ToSkRect(round_rect.GetBounds()), radii);
   return rrect;
+};
+
+// Approximates a rounded superellipse with a round rectangle to the
+// best practical accuracy.
+//
+// Skia does not support rounded superellipses directly, so rendering
+// `DlRoundSuperellipses` on Skia requires falling back to RRect.
+inline constexpr const SkRRect ToApproximateSkRRect(
+    const DlRoundSuperellipse& rse) {
+  return ToSkRRect(rse.ToApproximateRoundRect());
 };
 
 inline constexpr SkMatrix ToSkMatrix(const DlMatrix& matrix) {

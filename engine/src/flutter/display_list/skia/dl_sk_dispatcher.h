@@ -56,6 +56,9 @@ class DlSkCanvasDispatcher : public virtual DlOpReceiver,
   void clipRoundRect(const DlRoundRect& rrect,
                      DlClipOp clip_op,
                      bool is_aa) override;
+  void clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             DlClipOp clip_op,
+                             bool is_aa) override;
   void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override;
 
   void drawPaint() override;
@@ -71,6 +74,7 @@ class DlSkCanvasDispatcher : public virtual DlOpReceiver,
   void drawRoundRect(const DlRoundRect& rrect) override;
   void drawDiffRoundRect(const DlRoundRect& outer,
                          const DlRoundRect& inner) override;
+  void drawRoundSuperellipse(const DlRoundSuperellipse& rse) override;
   void drawPath(const DlPath& path) override;
   void drawArc(const DlRect& bounds,
                DlScalar start,

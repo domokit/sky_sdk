@@ -4,5 +4,12 @@
   "reorderItemUp": "위로 이동",
   "reorderItemDown": "아래로 이동",
   "reorderItemLeft": "왼쪽으로 이동",
-  "reorderItemRight": "오른쪽으로 이동"
+  "reorderItemRight": "오른쪽으로 이동",
+  "copyButtonLabel": "복사",
+  "cutButtonLabel": "잘라내기",
+  "lookUpButtonLabel": "찾기",
+  "searchWebButtonLabel": "웹 검색",
+  "shareButtonLabel": "공유",
+  "pasteButtonLabel": "붙여넣기",
+  "selectAllButtonLabel": "전체 선택"
 }

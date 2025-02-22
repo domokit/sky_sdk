@@ -4,5 +4,12 @@
   "reorderItemUp": "माथि सार्नुहोस्",
   "reorderItemDown": "तल सार्नुहोस्",
   "reorderItemLeft": "बायाँ सार्नुहोस्",
-  "reorderItemRight": "दायाँ सार्नुहोस्"
+  "reorderItemRight": "दायाँ सार्नुहोस्",
+  "copyButtonLabel": "कपी गर्नुहोस्",
+  "cutButtonLabel": "काट्नुहोस्",
+  "lookUpButtonLabel": "माथितिर हेर्नुहोस्",
+  "searchWebButtonLabel": "वेबमा खोज्नुहोस्",
+  "shareButtonLabel": "सेयर गर्नुहोस्",
+  "pasteButtonLabel": "टाँस्नुहोस्",
+  "selectAllButtonLabel": "सबै बटनहरू चयन गर्नुहोस्"
 }

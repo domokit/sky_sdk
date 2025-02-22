@@ -17,6 +17,7 @@
 #include "flutter/lib/ui/painting/path.h"
 #include "flutter/lib/ui/painting/picture.h"
 #include "flutter/lib/ui/painting/rrect.h"
+#include "flutter/lib/ui/painting/rsuperellipse.h"
 #include "flutter/lib/ui/painting/shader.h"
 #include "third_party/tonic/typed_data/typed_list.h"
 
@@ -59,6 +60,10 @@ class SceneBuilder : public RefCountedDartWrappable<SceneBuilder> {
                      const RRect& rrect,
                      int clip_behavior,
                      const fml::RefPtr<EngineLayer>& old_layer);
+  void pushClipRSuperellipse(Dart_Handle layer_handle,
+                             const RSuperellipse& rse,
+                             int clip_behavior,
+                             const fml::RefPtr<EngineLayer>& old_layer);
   void pushClipPath(Dart_Handle layer_handle,
                     const CanvasPath* path,
                     int clip_behavior,

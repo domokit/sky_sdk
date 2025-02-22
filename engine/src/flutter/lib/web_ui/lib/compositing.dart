@@ -18,6 +18,8 @@ abstract class ClipRectEngineLayer implements EngineLayer {}
 
 abstract class ClipRRectEngineLayer implements EngineLayer {}
 
+abstract class ClipRSuperellipseEngineLayer implements EngineLayer {}
+
 abstract class ClipPathEngineLayer implements EngineLayer {}
 
 abstract class OpacityEngineLayer implements EngineLayer {}
@@ -44,6 +46,11 @@ abstract class SceneBuilder {
     RRect rrect, {
     required Clip clipBehavior,
     ClipRRectEngineLayer? oldLayer,
+  });
+  ClipRSuperellipseEngineLayer pushClipRSuperellipse(
+    RSuperellipse rse, {
+    required Clip clipBehavior,
+    ClipRSuperellipseEngineLayer? oldLayer,
   });
   ClipPathEngineLayer pushClipPath(
     Path path, {

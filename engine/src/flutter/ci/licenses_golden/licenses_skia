@@ -1,4 +1,4 @@
-Signature: 348474501b1c43ba34991483244e153c
+Signature: c14fc194a919c2ed0320535f01ffe8b7
 
 ====================================================================================================
 LIBRARY: etc1
@@ -398,7 +398,9 @@ FILE: ../../../flutter/third_party/skia/modules/pathkit/perf/pathops.bench.js
 FILE: ../../../flutter/third_party/skia/modules/pathkit/perf/perfReporter.js
 FILE: ../../../flutter/third_party/skia/modules/skparagraph/test.html
 FILE: ../../../flutter/third_party/skia/package-lock.json
+FILE: ../../../flutter/third_party/skia/relnotes/codec_is_animated_api.md
 FILE: ../../../flutter/third_party/skia/relnotes/graphiteincludes.md
+FILE: ../../../flutter/third_party/skia/relnotes/pdf_jpeg.md
 FILE: ../../../flutter/third_party/skia/relnotes/serializedkeyprecompilation.md
 FILE: ../../../flutter/third_party/skia/src/gpu/gpu_workaround_list.txt
 FILE: ../../../flutter/third_party/skia/src/ports/fontations/Cargo.toml
@@ -9478,6 +9480,7 @@ ORIGIN: ../../../flutter/third_party/skia/gm/pathopsblend.cpp + ../../../flutter
 ORIGIN: ../../../flutter/third_party/skia/gm/rendertomipmappedyuvimageplanes.cpp + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/core/SkArc.h + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/core/SkFourByteTag.h + ../../../flutter/third_party/skia/LICENSE
+ORIGIN: ../../../flutter/third_party/skia/include/docs/SkPDFJpegHelpers.h + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/gpu/ganesh/gl/GrGLMakeWebGLInterface.h + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.h + ../../../flutter/third_party/skia/LICENSE
 ORIGIN: ../../../flutter/third_party/skia/include/gpu/ganesh/gl/ios/GrGLMakeIOSInterface.h + ../../../flutter/third_party/skia/LICENSE
@@ -9609,6 +9612,7 @@ FILE: ../../../flutter/third_party/skia/gm/pathopsblend.cpp
 FILE: ../../../flutter/third_party/skia/gm/rendertomipmappedyuvimageplanes.cpp
 FILE: ../../../flutter/third_party/skia/include/core/SkArc.h
 FILE: ../../../flutter/third_party/skia/include/core/SkFourByteTag.h
+FILE: ../../../flutter/third_party/skia/include/docs/SkPDFJpegHelpers.h
 FILE: ../../../flutter/third_party/skia/include/gpu/ganesh/gl/GrGLMakeWebGLInterface.h
 FILE: ../../../flutter/third_party/skia/include/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.h
 FILE: ../../../flutter/third_party/skia/include/gpu/ganesh/gl/ios/GrGLMakeIOSInterface.h

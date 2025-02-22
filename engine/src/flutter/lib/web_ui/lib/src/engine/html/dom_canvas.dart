@@ -45,6 +45,11 @@ class DomCanvas extends EngineCanvas with SaveElementStackTracking {
   }
 
   @override
+  void clipRSuperellipse(ui.RSuperellipse rse, {bool doAntiAlias = true}) {
+    throw UnimplementedError();
+  }
+
+  @override
   void clipPath(ui.Path path) {
     throw UnimplementedError();
   }

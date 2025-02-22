@@ -889,23 +889,95 @@ if (enable_unittests) {
     binary = "dart_utils_unittests"
   }
 
+  fuchsia_test_archive("assets_unittests") {
+    deps = [ "//flutter/assets:assets_unittests" ]
+    gen_cml_file = true
+    binary = "assets_unittests"
+  }
+
+  fuchsia_test_archive("client_wrapper_unittests") {
+    deps = [
+      "//flutter/shell/platform/common/client_wrapper:client_wrapper_unittests",
+    ]
+    gen_cml_file = true
+    binary = "client_wrapper_unittests"
+  }
+
+  fuchsia_test_archive("common_cpp_core_unittests") {
+    deps = [ "//flutter/shell/platform/common:common_cpp_core_unittests" ]
+    gen_cml_file = true
+    binary = "common_cpp_core_unittests"
+  }
+
+  fuchsia_test_archive("common_cpp_unittests") {
+    deps = [ "//flutter/shell/platform/common:common_cpp_unittests" ]
+    gen_cml_file = true
+    binary = "common_cpp_unittests"
+  }
+
+  fuchsia_test_archive("dart_plugin_registrant_unittests") {
+    deps = [ "//flutter/runtime:dart_plugin_registrant_unittests" ]
+    gen_cml_file = true
+    binary = "dart_plugin_registrant_unittests"
+  }
+
+  fuchsia_test_archive("no_dart_plugin_registrant_unittests") {
+    deps = [ "//flutter/runtime:no_dart_plugin_registrant_unittests" ]
+    gen_cml_file = true
+    binary = "no_dart_plugin_registrant_unittests"
+  }
+
+  fuchsia_test_archive("embedder_a11y_unittests") {
+    deps = [ "//flutter/shell/platform/embedder:embedder_a11y_unittests" ]
+    gen_cml_file = true
+    binary = "embedder_a11y_unittests"
+  }
+
+  fuchsia_test_archive("embedder_proctable_unittests") {
+    deps = [ "//flutter/shell/platform/embedder:embedder_proctable_unittests" ]
+    gen_cml_file = true
+    binary = "embedder_proctable_unittests"
+  }
+
+  fuchsia_test_archive("testing_unittests") {
+    deps = [ "//flutter/testing:testing_unittests" ]
+    gen_cml_file = true
+    binary = "testing_unittests"
+  }
+
+  fuchsia_test_archive("tonic_unittests") {
+    deps = [ "//flutter/third_party/tonic/tests:tonic_unittests" ]
+    gen_cml_file = true
+    binary = "tonic_unittests"
+  }
+
   # When adding a new dep here, please also ensure the dep is added to
   # testing/fuchsia/test_suites.yaml.
   group("tests") {
     testonly = true
 
     deps = [
+      ":assets_unittests",
+      ":client_wrapper_unittests",
+      ":common_cpp_core_unittests",
+      ":common_cpp_unittests",
+      ":dart_plugin_registrant_unittests",
       ":dart_utils_tests",
       ":display_list_render_tests",
       ":display_list_tests",
+      ":embedder_a11y_unittests",
+      ":embedder_proctable_unittests",
       ":embedder_tests",
       ":flow_tests",
       ":flutter_runner_tests",
       ":flutter_runner_tzdata_missing_tests",
       ":flutter_runner_tzdata_tests",
       ":fml_tests",
+      ":no_dart_plugin_registrant_unittests",
       ":runtime_tests",
       ":shell_tests",
+      ":testing_unittests",
+      ":tonic_unittests",
       ":txt_tests",
       ":ui_tests",
       "tests/integration",

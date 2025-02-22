@@ -127,6 +127,15 @@ class LayerSceneBuilder implements ui.SceneBuilder {
   }
 
   @override
+  ClipRSuperellipseEngineLayer pushClipRSuperellipse(
+    ui.RSuperellipse rse, {
+    ui.Clip? clipBehavior,
+    ui.EngineLayer? oldLayer,
+  }) {
+    return pushLayer<ClipRSuperellipseEngineLayer>(ClipRSuperellipseEngineLayer(rse, clipBehavior));
+  }
+
+  @override
   ClipRectEngineLayer pushClipRect(
     ui.Rect rect, {
     ui.Clip clipBehavior = ui.Clip.antiAlias,

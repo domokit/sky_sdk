@@ -4,5 +4,12 @@
   "reorderItemUp": "上移",
   "reorderItemDown": "下移",
   "reorderItemLeft": "左移",
-  "reorderItemRight": "右移"
+  "reorderItemRight": "右移",
+  "copyButtonLabel": "复制",
+  "cutButtonLabel": "剪切",
+  "lookUpButtonLabel": "查询",
+  "searchWebButtonLabel": "搜索",
+  "shareButtonLabel": "分享",
+  "pasteButtonLabel": "粘贴",
+  "selectAllButtonLabel": "全选"
 }

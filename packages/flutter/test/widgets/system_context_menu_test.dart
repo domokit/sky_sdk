@@ -6,7 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
+
+import '../system_context_menu_utils.dart';
 
 void main() {
   final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
@@ -131,6 +132,267 @@ void main() {
       expect(state.showToolbar(), true);
       await tester.pump();
       expect(find.byType(SystemContextMenu), findsOneWidget);
+
+      state.hideToolbar();
+      await tester.pump();
+      expect(find.byType(SystemContextMenu), findsNothing);
+    },
+    skip: kIsWeb, // [intended]
+    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+  );
+
+  testWidgets(
+    'can customize the menu items',
+    (WidgetTester tester) async {
+      final List<List<IOSSystemContextMenuItemData>> itemsReceived =
+          <List<IOSSystemContextMenuItemData>>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'ContextMenu.showSystemContextMenu':
+              final Map<String, dynamic> arguments = methodCall.arguments as Map<String, dynamic>;
+              final List<dynamic> untypedItems = arguments['items'] as List<dynamic>;
+              final List<IOSSystemContextMenuItemData> lastItems =
+                  untypedItems.map((dynamic value) {
+                    final Map<String, dynamic> itemJson = value as Map<String, dynamic>;
+                    return systemContextMenuItemDataFromJson(itemJson);
+                  }).toList();
+              itemsReceived.add(lastItems);
+          }
+          return;
+        },
+      );
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        );
+      });
+
+      const List<IOSSystemContextMenuItem> items1 = <IOSSystemContextMenuItem>[
+        IOSSystemContextMenuItemCopy(),
+        IOSSystemContextMenuItemShare(title: 'My Share Title'),
+      ];
+      final TextEditingController controller = TextEditingController(text: 'one two three');
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            final MediaQueryData mediaQueryData = MediaQuery.of(context);
+            return MediaQuery(
+              data: mediaQueryData.copyWith(supportsShowingSystemContextMenu: true),
+              child: MaterialApp(
+                home: Scaffold(
+                  body: Center(
+                    child: TextField(
+                      controller: controller,
+                      contextMenuBuilder: (
+                        BuildContext context,
+                        EditableTextState editableTextState,
+                      ) {
+                        return SystemContextMenu.editableText(
+                          editableTextState: editableTextState,
+                          items: items1,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+
+      expect(find.byType(SystemContextMenu), findsNothing);
+      expect(itemsReceived, hasLength(0));
+
+      await tester.tap(find.byType(TextField));
+      final EditableTextState state = tester.state<EditableTextState>(find.byType(EditableText));
+      expect(state.showToolbar(), true);
+      await tester.pump();
+      expect(find.byType(SystemContextMenu), findsOneWidget);
+
+      expect(itemsReceived, hasLength(1));
+      expect(itemsReceived.last, hasLength(items1.length));
+      expect(itemsReceived.last[0], equals(const IOSSystemContextMenuItemDataCopy()));
+      expect(
+        itemsReceived.last[1],
+        equals(const IOSSystemContextMenuItemDataShare(title: 'My Share Title')),
+      );
+
+      state.hideToolbar();
+      await tester.pump();
+      expect(find.byType(SystemContextMenu), findsNothing);
+    },
+    skip: kIsWeb, // [intended]
+    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+  );
+
+  testWidgets(
+    "passing empty items builds the widget but doesn't show the system context menu",
+    (WidgetTester tester) async {
+      final List<List<IOSSystemContextMenuItemData>> itemsReceived =
+          <List<IOSSystemContextMenuItemData>>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'ContextMenu.showSystemContextMenu':
+              final Map<String, dynamic> arguments = methodCall.arguments as Map<String, dynamic>;
+              final List<dynamic> untypedItems = arguments['items'] as List<dynamic>;
+              final List<IOSSystemContextMenuItemData> lastItems =
+                  untypedItems.map((dynamic value) {
+                    final Map<String, dynamic> itemJson = value as Map<String, dynamic>;
+                    return systemContextMenuItemDataFromJson(itemJson);
+                  }).toList();
+              itemsReceived.add(lastItems);
+          }
+          return;
+        },
+      );
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        );
+      });
+
+      const List<IOSSystemContextMenuItem> items1 = <IOSSystemContextMenuItem>[];
+      final TextEditingController controller = TextEditingController(text: 'one two three');
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            final MediaQueryData mediaQueryData = MediaQuery.of(context);
+            return MediaQuery(
+              data: mediaQueryData.copyWith(supportsShowingSystemContextMenu: true),
+              child: MaterialApp(
+                home: Scaffold(
+                  body: Center(
+                    child: TextField(
+                      controller: controller,
+                      contextMenuBuilder: (
+                        BuildContext context,
+                        EditableTextState editableTextState,
+                      ) {
+                        return SystemContextMenu.editableText(
+                          editableTextState: editableTextState,
+                          items: items1,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+
+      expect(find.byType(SystemContextMenu), findsNothing);
+      expect(itemsReceived, hasLength(0));
+
+      await tester.tap(find.byType(TextField));
+      final EditableTextState state = tester.state<EditableTextState>(find.byType(EditableText));
+      expect(state.showToolbar(), true);
+      expect(tester.takeException(), isNull);
+
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      expect(find.byType(SystemContextMenu), findsOneWidget);
+      expect(itemsReceived, hasLength(0));
+    },
+    skip: kIsWeb, // [intended]
+    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+  );
+
+  testWidgets(
+    'items receive a default title',
+    (WidgetTester tester) async {
+      final List<List<IOSSystemContextMenuItemData>> itemsReceived =
+          <List<IOSSystemContextMenuItemData>>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'ContextMenu.showSystemContextMenu':
+              final Map<String, dynamic> arguments = methodCall.arguments as Map<String, dynamic>;
+              final List<dynamic> untypedItems = arguments['items'] as List<dynamic>;
+              final List<IOSSystemContextMenuItemData> lastItems =
+                  untypedItems.map((dynamic value) {
+                    final Map<String, dynamic> itemJson = value as Map<String, dynamic>;
+                    return systemContextMenuItemDataFromJson(itemJson);
+                  }).toList();
+              itemsReceived.add(lastItems);
+          }
+          return;
+        },
+      );
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        );
+      });
+
+      const List<IOSSystemContextMenuItem> items1 = <IOSSystemContextMenuItem>[
+        // Copy gets no title, it's set by the platform.
+        IOSSystemContextMenuItemCopy(),
+        // Share could take a title, but if not, it gets a localized default.
+        IOSSystemContextMenuItemShare(),
+      ];
+      final TextEditingController controller = TextEditingController(text: 'one two three');
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            final MediaQueryData mediaQueryData = MediaQuery.of(context);
+            return MediaQuery(
+              data: mediaQueryData.copyWith(supportsShowingSystemContextMenu: true),
+              child: MaterialApp(
+                home: Scaffold(
+                  body: Center(
+                    child: TextField(
+                      controller: controller,
+                      contextMenuBuilder: (
+                        BuildContext context,
+                        EditableTextState editableTextState,
+                      ) {
+                        return SystemContextMenu.editableText(
+                          editableTextState: editableTextState,
+                          items: items1,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+
+      expect(find.byType(SystemContextMenu), findsNothing);
+      expect(itemsReceived, hasLength(0));
+
+      await tester.tap(find.byType(TextField));
+      final EditableTextState state = tester.state<EditableTextState>(find.byType(EditableText));
+      expect(state.showToolbar(), true);
+      await tester.pump();
+      expect(find.byType(SystemContextMenu), findsOneWidget);
+
+      expect(itemsReceived, hasLength(1));
+      expect(itemsReceived.last, hasLength(items1.length));
+      expect(itemsReceived.last[0], equals(const IOSSystemContextMenuItemDataCopy()));
+      const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+      expect(
+        itemsReceived.last[1],
+        equals(IOSSystemContextMenuItemDataShare(title: localizations.shareButtonLabel)),
+      );
 
       state.hideToolbar();
       await tester.pump();
@@ -365,123 +627,75 @@ void main() {
     variant: TargetPlatformVariant.only(TargetPlatform.iOS),
   );
 
-  testWidgets(
-    'asserts when built with no text input connection',
-    experimentalLeakTesting:
-        LeakTesting.settings.withIgnoredAll(), // leaking by design because of exception
-    (WidgetTester tester) async {
-      SystemContextMenu? systemContextMenu;
-      late StateSetter setState;
-      await tester.pumpWidget(
-        Builder(
-          builder: (BuildContext context) {
-            final MediaQueryData mediaQueryData = MediaQuery.of(context);
-            return MediaQuery(
-              data: mediaQueryData.copyWith(supportsShowingSystemContextMenu: true),
-              child: MaterialApp(
-                home: Scaffold(
-                  body: StatefulBuilder(
-                    builder: (BuildContext context, StateSetter localSetState) {
-                      setState = localSetState;
-                      return Column(
-                        children: <Widget>[
-                          const TextField(),
-                          if (systemContextMenu != null) systemContextMenu!,
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      );
-
-      // No SystemContextMenu yet, so no assertion error.
-      expect(tester.takeException(), isNull);
-
-      // Add the SystemContextMenu and receive an assertion since there is no
-      // active text input connection.
-      setState(() {
-        final EditableTextState state = tester.state<EditableTextState>(find.byType(EditableText));
-        systemContextMenu = SystemContextMenu.editableText(editableTextState: state);
-      });
-
-      final FlutterExceptionHandler? oldHandler = FlutterError.onError;
-      dynamic exception;
-      FlutterError.onError = (FlutterErrorDetails details) {
-        exception ??= details.exception;
-      };
-      addTearDown(() {
-        FlutterError.onError = oldHandler;
-      });
-
-      await tester.pump();
-      expect(exception, isAssertionError);
-      expect(exception.toString(), contains('only be shown for an active text input connection'));
+  test(
+    'can get the IOSSystemContextMenuItemData representation of an IOSSystemContextMenuItemCopy',
+    () {
+      const IOSSystemContextMenuItemCopy item = IOSSystemContextMenuItemCopy();
+      const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+      expect(item.getData(localizations), const IOSSystemContextMenuItemDataCopy());
     },
-    skip: kIsWeb, // [intended]
-    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
   );
 
-  testWidgets(
-    'does not assert when built with an active text input connection',
-    (WidgetTester tester) async {
-      SystemContextMenu? systemContextMenu;
-      late StateSetter setState;
-      await tester.pumpWidget(
-        Builder(
-          builder: (BuildContext context) {
-            final MediaQueryData mediaQueryData = MediaQuery.of(context);
-            return MediaQuery(
-              data: mediaQueryData.copyWith(supportsShowingSystemContextMenu: true),
-              child: MaterialApp(
-                home: Scaffold(
-                  body: StatefulBuilder(
-                    builder: (BuildContext context, StateSetter localSetState) {
-                      setState = localSetState;
-                      return Column(
-                        children: <Widget>[
-                          const TextField(),
-                          if (systemContextMenu != null) systemContextMenu!,
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      );
-
-      // No SystemContextMenu yet, so no assertion error.
-      expect(tester.takeException(), isNull);
-
-      // Tap the field to open a text input connection.
-      await tester.tap(find.byType(TextField));
-      await tester.pump();
-
-      // Add the SystemContextMenu and expect no error.
-      setState(() {
-        final EditableTextState state = tester.state<EditableTextState>(find.byType(EditableText));
-        systemContextMenu = SystemContextMenu.editableText(editableTextState: state);
-      });
-
-      final FlutterExceptionHandler? oldHandler = FlutterError.onError;
-      dynamic exception;
-      FlutterError.onError = (FlutterErrorDetails details) {
-        exception ??= details.exception;
-      };
-      addTearDown(() {
-        FlutterError.onError = oldHandler;
-      });
-
-      await tester.pump();
-      expect(exception, isNull);
+  test(
+    'can get the IOSSystemContextMenuItemData representation of an IOSSystemContextMenuItemCut',
+    () {
+      const IOSSystemContextMenuItemCut item = IOSSystemContextMenuItemCut();
+      const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+      expect(item.getData(localizations), const IOSSystemContextMenuItemDataCut());
     },
-    skip: kIsWeb, // [intended]
-    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+  );
+
+  test(
+    'can get the IOSSystemContextMenuItemData representation of an IOSSystemContextMenuItemPaste',
+    () {
+      const IOSSystemContextMenuItemPaste item = IOSSystemContextMenuItemPaste();
+      const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+      expect(item.getData(localizations), const IOSSystemContextMenuItemDataPaste());
+    },
+  );
+
+  test(
+    'can get the IOSSystemContextMenuItemData representation of an IOSSystemContextMenuItemSelectAll',
+    () {
+      const IOSSystemContextMenuItemSelectAll item = IOSSystemContextMenuItemSelectAll();
+      const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+      expect(item.getData(localizations), const IOSSystemContextMenuItemDataSelectAll());
+    },
+  );
+
+  test(
+    'can get the IOSSystemContextMenuItemData representation of an IOSSystemContextMenuItemLookUp',
+    () {
+      const IOSSystemContextMenuItemLookUp item = IOSSystemContextMenuItemLookUp();
+      const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+      expect(
+        item.getData(localizations),
+        IOSSystemContextMenuItemDataLookUp(title: localizations.lookUpButtonLabel),
+      );
+    },
+  );
+
+  test(
+    'can get the IOSSystemContextMenuItemData representation of an IOSSystemContextMenuItemSearchWeb',
+    () {
+      const IOSSystemContextMenuItemSearchWeb item = IOSSystemContextMenuItemSearchWeb();
+      const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+      expect(
+        item.getData(localizations),
+        IOSSystemContextMenuItemDataSearchWeb(title: localizations.searchWebButtonLabel),
+      );
+    },
+  );
+
+  test(
+    'can get the IOSSystemContextMenuItemData representation of an IOSSystemContextMenuItemShare',
+    () {
+      const IOSSystemContextMenuItemShare item = IOSSystemContextMenuItemShare();
+      const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+      expect(
+        item.getData(localizations),
+        IOSSystemContextMenuItemDataShare(title: localizations.shareButtonLabel),
+      );
+    },
   );
 }

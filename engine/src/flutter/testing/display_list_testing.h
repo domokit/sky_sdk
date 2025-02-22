@@ -135,6 +135,9 @@ class DisplayListStreamDispatcher final : public DlOpReceiver {
   void clipRoundRect(const DlRoundRect& rrect,
                      DlClipOp clip_op,
                      bool is_aa) override;
+  void clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             DlClipOp clip_op,
+                             bool is_aa) override;
   void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override;
 
   void drawColor(DlColor color, DlBlendMode mode) override;
@@ -150,6 +153,7 @@ class DisplayListStreamDispatcher final : public DlOpReceiver {
   void drawRoundRect(const DlRoundRect& rrect) override;
   void drawDiffRoundRect(const DlRoundRect& outer,
                          const DlRoundRect& inner) override;
+  void drawRoundSuperellipse(const DlRoundSuperellipse& rse) override;
   void drawPath(const DlPath& path) override;
   void drawArc(const DlRect& oval_bounds,
                DlScalar start_degrees,
@@ -382,6 +386,18 @@ class DisplayListGeneralReceiver : public DlOpReceiver {
         break;
     }
   }
+  void clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             DlClipOp clip_op,
+                             bool is_aa) override {
+    switch (clip_op) {
+      case DlClipOp::kIntersect:
+        RecordByType(DisplayListOpType::kClipIntersectRoundSuperellipse);
+        break;
+      case DlClipOp::kDifference:
+        RecordByType(DisplayListOpType::kClipDifferenceRoundSuperellipse);
+        break;
+    }
+  }
   void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override {
     switch (clip_op) {
       case DlClipOp::kIntersect:
@@ -434,6 +450,9 @@ class DisplayListGeneralReceiver : public DlOpReceiver {
   void drawDiffRoundRect(const DlRoundRect& outer,
                          const DlRoundRect& inner) override {
     RecordByType(DisplayListOpType::kDrawDiffRoundRect);
+  }
+  void drawRoundSuperellipse(const DlRoundSuperellipse& rse) override {
+    RecordByType(DisplayListOpType::kDrawRoundSuperellipse);
   }
   void drawPath(const DlPath& path) override {
     RecordByType(DisplayListOpType::kDrawPath);
