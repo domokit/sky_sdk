@@ -4,5 +4,12 @@
   "reorderItemUp": "ย้ายขึ้น",
   "reorderItemDown": "ย้ายลง",
   "reorderItemLeft": "ย้ายไปทางซ้าย",
-  "reorderItemRight": "ย้ายไปทางขวา"
+  "reorderItemRight": "ย้ายไปทางขวา",
+  "copyButtonLabel": "คัดลอก",
+  "cutButtonLabel": "ตัด",
+  "lookUpButtonLabel": "ค้นหา",
+  "searchWebButtonLabel": "ค้นหาบนอินเทอร์เน็ต",
+  "shareButtonLabel": "แชร์",
+  "pasteButtonLabel": "วาง",
+  "selectAllButtonLabel": "เลือกทั้งหมด"
 }

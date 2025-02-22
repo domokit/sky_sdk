@@ -413,9 +413,15 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
       // the user taps outside the menu. Not called when Flutter shows a new
       // system context menu while an old one is still visible.
       case 'ContextMenu.onDismissSystemContextMenu':
-        for (final SystemContextMenuClient client in _systemContextMenuClients) {
-          client.handleSystemHide();
+        if (_systemContextMenuClient == null) {
+          assert(
+            false,
+            'Platform sent onDismissSystemContextMenu when no SystemContextMenuClient was registered.',
+          );
+          return;
         }
+        _systemContextMenuClient!.handleSystemHide();
+        _systemContextMenuClient = null;
       case 'SystemChrome.systemUIChange':
         final List<dynamic> args = methodCall.arguments as List<dynamic>;
         if (_systemUiChangeCallback != null) {
@@ -571,17 +577,14 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
     await SystemChannels.platform.invokeMethod('System.initializationComplete');
   }
 
-  final Set<SystemContextMenuClient> _systemContextMenuClients = <SystemContextMenuClient>{};
+  SystemContextMenuClient? _systemContextMenuClient;
 
   /// Registers a [SystemContextMenuClient] that will receive system context
   /// menu calls from the engine.
-  static void registerSystemContextMenuClient(SystemContextMenuClient client) {
-    instance._systemContextMenuClients.add(client);
-  }
-
-  /// Unregisters a [SystemContextMenuClient] so that it is no longer called.
-  static void unregisterSystemContextMenuClient(SystemContextMenuClient client) {
-    instance._systemContextMenuClients.remove(client);
+  ///
+  /// To unregister, set to null.
+  static set systemContextMenuClient(SystemContextMenuClient? client) {
+    instance._systemContextMenuClient = client;
   }
 }
 
@@ -673,6 +676,9 @@ class _DefaultBinaryMessenger extends BinaryMessenger {
 /// See also:
 ///  * [SystemContextMenuController], which uses this to provide a fully
 ///    featured way to control the system context menu.
+///  * [ServicesBinding.systemContextMenuClient], which can be set to a
+///    [SystemContextMenuClient] to register it to receive events, or null to
+///    unregister.
 ///  * [MediaQuery.maybeSupportsShowingSystemContextMenu], which indicates
 ///    whether the system context menu is supported.
 ///  * [SystemContextMenu], which provides a widget interface for displaying the
@@ -680,7 +686,7 @@ class _DefaultBinaryMessenger extends BinaryMessenger {
 mixin SystemContextMenuClient {
   /// Handles the system hiding a context menu.
   ///
-  /// This is called for all instances of [SystemContextMenuController], so it's
-  /// not guaranteed that this instance was the one that was hidden.
+  /// Called only on the single active instance registered with
+  /// [ServicesBinding.systemContextMenuClient].
   void handleSystemHide();
 }

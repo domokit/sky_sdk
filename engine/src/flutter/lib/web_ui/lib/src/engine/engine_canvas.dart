@@ -47,6 +47,8 @@ abstract class EngineCanvas {
 
   void clipRRect(ui.RRect rrect);
 
+  void clipRSuperellipse(ui.RSuperellipse rse);
+
   void clipPath(ui.Path path);
 
   void drawColor(ui.Color color, ui.BlendMode blendMode);
@@ -232,6 +234,17 @@ mixin SaveStackTracking on EngineCanvas {
   void clipRRect(ui.RRect rrect) {
     _clipStack ??= <SaveClipEntry>[];
     _clipStack!.add(SaveClipEntry.rrect(rrect, _currentTransform.clone()));
+  }
+
+  /// Adds a round superellipse to clipping stack.
+  ///
+  /// Classes that override this method must call `super.clipRSuperellipse()`.
+  @override
+  void clipRSuperellipse(ui.RSuperellipse rse) {
+    _clipStack ??= <SaveClipEntry>[];
+    // TODO(dkwingsmt): Properly implement clipRSE on Web instead of falling
+    // back to RRect.  https://github.com/flutter/flutter/issues/163718
+    _clipStack!.add(SaveClipEntry.rrect(rse.toApproximateRRect(), _currentTransform.clone()));
   }
 
   /// Adds a path to clipping stack.

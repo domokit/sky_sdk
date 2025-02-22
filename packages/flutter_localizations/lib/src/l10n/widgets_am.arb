@@ -4,5 +4,12 @@
   "reorderItemUp": "ወደ ላይ ውሰድ",
   "reorderItemDown": "ወደ ታች ውሰድ",
   "reorderItemLeft": "ወደ ግራ ውሰድ",
-  "reorderItemRight": "ወደ ቀኝ ውሰድ"
+  "reorderItemRight": "ወደ ቀኝ ውሰድ",
+  "copyButtonLabel": "ቅዳ",
+  "cutButtonLabel": "ቁረጥ",
+  "lookUpButtonLabel": "ይመልከቱ",
+  "searchWebButtonLabel": "ድርን ፈልግ",
+  "shareButtonLabel": "አጋራ",
+  "pasteButtonLabel": "ለጥፍ",
+  "selectAllButtonLabel": "ሁሉንም ምረጥ"
 }

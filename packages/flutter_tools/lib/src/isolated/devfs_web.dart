@@ -24,7 +24,6 @@ import '../base/logger.dart';
 import '../base/net.dart';
 import '../base/platform.dart';
 import '../build_info.dart';
-import '../build_system/tools/scene_importer.dart';
 import '../build_system/tools/shader_compiler.dart';
 import '../bundle_builder.dart';
 import '../cache.dart';
@@ -1031,7 +1030,6 @@ class WebDevFS implements DevFS {
     required PackageConfig packageConfig,
     required String dillOutputPath,
     required DevelopmentShaderCompiler shaderCompiler,
-    DevelopmentSceneImporter? sceneImporter,
     DevFSWriter? devFSWriter,
     String? target,
     AssetBundle? bundle,
@@ -1234,9 +1232,6 @@ class WebDevFS implements DevFS {
 
   @override
   Set<String> get shaderPathsToEvict => <String>{};
-
-  @override
-  Set<String> get scenePathsToEvict => <String>{};
 }
 
 class ReleaseAssetServer {

@@ -344,6 +344,13 @@ class BitmapCanvas extends EngineCanvas {
   }
 
   @override
+  void clipRSuperellipse(ui.RSuperellipse rse) {
+    // TODO(dkwingsmt): Properly implement clipRSE on Web instead of falling
+    // back to RRect.  https://github.com/flutter/flutter/issues/163718
+    _canvasPool.clipRRect(rse.toApproximateRRect());
+  }
+
+  @override
   void clipPath(ui.Path path) {
     _canvasPool.clipPath(path);
   }

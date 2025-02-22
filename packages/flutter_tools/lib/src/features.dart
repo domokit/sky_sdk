@@ -166,7 +166,7 @@ const Feature swiftPackageManager = Feature(
 );
 
 /// Enable explicit resolution and generation of package dependencies.
-const Feature explicitPackageDependencies = Feature(
+const Feature explicitPackageDependencies = Feature.fullyEnabled(
   name: 'support for dev_dependency plugins',
   configSetting: 'explicit-package-dependencies',
   extraHelpText:
@@ -178,9 +178,6 @@ const Feature explicitPackageDependencies = Feature(
       'See also:\n'
       '* https://flutter.dev/to/flutter-plugins-configuration.\n'
       '* https://flutter.dev/to/flutter-gen-deprecation.',
-  master: FeatureChannelSetting(available: true),
-  beta: FeatureChannelSetting(available: true),
-  stable: FeatureChannelSetting(available: true),
 );
 
 /// A [Feature] is a process for conditionally enabling tool features.

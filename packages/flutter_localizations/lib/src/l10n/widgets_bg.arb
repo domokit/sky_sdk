@@ -4,5 +4,12 @@
   "reorderItemUp": "Преместване нагоре",
   "reorderItemDown": "Преместване надолу",
   "reorderItemLeft": "Преместване наляво",
-  "reorderItemRight": "Преместване надясно"
+  "reorderItemRight": "Преместване надясно",
+  "copyButtonLabel": "Копиране",
+  "cutButtonLabel": "Изрязване",
+  "lookUpButtonLabel": "Look Up",
+  "searchWebButtonLabel": "Търсене в мрежата",
+  "shareButtonLabel": "Споделяне",
+  "pasteButtonLabel": "Поставяне",
+  "selectAllButtonLabel": "Избиране на всички"
 }

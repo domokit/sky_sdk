@@ -207,8 +207,8 @@ extern std::ostream& operator<<(std::ostream& os, const DlPath& path) {
 
 std::ostream& operator<<(std::ostream& os, const flutter::DlClipOp& op) {
   switch (op) {
-    case flutter::DlClipOp::kDifference: return os << "ClipOp::kDifference";
-    case flutter::DlClipOp::kIntersect:  return os << "ClipOp::kIntersect";
+    case flutter::DlClipOp::kDifference: return os << "DlClipOp::kDifference";
+    case flutter::DlClipOp::kIntersect:  return os << "DlClipOp::kIntersect";
   }
 }
 
@@ -784,6 +784,15 @@ void DisplayListStreamDispatcher::clipRoundRect(const DlRoundRect& rrect,
            << "isaa: " << is_aa
            << ");" << std::endl;
 }
+void DisplayListStreamDispatcher::clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                    DlClipOp clip_op,
+                    bool is_aa) {
+  startl() << "clipRoundSuperellipse("
+           << rse << ", "
+           << clip_op << ", "
+           << "isaa: " << is_aa
+           << ");" << std::endl;
+}
 void DisplayListStreamDispatcher::clipPath(const DlPath& path, DlClipOp clip_op,
                                            bool is_aa) {
   startl() << "clipPath("
@@ -834,6 +843,9 @@ void DisplayListStreamDispatcher::drawDiffRoundRect(const DlRoundRect& outer,
                                                     const DlRoundRect& inner) {
   startl() << "drawDRRect(outer: " << outer << ", " << std::endl;
   startl() << "           inner: " << inner << ");" << std::endl;
+}
+void DisplayListStreamDispatcher::drawRoundSuperellipse(const DlRoundSuperellipse& rse) {
+  startl() << "drawRSuperellipse(" << rse << ");" << std::endl;
 }
 void DisplayListStreamDispatcher::drawPath(const DlPath& path) {
   startl() << "drawPath(" << path << ");" << std::endl;
