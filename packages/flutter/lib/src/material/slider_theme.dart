@@ -119,16 +119,26 @@ class SliderTheme extends InheritedTheme {
 ///  * [SliderThemeData], which describes the actual configuration of a slider
 ///    theme.
 enum ShowValueIndicator {
-  /// The value indicator will only be shown for discrete sliders (sliders
+  /// The value indicator will only be shown while dragging for discrete sliders (sliders
   /// where [Slider.divisions] is non-null).
   onlyForDiscrete,
 
-  /// The value indicator will only be shown for continuous sliders (sliders
+  /// The value indicator will only be shown while dragging for continuous sliders (sliders
   /// where [Slider.divisions] is null).
   onlyForContinuous,
 
-  /// The value indicator will be shown for all types of sliders.
+  /// The value indicator is shown while dragging.
+  @Deprecated(
+    'Use ShowValueIndicator.onDrag. '
+    'This feature was deprecated after v3.28.0-1.0.pre.',
+  )
   always,
+
+  /// The value indicator is shown while dragging.
+  onDrag,
+
+  /// The value indicator is always displayed.
+  alwaysVisible,
 
   /// The value indicator will never be shown.
   never,
