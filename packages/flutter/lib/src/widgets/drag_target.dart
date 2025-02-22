@@ -16,6 +16,7 @@ import 'debug.dart';
 import 'framework.dart';
 import 'media_query.dart';
 import 'overlay.dart';
+import 'value_listenable_builder.dart';
 import 'view.dart';
 
 /// Signature for determining whether the given data will be accepted by a [DragTarget].
@@ -463,6 +464,7 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
   @override
   void dispose() {
     _disposeRecognizerIfInactive();
+    _activeAvatars.clear();
     super.dispose();
   }
 
@@ -472,6 +474,7 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
     super.didChangeDependencies();
   }
 
+  final OverlayPortalController _overlayPortalController = OverlayPortalController();
   // This gesture recognizer has an unusual lifetime. We want to support the use
   // case of removing the Draggable from the tree in the middle of a drag. That
   // means we need to keep this recognizer alive after this state object has
@@ -482,7 +485,8 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
   // disposing the gesture recognizer after (a) this state object has been
   // disposed and (b) there are no more active drags.
   GestureRecognizer? _recognizer;
-  int _activeCount = 0;
+  int get _activeCount => _activeAvatars.length;
+  final List<_DragAvatar<T>> _activeAvatars = <_DragAvatar<T>>[];
 
   void _disposeRecognizerIfInactive() {
     if (_activeCount > 0) {
@@ -505,16 +509,13 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
     }
     final Offset dragStartPoint;
     dragStartPoint = widget.dragAnchorStrategy(widget, context, position);
-    setState(() {
-      _activeCount += 1;
-    });
+
     final _DragAvatar<T> avatar = _DragAvatar<T>(
       overlayState: Overlay.of(context, debugRequiredFor: widget, rootOverlay: widget.rootOverlay),
       data: widget.data,
       axis: widget.axis,
       initialPosition: position,
       dragStartPoint: dragStartPoint,
-      feedback: widget.feedback,
       feedbackOffset: widget.feedbackOffset,
       ignoringFeedbackSemantics: widget.ignoringFeedbackSemantics,
       ignoringFeedbackPointer: widget.ignoringFeedbackPointer,
@@ -524,13 +525,16 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
           widget.onDragUpdate!(details);
         }
       },
-      onDragEnd: (Velocity velocity, Offset offset, bool wasAccepted) {
+      onDragEnd: (Velocity velocity, Offset offset, bool wasAccepted, _DragAvatar<T> avatar) {
         if (mounted) {
           setState(() {
-            _activeCount -= 1;
+            _activeAvatars.remove(avatar);
+            if (_activeCount <= 0) {
+              _overlayPortalController.hide();
+            }
           });
         } else {
-          _activeCount -= 1;
+          _activeAvatars.remove(avatar);
           _disposeRecognizerIfInactive();
         }
         if (mounted && widget.onDragEnd != null) {
@@ -546,7 +550,11 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
         }
       },
     );
+    setState(() {
+      _activeAvatars.add(avatar);
+    });
     widget.onDragStarted?.call();
+    _overlayPortalController.show();
     return avatar;
   }
 
@@ -556,10 +564,21 @@ class _DraggableState<T extends Object> extends State<Draggable<T>> {
     final bool canDrag =
         widget.maxSimultaneousDrags == null || _activeCount < widget.maxSimultaneousDrags!;
     final bool showChild = _activeCount == 0 || widget.childWhenDragging == null;
-    return Listener(
-      behavior: widget.hitTestBehavior,
-      onPointerDown: canDrag ? _routePointer : null,
-      child: showChild ? widget.child : widget.childWhenDragging,
+    return (widget.rootOverlay ? OverlayPortal.targetsRootOverlay : OverlayPortal.new)(
+      controller: _overlayPortalController,
+      overlayChildBuilder: (BuildContext context) {
+        return Stack(
+          children: <Widget>[
+            for (final _DragAvatar<T> avatar in _activeAvatars)
+              avatar._build(context, widget.feedback),
+          ],
+        );
+      },
+      child: Listener(
+        behavior: widget.hitTestBehavior,
+        onPointerDown: canDrag ? _routePointer : null,
+        child: showChild ? widget.child : widget.childWhenDragging,
+      ),
     );
   }
 }
@@ -824,7 +843,8 @@ class _DragTargetState<T extends Object> extends State<DragTarget<T>> {
 
 enum _DragEndKind { dropped, canceled }
 
-typedef _OnDragEnd = void Function(Velocity velocity, Offset offset, bool wasAccepted);
+typedef _OnDragEnd<T extends Object> =
+    void Function(Velocity velocity, Offset offset, bool wasAccepted, _DragAvatar<T> avatar);
 
 // The lifetime of this object is a little dubious right now. Specifically, it
 // lives as long as the pointer is down. Arguably it should self-immolate if the
@@ -837,7 +857,6 @@ class _DragAvatar<T extends Object> extends Drag {
     this.axis,
     required Offset initialPosition,
     this.dragStartPoint = Offset.zero,
-    this.feedback,
     this.feedbackOffset = Offset.zero,
     this.onDragUpdate,
     this.onDragEnd,
@@ -845,18 +864,15 @@ class _DragAvatar<T extends Object> extends Drag {
     required this.ignoringFeedbackPointer,
     required this.viewId,
   }) : _position = initialPosition {
-    _entry = OverlayEntry(builder: _build);
-    overlayState.insert(_entry!);
     updateDrag(initialPosition);
   }
 
   final T? data;
   final Axis? axis;
   final Offset dragStartPoint;
-  final Widget? feedback;
   final Offset feedbackOffset;
   final DragUpdateCallback? onDragUpdate;
-  final _OnDragEnd? onDragEnd;
+  final _OnDragEnd<T>? onDragEnd;
   final OverlayState overlayState;
   final bool ignoringFeedbackSemantics;
   final bool ignoringFeedbackPointer;
@@ -866,8 +882,7 @@ class _DragAvatar<T extends Object> extends Drag {
   final List<_DragTargetState<Object>> _enteredTargets = <_DragTargetState<Object>>[];
   Offset _position;
   Offset? _lastOffset;
-  late Offset _overlayOffset;
-  OverlayEntry? _entry;
+  final ValueNotifier<Offset> _overlayOffset = ValueNotifier<Offset>(Offset.zero);
 
   @override
   void update(DragUpdateDetails details) {
@@ -882,11 +897,13 @@ class _DragAvatar<T extends Object> extends Drag {
   @override
   void end(DragEndDetails details) {
     finishDrag(_DragEndKind.dropped, _restrictVelocityAxis(details.velocity));
+    _overlayOffset.dispose();
   }
 
   @override
   void cancel() {
     finishDrag(_DragEndKind.canceled);
+    _overlayOffset.dispose();
   }
 
   void updateDrag(Offset globalPosition) {
@@ -894,9 +911,7 @@ class _DragAvatar<T extends Object> extends Drag {
     if (overlayState.mounted) {
       final RenderBox box = overlayState.context.findRenderObject()! as RenderBox;
       final Offset overlaySpaceOffset = box.globalToLocal(globalPosition);
-      _overlayOffset = overlaySpaceOffset - dragStartPoint;
-
-      _entry!.markNeedsBuild();
+      _overlayOffset.value = overlaySpaceOffset - dragStartPoint;
     }
 
     final HitTestResult result = HitTestResult();
@@ -974,21 +989,23 @@ class _DragAvatar<T extends Object> extends Drag {
     }
     _leaveAllEntered();
     _activeTarget = null;
-    _entry!.remove();
-    _entry!.dispose();
-    _entry = null;
     // TODO(ianh): consider passing _entry as well so the client can perform an animation.
-    onDragEnd?.call(velocity ?? Velocity.zero, _lastOffset!, wasAccepted);
+    onDragEnd?.call(velocity ?? Velocity.zero, _lastOffset!, wasAccepted, this);
   }
 
-  Widget _build(BuildContext context) {
-    return Positioned(
-      left: _overlayOffset.dx,
-      top: _overlayOffset.dy,
-      child: ExcludeSemantics(
-        excluding: ignoringFeedbackSemantics,
-        child: IgnorePointer(ignoring: ignoringFeedbackPointer, child: feedback),
-      ),
+  Widget _build(BuildContext context, Widget feedback) {
+    return ValueListenableBuilder<Offset>(
+      valueListenable: _overlayOffset,
+      builder: (BuildContext context, Offset overlayOffset, Widget? child) {
+        return Positioned(
+          left: overlayOffset.dx,
+          top: overlayOffset.dy,
+          child: ExcludeSemantics(
+            excluding: ignoringFeedbackSemantics,
+            child: IgnorePointer(ignoring: ignoringFeedbackPointer, child: feedback),
+          ),
+        );
+      },
     );
   }
 
