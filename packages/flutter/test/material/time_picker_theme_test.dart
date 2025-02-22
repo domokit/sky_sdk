@@ -300,10 +300,7 @@ void main() {
       hourText.text.style,
       Typography.material2021().englishLike.displayLarge!
           .merge(Typography.material2021().black.displayLarge)
-          .copyWith(
-            color: defaultTheme.colorScheme.onPrimaryContainer,
-            decorationColor: defaultTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: defaultTheme.colorScheme.onPrimaryContainer),
     );
 
     final RenderParagraph minuteText = _textRenderParagraph(tester, '15');
@@ -311,10 +308,7 @@ void main() {
       minuteText.text.style,
       Typography.material2021().englishLike.displayLarge!
           .merge(Typography.material2021().black.displayLarge)
-          .copyWith(
-            color: defaultTheme.colorScheme.onSurface,
-            decorationColor: defaultTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: defaultTheme.colorScheme.onSurface),
     );
 
     final RenderParagraph amText = _textRenderParagraph(tester, 'AM');
@@ -322,10 +316,7 @@ void main() {
       amText.text.style,
       Typography.material2021().englishLike.titleMedium!
           .merge(Typography.material2021().black.titleMedium)
-          .copyWith(
-            color: defaultTheme.colorScheme.onTertiaryContainer,
-            decorationColor: defaultTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: defaultTheme.colorScheme.onTertiaryContainer),
     );
 
     final RenderParagraph pmText = _textRenderParagraph(tester, 'PM');
@@ -333,10 +324,7 @@ void main() {
       pmText.text.style,
       Typography.material2021().englishLike.titleMedium!
           .merge(Typography.material2021().black.titleMedium)
-          .copyWith(
-            color: defaultTheme.colorScheme.onSurfaceVariant,
-            decorationColor: defaultTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: defaultTheme.colorScheme.onSurfaceVariant),
     );
 
     final RenderParagraph helperText = _textRenderParagraph(tester, 'Select time');
@@ -344,10 +332,7 @@ void main() {
       helperText.text.style,
       Typography.material2021().englishLike.bodyMedium!
           .merge(Typography.material2021().black.bodyMedium)
-          .copyWith(
-            color: defaultTheme.colorScheme.onSurface,
-            decorationColor: defaultTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: defaultTheme.colorScheme.onSurface),
     );
 
     final CustomPaint dialPaint = tester.widget(findDialPaint);
@@ -359,10 +344,7 @@ void main() {
       primaryLabels.first.painter.text.style,
       Typography.material2021().englishLike.bodyLarge!
           .merge(Typography.material2021().black.bodyLarge)
-          .copyWith(
-            color: defaultTheme.colorScheme.onSurface,
-            decorationColor: defaultTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: defaultTheme.colorScheme.onSurface),
     );
     // ignore: avoid_dynamic_calls
     final List<dynamic> selectedLabels = dialPainter.selectedLabels as List<dynamic>;
@@ -371,10 +353,7 @@ void main() {
       selectedLabels.first.painter.text.style,
       Typography.material2021().englishLike.bodyLarge!
           .merge(Typography.material2021().black.bodyLarge)
-          .copyWith(
-            color: defaultTheme.colorScheme.onPrimary,
-            decorationColor: defaultTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: defaultTheme.colorScheme.onPrimary),
     );
 
     final Material hourMaterial = _textMaterial(tester, '7');
@@ -499,10 +478,7 @@ void main() {
       hourTextStyle,
       Typography.material2021().englishLike.displayMedium!
           .merge(Typography.material2021().black.displayMedium)
-          .copyWith(
-            color: defaultTheme.colorScheme.onSurface,
-            decorationColor: defaultTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: defaultTheme.colorScheme.onSurface),
     );
 
     final TextStyle minuteTextStyle = _textField(tester, '15').style!;
@@ -510,10 +486,7 @@ void main() {
       minuteTextStyle,
       Typography.material2021().englishLike.displayMedium!
           .merge(Typography.material2021().black.displayMedium)
-          .copyWith(
-            color: defaultTheme.colorScheme.onSurface,
-            decorationColor: defaultTheme.colorScheme.onSurface,
-          ),
+          .copyWith(color: defaultTheme.colorScheme.onSurface),
     );
 
     final InputDecoration hourDecoration = _textField(tester, '7').decoration!;
@@ -697,7 +670,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final TimePickerThemeData timePickerTheme = _timePickerTheme();
-    final ThemeData theme = ThemeData(timePickerTheme: timePickerTheme, useMaterial3: true);
+    final ThemeData theme = ThemeData(timePickerTheme: timePickerTheme);
     await tester.pumpWidget(_TimePickerLauncher(themeData: theme));
     await tester.tap(find.text('X'));
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -720,7 +693,7 @@ void main() {
       Typography.material2021().englishLike.bodyMedium!
           .merge(Typography.material2021().black.bodyMedium)
           .merge(timePickerTheme.hourMinuteTextStyle)
-          .copyWith(color: _selectedColor, decorationColor: const Color(0xff1d1b20)),
+          .copyWith(color: _selectedColor),
     );
 
     final RenderParagraph minuteText = _textRenderParagraph(tester, '15');
@@ -729,7 +702,7 @@ void main() {
       Typography.material2021().englishLike.bodyMedium!
           .merge(Typography.material2021().black.bodyMedium)
           .merge(timePickerTheme.hourMinuteTextStyle)
-          .copyWith(color: _unselectedColor, decorationColor: const Color(0xff1d1b20)),
+          .copyWith(color: _unselectedColor),
     );
 
     final RenderParagraph amText = _textRenderParagraph(tester, 'AM');
@@ -738,7 +711,7 @@ void main() {
       Typography.material2021().englishLike.bodyMedium!
           .merge(Typography.material2021().black.bodyMedium)
           .merge(timePickerTheme.hourMinuteTextStyle)
-          .copyWith(color: _selectedColor, decorationColor: const Color(0xff1d1b20)),
+          .copyWith(color: _selectedColor),
     );
 
     final RenderParagraph pmText = _textRenderParagraph(tester, 'PM');
@@ -747,7 +720,7 @@ void main() {
       Typography.material2021().englishLike.bodyMedium!
           .merge(Typography.material2021().black.bodyMedium)
           .merge(timePickerTheme.hourMinuteTextStyle)
-          .copyWith(color: _unselectedColor, decorationColor: const Color(0xff1d1b20)),
+          .copyWith(color: _unselectedColor),
     );
 
     final RenderParagraph helperText = _textRenderParagraph(tester, 'Select time');
@@ -756,10 +729,7 @@ void main() {
       Typography.material2021().englishLike.bodyMedium!
           .merge(Typography.material2021().black.bodyMedium)
           .merge(timePickerTheme.helpTextStyle)
-          .copyWith(
-            color: theme.colorScheme.onSurface,
-            decorationColor: theme.colorScheme.onSurface,
-          ),
+          .copyWith(color: theme.colorScheme.onSurface),
     );
 
     final CustomPaint dialPaint = tester.widget(findDialPaint);
@@ -771,7 +741,7 @@ void main() {
       primaryLabels.first.painter.text.style,
       Typography.material2021().englishLike.bodyLarge!
           .merge(Typography.material2021().black.bodyLarge)
-          .copyWith(color: _unselectedColor, decorationColor: theme.colorScheme.onSurface),
+          .copyWith(color: _unselectedColor),
     );
     // ignore: avoid_dynamic_calls
     final List<dynamic> selectedLabels = dialPainter.selectedLabels as List<dynamic>;
@@ -780,7 +750,7 @@ void main() {
       selectedLabels.first.painter.text.style,
       Typography.material2021().englishLike.bodyLarge!
           .merge(Typography.material2021().black.bodyLarge)
-          .copyWith(color: _selectedColor, decorationColor: theme.colorScheme.onSurface),
+          .copyWith(color: _selectedColor),
     );
 
     final Material hourMaterial = _textMaterial(tester, '7');

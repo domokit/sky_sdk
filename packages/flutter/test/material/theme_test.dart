@@ -556,7 +556,7 @@ void main() {
         expect(style.textBaseline, isNotNull);
         expect(style.height, isNotNull);
         expect(style.decoration, TextDecoration.none);
-        expect(style.decorationColor, isNotNull);
+        expect(style.decorationColor, null);
         expect(style.decorationStyle, null);
         expect(style.debugLabel, isNotNull);
         expect(style.locale, null);
