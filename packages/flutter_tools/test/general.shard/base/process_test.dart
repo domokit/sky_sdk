@@ -4,14 +4,17 @@
 
 import 'dart:async';
 
+import 'package:file/memory.dart';
+import 'package:flutter_tools/src/base/io.dart' as io;
 import 'package:flutter_tools/src/base/io.dart';
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/platform.dart';
 import 'package:flutter_tools/src/base/process.dart';
 import 'package:flutter_tools/src/base/terminal.dart';
+import 'package:unified_analytics/unified_analytics.dart';
 
 import '../../src/common.dart';
-import '../../src/fake_process_manager.dart';
+import '../../src/context.dart';
 import '../../src/fakes.dart';
 
 void main() {
@@ -392,6 +395,51 @@ void main() {
 
       expect(errorPassedToCallback, const TypeMatcher<SocketException>());
     });
+  });
+
+  group('exitWithHooks', () {
+    late MemoryFileSystem fileSystem;
+    late BufferLogger logger;
+    late Analytics analytics;
+
+    setUp(() {
+      fileSystem = MemoryFileSystem.test();
+      logger = BufferLogger.test();
+      final FakeFlutterVersion fakeFlutterVersion = FakeFlutterVersion();
+      analytics = Analytics.fake(
+        tool: DashTool.flutterTool,
+        homeDirectory: fileSystem.currentDirectory,
+        dartVersion: fakeFlutterVersion.dartSdkVersion,
+        fs: fileSystem,
+        flutterChannel: fakeFlutterVersion.channel,
+        flutterVersion: fakeFlutterVersion.getVersionString(),
+      );
+    });
+
+    testUsingContext(
+      'prints analytics welcome message',
+      () async {
+        io.setExitFunctionForTests((int exitCode) {});
+        final ShutdownHooks shutdownHooks = ShutdownHooks();
+        await exitWithHooks(0, shutdownHooks: shutdownHooks);
+        expect(logger.statusText, contains(analytics.getConsentMessage));
+      },
+      overrides: <Type, Generator>{Analytics: () => analytics, Logger: () => logger},
+    );
+
+    testUsingContext(
+      'does not print analytics welcome message if Analytics instance indicates it should not be printed',
+      () async {
+        io.setExitFunctionForTests((int exitCode) {});
+
+        analytics.clientShowedMessage();
+
+        final ShutdownHooks shutdownHooks = ShutdownHooks();
+        await exitWithHooks(0, shutdownHooks: shutdownHooks);
+        expect(logger.statusText, isNot(contains(analytics.getConsentMessage)));
+      },
+      overrides: <Type, Generator>{Analytics: () => analytics, Logger: () => logger},
+    );
   });
 }
 
