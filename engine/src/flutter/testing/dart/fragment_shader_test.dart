@@ -415,6 +415,26 @@ void main() async {
     expect(color, const Color(0xFF00FF00));
   });
 
+  // For an explaination of the problem see https://github.com/flutter/flutter/issues/163302 .
+  test('ImageFilter.shader equality checks always fail', () async {
+    if (!impellerEnabled) {
+      print('Skipped for Skia');
+      return;
+    }
+    final FragmentProgram program = await FragmentProgram.fromAsset('filter_shader.frag.iplr');
+    final FragmentShader shader = program.fragmentShader();
+
+    // The same shader is not equal to itself.
+    expect(shader, isNot(shader));
+    expect(identical(shader, shader), true);
+
+    final FragmentShader shader_2 = program.fragmentShader();
+
+    // The different shader is not equal or identical.
+    expect(shader, isNot(shader_2));
+    expect(identical(shader, shader_2), false);
+  });
+
   if (impellerEnabled) {
     print('Skipped for Impeller - https://github.com/flutter/flutter/issues/122823');
     return;

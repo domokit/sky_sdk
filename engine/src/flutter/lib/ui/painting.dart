@@ -4471,10 +4471,14 @@ class _FragmentShaderImageFilter implements ImageFilter {
 
   @override
   bool operator ==(Object other) {
-    if (other.runtimeType != runtimeType) {
-      return false;
-    }
-    return other is _FragmentShaderImageFilter && other.shader == shader;
+    // This object always returns false for equality, because it wraps
+    // a mutable object (The fragment shader). The expectation is that this
+    // object can be mutated to update the shader result. However, the framework
+    // equality checks ImageFilter objects to determine if the filter has
+    // actually changed. Because the object was mutated, even a deep equality
+    // check would pass. Thus, we work around these problems by always
+    // returning false.
+    return false;
   }
 
   @override
