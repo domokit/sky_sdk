@@ -4,5 +4,12 @@
   "reorderItemUp": "ຍ້າຍຂຶ້ນ",
   "reorderItemDown": "ຍ້າຍລົງ",
   "reorderItemLeft": "ຍ້າຍໄປຊ້າຍ",
-  "reorderItemRight": "ຍ້າຍໄປຂວາ"
+  "reorderItemRight": "ຍ້າຍໄປຂວາ",
+  "copyButtonLabel": "ສຳເນົາ",
+  "cutButtonLabel": "ຕັດ",
+  "lookUpButtonLabel": "ຊອກຫາຂໍ້ມູນ",
+  "searchWebButtonLabel": "ຊອກຫາຢູ່ອິນເຕີເນັດ",
+  "shareButtonLabel": "ແບ່ງປັນ",
+  "pasteButtonLabel": "ວາງ",
+  "selectAllButtonLabel": "ເລືອກທັງໝົດ"
 }

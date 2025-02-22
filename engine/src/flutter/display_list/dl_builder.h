@@ -118,6 +118,10 @@ class DisplayListBuilder final : public virtual DlCanvas,
                      DlClipOp clip_op = DlClipOp::kIntersect,
                      bool is_aa = false) override;
   // |DlCanvas|
+  void ClipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             DlClipOp clip_op = DlClipOp::kIntersect,
+                             bool is_aa = false) override;
+  // |DlCanvas|
   void ClipPath(const DlPath& path,
                 DlClipOp clip_op = DlClipOp::kIntersect,
                 bool is_aa = false) override;
@@ -171,6 +175,9 @@ class DisplayListBuilder final : public virtual DlCanvas,
   void DrawDiffRoundRect(const DlRoundRect& outer,
                          const DlRoundRect& inner,
                          const DlPaint& paint) override;
+  // |DlCanvas|
+  void DrawRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             const DlPaint& paint) override;
   // |DlCanvas|
   void DrawPath(const DlPath& path, const DlPaint& paint) override;
   // |DlCanvas|
@@ -409,6 +416,12 @@ class DisplayListBuilder final : public virtual DlCanvas,
     ClipRoundRect(rrect, clip_op, is_aa);
   }
   // |DlOpReceiver|
+  void clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                     DlClipOp clip_op,
+                     bool is_aa) override {
+    ClipRoundSuperellipse(rse, clip_op, is_aa);
+  }
+  // |DlOpReceiver|
   void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override {
     ClipPath(path, clip_op, is_aa);
   }
@@ -437,6 +450,8 @@ class DisplayListBuilder final : public virtual DlCanvas,
   // |DlOpReceiver|
   void drawDiffRoundRect(const DlRoundRect& outer,
                          const DlRoundRect& inner) override;
+  // |DlOpReceiver|
+  void drawRoundSuperellipse(const DlRoundSuperellipse& rse) override;
   // |DlOpReceiver|
   void drawPath(const DlPath& path) override;
   // |DlOpReceiver|

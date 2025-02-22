@@ -4512,7 +4512,7 @@ TEST_F(DisplayListTest, DrawDisplayListForwardsBackdropFlag) {
 #define CLIP_EXPECTOR(name) ClipExpector name(__FILE__, __LINE__)
 
 struct ClipExpectation {
-  std::variant<DlRect, DlRoundRect, DlPath> shape;
+  std::variant<DlRect, DlRoundRect, DlRoundSuperellipse, DlPath> shape;
   bool is_oval;
   DlClipOp clip_op;
   bool is_aa;
@@ -4524,6 +4524,8 @@ struct ClipExpectation {
       case 1:
         return "DlRoundRect";
       case 2:
+        return "DlRoundSuperellipse";
+      case 3:
         return "DlPath";
       default:
         return "Unknown";
@@ -4631,6 +4633,11 @@ class ClipExpector : public virtual DlOpReceiver,
                      DlClipOp clip_op,
                      bool is_aa) override {
     check(rrect, clip_op, is_aa);
+  }
+  void clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             DlClipOp clip_op,
+                             bool is_aa) override {
+    check(rse, clip_op, is_aa);
   }
   void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override {
     check(path, clip_op, is_aa);

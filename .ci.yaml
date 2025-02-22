@@ -3224,7 +3224,6 @@ targets:
   - name: Linux_pixel_7pro platform_views_hcpp_scroll_perf__timeline_summary
     recipe: devicelab/devicelab_drone
     presubmit: false
-    bringup: true
     timeout: 60
     properties:
       tags: >
@@ -3568,7 +3567,6 @@ targets:
       task_name: animated_complex_opacity_perf_macos__e2e_summary
 
   - name: Mac_benchmark basic_material_app_macos__compile
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/162364
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -3873,7 +3871,6 @@ targets:
       - dev/bots/**
 
   - name: Mac_benchmark flutter_view_macos__start_up
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/159540
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
@@ -6695,7 +6692,6 @@ targets:
 
   # windows mokey test
   - name: Windows_mokey native_assets_android
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/156063
     recipe: devicelab/devicelab_drone
     presubmit: false
     timeout: 60

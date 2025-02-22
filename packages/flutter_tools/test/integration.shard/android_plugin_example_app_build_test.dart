@@ -96,7 +96,7 @@ void main() {
     expect(gradleProperties, exists);
 
     gradleProperties.writeAsStringSync('''
-org.gradle.jvmargs=-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError
+org.gradle.jvmargs=-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError
 android.useAndroidX=true
 android.enableJetifier=true
 android.enableR8=true''');

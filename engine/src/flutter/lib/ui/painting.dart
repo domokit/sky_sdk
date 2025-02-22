@@ -32,6 +32,11 @@ bool _rrectIsValid(RRect rrect) {
   return true;
 }
 
+bool _rseIsValid(RSuperellipse rse) {
+  assert(!rse.hasNaN, 'RSuperellipse argument contained a NaN value.');
+  return true;
+}
+
 bool _offsetIsValid(Offset offset) {
   assert(!offset.dx.isNaN && !offset.dy.isNaN, 'Offset argument contained a NaN value.');
   return true;
@@ -5874,6 +5879,18 @@ abstract class Canvas {
   void clipRRect(RRect rrect, {bool doAntiAlias = true});
 
   /// Reduces the clip region to the intersection of the current clip and the
+  /// given rounded superellipse.
+  ///
+  /// ![](https://flutter.github.io/assets-for-api-docs/assets/dart-ui/clip_rsuperellipse.png)
+  ///
+  /// If [doAntiAlias] is true, then the clip will be anti-aliased.
+  ///
+  /// If multiple draw commands intersect with the clip boundary, this can result
+  /// in incorrect blending at the clip boundary. See [saveLayer] for a
+  /// discussion of how to address that and some examples of using [clipRSuperellipse].
+  void clipRSuperellipse(RSuperellipse rse, {bool doAntiAlias = true});
+
+  /// Reduces the clip region to the intersection of the current clip and the
   /// given [Path].
   ///
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/dart-ui/clip_path.png)
@@ -5995,6 +6012,13 @@ abstract class Canvas {
   ///
   /// This shape is almost but not quite entirely unlike an annulus.
   void drawDRRect(RRect outer, RRect inner, Paint paint);
+
+  /// Draws a rounded superellipse with the given [Paint]. The shape is filled,
+  /// and the value of the [Paint.style] is ignored for this call.
+  ///
+  /// ![](https://flutter.github.io/assets-for-api-docs/assets/dart-ui/canvas_rsuperellipse.png#gh-light-mode-only)
+  /// ![](https://flutter.github.io/assets-for-api-docs/assets/dart-ui/canvas_rsuperellipse.png#gh-dark-mode-only)
+  void drawRSuperellipse(RSuperellipse rse, Paint paint);
 
   /// Draws an axis-aligned oval that fills the given axis-aligned rectangle
   /// with the given [Paint]. Whether the oval is filled or stroked (or both) is
@@ -6608,6 +6632,15 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
   external void _clipRRect(Float32List rrect, bool doAntiAlias);
 
   @override
+  void clipRSuperellipse(RSuperellipse rse, {bool doAntiAlias = true}) {
+    assert(_rseIsValid(rse));
+    _clipRSuperellipse(rse._getValue32(), doAntiAlias);
+  }
+
+  @Native<Void Function(Pointer<Void>, Handle, Bool)>(symbol: 'Canvas::clipRSuperellipse')
+  external void _clipRSuperellipse(Float32List rse, bool doAntiAlias);
+
+  @override
   void clipPath(Path path, {bool doAntiAlias = true}) {
     _clipPath(path as _NativePath, doAntiAlias);
   }
@@ -6713,6 +6746,19 @@ base class _NativeCanvas extends NativeFieldWrapperClass1 implements Canvas {
   external void _drawDRRect(
     Float32List outer,
     Float32List inner,
+    List<Object?>? paintObjects,
+    ByteData paintData,
+  );
+
+  @override
+  void drawRSuperellipse(RSuperellipse rse, Paint paint) {
+    assert(_rseIsValid(rse));
+    _drawRSuperellipse(rse._getValue32(), paint._objects, paint._data);
+  }
+
+  @Native<Void Function(Pointer<Void>, Handle, Handle, Handle)>(symbol: 'Canvas::drawRSuperellipse')
+  external void _drawRSuperellipse(
+    Float32List rse,
     List<Object?>? paintObjects,
     ByteData paintData,
   );

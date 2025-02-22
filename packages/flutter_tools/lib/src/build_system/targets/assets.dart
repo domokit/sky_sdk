@@ -16,7 +16,6 @@ import '../build_system.dart';
 import '../depfile.dart';
 import '../exceptions.dart';
 import '../tools/asset_transformer.dart';
-import '../tools/scene_importer.dart';
 import '../tools/shader_compiler.dart';
 import 'common.dart';
 import 'icon_tree_shaker.dart';
@@ -78,12 +77,6 @@ Future<Depfile> copyAssets(
     targetPlatform: targetPlatform,
   );
   final ShaderCompiler shaderCompiler = ShaderCompiler(
-    processManager: environment.processManager,
-    logger: environment.logger,
-    fileSystem: environment.fileSystem,
-    artifacts: environment.artifacts,
-  );
-  final SceneImporter sceneImporter = SceneImporter(
     processManager: environment.processManager,
     logger: environment.logger,
     fileSystem: environment.fileSystem,
@@ -159,12 +152,6 @@ Future<Depfile> copyAssets(
                     input: content.file as File,
                     outputPath: file.path,
                     targetPlatform: targetPlatform,
-                  );
-            case AssetKind.model:
-              doCopy =
-                  !await sceneImporter.importScene(
-                    input: content.file as File,
-                    outputPath: file.path,
                   );
           }
           if (doCopy) {

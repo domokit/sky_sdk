@@ -4,5 +4,12 @@
   "reorderItemUp": "Pārvietot uz augšu",
   "reorderItemDown": "Pārvietot uz leju",
   "reorderItemLeft": "Pārvietot pa kreisi",
-  "reorderItemRight": "Pārvietot pa labi"
+  "reorderItemRight": "Pārvietot pa labi",
+  "copyButtonLabel": "Kopēt",
+  "cutButtonLabel": "Izgriezt",
+  "lookUpButtonLabel": "Meklēt",
+  "searchWebButtonLabel": "Meklēt tīmeklī",
+  "shareButtonLabel": "Kopīgot",
+  "pasteButtonLabel": "Ielīmēt",
+  "selectAllButtonLabel": "Atlasīt visu"
 }

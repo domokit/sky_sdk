@@ -4,5 +4,12 @@
   "reorderItemUp": "Տեղափոխել վերև",
   "reorderItemDown": "Տեղափոխել ներքև",
   "reorderItemLeft": "Տեղափոխել ձախ",
-  "reorderItemRight": "Տեղափոխել աջ"
+  "reorderItemRight": "Տեղափոխել աջ",
+  "copyButtonLabel": "Պատճենել",
+  "cutButtonLabel": "Կտրել",
+  "lookUpButtonLabel": "Փնտրել",
+  "searchWebButtonLabel": "Որոնել համացանցում",
+  "shareButtonLabel": "Կիսվել",
+  "pasteButtonLabel": "Տեղադրել",
+  "selectAllButtonLabel": "Նշել բոլորը"
 }

@@ -4,5 +4,12 @@
   "reorderItemUp": "Mutați în sus",
   "reorderItemDown": "Mutați în jos",
   "reorderItemLeft": "Mutați la stânga",
-  "reorderItemRight": "Mutați la dreapta"
+  "reorderItemRight": "Mutați la dreapta",
+  "copyButtonLabel": "Copiați",
+  "cutButtonLabel": "Decupați",
+  "lookUpButtonLabel": "Privire în sus",
+  "searchWebButtonLabel": "Căutați pe web",
+  "shareButtonLabel": "Trimiteți",
+  "pasteButtonLabel": "Inserați",
+  "selectAllButtonLabel": "Selectați tot"
 }
