@@ -146,7 +146,8 @@ if (enable_unittests) {
       ":txt",
       ":txt_fixtures",
       "//flutter/fml",
-      "//flutter/skia/modules/skparagraph",
+      "//flutter/skia/modules/skparagraph:skparagraph",
+      "//flutter/skia/modules/skparagraph:utils",
       "//flutter/testing:testing_lib",
       "//flutter/third_party/benchmark",
     ]
