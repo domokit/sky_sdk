@@ -254,6 +254,10 @@ STDERR STUFF
         osUtils: FakeOperatingSystemUtils(),
       );
       fileSystem.file('pubspec.yaml').createSync();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
       fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
 
       expect(

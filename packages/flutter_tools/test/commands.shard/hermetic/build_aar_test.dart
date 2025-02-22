@@ -32,6 +32,7 @@ void main() {
 
   setUp(() {
     fs = MemoryFileSystem.test();
+    fs.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
     final Directory flutterRoot = fs.directory('flutter');
     Cache.flutterRoot = flutterRoot.path;
     logger = BufferLogger.test();
@@ -89,6 +90,43 @@ flutter:
   module:
     foo: bar
 ''');
+
+      // Modules are weird.
+      //
+      // The iOS project configuration kicks in, even for this test, because
+      // it's *always* on by default for module-type projects. This is the bare
+      // minimum scaffolding to allow the iOS project not to fail, so we can get
+      // on with the Andorid (AAR) testing.
+      {
+        final String packageConfigPath =
+            '${Cache.flutterRoot!}/packages/flutter_tools/.dart_tool/package_config.json';
+        final Directory dummyTemplateImagesDirectory = fs.directory(Cache.flutterRoot).parent;
+        dummyTemplateImagesDirectory.createSync(recursive: true);
+        fs.file(packageConfigPath)
+          ..createSync(recursive: true)
+          ..writeAsStringSync('''
+{
+  "configVersion": 2,
+  "packages": [
+    {
+      "name": "flutter_template_images",
+      "rootUri": "${dummyTemplateImagesDirectory.uri}",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    }
+  ]
+}
+''');
+        fs
+            .directory('${Cache.flutterRoot!}/packages/flutter_tools')
+            .childDirectory('templates/module/ios/library')
+            .createSync(recursive: true);
+        fs
+            .directory('${Cache.flutterRoot!}/packages/flutter_tools')
+            .childDirectory('templates/module/ios/host_app_ephemeral')
+            .createSync(recursive: true);
+      }
+
       final Directory dotAndroidDir = fs.directory('.android')..createSync(recursive: true);
       dotAndroidDir.childFile('gradlew').createSync();
 

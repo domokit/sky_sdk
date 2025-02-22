@@ -26,7 +26,7 @@ class BuildWebCommand extends BuildSubCommand {
     addTreeShakeIconsFlag();
     usesTargetOption();
     usesOutputDir();
-    usesPubOption();
+    usesPackageTooling();
     usesBuildNumberOption();
     usesBuildNameOption();
     addBuildModeFlags(verboseHelp: verboseHelp);

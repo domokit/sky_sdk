@@ -104,7 +104,7 @@ class AnalyzeCommand extends FlutterCommand {
       help: 'Also output the analysis time.',
     );
 
-    usesPubOption();
+    usesPackageTooling();
 
     // Not used by analyze --watch
     argParser.addFlag(
@@ -257,6 +257,9 @@ class AnalyzeCommand extends FlutterCommand {
 
     return super.shouldRunPub;
   }
+
+  @override
+  bool get shouldEnsurePlatformTooling => false;
 
   @override
   Future<FlutterCommandResult> runCommand() async {

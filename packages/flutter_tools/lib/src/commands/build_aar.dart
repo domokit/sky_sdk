@@ -42,7 +42,7 @@ class BuildAarCommand extends BuildSubCommand {
     usesFlavorOption();
     usesBuildNumberOption();
     usesOutputDir();
-    usesPubOption();
+    usesPackageTooling();
     addSplitDebugInfoOption();
     addDartObfuscationOption();
     usesDartDefineOption();

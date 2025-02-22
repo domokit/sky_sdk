@@ -64,7 +64,7 @@ class BuildBundleCommand extends BuildSubCommand {
         hide: !verboseHelp,
         help: '(deprecated) Icon font tree shaking is not supported by this command.',
       );
-    usesPubOption();
+    usesPackageTooling();
     usesTrackWidgetCreation(verboseHelp: verboseHelp);
   }
 

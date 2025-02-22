@@ -24,7 +24,7 @@ class BuildAppBundleCommand extends BuildSubCommand {
     usesTargetOption();
     addBuildModeFlags(verboseHelp: verboseHelp);
     usesFlavorOption();
-    usesPubOption();
+    usesPackageTooling();
     usesBuildNumberOption();
     usesBuildNameOption();
     addShrinkingFlag(verboseHelp: verboseHelp);

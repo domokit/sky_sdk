@@ -80,6 +80,11 @@ void main() {
       () async {
         fileSystem.file('lib/main.dart').createSync(recursive: true);
         fileSystem.file('pubspec.yaml').createSync();
+        fileSystem
+            .directory('.dart_tool')
+            .childFile('package_config.json')
+            .createSync(recursive: true);
+
         fileSystem.file('.dart_tool/package_config.json').createSync(recursive: true);
 
         final TestRunCommandThatOnlyValidates command = TestRunCommandThatOnlyValidates();
@@ -108,6 +113,10 @@ void main() {
       () async {
         fileSystem.file('lib/main.dart').createSync(recursive: true);
         fileSystem.file('pubspec.yaml').createSync();
+        fileSystem
+            .directory('.dart_tool')
+            .childFile('package_config.json')
+            .createSync(recursive: true);
         fileSystem.file('.dart_tool/package_config.json').createSync(recursive: true);
 
         final RunCommand command = RunCommand();
@@ -617,6 +626,7 @@ void main() {
       setUp(() {
         command = TestRunCommandWithFakeResidentRunner()..fakeResidentRunner = FakeResidentRunner();
         fs = MemoryFileSystem.test();
+        fs.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
       });
 
       testUsingContext(
@@ -1137,9 +1147,15 @@ void main() {
 
   group('terminal', () {
     late FakeAnsiTerminal fakeTerminal;
+    late FileSystem fileSystem;
 
     setUp(() {
       fakeTerminal = FakeAnsiTerminal();
+      fileSystem = MemoryFileSystem.test();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
     });
 
     testUsingContext(
@@ -1159,7 +1175,7 @@ void main() {
       overrides: <Type, Generator>{
         AnsiTerminal: () => fakeTerminal,
         Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-        FileSystem: () => MemoryFileSystem.test(),
+        FileSystem: () => fileSystem,
         ProcessManager: () => FakeProcessManager.any(),
       },
     );
@@ -1182,7 +1198,7 @@ void main() {
       overrides: <Type, Generator>{
         AnsiTerminal: () => fakeTerminal,
         Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-        FileSystem: () => MemoryFileSystem.test(),
+        FileSystem: () => fileSystem,
         ProcessManager: () => FakeProcessManager.any(),
       },
     );
@@ -1218,7 +1234,11 @@ void main() {
     },
     overrides: <Type, Generator>{
       Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-      FileSystem: () => MemoryFileSystem.test(),
+      FileSystem: () {
+        final FileSystem fs = MemoryFileSystem.test();
+        fs.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+        return fs;
+      },
       ProcessManager: () => FakeProcessManager.any(),
     },
   );
@@ -1242,7 +1262,11 @@ void main() {
     },
     overrides: <Type, Generator>{
       Cache: () => Cache.test(processManager: FakeProcessManager.any()),
-      FileSystem: () => MemoryFileSystem.test(),
+      FileSystem: () {
+        final FileSystem fs = MemoryFileSystem.test();
+        fs.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+        return fs;
+      },
       ProcessManager: () => FakeProcessManager.any(),
     },
   );
