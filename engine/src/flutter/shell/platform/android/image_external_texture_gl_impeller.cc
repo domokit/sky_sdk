@@ -13,8 +13,9 @@ ImageExternalTextureGLImpeller::ImageExternalTextureGLImpeller(
     const std::shared_ptr<impeller::ContextGLES>& context,
     int64_t id,
     const fml::jni::ScopedJavaGlobalRef<jobject>& image_textury_entry,
-    const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade)
-    : ImageExternalTextureGL(id, image_textury_entry, jni_facade),
+    const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade,
+    const ImageExternalTexture::ImageLifecycle lifecycle)
+    : ImageExternalTextureGL(id, image_textury_entry, jni_facade, lifecycle),
       impeller_context_(context) {}
 
 void ImageExternalTextureGLImpeller::Detach() {}

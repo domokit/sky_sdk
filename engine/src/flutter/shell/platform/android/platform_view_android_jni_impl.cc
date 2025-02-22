@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "impeller/toolkit/android/shadow_realm.h"
+#include "shell/platform/android/image_external_texture.h"
 #include "unicode/uchar.h"
 
 #include "flutter/common/constants.h"
@@ -517,10 +518,18 @@ static void RegisterImageTexture(JNIEnv* env,
                                  jobject jcaller,
                                  jlong shell_holder,
                                  jlong texture_id,
-                                 jobject image_texture_entry) {
+                                 jobject image_texture_entry,
+                                 jboolean reset_on_gr_context_destroyed) {
+  ImageExternalTexture::ImageLifecycle lifecycle;
+  if (reset_on_gr_context_destroyed) {
+    lifecycle = ImageExternalTexture::ImageLifecycle::kReset;
+  } else {
+    lifecycle = ImageExternalTexture::ImageLifecycle::kKeepAlive;
+  }
   ANDROID_SHELL_HOLDER->GetPlatformView()->RegisterImageTexture(
-      static_cast<int64_t>(texture_id),                                 //
-      fml::jni::ScopedJavaGlobalRef<jobject>(env, image_texture_entry)  //
+      static_cast<int64_t>(texture_id),                                  //
+      fml::jni::ScopedJavaGlobalRef<jobject>(env, image_texture_entry),  //
+      lifecycle                                                          //
   );
 }
 
@@ -798,7 +807,7 @@ bool RegisterApi(JNIEnv* env) {
       {
           .name = "nativeRegisterImageTexture",
           .signature = "(JJLjava/lang/ref/"
-                       "WeakReference;)V",
+                       "WeakReference;Z)V",
           .fnPtr = reinterpret_cast<void*>(&RegisterImageTexture),
       },
       {
