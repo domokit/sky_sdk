@@ -109,6 +109,7 @@ import java.util.Set;
 public class FlutterView extends FrameLayout
     implements MouseCursorPlugin.MouseCursorViewDelegate, KeyboardManager.ViewDelegate {
   private static final String TAG = "FlutterView";
+  private static final String GBOARD_PACKAGE_NAME = "com.google.android.inputmethod.latin";
 
   // Internal view hierarchy references.
   @Nullable private FlutterSurfaceView flutterSurfaceView;
@@ -1445,13 +1446,14 @@ public class FlutterView extends FrameLayout
       if (Build.VERSION.SDK_INT >= API_LEVELS.API_31) {
         List<SpellCheckerInfo> enabledSpellCheckerInfos =
             textServicesManager.getEnabledSpellCheckerInfos();
-        boolean gboardSpellCheckerEnabled =
-            enabledSpellCheckerInfos.stream()
-                .anyMatch(
-                    spellCheckerInfo ->
-                        spellCheckerInfo
-                            .getPackageName()
-                            .equals("com.google.android.inputmethod.latin"));
+        boolean gboardSpellCheckerEnabled = false;
+
+        for (SpellCheckerInfo spellCheckerInfo : enabledSpellCheckerInfos) {
+          if (spellCheckerInfo.getPackageName().equals(GBOARD_PACKAGE_NAME)) {
+            gboardSpellCheckerEnabled = true;
+            break;
+          }
+        }
 
         // Checks if enabled spell checker is the one that is suppported by Gboard, which is
         // the one Flutter supports by default.
