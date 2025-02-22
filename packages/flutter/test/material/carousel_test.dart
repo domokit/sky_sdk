@@ -1413,6 +1413,25 @@ void main() {
       expect(buttonPressed, isTrue);
     },
   );
+
+  // Regression test for https://github.com/flutter/flutter/issues/160679
+  testWidgets('CarouselView does not crash if itemExtent is zero', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 100,
+            child: CarouselView(
+              itemExtent: 0,
+              children: <Widget>[Container(color: Colors.red, width: 100, height: 100)],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+  });
 }
 
 Finder getItem(int index) {
