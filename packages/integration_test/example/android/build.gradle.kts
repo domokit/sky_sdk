@@ -13,22 +13,22 @@ allprojects {
     }
 }
 
-rootProject.buildDir = '../build'
+rootProject.buildDir = file("../build")
 
 subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.buildDir = file("${rootProject.buildDir}/${project.name}")
 }
 subprojects {
-    project.evaluationDependsOn(':app')
+    project.evaluationDependsOn(":app")
     dependencyLocking {
-        ignoredDependencies.add('io.flutter:*')
+        ignoredDependencies.add("io.flutter:*")
         lockFile = file("${rootProject.projectDir}/project-${project.name}.lockfile")
-        if (!project.hasProperty('local-engine-repo')) {
-          lockAllConfigurations()
+        if (!project.hasProperty("local-engine-repo")) {
+            lockAllConfigurations()
         }
     }
 }
 
-tasks.register("clean", Delete) {
-    delete rootProject.buildDir
+tasks.register<Delete>("clean") {
+    delete(rootProject.buildDir)
 }
