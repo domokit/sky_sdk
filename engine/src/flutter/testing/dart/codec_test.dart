@@ -20,8 +20,7 @@ void main() {
     expect(codec.repetitionCount, 0);
     codec.dispose();
 
-    data = await _getSkiaResource('test640x479.gif').readAsBytes();
-    codec = await ui.instantiateImageCodec(data);
+    data = await _createCodec();
     expect(codec.frameCount, 4);
     expect(codec.repetitionCount, -1);
   });
@@ -55,8 +54,7 @@ void main() {
   });
 
   test('nextFrame', () async {
-    final Uint8List data = await _getSkiaResource('test640x479.gif').readAsBytes();
-    final ui.Codec codec = await ui.instantiateImageCodec(data);
+    final ui.Codec codec = await _createCodec();
     final List<List<int>> decodedFrameInfos = <List<int>>[];
     for (int i = 0; i < 5; i++) {
       final ui.FrameInfo frameInfo = await codec.getNextFrame();
@@ -316,6 +314,59 @@ void main() {
       }
     },
   );
+
+  test('Image constructor invokes onCreate once', () async {
+    int onCreateInvokedCount = 0;
+
+    ui.Codec? createdCodec;
+    ui.Codec.onCreate = (ui.Codec codec) {
+      onCreateInvokedCount++;
+      createdCodec = codec;
+    };
+
+    final ui.Codec codec1 = await _createCodec();
+
+    expect(onCreateInvokedCount, 1);
+    expect(createdCodec, codec1);
+
+    final ui.Codec codec2 = await _createCodec();
+
+    expect(onCreateInvokedCount, 2);
+    expect(createdCodec, codec2);
+
+    ui.Codec.onCreate = null;
+  });
+
+  test('dispose() invokes onDispose once', () async {
+    int onDisposeInvokedCount = 0;
+    ui.Codec? disposedCodec;
+    ui.Codec.onDispose = (ui.Codec codec) {
+      onDisposeInvokedCount++;
+      disposedCodec = codec;
+    };
+
+    final ui.Codec codec1 =
+        await _createCodec()
+          ..dispose();
+
+    expect(onDisposeInvokedCount, 1);
+    expect(disposedCodec, codec1);
+
+    final ui.Codec codec2 =
+        await _createCodec()
+          ..dispose();
+
+    expect(onDisposeInvokedCount, 2);
+    expect(disposedCodec, codec2);
+
+    ui.Codec.onDispose = null;
+  });
+}
+
+ui.Codec _createCodec() async {
+  Uint8List data = await _getSkiaResource('test640x479.gif').readAsBytes();
+  final ui.Codec codec = await ui.instantiateImageCodec(data);
+  return codec;
 }
 
 /// Returns a File handle to a file in the skia/resources directory.

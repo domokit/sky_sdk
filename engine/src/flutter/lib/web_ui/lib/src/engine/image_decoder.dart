@@ -204,15 +204,35 @@ class AnimatedImageFrameInfo implements ui.FrameInfo {
 
 // Wraps another codec and resizes each output image.
 class ResizingCodec implements ui.Codec {
-  ResizingCodec(this.delegate, {this.targetWidth, this.targetHeight, this.allowUpscaling = true});
+  ResizingCodec(this.delegate, {this.targetWidth, this.targetHeight, this.allowUpscaling = true}) {
+    onCreate?.call(this);
+  }
 
   final ui.Codec delegate;
   final int? targetWidth;
   final int? targetHeight;
   final bool allowUpscaling;
 
+  /// A callback that is invoked to report a codec creation.
+  ///
+  /// It's preferred to use [MemoryAllocations] in flutter/foundation.dart
+  /// than to use [onCreate] directly because [MemoryAllocations]
+  /// allows multiple callbacks.
+  static CodecEventCallback? onCreate;
+
+  /// A callback that is invoked to report the codec disposal.
+  ///
+  /// It's preferred to use [MemoryAllocations] in flutter/foundation.dart
+  /// than to use [onDispose] directly because [MemoryAllocations]
+  /// allows multiple callbacks.
+  static CodecEventCallback? onDispose;
+
   @override
-  void dispose() => delegate.dispose();
+  @mustCallSuper
+  void dispose() {
+    delegate.dispose();
+    onDispose?.call(this);
+  }
 
   @override
   int get frameCount => delegate.frameCount;
