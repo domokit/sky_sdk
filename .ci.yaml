@@ -561,6 +561,9 @@ targets:
     recipe: infra/ci_yaml
     presubmit: false
     timeout: 30
+    enabled_branches:
+      # Don't run this on release branches
+      - master
     properties:
       tags: >
         ["framework", "hostonly", "shard", "linux"]
