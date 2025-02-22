@@ -113,6 +113,8 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
 
   // Begin WidgetsBindingObserver.
 
+  // TODO(justinmc): This seems to not handle interleaved nested Navigators.
+  // https://github.com/flutter/flutter/issues/152323
   @override
   bool handleStartBackGesture(PredictiveBackEvent backEvent) {
     final bool gestureInProgress = !backEvent.isButtonEvent && _isEnabled;

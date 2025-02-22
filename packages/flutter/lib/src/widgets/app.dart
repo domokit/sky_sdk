@@ -422,6 +422,13 @@ class WidgetsApp extends StatefulWidget {
   /// [routeInformationParser], [routeInformationProvider], [routerDelegate],
   /// and [backButtonDispatcher], must all be null.
   /// {@endtemplate}
+  ///
+  /// {@tool dartpad}
+  /// This sample shows how to handle nested [Navigator]s when using
+  /// [WidgetsApp.router].
+  ///
+  /// ** See code in examples/api/lib/widgets/app/app.1.dart **
+  /// {@end-tool}
   WidgetsApp.router({
     super.key,
     this.routeInformationProvider,
