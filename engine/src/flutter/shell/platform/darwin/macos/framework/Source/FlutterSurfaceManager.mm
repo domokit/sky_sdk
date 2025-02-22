@@ -222,18 +222,9 @@ static CGSize GetRequiredFrameSize(NSArray<FlutterSurfacePresentInfo*>* surfaces
   [commandBuffer commit];
   [commandBuffer waitUntilScheduled];
 
-  dispatch_block_t presentBlock = ^{
-    // Get the actual dimensions of the frame (relevant for thread synchronizer).
-    CGSize size = GetRequiredFrameSize(surfaces);
-    [_delegate onPresent:size
-               withBlock:^{
-                 _lastPresentationTime = presentationTime;
-                 [self commit:surfaces];
-                 if (notify != nil) {
-                   notify();
-                 }
-               }];
-  };
+  CGSize size = GetRequiredFrameSize(surfaces);
+
+  CFTimeInterval delay = 0;
 
   if (presentationTime > 0) {
     // Enforce frame pacing. It seems that the target timestamp of CVDisplayLink does not
@@ -249,17 +240,20 @@ static CGSize GetRequiredFrameSize(NSArray<FlutterSurfacePresentInfo*>* surfaces
     // as a average_frame_rasterizer_time_millis regresson.
     CFTimeInterval minPresentationTime = (presentationTime + _lastPresentationTime) / 2.0;
     CFTimeInterval now = CACurrentMediaTime();
-    if (now < minPresentationTime) {
-      NSTimer* timer = [NSTimer timerWithTimeInterval:minPresentationTime - now
-                                              repeats:NO
-                                                block:^(NSTimer* timer) {
-                                                  presentBlock();
-                                                }];
-      [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-      return;
-    }
+    delay = std::max(minPresentationTime - now, 0.0);
   }
-  presentBlock();
+  [_delegate onPresent:size
+             withBlock:^{
+               _lastPresentationTime = presentationTime;
+               [CATransaction begin];
+               [CATransaction setDisableActions:YES];
+               [self commit:surfaces];
+               if (notify != nil) {
+                 notify();
+               }
+               [CATransaction commit];
+             }
+                 delay:delay];
 }
 
 @end

@@ -29,11 +29,9 @@ TEST(FlutterView, ShouldInheritContentsScaleReturnsYes) {
   id<MTLDevice> device = MTLCreateSystemDefaultDevice();
   id<MTLCommandQueue> queue = [device newCommandQueue];
   TestFlutterViewDelegate* delegate = [[TestFlutterViewDelegate alloc] init];
-  FlutterThreadSynchronizer* threadSynchronizer = [[FlutterThreadSynchronizer alloc] init];
   FlutterView* view = [[FlutterView alloc] initWithMTLDevice:device
                                                 commandQueue:queue
                                                     delegate:delegate
-                                          threadSynchronizer:threadSynchronizer
                                               viewIdentifier:kImplicitViewId];
   EXPECT_EQ([view layer:view.layer shouldInheritContentsScale:3.0 fromWindow:view.window], YES);
 }
@@ -74,11 +72,9 @@ TEST(FlutterView, CursorUpdateDoesHitTest) {
   id<MTLDevice> device = MTLCreateSystemDefaultDevice();
   id<MTLCommandQueue> queue = [device newCommandQueue];
   TestFlutterViewDelegate* delegate = [[TestFlutterViewDelegate alloc] init];
-  FlutterThreadSynchronizer* threadSynchronizer = [[FlutterThreadSynchronizer alloc] init];
   TestFlutterView* view = [[TestFlutterView alloc] initWithMTLDevice:device
                                                         commandQueue:queue
                                                             delegate:delegate
-                                                  threadSynchronizer:threadSynchronizer
                                                       viewIdentifier:kImplicitViewId];
   NSWindow* window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600)
                                                  styleMask:NSBorderlessWindowMask
@@ -118,11 +114,9 @@ TEST(FlutterView, CursorUpdateDoesNotOverridePlatformView) {
   id<MTLDevice> device = MTLCreateSystemDefaultDevice();
   id<MTLCommandQueue> queue = [device newCommandQueue];
   TestFlutterViewDelegate* delegate = [[TestFlutterViewDelegate alloc] init];
-  FlutterThreadSynchronizer* threadSynchronizer = [[FlutterThreadSynchronizer alloc] init];
   TestFlutterView* view = [[TestFlutterView alloc] initWithMTLDevice:device
                                                         commandQueue:queue
                                                             delegate:delegate
-                                                  threadSynchronizer:threadSynchronizer
                                                       viewIdentifier:kImplicitViewId];
   NSWindow* window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600)
                                                  styleMask:NSBorderlessWindowMask

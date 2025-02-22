@@ -1,5 +1,6 @@
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterVSyncWaiter.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterDisplayLink.h"
+#import "flutter/shell/platform/darwin/macos/framework/Source/FlutterRunLoop.h"
 
 #include "flutter/fml/logging.h"
 
@@ -37,7 +38,6 @@ static const CFTimeInterval kTimerLatencyCompensation = 0.001;
   std::optional<std::uintptr_t> _pendingBaton;
   FlutterDisplayLink* _displayLink;
   void (^_block)(CFTimeInterval, CFTimeInterval, uintptr_t);
-  NSRunLoop* _runLoop;
   CFTimeInterval _lastTargetTimestamp;
   BOOL _warmUpFrame;
 }
@@ -59,48 +59,37 @@ static const CFTimeInterval kTimerLatencyCompensation = 0.001;
   return self;
 }
 
-// Called on same thread as the vsync request (UI thread).
-- (void)processDisplayLink:(CFTimeInterval)timestamp
-           targetTimestamp:(CFTimeInterval)targetTimestamp {
-  FML_DCHECK([NSRunLoop currentRunLoop] == _runLoop);
-
-  _lastTargetTimestamp = targetTimestamp;
-
-  // CVDisplayLink callback is called one and a half frame before the target
-  // timestamp. That can cause frame-pacing issues if the frame is rendered too early,
-  // it may also trigger frame start before events are processed.
-  CFTimeInterval minStart = targetTimestamp - _displayLink.nominalOutputRefreshPeriod;
-  CFTimeInterval current = CACurrentMediaTime();
-  CFTimeInterval remaining = std::max(minStart - current - kTimerLatencyCompensation, 0.0);
-
-  TRACE_VSYNC("DisplayLinkCallback-Original", _pendingBaton.value_or(0));
-
-  NSTimer* timer = [NSTimer
-      timerWithTimeInterval:remaining
-                    repeats:NO
-                      block:^(NSTimer* _Nonnull timer) {
-                        if (!_pendingBaton.has_value()) {
-                          TRACE_VSYNC("DisplayLinkPaused", size_t(0));
-                          _displayLink.paused = YES;
-                          return;
-                        }
-                        TRACE_VSYNC("DisplayLinkCallback-Delayed", _pendingBaton.value_or(0));
-                        _block(minStart, targetTimestamp, *_pendingBaton);
-                        _pendingBaton = std::nullopt;
-                      }];
-  [_runLoop addTimer:timer forMode:NSRunLoopCommonModes];
-}
-
 // Called from display link thread.
 - (void)onDisplayLink:(CFTimeInterval)timestamp targetTimestamp:(CFTimeInterval)targetTimestamp {
   @synchronized(self) {
-    if (_runLoop == nil) {
+    if (_lastTargetTimestamp == 0) {
       // Initial vsync - timestamp will be used to determine vsync phase.
       _lastTargetTimestamp = targetTimestamp;
       _displayLink.paused = YES;
     } else {
-      [_runLoop performBlock:^{
-        [self processDisplayLink:timestamp targetTimestamp:targetTimestamp];
+      _lastTargetTimestamp = targetTimestamp;
+      [FlutterRunLoop.mainRunLoop performBlock:^{
+        // CVDisplayLink callback is called one and a half frame before the target
+        // timestamp. That can cause frame-pacing issues if the frame is rendered too early,
+        // it may also trigger frame start before events are processed.
+        CFTimeInterval minStart = targetTimestamp - _displayLink.nominalOutputRefreshPeriod;
+        CFTimeInterval current = CACurrentMediaTime();
+        CFTimeInterval remaining = std::max(minStart - current - kTimerLatencyCompensation, 0.0);
+
+        TRACE_VSYNC("DisplayLinkCallback-Original", _pendingBaton.value_or(0));
+
+        [FlutterRunLoop.mainRunLoop
+            performBlock:^{
+              if (!_pendingBaton.has_value()) {
+                TRACE_VSYNC("DisplayLinkPaused", size_t(0));
+                _displayLink.paused = YES;
+                return;
+              }
+              TRACE_VSYNC("DisplayLinkCallback-Delayed", _pendingBaton.value_or(0));
+              _block(minStart, targetTimestamp, *_pendingBaton);
+              _pendingBaton = std::nullopt;
+            }
+              afterDelay:remaining];
       }];
     }
   }
@@ -120,14 +109,6 @@ static const CFTimeInterval kTimerLatencyCompensation = 0.001;
     return;
   }
 
-  // RunLoop is accessed both from main thread and from the display link thread.
-  @synchronized(self) {
-    if (_runLoop == nil) {
-      _runLoop = [NSRunLoop currentRunLoop];
-    }
-  }
-
-  FML_DCHECK(_runLoop == [NSRunLoop currentRunLoop]);
   if (_pendingBaton.has_value()) {
     FML_LOG(WARNING) << "Engine requested vsync while another was pending";
     _block(0, 0, *_pendingBaton);
@@ -161,15 +142,13 @@ static const CFTimeInterval kTimerLatencyCompensation = 0.001;
       delay = std::max(start - now - kTimerLatencyCompensation, 0.0);
     }
 
-    NSTimer* timer = [NSTimer timerWithTimeInterval:delay
-                                            repeats:NO
-                                              block:^(NSTimer* timer) {
-                                                CFTimeInterval targetTimestamp =
-                                                    start + tick_interval;
-                                                TRACE_VSYNC("SynthesizedInitialVSync", baton);
-                                                _block(start, targetTimestamp, baton);
-                                              }];
-    [_runLoop addTimer:timer forMode:NSRunLoopCommonModes];
+    [FlutterRunLoop.mainRunLoop
+        performBlock:^{
+          CFTimeInterval targetTimestamp = start + tick_interval;
+          TRACE_VSYNC("SynthesizedInitialVSync", baton);
+          _block(start, targetTimestamp, baton);
+        }
+          afterDelay:delay];
     _displayLink.paused = NO;
   } else {
     _pendingBaton = baton;
@@ -180,7 +159,12 @@ static const CFTimeInterval kTimerLatencyCompensation = 0.001;
   if (_pendingBaton.has_value()) {
     FML_LOG(WARNING) << "Deallocating FlutterVSyncWaiter with a pending vsync";
   }
-  [_displayLink invalidate];
+  // It is possible that block running on UI thread held the last reference to
+  // the waiter, in which case reschedule to main thread.
+  FlutterDisplayLink* link = _displayLink;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [link invalidate];
+  });
 }
 
 @end
