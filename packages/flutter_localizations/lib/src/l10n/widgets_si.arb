@@ -4,5 +4,12 @@
   "reorderItemUp": "ඉහළට ගෙන යන්න",
   "reorderItemDown": "පහළට ගෙන යන්න",
   "reorderItemLeft": "වමට ගෙන යන්න",
-  "reorderItemRight": "දකුණට ගෙන යන්න"
+  "reorderItemRight": "දකුණට ගෙන යන්න",
+  "copyButtonLabel": "පිටපත් කරන්න",
+  "cutButtonLabel": "කපන්න",
+  "lookUpButtonLabel": "උඩ බලන්න",
+  "searchWebButtonLabel": "වෙබය සොයන්න",
+  "shareButtonLabel": "බෙදා ගන්න",
+  "pasteButtonLabel": "අලවන්න",
+  "selectAllButtonLabel": "සියල්ල තෝරන්න"
 }

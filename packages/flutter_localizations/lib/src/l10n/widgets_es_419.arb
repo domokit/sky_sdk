@@ -4,5 +4,12 @@
   "reorderItemUp": "Mover hacia arriba",
   "reorderItemDown": "Mover hacia abajo",
   "reorderItemLeft": "Mover hacia la izquierda",
-  "reorderItemRight": "Mover hacia la derecha"
+  "reorderItemRight": "Mover hacia la derecha",
+  "copyButtonLabel": "Copiar",
+  "cutButtonLabel": "Cortar",
+  "lookUpButtonLabel": "Mirar hacia arriba",
+  "searchWebButtonLabel": "Buscar en la Web",
+  "shareButtonLabel": "Compartir",
+  "pasteButtonLabel": "Pegar",
+  "selectAllButtonLabel": "Seleccionar todo"
 }

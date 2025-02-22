@@ -4,5 +4,12 @@
   "reorderItemUp": "نقل لأعلى",
   "reorderItemDown": "نقل لأسفل",
   "reorderItemLeft": "نقل لليمين",
-  "reorderItemRight": "نقل لليسار"
+  "reorderItemRight": "نقل لليسار",
+  "copyButtonLabel": "نسخ",
+  "cutButtonLabel": "قص",
+  "lookUpButtonLabel": "بحث عام",
+  "searchWebButtonLabel": "البحث على الويب",
+  "shareButtonLabel": "مشاركة",
+  "pasteButtonLabel": "لصق",
+  "selectAllButtonLabel": "اختيار الكل"
 }

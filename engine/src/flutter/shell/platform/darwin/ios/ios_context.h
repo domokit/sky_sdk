@@ -15,7 +15,6 @@
 #import "flutter/shell/platform/darwin/common/framework/Headers/FlutterTexture.h"
 #import "flutter/shell/platform/darwin/ios/rendering_api_selection.h"
 #include "impeller/display_list/aiks_context.h"
-#include "third_party/skia/include/gpu/ganesh/GrDirectContext.h"
 
 namespace impeller {
 class Context;
@@ -71,46 +70,6 @@ class IOSContext {
   virtual IOSRenderingBackend GetBackend() const;
 
   //----------------------------------------------------------------------------
-  /// @brief      Create a resource context for use on the IO task runner. This
-  ///             resource context is used by Skia to upload texture to
-  ///             asynchronously and collect resources that are no longer needed
-  ///             on the render task runner.
-  ///
-  /// @attention  Client rendering APIs for which a GrDirectContext cannot be realized
-  ///             (software rendering), this method will always return null.
-  ///
-  /// @return     A non-null Skia context on success. `nullptr` on failure.
-  ///
-  virtual sk_sp<GrDirectContext> CreateResourceContext() = 0;
-
-  //----------------------------------------------------------------------------
-  /// @brief      When using client rendering APIs whose contexts need to be
-  ///             bound to a specific thread, the engine will call this method
-  ///             to give the on-screen context a chance to bind to the current
-  ///             thread.
-  ///
-  /// @attention  Client rendering APIs that have no-concept of thread local
-  ///             bindings (anything that is not OpenGL) will always return
-  ///             `true`.
-  ///
-  /// @attention  Client rendering APIs for which a GrDirectContext cannot be created
-  ///             (software rendering) will always return `false`.
-  ///
-  /// @attention  This binds the on-screen context to the current thread. To
-  ///             bind the off-screen context to the thread, use the
-  ///             `ResoruceMakeCurrent` method instead.
-  ///
-  /// @attention  Only one context may be bound to a thread at any given time.
-  ///             Making a binding on a thread, clears the old binding.
-  ///
-  /// @return     A GLContextResult that represents the result of the method.
-  ///             The GetResult() returns a bool that indicates If the on-screen context could be
-  ///             bound to the current
-  /// thread.
-  ///
-  virtual std::unique_ptr<GLContextResult> MakeCurrent() = 0;
-
-  //----------------------------------------------------------------------------
   /// @brief      Creates an external texture proxy of the appropriate client
   ///             rendering API.
   ///
@@ -122,20 +81,6 @@ class IOSContext {
   ///
   virtual std::unique_ptr<Texture> CreateExternalTexture(int64_t texture_id,
                                                          NSObject<FlutterTexture>* texture) = 0;
-
-  //----------------------------------------------------------------------------
-  /// @brief      Accessor for the Skia context associated with IOSSurfaces and
-  ///             the raster thread.
-  /// @details    There can be any number of resource contexts but this is the
-  ///             one context that will be used by surfaces to draw to the
-  ///             screen from the raster thread.
-  /// @returns    `nullptr` on failure.
-  /// @attention  The software context doesn't have a Skia context, so this
-  ///             value will be nullptr.
-  /// @see        For contexts which are used for offscreen work like loading
-  ///             textures see IOSContext::CreateResourceContext.
-  ///
-  virtual sk_sp<GrDirectContext> GetMainContext() const = 0;
 
   virtual std::shared_ptr<impeller::Context> GetImpellerContext() const;
 

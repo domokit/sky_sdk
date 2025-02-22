@@ -18,15 +18,6 @@ class IOSContextNoop final : public IOSContext {
   ~IOSContextNoop();
 
   // |IOSContext|
-  sk_sp<GrDirectContext> CreateResourceContext() override;
-
-  // |IOSContext|
-  sk_sp<GrDirectContext> GetMainContext() const override;
-
-  // |IOSContext|
-  std::unique_ptr<GLContextResult> MakeCurrent() override;
-
-  // |IOSContext|
   std::unique_ptr<Texture> CreateExternalTexture(int64_t texture_id,
                                                  NSObject<FlutterTexture>* texture) override;
 

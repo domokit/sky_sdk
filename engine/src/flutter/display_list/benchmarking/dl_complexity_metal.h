@@ -51,6 +51,7 @@ class DisplayListMetalComplexityCalculator
     void drawRoundRect(const DlRoundRect& rrect) override;
     void drawDiffRoundRect(const DlRoundRect& outer,
                            const DlRoundRect& inner) override;
+    void drawRoundSuperellipse(const DlRoundSuperellipse& rse) override;
     void drawPath(const DlPath& path) override;
     void drawArc(const DlRect& oval_bounds,
                  DlScalar start_degrees,
@@ -85,7 +86,7 @@ class DisplayListMetalComplexityCalculator
                     DlScalar dpr) override;
 
    protected:
-    void ImageRect(const SkISize& size,
+    void ImageRect(const DlISize& size,
                    bool texture_backed,
                    bool render_with_attributes,
                    bool enforce_src_edges) override;

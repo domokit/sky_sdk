@@ -1093,162 +1093,21 @@ class Radius {
   }
 }
 
-/// An immutable rounded rectangle with the custom radii for all four corners.
-class RRect {
-  /// Construct a rounded rectangle from its left, top, right, and bottom edges,
-  /// and the same radii along its horizontal axis and its vertical axis.
-  ///
-  /// Will assert in debug mode if `radiusX` or `radiusY` are negative.
-  const RRect.fromLTRBXY(
-    double left,
-    double top,
-    double right,
-    double bottom,
-    double radiusX,
-    double radiusY,
-  ) : this._raw(
-        top: top,
-        left: left,
-        right: right,
-        bottom: bottom,
-        tlRadiusX: radiusX,
-        tlRadiusY: radiusY,
-        trRadiusX: radiusX,
-        trRadiusY: radiusY,
-        blRadiusX: radiusX,
-        blRadiusY: radiusY,
-        brRadiusX: radiusX,
-        brRadiusY: radiusY,
-      );
-
-  /// Construct a rounded rectangle from its left, top, right, and bottom edges,
-  /// and the same radius in each corner.
-  ///
-  /// Will assert in debug mode if the `radius` is negative in either x or y.
-  RRect.fromLTRBR(double left, double top, double right, double bottom, Radius radius)
-    : this._raw(
-        top: top,
-        left: left,
-        right: right,
-        bottom: bottom,
-        tlRadiusX: radius.x,
-        tlRadiusY: radius.y,
-        trRadiusX: radius.x,
-        trRadiusY: radius.y,
-        blRadiusX: radius.x,
-        blRadiusY: radius.y,
-        brRadiusX: radius.x,
-        brRadiusY: radius.y,
-      );
-
-  /// Construct a rounded rectangle from its bounding box and the same radii
-  /// along its horizontal axis and its vertical axis.
-  ///
-  /// Will assert in debug mode if `radiusX` or `radiusY` are negative.
-  RRect.fromRectXY(Rect rect, double radiusX, double radiusY)
-    : this._raw(
-        top: rect.top,
-        left: rect.left,
-        right: rect.right,
-        bottom: rect.bottom,
-        tlRadiusX: radiusX,
-        tlRadiusY: radiusY,
-        trRadiusX: radiusX,
-        trRadiusY: radiusY,
-        blRadiusX: radiusX,
-        blRadiusY: radiusY,
-        brRadiusX: radiusX,
-        brRadiusY: radiusY,
-      );
-
-  /// Construct a rounded rectangle from its bounding box and a radius that is
-  /// the same in each corner.
-  ///
-  /// Will assert in debug mode if the `radius` is negative in either x or y.
-  RRect.fromRectAndRadius(Rect rect, Radius radius)
-    : this._raw(
-        top: rect.top,
-        left: rect.left,
-        right: rect.right,
-        bottom: rect.bottom,
-        tlRadiusX: radius.x,
-        tlRadiusY: radius.y,
-        trRadiusX: radius.x,
-        trRadiusY: radius.y,
-        blRadiusX: radius.x,
-        blRadiusY: radius.y,
-        brRadiusX: radius.x,
-        brRadiusY: radius.y,
-      );
-
-  /// Construct a rounded rectangle from its left, top, right, and bottom edges,
-  /// and topLeft, topRight, bottomRight, and bottomLeft radii.
-  ///
-  /// The corner radii default to [Radius.zero], i.e. right-angled corners. Will
-  /// assert in debug mode if any of the radii are negative in either x or y.
-  RRect.fromLTRBAndCorners(
-    double left,
-    double top,
-    double right,
-    double bottom, {
-    Radius topLeft = Radius.zero,
-    Radius topRight = Radius.zero,
-    Radius bottomRight = Radius.zero,
-    Radius bottomLeft = Radius.zero,
-  }) : this._raw(
-         top: top,
-         left: left,
-         right: right,
-         bottom: bottom,
-         tlRadiusX: topLeft.x,
-         tlRadiusY: topLeft.y,
-         trRadiusX: topRight.x,
-         trRadiusY: topRight.y,
-         blRadiusX: bottomLeft.x,
-         blRadiusY: bottomLeft.y,
-         brRadiusX: bottomRight.x,
-         brRadiusY: bottomRight.y,
-       );
-
-  /// Construct a rounded rectangle from its bounding box and topLeft,
-  /// topRight, bottomRight, and bottomLeft radii.
-  ///
-  /// The corner radii default to [Radius.zero], i.e. right-angled corners. Will
-  /// assert in debug mode if any of the radii are negative in either x or y.
-  RRect.fromRectAndCorners(
-    Rect rect, {
-    Radius topLeft = Radius.zero,
-    Radius topRight = Radius.zero,
-    Radius bottomRight = Radius.zero,
-    Radius bottomLeft = Radius.zero,
-  }) : this._raw(
-         top: rect.top,
-         left: rect.left,
-         right: rect.right,
-         bottom: rect.bottom,
-         tlRadiusX: topLeft.x,
-         tlRadiusY: topLeft.y,
-         trRadiusX: topRight.x,
-         trRadiusY: topRight.y,
-         blRadiusX: bottomLeft.x,
-         blRadiusY: bottomLeft.y,
-         brRadiusX: bottomRight.x,
-         brRadiusY: bottomRight.y,
-       );
-
-  const RRect._raw({
-    this.left = 0.0,
-    this.top = 0.0,
-    this.right = 0.0,
-    this.bottom = 0.0,
-    this.tlRadiusX = 0.0,
-    this.tlRadiusY = 0.0,
-    this.trRadiusX = 0.0,
-    this.trRadiusY = 0.0,
-    this.brRadiusX = 0.0,
-    this.brRadiusY = 0.0,
-    this.blRadiusX = 0.0,
-    this.blRadiusY = 0.0,
+// The common base class for `RRect` and `RSuperellipse`.
+abstract class _RRectLike<T extends _RRectLike<T>> {
+  const _RRectLike({
+    required this.left,
+    required this.top,
+    required this.right,
+    required this.bottom,
+    required this.tlRadiusX,
+    required this.tlRadiusY,
+    required this.trRadiusX,
+    required this.trRadiusY,
+    required this.brRadiusX,
+    required this.brRadiusY,
+    required this.blRadiusX,
+    required this.blRadiusY,
   }) : assert(tlRadiusX >= 0),
        assert(tlRadiusY >= 0),
        assert(trRadiusX >= 0),
@@ -1257,6 +1116,25 @@ class RRect {
        assert(brRadiusY >= 0),
        assert(blRadiusX >= 0),
        assert(blRadiusY >= 0);
+
+  // Implemented by a subclass to return an object constructed with the given
+  // parameters.
+  //
+  // Used by various methods that construct an object of the same shape.
+  T _create({
+    required double left,
+    required double top,
+    required double right,
+    required double bottom,
+    required double tlRadiusX,
+    required double tlRadiusY,
+    required double trRadiusX,
+    required double trRadiusY,
+    required double brRadiusX,
+    required double brRadiusY,
+    required double blRadiusX,
+    required double blRadiusY,
+  });
 
   Float32List _getValue32() {
     final Float32List result = Float32List(12);
@@ -1323,12 +1201,9 @@ class RRect {
   /// The bottom-left [Radius].
   Radius get blRadius => Radius.elliptical(blRadiusX, blRadiusY);
 
-  /// A rounded rectangle with all the values set to zero.
-  static const RRect zero = RRect._raw();
-
-  /// Returns a new [RRect] translated by the given offset.
-  RRect shift(Offset offset) {
-    return RRect._raw(
+  /// Returns a clone translated by the given offset.
+  T shift(Offset offset) {
+    return _create(
       left: left + offset.dx,
       top: top + offset.dy,
       right: right + offset.dx,
@@ -1344,10 +1219,10 @@ class RRect {
     );
   }
 
-  /// Returns a new [RRect] with edges and radii moved outwards by the given
+  /// Returns a clone with edges and radii moved outwards by the given
   /// delta.
-  RRect inflate(double delta) {
-    return RRect._raw(
+  T inflate(double delta) {
+    return _create(
       left: left - delta,
       top: top - delta,
       right: right + delta,
@@ -1363,8 +1238,8 @@ class RRect {
     );
   }
 
-  /// Returns a new [RRect] with edges and radii moved inwards by the given delta.
-  RRect deflate(double delta) => inflate(-delta);
+  /// Returns a clone with edges and radii moved inwards by the given delta.
+  T deflate(double delta) => inflate(-delta);
 
   /// The distance between the left and right edges of this rectangle.
   double get width => right - left;
@@ -1516,7 +1391,7 @@ class RRect {
   ///
   /// See the [Skia scaling implementation](https://github.com/google/skia/blob/main/src/core/SkRRect.cpp)
   /// for more details.
-  RRect scaleRadii() {
+  T scaleRadii() {
     double scale = 1.0;
     scale = _getMin(scale, blRadiusY, tlRadiusY, height);
     scale = _getMin(scale, tlRadiusX, trRadiusX, width);
@@ -1525,7 +1400,7 @@ class RRect {
     assert(scale >= 0);
 
     if (scale < 1.0) {
-      return RRect._raw(
+      return _create(
         top: top,
         left: left,
         right: right,
@@ -1541,7 +1416,7 @@ class RRect {
       );
     }
 
-    return RRect._raw(
+    return _create(
       top: top,
       left: left,
       right: right,
@@ -1556,6 +1431,294 @@ class RRect {
       brRadiusY: brRadiusY,
     );
   }
+
+  // Linearly interpolate between this object and another of the same shape.
+  T _lerpTo(T? b, double t) {
+    assert(runtimeType == T);
+    if (b == null) {
+      final double k = 1.0 - t;
+      return _create(
+        left: left * k,
+        top: top * k,
+        right: right * k,
+        bottom: bottom * k,
+        tlRadiusX: math.max(0, tlRadiusX * k),
+        tlRadiusY: math.max(0, tlRadiusY * k),
+        trRadiusX: math.max(0, trRadiusX * k),
+        trRadiusY: math.max(0, trRadiusY * k),
+        brRadiusX: math.max(0, brRadiusX * k),
+        brRadiusY: math.max(0, brRadiusY * k),
+        blRadiusX: math.max(0, blRadiusX * k),
+        blRadiusY: math.max(0, blRadiusY * k),
+      );
+    } else {
+      return _create(
+        left: _lerpDouble(left, b.left, t),
+        top: _lerpDouble(top, b.top, t),
+        right: _lerpDouble(right, b.right, t),
+        bottom: _lerpDouble(bottom, b.bottom, t),
+        tlRadiusX: math.max(0, _lerpDouble(tlRadiusX, b.tlRadiusX, t)),
+        tlRadiusY: math.max(0, _lerpDouble(tlRadiusY, b.tlRadiusY, t)),
+        trRadiusX: math.max(0, _lerpDouble(trRadiusX, b.trRadiusX, t)),
+        trRadiusY: math.max(0, _lerpDouble(trRadiusY, b.trRadiusY, t)),
+        brRadiusX: math.max(0, _lerpDouble(brRadiusX, b.brRadiusX, t)),
+        brRadiusY: math.max(0, _lerpDouble(brRadiusY, b.brRadiusY, t)),
+        blRadiusX: math.max(0, _lerpDouble(blRadiusX, b.blRadiusX, t)),
+        blRadiusY: math.max(0, _lerpDouble(blRadiusY, b.blRadiusY, t)),
+      );
+    }
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (runtimeType != other.runtimeType) {
+      return false;
+    }
+    return other is _RRectLike &&
+        other.left == left &&
+        other.top == top &&
+        other.right == right &&
+        other.bottom == bottom &&
+        other.tlRadiusX == tlRadiusX &&
+        other.tlRadiusY == tlRadiusY &&
+        other.trRadiusX == trRadiusX &&
+        other.trRadiusY == trRadiusY &&
+        other.blRadiusX == blRadiusX &&
+        other.blRadiusY == blRadiusY &&
+        other.brRadiusX == brRadiusX &&
+        other.brRadiusY == brRadiusY;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    left,
+    top,
+    right,
+    bottom,
+    tlRadiusX,
+    tlRadiusY,
+    trRadiusX,
+    trRadiusY,
+    blRadiusX,
+    blRadiusY,
+    brRadiusX,
+    brRadiusY,
+  );
+
+  String _toString({required String className}) {
+    final String rect =
+        '${left.toStringAsFixed(1)}, '
+        '${top.toStringAsFixed(1)}, '
+        '${right.toStringAsFixed(1)}, '
+        '${bottom.toStringAsFixed(1)}';
+    if (tlRadius == trRadius && trRadius == brRadius && brRadius == blRadius) {
+      if (tlRadius.x == tlRadius.y) {
+        return '$className.fromLTRBR($rect, ${tlRadius.x.toStringAsFixed(1)})';
+      }
+      return '$className.fromLTRBXY($rect, ${tlRadius.x.toStringAsFixed(1)}, ${tlRadius.y.toStringAsFixed(1)})';
+    }
+    return '$className.fromLTRBAndCorners('
+        '$rect, '
+        'topLeft: $tlRadius, '
+        'topRight: $trRadius, '
+        'bottomRight: $brRadius, '
+        'bottomLeft: $blRadius'
+        ')';
+  }
+}
+
+/// An immutable rounded rectangle with the custom radii for all four corners.
+class RRect extends _RRectLike<RRect> {
+  /// Construct a rounded rectangle from its left, top, right, and bottom edges,
+  /// and the same radii along its horizontal axis and its vertical axis.
+  ///
+  /// Will assert in debug mode if `radiusX` or `radiusY` are negative.
+  const RRect.fromLTRBXY(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    double radiusX,
+    double radiusY,
+  ) : this._raw(
+        top: top,
+        left: left,
+        right: right,
+        bottom: bottom,
+        tlRadiusX: radiusX,
+        tlRadiusY: radiusY,
+        trRadiusX: radiusX,
+        trRadiusY: radiusY,
+        blRadiusX: radiusX,
+        blRadiusY: radiusY,
+        brRadiusX: radiusX,
+        brRadiusY: radiusY,
+      );
+
+  /// Construct a rounded rectangle from its left, top, right, and bottom edges,
+  /// and the same radius in each corner.
+  ///
+  /// Will assert in debug mode if the `radius` is negative in either x or y.
+  RRect.fromLTRBR(double left, double top, double right, double bottom, Radius radius)
+    : this._raw(
+        top: top,
+        left: left,
+        right: right,
+        bottom: bottom,
+        tlRadiusX: radius.x,
+        tlRadiusY: radius.y,
+        trRadiusX: radius.x,
+        trRadiusY: radius.y,
+        blRadiusX: radius.x,
+        blRadiusY: radius.y,
+        brRadiusX: radius.x,
+        brRadiusY: radius.y,
+      );
+
+  /// Construct a rounded rectangle from its bounding box and the same radii
+  /// along its horizontal axis and its vertical axis.
+  ///
+  /// Will assert in debug mode if `radiusX` or `radiusY` are negative.
+  RRect.fromRectXY(Rect rect, double radiusX, double radiusY)
+    : this._raw(
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        bottom: rect.bottom,
+        tlRadiusX: radiusX,
+        tlRadiusY: radiusY,
+        trRadiusX: radiusX,
+        trRadiusY: radiusY,
+        blRadiusX: radiusX,
+        blRadiusY: radiusY,
+        brRadiusX: radiusX,
+        brRadiusY: radiusY,
+      );
+
+  /// Construct a rounded rectangle from its bounding box and a radius that is
+  /// the same in each corner.
+  ///
+  /// Will assert in debug mode if the `radius` is negative in either x or y.
+  RRect.fromRectAndRadius(Rect rect, Radius radius)
+    : this._raw(
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        bottom: rect.bottom,
+        tlRadiusX: radius.x,
+        tlRadiusY: radius.y,
+        trRadiusX: radius.x,
+        trRadiusY: radius.y,
+        blRadiusX: radius.x,
+        blRadiusY: radius.y,
+        brRadiusX: radius.x,
+        brRadiusY: radius.y,
+      );
+
+  /// Construct a rounded rectangle from its left, top, right, and bottom edges,
+  /// and topLeft, topRight, bottomRight, and bottomLeft radii.
+  ///
+  /// The corner radii default to [Radius.zero], i.e. right-angled corners. Will
+  /// assert in debug mode if any of the radii are negative in either x or y.
+  RRect.fromLTRBAndCorners(
+    double left,
+    double top,
+    double right,
+    double bottom, {
+    Radius topLeft = Radius.zero,
+    Radius topRight = Radius.zero,
+    Radius bottomRight = Radius.zero,
+    Radius bottomLeft = Radius.zero,
+  }) : this._raw(
+         top: top,
+         left: left,
+         right: right,
+         bottom: bottom,
+         tlRadiusX: topLeft.x,
+         tlRadiusY: topLeft.y,
+         trRadiusX: topRight.x,
+         trRadiusY: topRight.y,
+         blRadiusX: bottomLeft.x,
+         blRadiusY: bottomLeft.y,
+         brRadiusX: bottomRight.x,
+         brRadiusY: bottomRight.y,
+       );
+
+  /// Construct a rounded rectangle from its bounding box and topLeft,
+  /// topRight, bottomRight, and bottomLeft radii.
+  ///
+  /// The corner radii default to [Radius.zero], i.e. right-angled corners. Will
+  /// assert in debug mode if any of the radii are negative in either x or y.
+  RRect.fromRectAndCorners(
+    Rect rect, {
+    Radius topLeft = Radius.zero,
+    Radius topRight = Radius.zero,
+    Radius bottomRight = Radius.zero,
+    Radius bottomLeft = Radius.zero,
+  }) : this._raw(
+         top: rect.top,
+         left: rect.left,
+         right: rect.right,
+         bottom: rect.bottom,
+         tlRadiusX: topLeft.x,
+         tlRadiusY: topLeft.y,
+         trRadiusX: topRight.x,
+         trRadiusY: topRight.y,
+         blRadiusX: bottomLeft.x,
+         blRadiusY: bottomLeft.y,
+         brRadiusX: bottomRight.x,
+         brRadiusY: bottomRight.y,
+       );
+
+  const RRect._raw({
+    super.left = 0.0,
+    super.top = 0.0,
+    super.right = 0.0,
+    super.bottom = 0.0,
+    super.tlRadiusX = 0.0,
+    super.tlRadiusY = 0.0,
+    super.trRadiusX = 0.0,
+    super.trRadiusY = 0.0,
+    super.brRadiusX = 0.0,
+    super.brRadiusY = 0.0,
+    super.blRadiusX = 0.0,
+    super.blRadiusY = 0.0,
+  });
+
+  @override
+  RRect _create({
+    required double left,
+    required double top,
+    required double right,
+    required double bottom,
+    required double tlRadiusX,
+    required double tlRadiusY,
+    required double trRadiusX,
+    required double trRadiusY,
+    required double brRadiusX,
+    required double brRadiusY,
+    required double blRadiusX,
+    required double blRadiusY,
+  }) => RRect._raw(
+    top: top,
+    left: left,
+    right: right,
+    bottom: bottom,
+    tlRadiusX: tlRadiusX,
+    tlRadiusY: tlRadiusY,
+    trRadiusX: trRadiusX,
+    trRadiusY: trRadiusY,
+    blRadiusX: blRadiusX,
+    blRadiusY: blRadiusY,
+    brRadiusX: brRadiusX,
+    brRadiusY: brRadiusY,
+  );
+
+  /// A rounded rectangle with all the values set to zero.
+  static const RRect zero = RRect._raw();
 
   /// Whether the point specified by the given offset (which is assumed to be
   /// relative to the origin) lies inside the rounded rectangle.
@@ -1626,120 +1789,254 @@ class RRect {
   /// Values for `t` are usually obtained from an [Animation<double>], such as
   /// an [AnimationController].
   static RRect? lerp(RRect? a, RRect? b, double t) {
-    if (b == null) {
-      if (a == null) {
+    if (a == null) {
+      if (b == null) {
         return null;
-      } else {
-        final double k = 1.0 - t;
-        return RRect._raw(
-          left: a.left * k,
-          top: a.top * k,
-          right: a.right * k,
-          bottom: a.bottom * k,
-          tlRadiusX: math.max(0, a.tlRadiusX * k),
-          tlRadiusY: math.max(0, a.tlRadiusY * k),
-          trRadiusX: math.max(0, a.trRadiusX * k),
-          trRadiusY: math.max(0, a.trRadiusY * k),
-          brRadiusX: math.max(0, a.brRadiusX * k),
-          brRadiusY: math.max(0, a.brRadiusY * k),
-          blRadiusX: math.max(0, a.blRadiusX * k),
-          blRadiusY: math.max(0, a.blRadiusY * k),
-        );
       }
-    } else {
-      if (a == null) {
-        return RRect._raw(
-          left: b.left * t,
-          top: b.top * t,
-          right: b.right * t,
-          bottom: b.bottom * t,
-          tlRadiusX: math.max(0, b.tlRadiusX * t),
-          tlRadiusY: math.max(0, b.tlRadiusY * t),
-          trRadiusX: math.max(0, b.trRadiusX * t),
-          trRadiusY: math.max(0, b.trRadiusY * t),
-          brRadiusX: math.max(0, b.brRadiusX * t),
-          brRadiusY: math.max(0, b.brRadiusY * t),
-          blRadiusX: math.max(0, b.blRadiusX * t),
-          blRadiusY: math.max(0, b.blRadiusY * t),
-        );
-      } else {
-        return RRect._raw(
-          left: _lerpDouble(a.left, b.left, t),
-          top: _lerpDouble(a.top, b.top, t),
-          right: _lerpDouble(a.right, b.right, t),
-          bottom: _lerpDouble(a.bottom, b.bottom, t),
-          tlRadiusX: math.max(0, _lerpDouble(a.tlRadiusX, b.tlRadiusX, t)),
-          tlRadiusY: math.max(0, _lerpDouble(a.tlRadiusY, b.tlRadiusY, t)),
-          trRadiusX: math.max(0, _lerpDouble(a.trRadiusX, b.trRadiusX, t)),
-          trRadiusY: math.max(0, _lerpDouble(a.trRadiusY, b.trRadiusY, t)),
-          brRadiusX: math.max(0, _lerpDouble(a.brRadiusX, b.brRadiusX, t)),
-          brRadiusY: math.max(0, _lerpDouble(a.brRadiusY, b.brRadiusY, t)),
-          blRadiusX: math.max(0, _lerpDouble(a.blRadiusX, b.blRadiusX, t)),
-          blRadiusY: math.max(0, _lerpDouble(a.blRadiusY, b.blRadiusY, t)),
-        );
-      }
+      return b._lerpTo(null, 1 - t);
     }
+    return a._lerpTo(b, t);
   }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (runtimeType != other.runtimeType) {
-      return false;
-    }
-    return other is RRect &&
-        other.left == left &&
-        other.top == top &&
-        other.right == right &&
-        other.bottom == bottom &&
-        other.tlRadiusX == tlRadiusX &&
-        other.tlRadiusY == tlRadiusY &&
-        other.trRadiusX == trRadiusX &&
-        other.trRadiusY == trRadiusY &&
-        other.blRadiusX == blRadiusX &&
-        other.blRadiusY == blRadiusY &&
-        other.brRadiusX == brRadiusX &&
-        other.brRadiusY == brRadiusY;
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    left,
-    top,
-    right,
-    bottom,
-    tlRadiusX,
-    tlRadiusY,
-    trRadiusX,
-    trRadiusY,
-    blRadiusX,
-    blRadiusY,
-    brRadiusX,
-    brRadiusY,
-  );
 
   @override
   String toString() {
-    final String rect =
-        '${left.toStringAsFixed(1)}, '
-        '${top.toStringAsFixed(1)}, '
-        '${right.toStringAsFixed(1)}, '
-        '${bottom.toStringAsFixed(1)}';
-    if (tlRadius == trRadius && trRadius == brRadius && brRadius == blRadius) {
-      if (tlRadius.x == tlRadius.y) {
-        return 'RRect.fromLTRBR($rect, ${tlRadius.x.toStringAsFixed(1)})';
+    return _toString(className: 'RRect');
+  }
+}
+
+/// An immutable rounded superellipse.
+///
+/// A rounded superellipse is a shape similar to a typical rounded rectangle
+/// ([RRect]), but with smoother transitions between the straight sides and the
+/// rounded corners. It resembles the `RoundedRectangle` shape in SwiftUI with
+/// the `.continuous` corner style.
+///
+/// Technically, a canonical rounded superellipse, i.e. one with a uniform
+/// corner radius ([RSuperellipse.fromRectAndRadius]), is created by replacing
+/// the four corners of a superellipse (also known as a Lamé curve) with
+/// circular arcs. A rounded superellipse with non-uniform radii is extended on it
+/// by concatenating arc segments and transformation.
+///
+/// The corner radius parameters used in this class corresponds to SwiftUI's
+/// `cornerRadius` parameter, which is close to, but not exactly equals to, the
+/// radius of the corner circles.
+class RSuperellipse extends _RRectLike<RSuperellipse> {
+  /// Construct a rounded rectangle from its left, top, right, and bottom edges,
+  /// and the same radii along its horizontal axis and its vertical axis.
+  ///
+  /// Will assert in debug mode if `radiusX` or `radiusY` are negative.
+  const RSuperellipse.fromLTRBXY(
+    double left,
+    double top,
+    double right,
+    double bottom,
+    double radiusX,
+    double radiusY,
+  ) : this._raw(
+        top: top,
+        left: left,
+        right: right,
+        bottom: bottom,
+        tlRadiusX: radiusX,
+        tlRadiusY: radiusY,
+        trRadiusX: radiusX,
+        trRadiusY: radiusY,
+        blRadiusX: radiusX,
+        blRadiusY: radiusY,
+        brRadiusX: radiusX,
+        brRadiusY: radiusY,
+      );
+
+  /// Construct a rounded rectangle from its left, top, right, and bottom edges,
+  /// and the same radius in each corner.
+  ///
+  /// Will assert in debug mode if the `radius` is negative in either x or y.
+  RSuperellipse.fromLTRBR(double left, double top, double right, double bottom, Radius radius)
+    : this._raw(
+        top: top,
+        left: left,
+        right: right,
+        bottom: bottom,
+        tlRadiusX: radius.x,
+        tlRadiusY: radius.y,
+        trRadiusX: radius.x,
+        trRadiusY: radius.y,
+        blRadiusX: radius.x,
+        blRadiusY: radius.y,
+        brRadiusX: radius.x,
+        brRadiusY: radius.y,
+      );
+
+  /// Construct a rounded rectangle from its bounding box and the same radii
+  /// along its horizontal axis and its vertical axis.
+  ///
+  /// Will assert in debug mode if `radiusX` or `radiusY` are negative.
+  RSuperellipse.fromRectXY(Rect rect, double radiusX, double radiusY)
+    : this._raw(
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        bottom: rect.bottom,
+        tlRadiusX: radiusX,
+        tlRadiusY: radiusY,
+        trRadiusX: radiusX,
+        trRadiusY: radiusY,
+        blRadiusX: radiusX,
+        blRadiusY: radiusY,
+        brRadiusX: radiusX,
+        brRadiusY: radiusY,
+      );
+
+  /// Construct a rounded rectangle from its bounding box and a radius that is
+  /// the same in each corner.
+  ///
+  /// Will assert in debug mode if the `radius` is negative in either x or y.
+  RSuperellipse.fromRectAndRadius(Rect rect, Radius radius)
+    : this._raw(
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        bottom: rect.bottom,
+        tlRadiusX: radius.x,
+        tlRadiusY: radius.y,
+        trRadiusX: radius.x,
+        trRadiusY: radius.y,
+        blRadiusX: radius.x,
+        blRadiusY: radius.y,
+        brRadiusX: radius.x,
+        brRadiusY: radius.y,
+      );
+
+  /// Construct a rounded rectangle from its left, top, right, and bottom edges,
+  /// and topLeft, topRight, bottomRight, and bottomLeft radii.
+  ///
+  /// The corner radii default to [Radius.zero], i.e. right-angled corners. Will
+  /// assert in debug mode if any of the radii are negative in either x or y.
+  RSuperellipse.fromLTRBAndCorners(
+    double left,
+    double top,
+    double right,
+    double bottom, {
+    Radius topLeft = Radius.zero,
+    Radius topRight = Radius.zero,
+    Radius bottomRight = Radius.zero,
+    Radius bottomLeft = Radius.zero,
+  }) : this._raw(
+         top: top,
+         left: left,
+         right: right,
+         bottom: bottom,
+         tlRadiusX: topLeft.x,
+         tlRadiusY: topLeft.y,
+         trRadiusX: topRight.x,
+         trRadiusY: topRight.y,
+         blRadiusX: bottomLeft.x,
+         blRadiusY: bottomLeft.y,
+         brRadiusX: bottomRight.x,
+         brRadiusY: bottomRight.y,
+       );
+
+  /// Construct a rounded rectangle from its bounding box and topLeft,
+  /// topRight, bottomRight, and bottomLeft radii.
+  ///
+  /// The corner radii default to [Radius.zero], i.e. right-angled corners. Will
+  /// assert in debug mode if any of the radii are negative in either x or y.
+  RSuperellipse.fromRectAndCorners(
+    Rect rect, {
+    Radius topLeft = Radius.zero,
+    Radius topRight = Radius.zero,
+    Radius bottomRight = Radius.zero,
+    Radius bottomLeft = Radius.zero,
+  }) : this._raw(
+         top: rect.top,
+         left: rect.left,
+         right: rect.right,
+         bottom: rect.bottom,
+         tlRadiusX: topLeft.x,
+         tlRadiusY: topLeft.y,
+         trRadiusX: topRight.x,
+         trRadiusY: topRight.y,
+         blRadiusX: bottomLeft.x,
+         blRadiusY: bottomLeft.y,
+         brRadiusX: bottomRight.x,
+         brRadiusY: bottomRight.y,
+       );
+
+  const RSuperellipse._raw({
+    super.left = 0.0,
+    super.top = 0.0,
+    super.right = 0.0,
+    super.bottom = 0.0,
+    super.tlRadiusX = 0.0,
+    super.tlRadiusY = 0.0,
+    super.trRadiusX = 0.0,
+    super.trRadiusY = 0.0,
+    super.brRadiusX = 0.0,
+    super.brRadiusY = 0.0,
+    super.blRadiusX = 0.0,
+    super.blRadiusY = 0.0,
+  });
+
+  @override
+  RSuperellipse _create({
+    required double left,
+    required double top,
+    required double right,
+    required double bottom,
+    required double tlRadiusX,
+    required double tlRadiusY,
+    required double trRadiusX,
+    required double trRadiusY,
+    required double brRadiusX,
+    required double brRadiusY,
+    required double blRadiusX,
+    required double blRadiusY,
+  }) => RSuperellipse._raw(
+    top: top,
+    left: left,
+    right: right,
+    bottom: bottom,
+    tlRadiusX: tlRadiusX,
+    tlRadiusY: tlRadiusY,
+    trRadiusX: trRadiusX,
+    trRadiusY: trRadiusY,
+    blRadiusX: blRadiusX,
+    blRadiusY: blRadiusY,
+    brRadiusX: brRadiusX,
+    brRadiusY: brRadiusY,
+  );
+
+  /// A rounded rectangle with all the values set to zero.
+  static const RSuperellipse zero = RSuperellipse._raw();
+
+  /// Linearly interpolate between two rounded superellipses.
+  ///
+  /// If either is null, this function substitutes [RSuperellipse.zero] instead.
+  ///
+  /// The `t` argument represents position on the timeline, with 0.0 meaning
+  /// that the interpolation has not started, returning `a` (or something
+  /// equivalent to `a`), 1.0 meaning that the interpolation has finished,
+  /// returning `b` (or something equivalent to `b`), and values in between
+  /// meaning that the interpolation is at the relevant point on the timeline
+  /// between `a` and `b`. The interpolation can be extrapolated beyond 0.0 and
+  /// 1.0, so negative values and values greater than 1.0 are valid (and can
+  /// easily be generated by curves such as [Curves.elasticInOut]).
+  ///
+  /// Values for `t` are usually obtained from an [Animation<double>], such as
+  /// an [AnimationController].
+  static RSuperellipse? lerp(RSuperellipse? a, RSuperellipse? b, double t) {
+    if (a == null) {
+      if (b == null) {
+        return null;
       }
-      return 'RRect.fromLTRBXY($rect, ${tlRadius.x.toStringAsFixed(1)}, ${tlRadius.y.toStringAsFixed(1)})';
+      return b._lerpTo(null, 1 - t);
     }
-    return 'RRect.fromLTRBAndCorners('
-        '$rect, '
-        'topLeft: $tlRadius, '
-        'topRight: $trRadius, '
-        'bottomRight: $brRadius, '
-        'bottomLeft: $blRadius'
-        ')';
+    return a._lerpTo(b, t);
+  }
+
+  @override
+  String toString() {
+    return _toString(className: 'RSuperellipse');
   }
 }
 

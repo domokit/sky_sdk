@@ -22,7 +22,6 @@
 #import "flutter/shell/platform/darwin/ios/framework/Source/FlutterViewController_Internal.h"
 #import "flutter/shell/platform/darwin/ios/framework/Source/SemanticsObject.h"
 #import "flutter/shell/platform/darwin/ios/framework/Source/accessibility_bridge_ios.h"
-#include "third_party/skia/include/core/SkRect.h"
 
 namespace flutter {
 class PlatformViewIOS;

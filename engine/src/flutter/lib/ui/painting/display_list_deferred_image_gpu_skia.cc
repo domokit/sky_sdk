@@ -90,6 +90,12 @@ SkISize DlDeferredImageGPUSkia::dimensions() const {
 }
 
 // |DlImage|
+DlISize DlDeferredImageGPUSkia::GetSize() const {
+  return image_wrapper_ ? ToDlISize(image_wrapper_->image_info().dimensions())
+                        : DlISize();
+}
+
+// |DlImage|
 size_t DlDeferredImageGPUSkia::GetApproximateByteSize() const {
   return sizeof(*this) +
          (image_wrapper_ ? image_wrapper_->image_info().computeMinByteSize()

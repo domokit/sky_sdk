@@ -2602,8 +2602,8 @@ FlutterEngineResult FlutterEngineCollectAOTData(FlutterEngineAOTData data);
 ///             engine may need the embedder to post tasks back to it before
 ///             `FlutterEngineRun` has returned. Embedders can only post tasks
 ///             to the engine if they have a handle to the engine. In such
-///             cases, embedders are advised to get the engine handle via the
-///             `FlutterInitializeCall`. Then they can call
+///             cases, embedders are advised to get the engine handle by calling
+///             `FlutterEngineInitialize`. Then they can call
 ///             `FlutterEngineRunInitialized` knowing that they will be able to
 ///             service custom tasks on other threads with the engine handle.
 ///

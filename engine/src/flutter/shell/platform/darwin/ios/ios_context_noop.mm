@@ -16,24 +16,8 @@ IOSContextNoop::IOSContextNoop() = default;
 IOSContextNoop::~IOSContextNoop() = default;
 
 // |IOSContext|
-sk_sp<GrDirectContext> IOSContextNoop::CreateResourceContext() {
-  return nullptr;
-}
-
-// |IOSContext|
-sk_sp<GrDirectContext> IOSContextNoop::GetMainContext() const {
-  return nullptr;
-}
-
-// |IOSContext|
 IOSRenderingBackend IOSContextNoop::GetBackend() const {
   return IOSRenderingBackend::kImpeller;
-}
-
-// |IOSContext|
-std::unique_ptr<GLContextResult> IOSContextNoop::MakeCurrent() {
-  // This only makes sense for context that need to be bound to a specific thread.
-  return std::make_unique<GLContextDefaultResult>(false);
 }
 
 // |IOSContext|

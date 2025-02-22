@@ -85,9 +85,7 @@ void IOSExternalViewEmbedder::SubmitFlutterView(
   // Properly support multi-view in the future.
   FML_DCHECK(flutter_view_id == kFlutterImplicitViewId);
   FML_CHECK(platform_views_controller_);
-  [platform_views_controller_ submitFrame:std::move(frame)
-                           withIosContext:ios_context_
-                                grContext:context];
+  [platform_views_controller_ submitFrame:std::move(frame) withIosContext:ios_context_];
   TRACE_EVENT0("flutter", "IOSExternalViewEmbedder::DidSubmitFrame");
 }
 
@@ -104,12 +102,7 @@ void IOSExternalViewEmbedder::EndFrame(
 
 // |ExternalViewEmbedder|
 bool IOSExternalViewEmbedder::SupportsDynamicThreadMerging() {
-// TODO(jonahwilliams): remove this once Software backend is removed for iOS Sim.
-#if FML_OS_IOS_SIMULATOR
-  return true;
-#else
-  return ios_context_->GetBackend() == IOSRenderingBackend::kSkia;
-#endif  // FML_OS_IOS_SIMULATOR
+  return false;
 }
 
 // |ExternalViewEmbedder|

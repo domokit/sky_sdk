@@ -904,6 +904,9 @@ class BitmapSize {
   @override
   int get hashCode => Object.hash(width, height);
 
+  @override
+  String toString() => 'BitmapSize($width, $height)';
+
   ui.Size toSize() {
     return ui.Size(width.toDouble(), height.toDouble());
   }

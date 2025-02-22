@@ -68,6 +68,7 @@ abstract class Canvas {
   Float64List getTransform();
   void clipRect(Rect rect, {ClipOp clipOp = ClipOp.intersect, bool doAntiAlias = true});
   void clipRRect(RRect rrect, {bool doAntiAlias = true});
+  void clipRSuperellipse(RSuperellipse rse, {bool doAntiAlias = true});
   void clipPath(Path path, {bool doAntiAlias = true});
   Rect getLocalClipBounds();
   Rect getDestinationClipBounds();
@@ -76,6 +77,7 @@ abstract class Canvas {
   void drawPaint(Paint paint);
   void drawRect(Rect rect, Paint paint);
   void drawRRect(RRect rrect, Paint paint);
+  void drawRSuperellipse(RSuperellipse rse, Paint paint);
   void drawDRRect(RRect outer, RRect inner, Paint paint);
   void drawOval(Rect rect, Paint paint);
   void drawCircle(Offset c, double radius, Paint paint);

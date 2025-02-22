@@ -335,6 +335,12 @@ void DisplayListGLComplexityCalculator::GLHelper::drawDiffRoundRect(
   AccumulateComplexity(complexity);
 }
 
+void DisplayListGLComplexityCalculator::GLHelper::drawRoundSuperellipse(
+    const DlRoundSuperellipse& rse) {
+  // Drawing RSEs on Skia falls back to RRect.
+  drawRoundRect(rse.ToApproximateRoundRect());
+}
+
 void DisplayListGLComplexityCalculator::GLHelper::drawPath(const DlPath& path) {
   if (IsComplex()) {
     return;
@@ -531,9 +537,9 @@ void DisplayListGLComplexityCalculator::GLHelper::drawImage(
   // If we don't need to upload, then the cost scales linearly with the
   // length of the image. If it needs uploading, the cost scales linearly
   // with the square of the area (!!!).
-  SkISize dimensions = image->dimensions();
-  unsigned int length = (dimensions.width() + dimensions.height()) / 2;
-  unsigned int area = dimensions.width() * dimensions.height();
+  DlISize dimensions = image->GetSize();
+  unsigned int length = (dimensions.width + dimensions.height) / 2;
+  unsigned int area = dimensions.Area();
 
   // m = 1/13
   // c = 0
@@ -561,7 +567,7 @@ void DisplayListGLComplexityCalculator::GLHelper::drawImage(
 }
 
 void DisplayListGLComplexityCalculator::GLHelper::ImageRect(
-    const SkISize& size,
+    const DlISize& size,
     bool texture_backed,
     bool render_with_attributes,
     bool enforce_src_edges) {
@@ -579,12 +585,12 @@ void DisplayListGLComplexityCalculator::GLHelper::ImageRect(
   unsigned int complexity;
   if (!texture_backed || (texture_backed && render_with_attributes &&
                           enforce_src_edges && IsAntiAliased())) {
-    unsigned int area = size.width() * size.height();
+    unsigned int area = size.Area();
     // m = 1/4000
     // c = 5
     complexity = (area + 20000) / 10;
   } else {
-    unsigned int length = (size.width() + size.height()) / 2;
+    unsigned int length = (size.width + size.height) / 2;
     // There's a little bit of spread here but the numbers are pretty large
     // anyway.
     //
@@ -606,8 +612,8 @@ void DisplayListGLComplexityCalculator::GLHelper::drawImageNine(
     return;
   }
 
-  SkISize dimensions = image->dimensions();
-  unsigned int area = dimensions.width() * dimensions.height();
+  DlISize dimensions = image->GetSize();
+  unsigned int area = dimensions.Area();
 
   // m = 1/3600
   // c = 3

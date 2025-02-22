@@ -717,14 +717,6 @@ class FlutterVmService {
     );
   }
 
-  Future<Map<String, Object?>?> flutterEvictScene(String assetPath, {required String isolateId}) {
-    return invokeFlutterExtensionRpcRaw(
-      'ext.ui.window.reinitializeScene',
-      isolateId: isolateId,
-      args: <String, Object?>{'assetKey': assetPath},
-    );
-  }
-
   /// Exit the application by calling [exit] from `dart:io`.
   ///
   /// This method is only supported by certain embedders. This is

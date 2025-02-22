@@ -4,5 +4,12 @@
   "reorderItemUp": "Færa upp",
   "reorderItemDown": "Færa niður",
   "reorderItemLeft": "Færa til vinstri",
-  "reorderItemRight": "Færa til hægri"
+  "reorderItemRight": "Færa til hægri",
+  "copyButtonLabel": "Afrita",
+  "cutButtonLabel": "Klippa",
+  "lookUpButtonLabel": "Look Up",
+  "searchWebButtonLabel": "Leita á vefnum",
+  "shareButtonLabel": "Deila",
+  "pasteButtonLabel": "Líma",
+  "selectAllButtonLabel": "Velja allt"
 }

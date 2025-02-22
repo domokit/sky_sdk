@@ -4,5 +4,12 @@
   "reorderItemUp": "ਉੱਪਰ ਲਿਜਾਓ",
   "reorderItemDown": "ਹੇਠਾਂ ਲਿਜਾਓ",
   "reorderItemLeft": "ਖੱਬੇ ਲਿਜਾਓ",
-  "reorderItemRight": "ਸੱਜੇ ਲਿਜਾਓ"
+  "reorderItemRight": "ਸੱਜੇ ਲਿਜਾਓ",
+  "copyButtonLabel": "ਕਾਪੀ ਕਰੋ",
+  "cutButtonLabel": "ਕੱਟ ਕਰੋ",
+  "lookUpButtonLabel": "ਖੋਜੋ",
+  "searchWebButtonLabel": "ਵੈੱਬ 'ਤੇ ਖੋਜੋ",
+  "shareButtonLabel": "ਸਾਂਝਾ ਕਰੋ",
+  "pasteButtonLabel": "ਪੇਸਟ ਕਰੋ",
+  "selectAllButtonLabel": "ਸਭ ਚੁਣੋ"
 }

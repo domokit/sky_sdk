@@ -19,7 +19,6 @@
 #import "flutter/shell/platform/darwin/ios/framework/Source/FlutterPlatformViewsController.h"
 #import "flutter/shell/platform/darwin/ios/framework/Source/FlutterViewResponder.h"
 #include "flutter/shell/platform/darwin/ios/ios_context.h"
-#include "third_party/skia/include/core/SkRect.h"
 
 // A UIView that acts as a clipping mask for the |ChildClippingView|.
 //

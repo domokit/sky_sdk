@@ -329,6 +329,12 @@ void DisplayListMetalComplexityCalculator::MetalHelper::drawDiffRoundRect(
   AccumulateComplexity(complexity);
 }
 
+void DisplayListMetalComplexityCalculator::MetalHelper::drawRoundSuperellipse(
+    const DlRoundSuperellipse& rse) {
+  // Drawing RSEs on Skia falls back to RRect.
+  drawRoundRect(rse.ToApproximateRoundRect());
+}
+
 void DisplayListMetalComplexityCalculator::MetalHelper::drawPath(
     const DlPath& path) {
   if (IsComplex()) {
@@ -481,8 +487,8 @@ void DisplayListMetalComplexityCalculator::MetalHelper::drawImage(
   // If we don't need to upload, then the cost scales linearly with the
   // area of the image. If it needs uploading, the cost scales linearly
   // with the square of the area (!!!).
-  SkISize dimensions = image->dimensions();
-  unsigned int area = dimensions.width() * dimensions.height();
+  DlISize dimensions = image->GetSize();
+  unsigned int area = dimensions.Area();
 
   // m = 1/17000
   // c = 3
@@ -502,7 +508,7 @@ void DisplayListMetalComplexityCalculator::MetalHelper::drawImage(
 }
 
 void DisplayListMetalComplexityCalculator::MetalHelper::ImageRect(
-    const SkISize& size,
+    const DlISize& size,
     bool texture_backed,
     bool render_with_attributes,
     bool enforce_src_edges) {
@@ -513,7 +519,7 @@ void DisplayListMetalComplexityCalculator::MetalHelper::ImageRect(
   //
   // Within each group, they all perform within a few % of each other *except*
   // when we have a strict constraint and anti-aliasing enabled.
-  unsigned int area = size.width() * size.height();
+  unsigned int area = size.Area();
 
   // These values were worked out by creating a straight line graph (y=mx+c)
   // approximately matching the measured data, normalising the data so that
@@ -554,8 +560,8 @@ void DisplayListMetalComplexityCalculator::MetalHelper::drawImageNine(
   }
   // Whether uploading or not, the performance is comparable across all
   // variations.
-  SkISize dimensions = image->dimensions();
-  unsigned int area = dimensions.width() * dimensions.height();
+  DlISize dimensions = image->GetSize();
+  unsigned int area = dimensions.Area();
 
   // m = 1/8000
   // c = 3

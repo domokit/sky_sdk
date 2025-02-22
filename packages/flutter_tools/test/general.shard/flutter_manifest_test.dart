@@ -1490,7 +1490,6 @@ flutter:
           FontAsset(Uri(path: 'assetUri'), weight: 100, style: 'normal'),
         ]),
       ],
-      models: <Uri>[Uri(path: 'modelUri')],
       shaders: <Uri>[Uri(path: 'shaderUri')],
       deferredComponents: <DeferredComponent>[
         DeferredComponent(
@@ -1535,8 +1534,6 @@ flutter:
           asset: assetUri
   shaders:
     - shaderUri
-  models:
-    - modelUri
   deferred-components:
     - name: deferredComponent
       libraries:

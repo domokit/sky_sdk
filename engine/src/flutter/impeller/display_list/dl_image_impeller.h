@@ -51,6 +51,9 @@ class DlImageImpeller final : public flutter::DlImage {
   SkISize dimensions() const override;
 
   // |DlImage|
+  flutter::DlISize GetSize() const override;
+
+  // |DlImage|
   size_t GetApproximateByteSize() const override;
 
   // |DlImage|

@@ -4,5 +4,12 @@
   "reorderItemUp": "Flytta uppåt",
   "reorderItemDown": "Flytta nedåt",
   "reorderItemLeft": "Flytta åt vänster",
-  "reorderItemRight": "Flytta åt höger"
+  "reorderItemRight": "Flytta åt höger",
+  "copyButtonLabel": "Kopiera",
+  "cutButtonLabel": "Klipp ut",
+  "lookUpButtonLabel": "Titta upp",
+  "searchWebButtonLabel": "Sök på webben",
+  "shareButtonLabel": "Dela",
+  "pasteButtonLabel": "Klistra in",
+  "selectAllButtonLabel": "Markera allt"
 }

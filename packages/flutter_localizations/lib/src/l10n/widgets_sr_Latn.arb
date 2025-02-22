@@ -4,5 +4,12 @@
   "reorderItemUp": "Pomerite nagore",
   "reorderItemDown": "Pomerite nadole",
   "reorderItemLeft": "Pomerite ulevo",
-  "reorderItemRight": "Pomerite udesno"
+  "reorderItemRight": "Pomerite udesno",
+  "copyButtonLabel": "Kopiraj",
+  "cutButtonLabel": "Iseci",
+  "lookUpButtonLabel": "Pogled nagore",
+  "searchWebButtonLabel": "Pretraži veb",
+  "shareButtonLabel": "Deli",
+  "pasteButtonLabel": "Nalepi",
+  "selectAllButtonLabel": "Izaberi sve"
 }

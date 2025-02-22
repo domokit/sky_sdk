@@ -28,20 +28,9 @@ class IOSContextMetalImpeller final : public IOSContext {
 
   IOSRenderingBackend GetBackend() const override;
 
-  // |IOSContext|
-  sk_sp<GrDirectContext> GetMainContext() const override;
-
-  sk_sp<GrDirectContext> GetResourceContext() const;
-
  private:
   FlutterDarwinContextMetalImpeller* darwin_context_metal_impeller_;
   std::shared_ptr<impeller::AiksContext> aiks_context_;
-
-  // |IOSContext|
-  sk_sp<GrDirectContext> CreateResourceContext() override;
-
-  // |IOSContext|
-  std::unique_ptr<GLContextResult> MakeCurrent() override;
 
   // |IOSContext|
   std::unique_ptr<Texture> CreateExternalTexture(int64_t texture_id,

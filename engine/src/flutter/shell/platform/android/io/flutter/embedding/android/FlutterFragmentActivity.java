@@ -620,6 +620,15 @@ public class FlutterFragmentActivity extends FragmentActivity
     super.onNewIntent(intent);
   }
 
+  // Intentionally missing super call to align FlutterFragmentActivity predictive back behavior
+  // with FlutterActivity, with respect to how it responds to the
+  // android:enableOnBackInvokedCallback manifest property.
+  @Override
+  @SuppressWarnings("MissingSuperCall")
+  public void onBackPressed() {
+    flutterFragment.onBackPressed();
+  }
+
   @Override
   public void onRequestPermissionsResult(
       int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

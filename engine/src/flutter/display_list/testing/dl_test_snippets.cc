@@ -546,6 +546,34 @@ std::vector<DisplayListInvocationGroup> CreateAllClipOps() {
               r.clipRoundRect(kTestRRect, DlClipOp::kDifference, false);
             }},
        }},
+      {"ClipRSuperellipse",
+       {
+           {1, 56, 0,
+            [](DlOpReceiver& r) {
+              r.clipRoundSuperellipse(kTestRSuperellipse, DlClipOp::kIntersect,
+                                      true);
+            }},
+           {1, 56, 0,
+            [](DlOpReceiver& r) {
+              r.clipRoundSuperellipse(kTestRSuperellipse.Shift(1, 1),
+                                      DlClipOp::kIntersect, true);
+            }},
+           {1, 56, 0,
+            [](DlOpReceiver& r) {
+              r.clipRoundSuperellipse(kTestRSuperellipse, DlClipOp::kIntersect,
+                                      false);
+            }},
+           {1, 56, 0,
+            [](DlOpReceiver& r) {
+              r.clipRoundSuperellipse(kTestRSuperellipse, DlClipOp::kDifference,
+                                      true);
+            }},
+           {1, 56, 0,
+            [](DlOpReceiver& r) {
+              r.clipRoundSuperellipse(kTestRSuperellipse, DlClipOp::kDifference,
+                                      false);
+            }},
+       }},
       {"ClipPath",
        {
            {1, 24, 0,
@@ -724,6 +752,17 @@ std::vector<DisplayListInvocationGroup> CreateAllRenderingOps() {
            {1, 56, 1, [](DlOpReceiver& r) { r.drawRoundRect(kTestRRect); }},
            {1, 56, 1,
             [](DlOpReceiver& r) { r.drawRoundRect(kTestRRect.Shift(5, 5)); }},
+       }},
+      {"DrawRSuperellipse",
+       {
+           {1, 56, 1,
+            [](DlOpReceiver& r) {
+              r.drawRoundSuperellipse(kTestRSuperellipse);
+            }},
+           {1, 56, 1,
+            [](DlOpReceiver& r) {
+              r.drawRoundSuperellipse(kTestRSuperellipse.Shift(5, 5));
+            }},
        }},
       {"DrawDRRect",
        {
