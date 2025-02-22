@@ -522,7 +522,6 @@ class _MaterialState extends State<Material> with TickerProviderStateMixin {
         elevation: widget.elevation,
         color: color,
         shadowColor: modelShadowColor,
-        animateColor: false,
         child: contents,
       );
     }
