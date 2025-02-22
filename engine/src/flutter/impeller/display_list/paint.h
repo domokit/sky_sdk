@@ -23,6 +23,8 @@
 
 namespace impeller {
 
+class Canvas;
+
 struct Paint {
   using ImageFilterProc = std::function<std::shared_ptr<FilterContents>(
       FilterInput::Ref,
@@ -91,7 +93,8 @@ struct Paint {
   /// @return     The filter-wrapped contents. If there are no filters that need
   ///             to be wrapped for the current paint configuration, the
   ///             original contents is returned.
-  std::shared_ptr<Contents> WithFilters(std::shared_ptr<Contents> input) const;
+  std::shared_ptr<Contents> WithFilters(std::shared_ptr<Contents> input,
+                                        Canvas& canvas) const;
 
   /// @brief      Wrap this paint's configured filters to the given contents of
   ///             subpass target.
@@ -103,12 +106,13 @@ struct Paint {
   ///             original contents is returned.
   std::shared_ptr<Contents> WithFiltersForSubpassTarget(
       std::shared_ptr<Contents> input,
+      Canvas& canvas,
       const Matrix& effect_transform = Matrix()) const;
 
   /// @brief   Whether this paint has a color filter that can apply opacity
   bool HasColorFilter() const;
 
-  std::shared_ptr<ColorSourceContents> CreateContents() const;
+  std::shared_ptr<ColorSourceContents> CreateContents(Canvas& canvas) const;
 
   std::shared_ptr<Contents> WithMaskBlur(std::shared_ptr<Contents> input,
                                          bool is_solid_color,
@@ -117,7 +121,8 @@ struct Paint {
   std::shared_ptr<FilterContents> WithImageFilter(
       const FilterInput::Variant& input,
       const Matrix& effect_transform,
-      Entity::RenderingMode rendering_mode) const;
+      Entity::RenderingMode rendering_mode,
+      Canvas& canvas) const;
 
  private:
   std::shared_ptr<Contents> WithColorFilter(

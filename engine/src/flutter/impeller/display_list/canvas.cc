@@ -93,7 +93,8 @@ static void ApplyFramebufferBlend(Entity& entity) {
 static std::shared_ptr<Contents> CreateContentsForSubpassTarget(
     const Paint& paint,
     const std::shared_ptr<Texture>& target,
-    const Matrix& effect_transform) {
+    const Matrix& effect_transform,
+    Canvas& canvas) {
   auto contents = TextureContents::MakeRect(Rect::MakeSize(target->GetSize()));
   contents->SetTexture(target);
   contents->SetLabel("Subpass");
@@ -101,7 +102,7 @@ static std::shared_ptr<Contents> CreateContentsForSubpassTarget(
   contents->SetOpacity(paint.color.alpha);
   contents->SetDeferApplyingOpacity(true);
 
-  return paint.WithFiltersForSubpassTarget(std::move(contents),
+  return paint.WithFiltersForSubpassTarget(std::move(contents), canvas,
                                            effect_transform);
 }
 
@@ -411,7 +412,7 @@ bool Canvas::AttemptDrawBlurredRRect(const Rect& rect,
 
     rrect_paint.mask_blur_descriptor = std::nullopt;
     blurred_rrect_entity.SetContents(
-        rrect_paint.WithFilters(std::move(contents)));
+        rrect_paint.WithFilters(std::move(contents), *this));
     AddRenderEntityToCurrentPass(blurred_rrect_entity);
   };
 
@@ -743,7 +744,7 @@ void Canvas::DrawImageRect(const std::shared_ptr<Texture>& image,
   entity.SetTransform(GetCurrentTransform());
 
   if (!paint.mask_blur_descriptor.has_value()) {
-    entity.SetContents(paint.WithFilters(std::move(texture_contents)));
+    entity.SetContents(paint.WithFilters(std::move(texture_contents), *this));
     AddRenderEntityToCurrentPass(entity);
     return;
   }
@@ -751,7 +752,8 @@ void Canvas::DrawImageRect(const std::shared_ptr<Texture>& image,
   RectGeometry out_rect(Rect{});
 
   entity.SetContents(paint.WithFilters(
-      paint.mask_blur_descriptor->CreateMaskBlur(texture_contents, &out_rect)));
+      paint.mask_blur_descriptor->CreateMaskBlur(texture_contents, &out_rect),
+      *this));
   AddRenderEntityToCurrentPass(entity);
 }
 
@@ -785,7 +787,7 @@ void Canvas::DrawVertices(const std::shared_ptr<VerticesGeometry>& vertices,
     contents->SetBlendMode(blend_mode);
     contents->SetAlpha(paint.color.alpha);
     contents->SetGeometry(vertices);
-    entity.SetContents(paint.WithFilters(std::move(contents)));
+    entity.SetContents(paint.WithFilters(std::move(contents), *this));
     AddRenderEntityToCurrentPass(entity);
     return;
   }
@@ -798,7 +800,7 @@ void Canvas::DrawVertices(const std::shared_ptr<VerticesGeometry>& vertices,
         paint.color_source->asImage();
     FML_DCHECK(image_color_source &&
                image_color_source->image()->impeller_texture());
-    auto texture = image_color_source->image()->impeller_texture();
+    auto texture = GetOrUploadTexture(image_color_source->image());
     auto x_tile_mode = static_cast<Entity::TileMode>(
         image_color_source->horizontal_tile_mode());
     auto y_tile_mode =
@@ -816,7 +818,7 @@ void Canvas::DrawVertices(const std::shared_ptr<VerticesGeometry>& vertices,
     contents->SetTileMode(x_tile_mode, y_tile_mode);
     contents->SetSamplerDescriptor(sampler_descriptor);
 
-    entity.SetContents(paint.WithFilters(std::move(contents)));
+    entity.SetContents(paint.WithFilters(std::move(contents), *this));
     AddRenderEntityToCurrentPass(entity);
     return;
   }
@@ -825,7 +827,7 @@ void Canvas::DrawVertices(const std::shared_ptr<VerticesGeometry>& vertices,
   src_paint.color = paint.color.WithAlpha(1.0);
 
   std::shared_ptr<ColorSourceContents> src_contents =
-      src_paint.CreateContents();
+      src_paint.CreateContents(*this);
   src_contents->SetGeometry(vertices.get());
 
   // If the color source has an intrinsic size, then we use that to
@@ -849,7 +851,7 @@ void Canvas::DrawVertices(const std::shared_ptr<VerticesGeometry>& vertices,
       src_coverage = cvg.value();
     }
   }
-  src_contents = src_paint.CreateContents();
+  src_contents = src_paint.CreateContents(*this);
 
   clip_geometry_.push_back(Geometry::MakeRect(Rect::Round(src_coverage)));
   src_contents->SetGeometry(clip_geometry_.back().get());
@@ -868,7 +870,7 @@ void Canvas::DrawVertices(const std::shared_ptr<VerticesGeometry>& vertices,
         src_contents->RenderToSnapshot(renderer, {}, Rect::Round(src_coverage));
     return snapshot.has_value() ? snapshot->texture : nullptr;
   });
-  entity.SetContents(paint.WithFilters(std::move(contents)));
+  entity.SetContents(paint.WithFilters(std::move(contents), *this));
   AddRenderEntityToCurrentPass(entity);
 }
 
@@ -879,7 +881,7 @@ void Canvas::DrawAtlas(const std::shared_ptr<AtlasContents>& atlas_contents,
   Entity entity;
   entity.SetTransform(GetCurrentTransform());
   entity.SetBlendMode(paint.blend_mode);
-  entity.SetContents(paint.WithFilters(atlas_contents));
+  entity.SetContents(paint.WithFilters(atlas_contents, *this));
 
   AddRenderEntityToCurrentPass(entity);
 }
@@ -1014,7 +1016,7 @@ void Canvas::SaveLayer(const Paint& paint,
 
   std::shared_ptr<FilterContents> filter_contents = paint.WithImageFilter(
       Rect(), transform_stack_.back().transform,
-      Entity::RenderingMode::kSubpassPrependSnapshotTransform);
+      Entity::RenderingMode::kSubpassPrependSnapshotTransform, *this);
 
   std::optional<Rect> maybe_subpass_coverage = ComputeSaveLayerCoverage(
       bounds.value_or(Rect::MakeMaximum()),
@@ -1075,10 +1077,10 @@ void Canvas::SaveLayer(const Paint& paint,
   if (backdrop_filter) {
     local_position = subpass_coverage.GetOrigin() - GetGlobalPassPosition();
     Canvas::BackdropFilterProc backdrop_filter_proc =
-        [backdrop_filter = backdrop_filter](
+        [backdrop_filter = backdrop_filter, &canvas = *this](
             const FilterInput::Ref& input, const Matrix& effect_transform,
             Entity::RenderingMode rendering_mode) {
-          auto filter = WrapInput(backdrop_filter, input);
+          auto filter = WrapInput(backdrop_filter, input, canvas);
           filter->SetEffectTransform(effect_transform);
           filter->SetRenderingMode(rendering_mode);
           return filter;
@@ -1269,8 +1271,8 @@ bool Canvas::Restore() {
         save_layer_state.paint,                                    //
         lazy_render_pass.inline_pass_context->GetTexture(),        //
         Matrix::MakeTranslation(Vector3{-global_pass_position}) *  //
-            transform_stack_.back().transform                      //
-    );
+            transform_stack_.back().transform,                     //
+        *this);
 
     lazy_render_pass.inline_pass_context->EndPass();
 
@@ -1396,8 +1398,9 @@ void Canvas::DrawTextFrame(const std::shared_ptr<TextFrame>& text_frame,
   //              needs to be reworked in order to interact correctly with
   //              mask filters.
   //              https://github.com/flutter/flutter/issues/133297
-  entity.SetContents(paint.WithFilters(paint.WithMaskBlur(
-      std::move(text_contents), true, GetCurrentTransform())));
+  entity.SetContents(paint.WithFilters(
+      paint.WithMaskBlur(std::move(text_contents), true, GetCurrentTransform()),
+      *this));
 
   AddRenderEntityToCurrentPass(entity, false);
 }
@@ -1406,7 +1409,7 @@ void Canvas::AddRenderEntityWithFiltersToCurrentPass(Entity& entity,
                                                      const Geometry* geometry,
                                                      const Paint& paint,
                                                      bool reuse_depth) {
-  std::shared_ptr<ColorSourceContents> contents = paint.CreateContents();
+  std::shared_ptr<ColorSourceContents> contents = paint.CreateContents(*this);
   if (!paint.color_filter && !paint.invert_colors && !paint.image_filter &&
       !paint.mask_blur_descriptor.has_value()) {
     contents->SetGeometry(geometry);
@@ -1469,7 +1472,7 @@ void Canvas::AddRenderEntityWithFiltersToCurrentPass(Entity& entity,
 
   if (paint.image_filter) {
     std::shared_ptr<FilterContents> filter = WrapInput(
-        paint.image_filter, FilterInput::Make(std::move(contents_copy)));
+        paint.image_filter, FilterInput::Make(std::move(contents_copy)), *this);
     filter->SetRenderingMode(Entity::RenderingMode::kDirect);
     entity.SetContents(filter);
     AddRenderEntityToCurrentPass(entity, reuse_depth);
@@ -1702,6 +1705,25 @@ std::shared_ptr<Texture> Canvas::FlipBackdrop(Point global_pass_position,
   }
 
   return input_texture;
+}
+
+std::shared_ptr<Texture> Canvas::GetOrUploadTexture(
+    const sk_sp<const flutter::DlImage>& image) {
+  if (image->isDeferredUpload()) {
+    std::shared_ptr<CommandBuffer> cmd_buffer =
+        renderer_.GetContext()->CreateCommandBuffer();
+    std::shared_ptr<BlitPass> blit_pass = cmd_buffer->CreateBlitPass();
+    std::shared_ptr<DeviceBuffer> device_buffer = image->GetDeviceBuffer();
+    blit_pass->AddCopy(DeviceBuffer::AsBufferView(device_buffer),
+                       image->impeller_texture());
+    image->SetUploaded();
+    blit_pass->EncodeCommands();
+
+    if (!renderer_.GetContext()->EnqueueCommandBuffer(std::move(cmd_buffer))) {
+      VALIDATION_LOG << "Failed to upload deferred GPU image.";
+    }
+  }
+  return image->impeller_texture();
 }
 
 bool Canvas::SupportsBlitToOnscreen() const {

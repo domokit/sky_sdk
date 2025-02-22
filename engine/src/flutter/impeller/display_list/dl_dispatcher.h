@@ -14,6 +14,7 @@
 #include "fml/logging.h"
 #include "impeller/display_list/aiks_context.h"
 #include "impeller/display_list/canvas.h"
+#include "impeller/display_list/dl_image_impeller.h"
 #include "impeller/display_list/paint.h"
 #include "impeller/entity/contents/content_context.h"
 #include "impeller/geometry/rect.h"
@@ -383,6 +384,8 @@ class FirstPassDispatcher : public flutter::IgnoreAttributeDispatchHelper,
   void setImageFilter(const flutter::DlImageFilter* filter) override;
 
   std::pair<std::unordered_map<int64_t, BackdropData>, size_t> TakeBackdropData();
+
+  void UploadDeferredImages(Context& context);
 
  private:
   const Rect GetCurrentLocalCullingBounds() const;

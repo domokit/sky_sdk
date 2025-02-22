@@ -41,8 +41,8 @@ class ImpellerAllocator : public SkBitmap::Allocator {
 
 struct DecompressResult {
   std::shared_ptr<impeller::DeviceBuffer> device_buffer;
-  std::shared_ptr<SkBitmap> sk_bitmap;
   SkImageInfo image_info;
+  std::shared_ptr<SkBitmap> sk_bitmap;
   std::optional<SkImageInfo> resize_info = std::nullopt;
   std::string decode_error;
 };
@@ -69,6 +69,7 @@ class ImageDecoderImpeller final : public ImageDecoder {
       SkISize target_size,
       impeller::ISize max_texture_size,
       bool supports_wide_gamut,
+      bool is_gpu_disabled,
       const std::shared_ptr<const impeller::Capabilities>& capabilities,
       const std::shared_ptr<impeller::Allocator>& allocator);
 
@@ -77,26 +78,16 @@ class ImageDecoderImpeller final : public ImageDecoder {
   /// @param result     The image result closure that accepts the DlImage and
   ///                   any encoding error messages.
   /// @param context    The Impeller graphics context.
-  /// @param buffer     A host buffer containing the image to be uploaded.
+  /// @param buffer     A device buffer containing the image to be uploaded.
   /// @param image_info Format information about the particular image.
-  /// @param bitmap      A bitmap containg the image to be uploaded.
   /// @param gpu_disabled_switch Whether the GPU is available command encoding.
   static void UploadTextureToPrivate(
       ImageResult result,
       const std::shared_ptr<impeller::Context>& context,
       const std::shared_ptr<impeller::DeviceBuffer>& buffer,
       const SkImageInfo& image_info,
-      const std::shared_ptr<SkBitmap>& bitmap,
       const std::optional<SkImageInfo>& resize_info,
-      const std::shared_ptr<fml::SyncSwitch>& gpu_disabled_switch);
-
-  /// @brief Create a texture from the provided bitmap.
-  /// @param context     The Impeller graphics context.
-  /// @param bitmap      A bitmap containg the image to be uploaded.
-  /// @return            A DlImage.
-  static std::pair<sk_sp<DlImage>, std::string> UploadTextureToStorage(
-      const std::shared_ptr<impeller::Context>& context,
-      std::shared_ptr<SkBitmap> bitmap);
+      const std::shared_ptr<const fml::SyncSwitch>& gpu_disabled_switch);
 
  private:
   using FutureContext = std::shared_future<std::shared_ptr<impeller::Context>>;
@@ -108,6 +99,7 @@ class ImageDecoderImpeller final : public ImageDecoder {
   static std::pair<sk_sp<DlImage>, std::string> UnsafeUploadTextureToPrivate(
       const std::shared_ptr<impeller::Context>& context,
       const std::shared_ptr<impeller::DeviceBuffer>& buffer,
+      const std::shared_ptr<impeller::Texture>& texture,
       const SkImageInfo& image_info,
       const std::optional<SkImageInfo>& resize_info);
 

@@ -12,6 +12,7 @@
 #include "flutter/display_list/geometry/dl_geometry_types.h"
 #include "flutter/fml/build_config.h"
 #include "flutter/fml/macros.h"
+#include "impeller/core/device_buffer.h"
 #include "third_party/skia/include/core/SkImage.h"
 #include "third_party/skia/include/core/SkRefCnt.h"
 
@@ -130,6 +131,24 @@ class DlImage : public SkRefCnt {
   /// @return     An error, if any, that occurred when trying to create the
   ///             image.
   virtual std::optional<std::string> get_error() const;
+
+  //----------------------------------------------------------------------------
+  /// @return     Whether the backing texture still needs to be populated from
+  ///             the uploaded image data.
+  virtual bool isDeferredUpload() const { return false; }
+
+  /// @brief Mark this deferred image as having already uploaded the deferred
+  ///        data and clear the device buffer.
+  virtual void SetUploaded() const {}
+
+  /// @brief Retrieve the device buffer backing this image, if it is a deferred
+  ///        Impeller image.
+  ///
+  /// Otherwise returns `nullptr`.
+  virtual const std::shared_ptr<impeller::DeviceBuffer> GetDeviceBuffer()
+      const {
+    return nullptr;
+  }
 
 #if FML_OS_IOS_SIMULATOR
   virtual bool IsFakeImage() const { return false; }

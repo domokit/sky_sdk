@@ -263,6 +263,12 @@ class Canvas {
   // Visible for testing.
   bool SupportsBlitToOnscreen() const;
 
+  /// @brief Retrieve the backing texture from the DL image.
+  ///
+  /// If this image is a deferred image, automatically performs the upload.
+  std::shared_ptr<Texture> GetOrUploadTexture(
+      const sk_sp<const flutter::DlImage>& image);
+
  private:
   ContentContext& renderer_;
   RenderTarget render_target_;

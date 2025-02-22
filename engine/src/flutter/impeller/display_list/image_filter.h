@@ -10,10 +10,13 @@
 
 namespace impeller {
 
+class Canvas;
+
 /// @brief  Generate a new FilterContents using this filter's configuration.
 ///
 std::shared_ptr<FilterContents> WrapInput(const flutter::DlImageFilter* filter,
-                                          const FilterInput::Ref& input);
+                                          const FilterInput::Ref& input,
+                                          Canvas& canvas);
 
 }  // namespace impeller
 
