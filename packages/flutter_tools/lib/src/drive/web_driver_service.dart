@@ -168,6 +168,38 @@ class WebDriverService extends DriverService {
   }) async {
     late async_io.WebDriver webDriver;
     final Browser browser = Browser.fromCliName(browserName);
+    final bool isAndroidChrome = browser == Browser.androidChrome;
+    late int width;
+    late int height;
+    Map<String, dynamic>? mobileEmulation;
+
+    // Do not resize Android Chrome browser.
+    // For PC Chrome use mobileEmulation if dpr is provided.
+    if (!isAndroidChrome && browserDimension != null) {
+      try {
+        final int len = browserDimension.length;
+        if (len != 2 && len != 3) {
+          throw const FormatException();
+        }
+        width = int.parse(browserDimension[0]);
+        height = int.parse(browserDimension[1]);
+        if (len == 3) {
+          mobileEmulation = <String, dynamic>{
+            'deviceMetrics': <String, dynamic>{
+              'width': width,
+              'height': height,
+              'pixelRatio': double.parse(browserDimension[2]),
+            },
+            'userAgent':
+                'Mozilla/5.0 (Linux; Android 15) AppleWebKit/537.36 (KHTML, '
+                'like Gecko) Chrome/131.0.6778.200 Mobile Safari/537.36',
+          };
+        }
+      } on FormatException {
+        throwToolExit('Browser dimension is invalid. Try --browser-dimension=1600x1024[@1]');
+      }
+    }
+
     try {
       webDriver = await async_io.createDriver(
         uri: Uri.parse('http://localhost:$driverPort/'),
@@ -176,6 +208,7 @@ class WebDriverService extends DriverService {
           headless,
           webBrowserFlags: webBrowserFlags,
           chromeBinary: chromeBinary,
+          mobileEmulation: mobileEmulation,
         ),
       );
     } on SocketException catch (error) {
@@ -188,21 +221,10 @@ class WebDriverService extends DriverService {
       );
     }
 
-    final bool isAndroidChrome = browser == Browser.androidChrome;
-    // Do not set the window size for android chrome browser.
-    if (!isAndroidChrome) {
-      assert(browserDimension!.length == 2);
-      late int x;
-      late int y;
-      try {
-        x = int.parse(browserDimension![0]);
-        y = int.parse(browserDimension[1]);
-      } on FormatException catch (ex) {
-        throwToolExit('Dimension provided to --browser-dimension is invalid: $ex');
-      }
+    if (!isAndroidChrome && browserDimension != null) {
       final async_io.Window window = await webDriver.window;
       await window.setLocation(const math.Point<int>(0, 0));
-      await window.setSize(math.Rectangle<int>(0, 0, x, y));
+      await window.setSize(math.Rectangle<int>(0, 0, width, height));
     }
     final int result = await _processUtils.stream(
       <String>[_dartSdkPath, ...arguments, testFile],
@@ -305,6 +327,7 @@ Map<String, dynamic> getDesiredCapabilities(
   bool? headless, {
   List<String> webBrowserFlags = const <String>[],
   String? chromeBinary,
+  Map<String, dynamic>? mobileEmulation,
 }) => switch (browser) {
   Browser.chrome => <String, dynamic>{
     'acceptInsecureCerts': true,
@@ -314,7 +337,6 @@ Map<String, dynamic> getDesiredCapabilities(
       async_io.LogType.performance: 'ALL',
     },
     'goog:chromeOptions': <String, dynamic>{
-      if (chromeBinary != null) 'binary': chromeBinary,
       'w3c': true,
       'args': <String>[
         '--bwsi',
@@ -335,6 +357,8 @@ Map<String, dynamic> getDesiredCapabilities(
             'v8,blink.console,benchmark,blink,'
             'blink.user_timing',
       },
+      if (chromeBinary != null) 'binary': chromeBinary,
+      if (mobileEmulation != null) 'mobileEmulation': mobileEmulation,
     },
   },
   Browser.firefox => <String, dynamic>{

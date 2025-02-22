@@ -140,11 +140,12 @@ class DriveCommand extends RunCommandBase {
       )
       ..addOption(
         'browser-dimension',
-        defaultsTo: '1600,1024',
+        defaultsTo: '1600x1024',
         help:
             'The dimension of the browser when running a Flutter Web test. '
-            'This will affect screenshot and all offset-related actions.',
-        valueHelp: 'width,height',
+            'Format is "width x height[@dpr]" where dpr is optional device pixel ratio. '
+            'This will affect screenshot dimensions and all offset-related actions.',
+        valueHelp: '1600x1024[@1]',
       )
       ..addFlag(
         'android-emulator',
@@ -355,7 +356,7 @@ class DriveCommand extends RunCommandBase {
         chromeBinary: stringArg('chrome-binary'),
         headless: boolArg('headless'),
         webBrowserFlags: stringsArg(FlutterOptions.kWebBrowserFlag),
-        browserDimension: stringArg('browser-dimension')!.split(','),
+        browserDimension: stringArg('browser-dimension')!.split(RegExp('[,x@]')),
         browserName: stringArg('browser-name'),
         driverPort:
             stringArg('driver-port') != null ? int.tryParse(stringArg('driver-port')!) : null,
