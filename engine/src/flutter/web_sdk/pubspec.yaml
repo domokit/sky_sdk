@@ -37,7 +37,7 @@ dependency_overrides: # Must include all transitive dependencies from the "any" 
   file:
     path: ../third_party/dart/third_party/pkg/tools/pkgs/file
   glob:
-    path: ../third_party/dart/third_party/pkg/glob
+    path: ../third_party/dart/third_party/pkg/tools/pkgs/glob
   macros:
     path: ../third_party/dart/pkg/macros
   meta:

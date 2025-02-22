@@ -65,6 +65,7 @@ vars = {
   'dart_core_rev': '0b2bd3fcd7f3e082f4cc9b14c19ffa93894b85ae',
   'dart_devtools_rev': 'b38abb81337b10c4b675d418e50f82a5fe6a894d',
   'dart_http_rev': '900da9fe7d576caa4882053cf26d3a70bd3106e0',
+  'dart_i18n_rev': '06a664f7beaab1f8eaf82a60b722982c03c8657c',
   'dart_libprotobuf_rev': '24487dd1045c7f3d64a21f38a3f0c06cc4cf2edb',
   'dart_perfetto_rev': '13ce0c9e13b0940d2476cd0cff2301708a9a2e2b',
   'dart_protobuf_gn_rev': 'ca669f79945418f6229e4fef89b666b2a88cbb10',
@@ -156,16 +157,13 @@ vars = {
   "upstream_ffi": "https://github.com/dart-lang/ffi.git",
   "upstream_flatbuffers": "https://github.com/google/flatbuffers.git",
   "upstream_freetype2": "https://gitlab.freedesktop.org/freetype/freetype.git",
-  "upstream_gcloud": "https://github.com/dart-lang/gcloud.git",
   "upstream_glfw": "https://github.com/glfw/glfw.git",
-  "upstream_glob": "https://github.com/dart-lang/glob.git",
   "upstream_googleapis": "https://github.com/google/googleapis.dart.git",
   "upstream_googletest": "https://github.com/google/googletest.git",
   "upstream_gtest-parallel": "https://github.com/google/gtest-parallel.git",
   "upstream_harfbuzz": "https://github.com/harfbuzz/harfbuzz.git",
   "upstream_http": "https://github.com/dart-lang/http.git",
   "upstream_icu": "https://github.com/unicode-org/icu.git",
-  "upstream_intl": "https://github.com/dart-lang/intl.git",
   "upstream_imgui": "https://github.com/ocornut/imgui.git",
   "upstream_inja": "https://github.com/pantor/inja.git",
   "upstream_json": "https://github.com/nlohmann/json.git",
@@ -177,7 +175,6 @@ vars = {
   "upstream_libtess2": "https://github.com/memononen/libtess2.git",
   "upstream_libwebp": "https://chromium.googlesource.com/webm/libwebp.git",
   "upstream_leak_tracker": "https://github.com/dart-lang/leak_tracker.git",
-  "upstream_markdown": "https://github.com/dart-lang/markdown.git",
   "upstream_mockito": "https://github.com/dart-lang/mockito.git",
   "upstream_ocmock": "https://github.com/erikdoe/ocmock.git",
   "upstream_packages": "https://github.com/flutter/packages.git",
@@ -200,7 +197,6 @@ vars = {
   "upstream_usage": "https://github.com/dart-lang/usage.git",
   "upstream_vector_math": "https://github.com/google/vector_math.dart.git",
   "upstream_VulkanMemoryAllocator": "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git",
-  "upstream_web_socket_channel": "https://github.com/dart-lang/web_socket_channel.git",
   "upstream_webdev": "https://github.com/dart-lang/webdev.git",
   "upstream_webkit_inspection_protocol": "https://github.com/google/webkit_inspection_protocol.dart.git",
   "upstream_wuffs-mirror-release-c": "https://github.com/google/wuffs-mirror-release-c.git",
@@ -315,20 +311,14 @@ deps = {
   'engine/src/flutter/third_party/dart/third_party/pkg/dartdoc':
    Var('dart_git') + '/dartdoc.git@f0d2276e57c96717e625964ea0385a30f2237e62',
 
-  'engine/src/flutter/third_party/dart/third_party/pkg/glob':
-   Var('dart_git') + '/glob.git@043796be996190473b397fa2fecfa34bb91376fb',
-
   'engine/src/flutter/third_party/dart/third_party/pkg/http':
    Var('dart_git') + '/http.git' + '@' + Var('dart_http_rev'),
 
-  'engine/src/flutter/third_party/dart/third_party/pkg/intl':
-   Var('dart_git') + '/intl.git@5d65e3808ce40e6282e40881492607df4e35669f',
+  'engine/src/flutter/third_party/dart/third_party/pkg/i18n':
+   Var('dart_git') + '/i18n.git' + '@' + Var('dart_i18n_rev'),
 
   'engine/src/flutter/third_party/dart/third_party/pkg/leak_tracker':
    Var('dart_git') + '/leak_tracker.git@f5620600a5ce1c44f65ddaa02001e200b096e14c',
-
-  'engine/src/flutter/third_party/dart/third_party/pkg/markdown':
-   Var('dart_git') + '/markdown.git@62f78c64d963ba6f73bd70ed65630dc934a264e6',
 
   'engine/src/flutter/third_party/dart/third_party/pkg/native':
    Var('dart_git') + '/native.git@c817a5e41220de370cbea6e6445e63cdc7087544',
@@ -353,9 +343,6 @@ deps = {
 
   'engine/src/flutter/third_party/dart/third_party/pkg/web':
    Var('dart_git') + '/web.git' + '@' + Var('dart_web_rev'),
-
-  'engine/src/flutter/third_party/dart/third_party/pkg/web_socket_channel':
-   Var('dart_git') + '/web_socket_channel.git@f335e52affa5c70a725401394bf265fc4384e62f',
 
   'engine/src/flutter/third_party/dart/third_party/pkg/webdev':
    Var('dart_git') + '/webdev.git' + '@' + Var('dart_webdev_rev'),
@@ -539,8 +526,8 @@ deps = {
   'engine/src/flutter/third_party/pkg/flutter_packages':
   Var('flutter_git') + '/mirrors/packages' + '@' + '25454e63851fe7933f04d025606e68c1eac4fe0f', # various
 
-  'engine/src/flutter/third_party/pkg/gcloud':
-  Var('flutter_git') + '/third_party/gcloud.git' + '@' + 'a5276b85c4714378e84b1fb478b8feeeb686ac26', # 0.8.6-dev
+  'engine/src/flutter/third_party/pkg/labs':
+  Var('dart_git') + '/labs.git' + '@' + 'bdd42446fe2db6d5526ee72d47b44c33281fab10', # gcloud 0.8.10-wip
 
   'engine/src/flutter/third_party/pkg/googleapis':
   Var('flutter_git') + '/third_party/googleapis.dart.git' + '@' + '526011f56d98eab183cc6075ee1392e8303e43e2', # various
