@@ -219,7 +219,13 @@ class FixedExtentScrollController extends ScrollController {
   /// Creates a scroll controller for scrollables whose items have the same size.
   ///
   /// [initialItem] defaults to zero.
-  FixedExtentScrollController({this.initialItem = 0, super.onAttach, super.onDetach});
+  FixedExtentScrollController({
+    this.initialItem = 0,
+    super.keepScrollOffset,
+    super.debugLabel,
+    super.onAttach,
+    super.onDetach,
+  });
 
   /// The page to show when first creating the scroll view.
   ///
@@ -294,6 +300,8 @@ class FixedExtentScrollController extends ScrollController {
       context: context,
       initialItem: initialItem,
       oldPosition: oldPosition,
+      keepScrollOffset: keepScrollOffset,
+      debugLabel: debugLabel,
     );
   }
 }
@@ -369,6 +377,8 @@ class _FixedExtentScrollPosition extends ScrollPositionWithSingleContext
     required super.context,
     required int initialItem,
     super.oldPosition,
+    super.keepScrollOffset,
+    super.debugLabel,
   }) : assert(
          context is _FixedExtentScrollableState,
          'FixedExtentScrollController can only be used with ListWheelScrollViews',
