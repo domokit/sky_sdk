@@ -32,6 +32,7 @@ import 'automatic_keep_alive.dart';
 import 'basic.dart';
 import 'binding.dart';
 import 'constants.dart';
+import 'container.dart';
 import 'context_menu_button_item.dart';
 import 'debug.dart';
 import 'default_selection_style.dart';
@@ -40,6 +41,7 @@ import 'focus_manager.dart';
 import 'focus_scope.dart';
 import 'focus_traversal.dart';
 import 'framework.dart';
+import 'gesture_detector.dart';
 import 'localizations.dart';
 import 'magnifier.dart';
 import 'media_query.dart';
@@ -54,6 +56,7 @@ import 'scrollable.dart';
 import 'scrollable_helpers.dart';
 import 'shortcuts.dart';
 import 'size_changed_layout_notifier.dart';
+import 'slotted_render_object_widget.dart';
 import 'spell_check.dart';
 import 'tap_region.dart';
 import 'text.dart';
@@ -6065,6 +6068,163 @@ class _ScribbleFocusableState extends State<_ScribbleFocusable> implements Scrib
   @override
   Widget build(BuildContext context) {
     return widget.child;
+  }
+}
+
+// TODO(justinmc): Some vertical handwriting seems to want to change the
+// selection instead of writing...
+class _Scribe extends StatefulWidget {
+  const _Scribe({required this.child, required this.editableKey, required this.focusNode});
+
+  final Widget child;
+  final GlobalKey editableKey;
+  final FocusNode focusNode;
+
+  @override
+  State<_Scribe> createState() => _ScribeState();
+}
+
+class _ScribeState extends State<_Scribe> implements ScribeClient {
+  // The handwriting bounds padding of EditText in Android API 34.
+  static const EdgeInsets _handwritingPadding = EdgeInsets.symmetric(
+    horizontal: 10.0,
+    vertical: 40.0,
+  );
+
+  RenderEditable get _renderEditable =>
+      widget.editableKey.currentContext!.findRenderObject()! as RenderEditable;
+
+  @override
+  void initState() {
+    super.initState();
+    Scribe.registerScribeClient(this);
+  }
+
+  @override
+  void dispose() {
+    Scribe.unregisterScribeClient(this);
+    super.dispose();
+  }
+
+  // Begin ScribeClient.
+
+  @override
+  double get devicePixelRatio => MediaQuery.devicePixelRatioOf(context);
+
+  // TODO(justinmc): ScribbleClient does this in EditableText, setting the
+  // active client on Scribble. Maybe that's better? Reconcile?
+  @override
+  bool get isActive => widget.focusNode.hasFocus;
+
+  @override
+  Future<bool> performHandwritingGesture() async {
+    print('justin EditableText.performHandwritingGesture.');
+    return true;
+  }
+
+  @override
+  void previewHandwritingGesture() {
+    print('justin EditableText.previewHandwritingGesture.');
+  }
+
+  /*
+  @override
+  bool performSelectionGesture(Rect selectionArea) {
+    // TODO(justinmc): Works, but selects even if only a tiny corner of a
+    // character is covered. I think by Android's definition, should have to
+    // cover the center of the granularity.
+    _renderEditable.selectPositionAt(
+      from: selectionArea.topLeft,
+      to: selectionArea.bottomRight,
+      // TODO(justinmc): Should this cause be generic or should there also be a scribe value?
+      cause: SelectionChangedCause.scribble,
+    );
+    return true;
+  }
+  */
+
+  // End ScribeClient.
+
+  void _handlePanDown(DragDownDetails details) {}
+
+  void _handlePointerDown(PointerDownEvent event) async {
+    if (event.kind != ui.PointerDeviceKind.stylus) {
+      return;
+    }
+
+    if (!(await Scribe.isStylusHandwritingAvailable() ?? false)) {
+      return;
+    }
+
+    if (!widget.focusNode.hasFocus) {
+      // TODO(justinmc): But don't show the keyboard!
+      widget.focusNode.requestFocus();
+    }
+    Scribe.startStylusHandwriting();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(onPointerDown: _handlePointerDown, child: widget.child);
+    /*
+    return _EmbiggenerMultiChildRenderObjectWidget(
+      margin: _handwritingPadding,
+      overflow: Listener(
+        onPointerDown: _handlePointerDown,
+        child: Container(
+          color: const Color(0x99ff0000),
+        ),
+      ),
+      child: widget.child,
+    );
+    */
+    /*
+    return OverflowBox(
+      fit: OverflowBoxFit.deferToChild,
+      child: Listener(
+        onPointerDown: _handlePointerDown,
+        child: Container(
+          alignment: Alignment.center,
+          color: const Color(0x99ff0000),
+          child: Padding(
+            padding: _handwritingPadding,
+            child: widget.child,
+          ),
+        ),
+      ),
+    );
+    */
+  }
+}
+
+class _StylusHandwriting extends StatelessWidget {
+  const _StylusHandwriting({
+    required this.child,
+    required this.editableKey,
+    required this.enabled,
+    required this.focusNode,
+    required this.updateSelectionRects,
+  });
+
+  final Widget child;
+  final GlobalKey editableKey;
+  final bool enabled;
+  final FocusNode focusNode;
+  final VoidCallback updateSelectionRects;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!enabled) {
+      return child;
+    }
+
+    return _ScribbleFocusable(
+      focusNode: focusNode,
+      editableKey: editableKey,
+      enabled: enabled,
+      updateSelectionRects: updateSelectionRects,
+      child: _Scribe(focusNode: focusNode, editableKey: editableKey, child: child),
+    );
   }
 }
 
