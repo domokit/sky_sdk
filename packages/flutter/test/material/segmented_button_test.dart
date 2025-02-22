@@ -1216,6 +1216,7 @@ void main() {
 
     // Test disabled button.
     await tester.pumpWidget(buildButton(enabled: false));
+    await tester.pumpAndSettle();
     expect(iconStyle(tester, Icons.add).color, disabledIconColor);
   });
 }

@@ -17,6 +17,10 @@ void main() {
     return iconRichText.text.style!;
   }
 
+  Color textColor(WidgetTester tester, String text) {
+    return tester.renderObject<RenderParagraph>(find.text(text)).text.style!.color!;
+  }
+
   testWidgets('FilledButton, FilledButton.icon defaults', (WidgetTester tester) async {
     const ColorScheme colorScheme = ColorScheme.light();
     final ThemeData theme = ThemeData.from(useMaterial3: false, colorScheme: colorScheme);
@@ -620,8 +624,8 @@ void main() {
   testWidgets('FilledButton uses stateful color for text color in different states', (
     WidgetTester tester,
   ) async {
+    const String buttonText = 'FilledButton';
     final FocusNode focusNode = FocusNode();
-
     const Color pressedColor = Color(0x00000001);
     const Color hoverColor = Color(0x00000002);
     const Color focusedColor = Color(0x00000003);
@@ -655,7 +659,7 @@ void main() {
                   return FilledButton(
                     onPressed: () {},
                     focusNode: focusNode,
-                    child: const Text('FilledButton'),
+                    child: const Text(buttonText),
                   );
                 },
               ),
@@ -665,17 +669,13 @@ void main() {
       ),
     );
 
-    Color textColor() {
-      return tester.renderObject<RenderParagraph>(find.text('FilledButton')).text.style!.color!;
-    }
-
     // Default, not disabled.
-    expect(textColor(), equals(defaultColor));
+    expect(textColor(tester, buttonText), equals(defaultColor));
 
     // Focused.
     focusNode.requestFocus();
     await tester.pumpAndSettle();
-    expect(textColor(), focusedColor);
+    expect(textColor(tester, buttonText), focusedColor);
 
     // Hovered.
     final Offset center = tester.getCenter(find.byType(FilledButton));
@@ -683,7 +683,7 @@ void main() {
     await gesture.addPointer();
     await gesture.moveTo(center);
     await tester.pumpAndSettle();
-    expect(textColor(), hoverColor);
+    expect(textColor(tester, buttonText), hoverColor);
 
     // Highlighted (pressed).
     await gesture.down(center);
@@ -691,7 +691,7 @@ void main() {
     await tester.pump(
       const Duration(milliseconds: 800),
     ); // Wait for splash and highlight to be well under way.
-    expect(textColor(), pressedColor);
+    expect(textColor(tester, buttonText), pressedColor);
     focusNode.dispose();
   });
 
@@ -2750,6 +2750,7 @@ void main() {
 
     // Test disabled button.
     await tester.pumpWidget(buildButton(enabled: false));
+    await tester.pumpAndSettle();
     expect(iconStyle(tester, Icons.add).color, disabledIconColor);
 
     final Offset buttonTopRight = tester.getTopRight(find.byType(Material).last);
@@ -2789,5 +2790,79 @@ void main() {
     );
     expect(iconStyle(tester, Icons.add).color, foregroundColor);
     expect(iconStyle(tester, Icons.mail).color, foregroundColor);
+  });
+
+  testWidgets('FilledButton text and icon respect animation duration', (WidgetTester tester) async {
+    const String buttonText = 'Button';
+    const IconData buttonIcon = Icons.add;
+    const Color hoveredColor = Color(0xFFFF0000);
+    const Color idleColor = Color(0xFF000000);
+
+    Widget buildButton({Duration? animationDuration}) {
+      return MaterialApp(
+        home: Material(
+          child: Center(
+            child: FilledButton.icon(
+              style: ButtonStyle(
+                animationDuration: animationDuration,
+                iconColor: const WidgetStateProperty<Color>.fromMap(<WidgetStatesConstraint, Color>{
+                  WidgetState.hovered: hoveredColor,
+                  WidgetState.any: idleColor,
+                }),
+                foregroundColor: const WidgetStateProperty<Color>.fromMap(
+                  <WidgetStatesConstraint, Color>{
+                    WidgetState.hovered: hoveredColor,
+                    WidgetState.any: idleColor,
+                  },
+                ),
+              ),
+              onPressed: () {},
+              icon: const Icon(buttonIcon),
+              label: const Text(buttonText),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Test default animation duration.
+    await tester.pumpWidget(buildButton());
+
+    expect(textColor(tester, buttonText), idleColor);
+    expect(iconStyle(tester, buttonIcon).color, idleColor);
+
+    final Offset buttonCenter = tester.getCenter(find.text(buttonText));
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    addTearDown(gesture.removePointer);
+    await gesture.moveTo(buttonCenter);
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(textColor(tester, buttonText), hoveredColor.withValues(red: 0.5));
+    expect(iconStyle(tester, buttonIcon).color, hoveredColor.withValues(red: 0.5));
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(textColor(tester, buttonText), hoveredColor);
+    expect(iconStyle(tester, buttonIcon).color, hoveredColor);
+
+    await gesture.removePointer();
+
+    // Test custom animation duration.
+    await tester.pumpWidget(buildButton(animationDuration: const Duration(seconds: 2)));
+    await tester.pumpAndSettle();
+
+    await gesture.moveTo(buttonCenter);
+
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(textColor(tester, buttonText), hoveredColor.withValues(red: 0.5));
+    expect(iconStyle(tester, buttonIcon).color, hoveredColor.withValues(red: 0.5));
+
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(textColor(tester, buttonText), hoveredColor);
+    expect(iconStyle(tester, buttonIcon).color, hoveredColor);
   });
 }

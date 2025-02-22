@@ -1313,6 +1313,7 @@ void main() {
         home: const Center(child: IconButton.filled(onPressed: null, icon: Icon(Icons.ac_unit))),
       ),
     );
+    await tester.pumpAndSettle();
 
     material = tester.widget<Material>(buttonMaterial);
     expect(material.animationDuration, const Duration(milliseconds: 200));
@@ -1465,6 +1466,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     material = tester.widget<Material>(buttonMaterial);
     expect(material.animationDuration, const Duration(milliseconds: 200));
@@ -1488,6 +1490,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     material = tester.widget<Material>(buttonMaterial);
     expect(material.animationDuration, const Duration(milliseconds: 200));
@@ -1570,6 +1573,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     material = tester.widget<Material>(buttonMaterial);
     expect(material.animationDuration, const Duration(milliseconds: 200));
@@ -1749,6 +1753,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     material = tester.widget<Material>(buttonMaterial);
     expect(material.animationDuration, const Duration(milliseconds: 200));
@@ -1827,6 +1832,7 @@ void main() {
         home: const Center(child: IconButton.outlined(onPressed: null, icon: Icon(Icons.ac_unit))),
       ),
     );
+    await tester.pumpAndSettle();
 
     material = tester.widget<Material>(buttonMaterial);
     expect(material.animationDuration, const Duration(milliseconds: 200));
@@ -1982,6 +1988,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     material = tester.widget<Material>(buttonMaterial);
     expect(material.animationDuration, const Duration(milliseconds: 200));
@@ -2005,6 +2012,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     material = tester.widget<Material>(buttonMaterial);
     expect(material.animationDuration, const Duration(milliseconds: 200));
@@ -2829,6 +2837,7 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
 
       Color? iconColor1() => _iconStyle(tester, Icons.account_box)?.color;
       expect(iconColor1(), Colors.orange);
