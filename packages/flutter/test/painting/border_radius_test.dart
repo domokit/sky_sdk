@@ -133,6 +133,23 @@ void main() {
     expect(BorderRadius.circular(15.0) ~/ 10.0, BorderRadius.circular(1.0));
 
     expect(BorderRadius.circular(15.0) % 10.0, BorderRadius.circular(5.0));
+
+    borderRadius = const BorderRadius.mostly(radius1, bottomRight: radius2);
+    expect(borderRadius, hasOneLineDescription);
+    expect(borderRadius.topLeft, radius1);
+    expect(borderRadius.topRight, radius1);
+    expect(borderRadius.bottomLeft, radius1);
+    expect(borderRadius.bottomRight, radius2);
+    expect(
+      borderRadius.toRRect(rect),
+      RRect.fromRectAndCorners(
+        rect,
+        topRight: radius1,
+        topLeft: radius1,
+        bottomLeft: radius1,
+        bottomRight: radius2,
+      ),
+    );
   });
 
   test('BorderRadius.lerp() invariants', () {
@@ -328,6 +345,34 @@ void main() {
     expect(BorderRadiusDirectional.circular(15.0) ~/ 10.0, BorderRadiusDirectional.circular(1.0));
 
     expect(BorderRadiusDirectional.circular(15.0) % 10.0, BorderRadiusDirectional.circular(5.0));
+
+    borderRadius = const BorderRadiusDirectional.mostly(radius1, bottomEnd: radius2);
+    expect(borderRadius, hasOneLineDescription);
+    expect(borderRadius.topStart, radius1);
+    expect(borderRadius.topEnd, radius1);
+    expect(borderRadius.bottomStart, radius1);
+    expect(borderRadius.bottomEnd, radius2);
+
+    expect(
+      borderRadius.resolve(TextDirection.ltr).toRRect(rect),
+      RRect.fromRectAndCorners(
+        rect,
+        topLeft: radius1,
+        topRight: radius1,
+        bottomLeft: radius1,
+        bottomRight: radius2,
+      ),
+    );
+    expect(
+      borderRadius.resolve(TextDirection.rtl).toRRect(rect),
+      RRect.fromRectAndCorners(
+        rect,
+        topLeft: radius1,
+        topRight: radius1,
+        bottomLeft: radius2,
+        bottomRight: radius1,
+      ),
+    );
   });
 
   test('BorderRadiusDirectional.lerp() invariants', () {

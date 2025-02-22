@@ -374,6 +374,22 @@ class EdgeInsets extends EdgeInsetsGeometry {
   /// {@end-tool}
   const EdgeInsets.only({this.left = 0.0, this.top = 0.0, this.right = 0.0, this.bottom = 0.0});
 
+  /// Creates insets with offsets from the left, top, right, and bottom otherwise defaults to `value`.
+  ///
+  /// {@tool snippet}
+  ///
+  /// Left margin indent of 40 pixels and others 8 pixels:
+  ///
+  /// ```dart
+  /// const EdgeInsets.mostly(8.0, left: 40.0)
+  /// ```
+  /// {@end-tool}
+  const EdgeInsets.mostly(double value, {double? top, double? right, double? bottom, double? left})
+    : left = left ?? value,
+      top = top ?? value,
+      right = right ?? value,
+      bottom = bottom ?? value;
+
   /// Creates insets with symmetrical vertical and horizontal offsets.
   ///
   /// {@tool snippet}
@@ -693,6 +709,27 @@ class EdgeInsetsDirectional extends EdgeInsetsGeometry {
       top = value,
       end = value,
       bottom = value;
+
+  /// Creates insets with offsets from the left, top, right, and bottom otherwise defaults to `value`.
+  ///
+  /// {@tool snippet}
+  ///
+  /// Start margin indent of 40 pixels and others 8 pixels:
+  ///
+  /// ```dart
+  /// const EdgeInsetsDirectional.mostly(8.0, start: 40.0)
+  /// ```
+  /// {@end-tool}
+  const EdgeInsetsDirectional.mostly(
+    double value, {
+    double? start,
+    double? top,
+    double? end,
+    double? bottom,
+  }) : start = start ?? value,
+       top = top ?? value,
+       end = end ?? value,
+       bottom = bottom ?? value;
 
   /// An [EdgeInsetsDirectional] with zero offsets in each direction.
   ///

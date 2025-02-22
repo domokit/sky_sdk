@@ -24,6 +24,16 @@ void main() {
     expect(border.bottom, same(side));
   });
 
+  test('Border.mostly constructor', () {
+    const BorderSide side = BorderSide();
+    const BorderSide leftSide = BorderSide(width: 2);
+    const Border border = Border.mostly(side, left: leftSide);
+    expect(border.left, same(leftSide));
+    expect(border.top, same(side));
+    expect(border.right, same(side));
+    expect(border.bottom, same(side));
+  });
+
   test('Border.symmetric constructor', () {
     const BorderSide side1 = BorderSide(color: Color(0xFFFFFFFF));
     const BorderSide side2 = BorderSide();
