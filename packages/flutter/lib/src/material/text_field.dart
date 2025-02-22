@@ -292,6 +292,7 @@ class TextField extends StatefulWidget {
     this.scrollPadding = const EdgeInsets.all(20.0),
     this.dragStartBehavior = DragStartBehavior.start,
     bool? enableInteractiveSelection,
+    this.highlightAllOnFocus = true,
     this.selectionControls,
     this.onTap,
     this.onTapAlwaysCalled = false,
@@ -661,6 +662,9 @@ class TextField extends StatefulWidget {
 
   /// {@macro flutter.widgets.editableText.enableInteractiveSelection}
   final bool enableInteractiveSelection;
+
+  /// {@macro flutter.widgets.editableText.highlightAllOnFocus}
+  final bool highlightAllOnFocus;
 
   /// {@macro flutter.widgets.editableText.selectionControls}
   final TextSelectionControls? selectionControls;
@@ -1686,6 +1690,7 @@ class _TextFieldState extends State<TextField>
           scrollPadding: widget.scrollPadding,
           keyboardAppearance: keyboardAppearance,
           enableInteractiveSelection: widget.enableInteractiveSelection,
+          highlightAllOnFocus: widget.highlightAllOnFocus,
           dragStartBehavior: widget.dragStartBehavior,
           scrollController: widget.scrollController,
           scrollPhysics: widget.scrollPhysics,

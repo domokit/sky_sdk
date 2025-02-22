@@ -882,6 +882,7 @@ class EditableText extends StatefulWidget {
     this.keyboardAppearance = Brightness.light,
     this.dragStartBehavior = DragStartBehavior.start,
     bool? enableInteractiveSelection,
+    this.highlightAllOnFocus = true,
     this.scrollController,
     this.scrollPhysics,
     this.autocorrectionTextRectColor,
@@ -1791,6 +1792,15 @@ class EditableText extends StatefulWidget {
   /// [RenderEditable.selectionEnabled].
   /// {@endtemplate}
   bool get selectionEnabled => enableInteractiveSelection;
+
+  /// {@template flutter.widgets.editableText.highlightAllOnFocus}
+  /// Whether or not this field should highlight all text when gaining focus on
+  /// web or desktop
+  ///
+  /// By default this will highlight the text field on web and desktop, and can
+  /// only be turned off on those two platforms
+  /// {@endtemplate}
+  final bool highlightAllOnFocus;
 
   /// {@template flutter.widgets.editableText.autofillHints}
   /// A list of strings that helps the autofill service identify the type of this
@@ -4624,6 +4634,7 @@ class EditableTextState extends State<EditableText>
       TargetPlatform.macOS || TargetPlatform.linux || TargetPlatform.windows => true,
     };
     final bool shouldSelectAll =
+        widget.highlightAllOnFocus &&
         widget.selectionEnabled &&
         (kIsWeb || isDesktop) &&
         !_isMultiline &&
