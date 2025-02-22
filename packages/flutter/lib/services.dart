@@ -20,6 +20,7 @@ export 'src/services/clipboard.dart';
 export 'src/services/debug.dart';
 export 'src/services/deferred_component.dart';
 export 'src/services/flavor.dart';
+export 'src/services/flutter_version.dart';
 export 'src/services/font_loader.dart';
 export 'src/services/haptic_feedback.dart';
 export 'src/services/hardware_keyboard.dart';

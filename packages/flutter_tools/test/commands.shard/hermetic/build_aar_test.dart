@@ -102,7 +102,7 @@ flutter:
               '-I=/flutter/packages/flutter_tools/gradle/aar_init_script.gradle',
               ...List<RegExp>.filled(4, RegExp(r'-P[a-zA-Z-]+=.*')),
               '-q',
-              ...List<RegExp>.filled(5, RegExp(r'-P[a-zA-Z-]+=.*')),
+              ...List<RegExp>.filled(6, RegExp(r'-P[a-zA-Z-]+=.*')),
               'assembleAar$buildMode',
             ],
             onRun: (_) => fs.directory('/build/host/outputs/repo').createSync(recursive: true),

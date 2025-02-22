@@ -381,6 +381,7 @@ void main() {
               '-PbuildNumber=1.0',
               '-q',
               '-Ptarget=${globals.fs.path.join('lib', 'main.dart')}',
+              '-Pdart-defines=RkxVVFRFUl9WRVJTSU9OPTAuMC4w,RkxVVFRFUl9DSEFOTkVMPW1hc3Rlcg==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049MTExMTE=,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049YWJjZGU=,RkxVVFRFUl9EQVJUX1ZFUlNJT049MTI=',
               '-Pdart-obfuscation=false',
               '-Pextra-front-end-options=foo,bar',
               '-Ptrack-widget-creation=true',
