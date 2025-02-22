@@ -553,7 +553,7 @@ void main() {
   });
 
   testWidgets('ExpansionTile default iconColor, textColor', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     await tester.pumpWidget(
       MaterialApp(

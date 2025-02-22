@@ -17,7 +17,7 @@ import '../widgets/feedback_tester.dart';
 import '../widgets/semantics_tester.dart';
 
 void main() {
-  final ThemeData material3Theme = ThemeData(useMaterial3: true);
+  final ThemeData material3Theme = ThemeData();
   final ThemeData material2Theme = ThemeData(useMaterial3: false);
 
   testWidgets('Floating Action Button control test', (WidgetTester tester) async {

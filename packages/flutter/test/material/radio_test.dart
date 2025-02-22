@@ -458,7 +458,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           body: RepaintBoundary(
             key: painterKey,
@@ -622,7 +621,7 @@ void main() {
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
     int? groupValue = 0;
     const Key radioKey = Key('radio');
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     Widget buildApp({bool enabled = true}) {
       return MaterialApp(
         theme: theme,
@@ -802,7 +801,7 @@ void main() {
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
     int? groupValue = 0;
     const Key radioKey = Key('radio');
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     Widget buildApp({bool enabled = true}) {
       return MaterialApp(
         theme: theme,
@@ -1335,7 +1334,7 @@ void main() {
 
     int? groupValue = 0;
     const Key radioKey = Key('radio');
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     Widget buildApp() {
       return MaterialApp(
         theme: theme,
@@ -1658,7 +1657,7 @@ void main() {
   });
 
   testWidgets('Material3 - Radio button default colors', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     Widget buildRadio({bool enabled = true, bool selected = true}) {
       return MaterialApp(
         theme: theme,
@@ -1815,7 +1814,7 @@ void main() {
     final FocusNode focusNode = FocusNode(debugLabel: 'Radio');
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
 
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final ColorScheme colors = theme.colorScheme;
     Widget buildRadio({bool enabled = true, bool focused = false, bool selected = true}) {
       return MaterialApp(
@@ -2023,7 +2022,7 @@ void main() {
   ) async {
     final FocusNode focusNode = FocusNode(debugLabel: 'Radio');
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     Finder findRadio() {
       return find.byWidgetPredicate((Widget widget) => widget is Radio<bool>);

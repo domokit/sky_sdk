@@ -11,7 +11,6 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         // Creates the outer Localizations widget.
-        theme: ThemeData(useMaterial3: true),
         home: ListView(
           children: <Widget>[
             const LocalizationTracker(key: ValueKey<String>('outer')),

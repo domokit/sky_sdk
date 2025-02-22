@@ -69,7 +69,6 @@ void main() {
       hasSubtitle = isTwoLine || isThreeLine;
       subtitleScaler ??= textScaler;
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: MediaQuery(
           data: MediaQueryData(
             padding: const EdgeInsets.only(left: leftPadding, right: rightPadding),
@@ -186,9 +185,8 @@ void main() {
     const double leftPadding = 10.0;
     const double rightPadding = 20.0;
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: const MediaQuery(
+      const MaterialApp(
+        home: MediaQuery(
           data: MediaQueryData(padding: EdgeInsets.only(left: leftPadding, right: rightPadding)),
           child: Directionality(
             textDirection: TextDirection.rtl,
@@ -385,7 +383,6 @@ void main() {
 
     Widget buildFrame(double leadingWidth, TextDirection textDirection) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Directionality(
           textDirection: textDirection,
           child: Material(
@@ -453,7 +450,6 @@ void main() {
     // "ONE"-LINE
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -505,7 +501,6 @@ void main() {
     // "TWO"-LINE
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -559,7 +554,6 @@ void main() {
     // THREE-LINE
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -611,7 +605,6 @@ void main() {
     // "ONE-LINE" with Small Leading Widget
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -669,7 +662,6 @@ void main() {
     // One line
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -693,7 +685,6 @@ void main() {
     // Two line
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -717,7 +708,6 @@ void main() {
     // Three line
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -758,7 +748,6 @@ void main() {
     // One line
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -782,7 +771,6 @@ void main() {
     // Two line
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -816,7 +804,6 @@ void main() {
     // Three line
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: ListView(
             children: const <Widget>[
@@ -1393,7 +1380,7 @@ void main() {
 
   testWidgets('ListTile default tile color', (WidgetTester tester) async {
     bool isSelected = false;
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     const Color defaultColor = Colors.transparent;
 
     await tester.pumpWidget(
@@ -1431,7 +1418,7 @@ void main() {
   ) async {
     // This is a regression test for https://github.com/flutter/flutter/issues/117700
     bool isSelected = false;
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     const Color defaultColor = Colors.transparent;
 
     await tester.pumpWidget(
@@ -1647,7 +1634,6 @@ void main() {
       double? widgetHorizontalTitleGap,
     }) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Directionality(
           textDirection: textDirection,
           child: Material(
@@ -1705,7 +1691,6 @@ void main() {
   ) async {
     Widget buildFrame(TextDirection textDirection) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Directionality(
           textDirection: textDirection,
           child: Material(
@@ -1737,7 +1722,6 @@ void main() {
   testWidgets('ListTile horizontalTitleGap with visualDensity', (WidgetTester tester) async {
     Widget buildFrame({double? horizontalTitleGap, VisualDensity? visualDensity}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Directionality(
           textDirection: TextDirection.ltr,
           child: Material(
@@ -1787,7 +1771,6 @@ void main() {
       double? widgetMinVerticalPadding,
     }) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Directionality(
           textDirection: textDirection,
           child: Material(
@@ -1975,7 +1958,7 @@ void main() {
   });
 
   testWidgets('selected, enabled ListTile default icon color', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final ColorScheme colorScheme = theme.colorScheme;
     final Key leadingKey = UniqueKey();
     final Key titleKey = UniqueKey();
@@ -2017,7 +2000,6 @@ void main() {
   testWidgets('ListTile font size', (WidgetTester tester) async {
     Widget buildFrame() {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: Center(
             child: Builder(
@@ -2050,7 +2032,6 @@ void main() {
   testWidgets('ListTile text color', (WidgetTester tester) async {
     Widget buildFrame() {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: Center(
             child: Builder(
@@ -2068,7 +2049,7 @@ void main() {
       );
     }
 
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     // ListTile default text colors.
     await tester.pumpWidget(buildFrame());
@@ -2174,7 +2155,6 @@ void main() {
 
     Widget buildFrame() {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: Center(
             child: Builder(
@@ -2231,7 +2211,6 @@ void main() {
 
     Widget buildFrame() {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: Center(
             child: Builder(
@@ -2287,7 +2266,6 @@ void main() {
       Widget buildFrame() {
         return MaterialApp(
           theme: ThemeData(
-            useMaterial3: true,
             iconButtonTheme: IconButtonThemeData(
               style: IconButton.styleFrom(foregroundColor: iconButtonThemeColor),
             ),
@@ -2358,7 +2336,6 @@ void main() {
 
     Widget buildFrame({ListTileTitleAlignment? titleAlignment}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: Center(
             child: ListTile(
@@ -2460,7 +2437,6 @@ void main() {
 
     Widget buildFrame({ListTileTitleAlignment? titleAlignment}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: Center(
             child: ListTile(
@@ -2562,7 +2538,6 @@ void main() {
 
     Widget buildFrame({ListTileTitleAlignment? titleAlignment, bool isThreeLine = false}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: Center(
             child: ListTile(

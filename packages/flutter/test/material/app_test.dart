@@ -1338,7 +1338,6 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true),
           scrollBehavior: const MaterialScrollBehavior(),
           home: ListView(
             children: const <Widget>[SizedBox(height: 1000.0, width: 1000.0, child: Text('Test'))],
@@ -1393,7 +1392,6 @@ void main() {
     (WidgetTester tester) async {
       Widget buildFrame(Clip clipBehavior) {
         return MaterialApp(
-          theme: ThemeData(useMaterial3: true),
           home: Column(
             children: <Widget>[
               SizedBox(

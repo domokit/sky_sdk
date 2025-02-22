@@ -253,9 +253,6 @@ class ContextMenuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const Scaffold(body: MyContextMenu(message: kMessage)),
-    );
+    return const MaterialApp(home: Scaffold(body: MyContextMenu(message: kMessage)));
   }
 }

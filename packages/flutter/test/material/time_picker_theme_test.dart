@@ -275,7 +275,7 @@ void main() {
   testWidgets('Material3 - Passing no TimePickerThemeData uses defaults', (
     WidgetTester tester,
   ) async {
-    final ThemeData defaultTheme = ThemeData(useMaterial3: true);
+    final ThemeData defaultTheme = ThemeData();
     await tester.pumpWidget(_TimePickerLauncher(themeData: defaultTheme));
     await tester.tap(find.text('X'));
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -487,7 +487,7 @@ void main() {
   testWidgets('Material3 - Passing no TimePickerThemeData uses defaults - input mode', (
     WidgetTester tester,
   ) async {
-    final ThemeData defaultTheme = ThemeData(useMaterial3: true);
+    final ThemeData defaultTheme = ThemeData();
     await tester.pumpWidget(
       _TimePickerLauncher(themeData: defaultTheme, entryMode: TimePickerEntryMode.input),
     );
@@ -697,7 +697,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final TimePickerThemeData timePickerTheme = _timePickerTheme();
-    final ThemeData theme = ThemeData(timePickerTheme: timePickerTheme, useMaterial3: true);
+    final ThemeData theme = ThemeData(timePickerTheme: timePickerTheme);
     await tester.pumpWidget(_TimePickerLauncher(themeData: theme));
     await tester.tap(find.text('X'));
     await tester.pumpAndSettle(const Duration(seconds: 1));

@@ -20,10 +20,7 @@ class _SearchBarAppState extends State<SearchBarApp> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = ThemeData(
-      useMaterial3: true,
-      brightness: isDark ? Brightness.dark : Brightness.light,
-    );
+    final ThemeData themeData = ThemeData(brightness: isDark ? Brightness.dark : Brightness.light);
 
     return MaterialApp(
       theme: themeData,

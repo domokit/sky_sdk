@@ -77,7 +77,7 @@ void main() {
     WidgetTester tester,
   ) async {
     const String contentText = 'Content';
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     late final ThemeData localizedTheme;
 
     await tester.pumpWidget(
@@ -123,7 +123,7 @@ void main() {
     (WidgetTester tester) async {
       const String contentText = 'Content';
       const Key tapTarget = Key('tap-target');
-      final ThemeData theme = ThemeData(useMaterial3: true);
+      final ThemeData theme = ThemeData();
       late final ThemeData localizedTheme;
 
       await tester.pumpWidget(

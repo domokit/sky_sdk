@@ -90,7 +90,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.light(useMaterial3: true).copyWith(badgeTheme: badgeTheme),
+        theme: ThemeData.light().copyWith(badgeTheme: badgeTheme),
         home: const Scaffold(body: Badge(label: Text('1234'), child: Icon(Icons.add))),
       ),
     );

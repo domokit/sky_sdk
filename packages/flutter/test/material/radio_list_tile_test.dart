@@ -1046,7 +1046,7 @@ void main() {
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
     int? groupValue = 0;
     final Color? hoverColor = Colors.orange[500];
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     Widget buildApp({bool enabled = true}) {
       return wrap(
         child: MaterialApp(
@@ -1140,7 +1140,6 @@ void main() {
 
     Widget buildRadio({bool active = false, bool useOverlay = true}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Material(
           child: RadioListTile<bool>(
             value: active,

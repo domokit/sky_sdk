@@ -6350,7 +6350,6 @@ void main() {
     final TextEditingController textController = _textEditingController();
     final ThemeData theme = ThemeData.from(
       colorScheme: const ColorScheme.light().copyWith(error: Colors.deepPurpleAccent),
-      useMaterial3: true,
     );
     await tester.pumpWidget(
       boilerplate(
@@ -6779,7 +6778,7 @@ void main() {
       text: 'Atwater Peel Sherbrooke Bonaventure',
     );
 
-    final ThemeData theme = ThemeData.light(useMaterial3: true);
+    final ThemeData theme = ThemeData.light();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -6938,7 +6937,7 @@ void main() {
       text: 'Atwater Peel Sherbrooke Bonaventure',
     );
 
-    final ThemeData theme = ThemeData.light(useMaterial3: true);
+    final ThemeData theme = ThemeData.light();
 
     Widget buildFrame(bool enabled) {
       return MaterialApp(
@@ -9284,7 +9283,6 @@ void main() {
     // Regression test for https://github.com/flutter/flutter/issues/23994
 
     final ThemeData themeData = ThemeData(
-      useMaterial3: true,
       textTheme: TextTheme(bodyLarge: TextStyle(color: Colors.blue[500])),
     );
 

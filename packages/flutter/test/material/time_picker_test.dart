@@ -160,7 +160,7 @@ void main() {
   });
 
   testWidgets('Material3 - Dialog size - input mode', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     const TimePickerEntryMode entryMode = TimePickerEntryMode.input;
     const double textScaleFactor = 1.0;
     const Size timePickerMinInputSize = Size(312, 216);
@@ -225,7 +225,7 @@ void main() {
   testWidgets('Material3 - Dial background uses correct default color', (
     WidgetTester tester,
   ) async {
-    ThemeData theme = ThemeData(useMaterial3: true);
+    ThemeData theme = ThemeData();
     Widget buildTimePicker(ThemeData themeData) {
       return MaterialApp(
         theme: themeData,
@@ -1067,7 +1067,6 @@ void main() {
         const String cancelString = 'Cancel';
         Widget buildFrame(TextDirection textDirection) {
           return MaterialApp(
-            theme: ThemeData(useMaterial3: true),
             home: Material(
               child: Center(
                 child: Builder(

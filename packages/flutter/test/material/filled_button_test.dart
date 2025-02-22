@@ -471,7 +471,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final FocusNode focusNode = FocusNode();
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -543,7 +543,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final FocusNode focusNode = FocusNode();
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1619,7 +1619,7 @@ void main() {
     final Key key = UniqueKey();
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: Scaffold(
           body: Center(
             child: FilledButton(key: key, onPressed: () {}, child: const Text('FilledButton')),
@@ -1638,7 +1638,7 @@ void main() {
     final Key key = UniqueKey();
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: Scaffold(
           body: Center(
             child: FilledButton.icon(
@@ -1768,7 +1768,7 @@ void main() {
   testWidgets(
     'FilledButton uses InkSparkle only for Android non-web when useMaterial3 is true',
     (WidgetTester tester) async {
-      final ThemeData theme = ThemeData(useMaterial3: true);
+      final ThemeData theme = ThemeData();
 
       await tester.pumpWidget(
         MaterialApp(

@@ -61,7 +61,7 @@ void main() {
 
   group('Material3 - Horizontal Divider', () {
     testWidgets('Passing no DividerThemeData returns defaults', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData(useMaterial3: true);
+      final ThemeData theme = ThemeData();
       await tester.pumpWidget(MaterialApp(theme: theme, home: const Scaffold(body: Divider())));
 
       final RenderBox box = tester.firstRenderObject(find.byType(Divider));
@@ -83,7 +83,7 @@ void main() {
       final DividerThemeData dividerTheme = _dividerTheme();
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true, dividerTheme: dividerTheme),
+          theme: ThemeData(dividerTheme: dividerTheme),
           home: const Scaffold(body: Divider()),
         ),
       );
@@ -105,10 +105,7 @@ void main() {
     testWidgets('DividerTheme overrides defaults', (WidgetTester tester) async {
       final DividerThemeData dividerTheme = _dividerTheme();
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(useMaterial3: true),
-          home: Scaffold(body: DividerTheme(data: dividerTheme, child: const Divider())),
-        ),
+        MaterialApp(home: Scaffold(body: DividerTheme(data: dividerTheme, child: const Divider()))),
       );
 
       final Container container = tester.widget(find.byType(Container));
@@ -157,7 +154,7 @@ void main() {
 
   group('Material3 - Vertical Divider', () {
     testWidgets('Passing no DividerThemeData returns defaults', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData(useMaterial3: true);
+      final ThemeData theme = ThemeData();
       await tester.pumpWidget(
         MaterialApp(theme: theme, home: const Scaffold(body: VerticalDivider())),
       );
@@ -206,7 +203,6 @@ void main() {
       final DividerThemeData dividerTheme = _dividerTheme();
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true),
           home: Scaffold(body: DividerTheme(data: dividerTheme, child: const VerticalDivider())),
         ),
       );

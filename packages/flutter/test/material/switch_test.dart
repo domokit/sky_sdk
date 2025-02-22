@@ -164,7 +164,6 @@ void main() {
 
     Widget buildSwitch({required double width, required double height}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           body: Directionality(
             textDirection: TextDirection.ltr,
@@ -448,7 +447,7 @@ void main() {
   });
 
   testWidgets('Material3 - Switch has default colors when enabled', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final ColorScheme colors = theme.colorScheme;
     bool value = false;
     await tester.pumpWidget(
@@ -515,7 +514,7 @@ void main() {
   testWidgets('Switch.adaptive(Cupertino) has default colors when enabled', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final ColorScheme colors = theme.colorScheme;
     bool value = false;
     await tester.pumpWidget(
@@ -634,7 +633,7 @@ void main() {
   testWidgets('Material3 - Inactive Switch has default colors when disabled', (
     WidgetTester tester,
   ) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
     final ColorScheme colors = themeData.colorScheme;
 
     await tester.pumpWidget(
@@ -671,7 +670,7 @@ void main() {
   testWidgets('Material3 - Active Switch has default colors when disabled', (
     WidgetTester tester,
   ) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
     final ColorScheme colors = themeData.colorScheme;
     await tester.pumpWidget(
       MaterialApp(
@@ -740,7 +739,7 @@ void main() {
   testWidgets('Material3 - Switch default overlayColor resolves hovered/focused state', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final FocusNode focusNode = FocusNode(debugLabel: 'Switch');
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
 
@@ -848,7 +847,7 @@ void main() {
   });
 
   testWidgets('Material3 - Switch can be set color', (WidgetTester tester) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
     final ColorScheme colors = themeData.colorScheme;
 
     bool value = false;
@@ -1751,7 +1750,7 @@ void main() {
   testWidgets('Material3 - Switch is focusable and has correct focus color', (
     WidgetTester tester,
   ) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
     final ColorScheme colors = themeData.colorScheme;
     final FocusNode focusNode = FocusNode(debugLabel: 'Switch');
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
@@ -1963,7 +1962,7 @@ void main() {
   testWidgets('Material3 - Switch can be hovered and has correct hover color', (
     WidgetTester tester,
   ) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
     final ColorScheme colors = themeData.colorScheme;
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
     bool value = true;
@@ -2373,7 +2372,7 @@ void main() {
   testWidgets('Material3 - Switch thumb color resolves in active/enabled states', (
     WidgetTester tester,
   ) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
     final ColorScheme colors = themeData.colorScheme;
     const Color activeEnabledThumbColor = Color(0xFF000001);
     const Color activeDisabledThumbColor = Color(0xFF000002);
@@ -2564,7 +2563,7 @@ void main() {
   testWidgets('Material3 - Switch thumb color resolves in hovered/focused states', (
     WidgetTester tester,
   ) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
     final ColorScheme colors = themeData.colorScheme;
     final FocusNode focusNode = FocusNode(debugLabel: 'Switch');
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
@@ -2731,7 +2730,7 @@ void main() {
   testWidgets('Material3 - Track color resolves in active/enabled states', (
     WidgetTester tester,
   ) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
     const Color activeEnabledTrackColor = Color(0xFF000001);
     const Color activeDisabledTrackColor = Color(0xFF000002);
     const Color inactiveEnabledTrackColor = Color(0xFF000003);
@@ -2892,7 +2891,7 @@ void main() {
   testWidgets('Material3 - Switch track color resolves in hovered/focused states', (
     WidgetTester tester,
   ) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
     final FocusNode focusNode = FocusNode(debugLabel: 'Switch');
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
     const Color hoveredTrackColor = Color(0xFF000001);
@@ -3021,7 +3020,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final Color activeDisabledThumbColor = Colors.blue.withOpacity(.60);
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final ColorScheme colors = theme.colorScheme;
 
     Color getThumbColor(Set<MaterialState> states) {
@@ -3399,7 +3398,7 @@ void main() {
 
   group('Switch M3 only tests', () {
     testWidgets('M3 Switch has a 300-millisecond animation in total', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData(useMaterial3: true);
+      final ThemeData theme = ThemeData();
       bool value = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -3441,7 +3440,7 @@ void main() {
     testWidgets('M3 Switch has a stadium shape in the middle of the track', (
       WidgetTester tester,
     ) async {
-      final ThemeData theme = ThemeData(useMaterial3: true, colorSchemeSeed: Colors.deepPurple);
+      final ThemeData theme = ThemeData(colorSchemeSeed: Colors.deepPurple);
       bool value = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -3483,7 +3482,7 @@ void main() {
     });
 
     testWidgets('M3 Switch thumb bounces in the end of the animation', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData(useMaterial3: true);
+      final ThemeData theme = ThemeData();
       bool value = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -3532,7 +3531,7 @@ void main() {
     });
 
     testWidgets('Switch thumb shows correct pressed color - M3', (WidgetTester tester) async {
-      final ThemeData themeData = ThemeData(useMaterial3: true);
+      final ThemeData themeData = ThemeData();
       final ColorScheme colors = themeData.colorScheme;
       Widget buildApp({bool enabled = true, bool value = true}) {
         return MaterialApp(
@@ -3817,7 +3816,6 @@ void main() {
 
       Widget buildSwitch({required bool enabled, required bool active}) {
         return MaterialApp(
-          theme: ThemeData(useMaterial3: true),
           home: Material(
             child: Center(
               child: Switch(
@@ -3898,7 +3896,6 @@ void main() {
 
       Widget buildSwitch() {
         return MaterialApp(
-          theme: ThemeData(useMaterial3: true),
           home: Material(
             child: Center(
               child: Switch(
@@ -3944,7 +3941,6 @@ void main() {
 
     testWidgets('Switch can set icon - M3', (WidgetTester tester) async {
       final ThemeData themeData = ThemeData(
-        useMaterial3: true,
         colorSchemeSeed: const Color(0xff6750a4),
         brightness: Brightness.light,
       );

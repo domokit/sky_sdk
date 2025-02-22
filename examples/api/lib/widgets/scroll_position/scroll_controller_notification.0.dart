@@ -89,10 +89,7 @@ class _ScrollNotificationDemoState extends State<ScrollNotificationDemo> {
     }
 
     return MaterialApp(
-      theme: ThemeData.from(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
-      ),
+      theme: ThemeData.from(colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey)),
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Listening to a ScrollPosition'),

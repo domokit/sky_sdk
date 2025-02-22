@@ -937,7 +937,6 @@ void main() {
             surface: surfaceColor,
             surfaceTint: surfaceTintColor,
           ),
-          useMaterial3: true,
         ),
         home: Scaffold(
           body: BottomSheet(
@@ -967,7 +966,6 @@ void main() {
   testWidgets('Material3 - BottomSheet has transparent shadow', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           body: BottomSheet(
             onClosing: () {},
@@ -1065,10 +1063,7 @@ void main() {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: Scaffold(key: scaffoldKey, body: const Center(child: Text('body'))),
-      ),
+      MaterialApp(home: Scaffold(key: scaffoldKey, body: const Center(child: Text('body')))),
     );
 
     showModalBottomSheet<void>(
@@ -1145,10 +1140,7 @@ void main() {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: Scaffold(key: scaffoldKey, body: const Center(child: Text('body'))),
-      ),
+      MaterialApp(home: Scaffold(key: scaffoldKey, body: const Center(child: Text('body')))),
     );
 
     showModalBottomSheet<void>(
@@ -2011,9 +2003,8 @@ void main() {
   group('constraints', () {
     testWidgets('Material3 - Default constraints are max width 640', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(useMaterial3: true),
-          home: const MediaQuery(
+        const MaterialApp(
+          home: MediaQuery(
             data: MediaQueryData(size: Size(1000, 1000)),
             child: Scaffold(
               body: Center(child: Text('body')),
@@ -2107,7 +2098,6 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(
-            useMaterial3: true,
             bottomSheetTheme: const BottomSheetThemeData(
               constraints: BoxConstraints(maxWidth: sheetMaxWidth),
             ),

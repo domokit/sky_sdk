@@ -231,7 +231,7 @@ void main() {
     WidgetTester tester,
   ) async {
     // M3 settings from the token database.
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await tester.pumpWidget(
       _buildWidget(
         NavigationBar(
@@ -329,7 +329,6 @@ void main() {
             DefaultWidgetsLocalizations.delegate,
           ],
           child: MaterialApp(
-            theme: ThemeData(useMaterial3: true),
             home: Navigator(
               onGenerateRoute: (RouteSettings settings) {
                 return MaterialPageRoute<void>(
@@ -641,7 +640,6 @@ void main() {
 
     Widget buildWidget({NavigationDestinationLabelBehavior? labelBehavior}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           bottomNavigationBar: Center(
             child: NavigationBar(
@@ -843,7 +841,6 @@ void main() {
 
     Widget buildWidget({NavigationDestinationLabelBehavior? labelBehavior}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           bottomNavigationBar: Center(
             child: NavigationBar(

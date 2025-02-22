@@ -420,7 +420,6 @@ void main() {
       );
 
       final ThemeData theme = ThemeData(
-        useMaterial3: true,
         listTileTheme: const ListTileThemeData(
           titleTextStyle: titleTextStyle,
           subtitleTextStyle: subtitleTextStyle,
@@ -540,7 +539,6 @@ void main() {
     "Material3 - ListTile's titleTextStyle, subtitleTextStyle & leadingAndTrailingTextStyle are overridden by ListTile properties",
     (WidgetTester tester) async {
       final ThemeData theme = ThemeData(
-        useMaterial3: true,
         listTileTheme: const ListTileThemeData(
           titleTextStyle: TextStyle(fontSize: 20.0),
           subtitleTextStyle: TextStyle(fontSize: 17.5),
@@ -993,7 +991,6 @@ void main() {
     Widget buildFrame({ListTileTitleAlignment? alignment}) {
       return MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
           listTileTheme: const ListTileThemeData(titleAlignment: ListTileTitleAlignment.center),
         ),
         home: Material(

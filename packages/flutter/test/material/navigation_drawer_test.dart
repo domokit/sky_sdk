@@ -166,7 +166,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await tester.pumpWidget(
       _buildWidget(
         scaffoldKey,
@@ -371,7 +371,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     const Color color = Color(0xff0000ff);
     const ShapeBorder shape = RoundedRectangleBorder();
 

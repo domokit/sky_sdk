@@ -354,7 +354,7 @@ void main() {
     // Test for Material 3
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: colorScheme, useMaterial3: true),
+        theme: ThemeData.from(colorScheme: colorScheme),
         home: Directionality(
           textDirection: TextDirection.ltr,
           child: Row(
@@ -1114,7 +1114,7 @@ void main() {
   });
 
   testWidgets('IconButton defaults - M3', (WidgetTester tester) async {
-    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
+    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme);
 
     // Enabled IconButton
     await tester.pumpWidget(
@@ -1192,7 +1192,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final FocusNode focusNode = FocusNode();
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1251,7 +1251,7 @@ void main() {
   });
 
   testWidgets('IconButton.fill defaults - M3', (WidgetTester tester) async {
-    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
+    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme);
 
     // Enabled IconButton
     await tester.pumpWidget(
@@ -1332,7 +1332,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final FocusNode focusNode = FocusNode();
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1391,7 +1391,7 @@ void main() {
   });
 
   testWidgets('Toggleable IconButton.fill defaults - M3', (WidgetTester tester) async {
-    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
+    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme);
 
     // Enabled selected IconButton
     await tester.pumpWidget(
@@ -1504,7 +1504,7 @@ void main() {
   });
 
   testWidgets('IconButton.filledTonal defaults - M3', (WidgetTester tester) async {
-    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
+    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme);
 
     // Enabled IconButton.tonal
     await tester.pumpWidget(
@@ -1589,7 +1589,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final FocusNode focusNode = FocusNode();
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1648,7 +1648,7 @@ void main() {
   });
 
   testWidgets('Toggleable IconButton.filledTonal defaults - M3', (WidgetTester tester) async {
-    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
+    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme);
 
     // Enabled selected IconButton
     await tester.pumpWidget(
@@ -1765,7 +1765,7 @@ void main() {
   });
 
   testWidgets('IconButton.outlined defaults - M3', (WidgetTester tester) async {
-    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
+    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme);
 
     // Enabled IconButton.tonal
     await tester.pumpWidget(
@@ -1849,7 +1849,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final FocusNode focusNode = FocusNode();
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1908,7 +1908,7 @@ void main() {
   });
 
   testWidgets('Toggleable IconButton.outlined defaults - M3', (WidgetTester tester) async {
-    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
+    final ThemeData themeM3 = ThemeData.from(colorScheme: colorScheme);
 
     // Enabled selected IconButton
     await tester.pumpWidget(
@@ -2027,7 +2027,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
           home: Scaffold(
             body: Center(
               child: IconButton(
@@ -2101,7 +2101,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Scaffold(
@@ -2168,7 +2168,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Center(
           child: Theme(
-            data: ThemeData(useMaterial3: true),
+            data: ThemeData(),
             child: IconButton(
               style: const ButtonStyle(
                 // Specifying minimumSize to mimic the original minimumSize for
@@ -2214,7 +2214,7 @@ void main() {
   ) async {
     Widget buildFrame(MaterialTapTargetSize tapTargetSize) {
       return Theme(
-        data: ThemeData(materialTapTargetSize: tapTargetSize, useMaterial3: true),
+        data: ThemeData(materialTapTargetSize: tapTargetSize),
         child: Directionality(
           textDirection: TextDirection.ltr,
           child: Center(
@@ -2239,7 +2239,7 @@ void main() {
     // Use [IconButton]'s padding property to override default value.
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: Scaffold(
           body: Center(
             child: IconButton(
@@ -2260,7 +2260,7 @@ void main() {
     // Use [IconButton.style]'s padding property to override default value.
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: Scaffold(
           body: Center(
             child: IconButton(
@@ -2282,7 +2282,7 @@ void main() {
     // values are not null.
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: Scaffold(
           body: Center(
             child: IconButton(
@@ -2305,7 +2305,7 @@ void main() {
   testWidgets('Default IconButton is not selectable - M3', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: IconButton(icon: const Icon(Icons.ac_unit), onPressed: () {}),
       ),
     );
@@ -2341,7 +2341,7 @@ void main() {
     bool isSelected = false;
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return IconButton(
@@ -2393,7 +2393,7 @@ void main() {
     bool isSelected = true;
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return IconButton(
@@ -2438,7 +2438,7 @@ void main() {
     bool isSelected = false;
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return IconButton(
@@ -2480,7 +2480,7 @@ void main() {
       bool isSelected = false;
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
           home: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return IconButton(
@@ -2518,7 +2518,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: const IconButton(
           isSelected: true,
           icon: Icon(Icons.account_box),
@@ -2544,7 +2544,7 @@ void main() {
     }) async {
       return tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData.from(colorScheme: colorScheme, useMaterial3: true).copyWith(
+          theme: ThemeData.from(colorScheme: colorScheme).copyWith(
             iconButtonTheme: IconButtonThemeData(
               style: IconButton.styleFrom(visualDensity: iconButtonThemeVisualDensity),
             ),
@@ -2741,7 +2741,6 @@ void main() {
         MaterialApp(
           theme: ThemeData.from(
             colorScheme: const ColorScheme.light(),
-            useMaterial3: true,
           ).copyWith(iconTheme: const IconThemeData(color: Colors.red, size: 37)),
           home: IconButton(icon: const Icon(Icons.account_box), onPressed: () {}),
         ),
@@ -2754,7 +2753,7 @@ void main() {
       // custom IconTheme outside of IconButton
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
           home: IconTheme.merge(
             data: const IconThemeData(color: Colors.pink, size: 35),
             child: IconButton(icon: const Icon(Icons.account_box), onPressed: () {}),
@@ -2773,10 +2772,7 @@ void main() {
       // When IconButtonTheme and IconTheme both exist in ThemeData, the IconButtonTheme can override IconTheme.
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData.from(
-            colorScheme: const ColorScheme.light(),
-            useMaterial3: true,
-          ).copyWith(
+          theme: ThemeData.from(colorScheme: const ColorScheme.light()).copyWith(
             iconTheme: const IconThemeData(color: Colors.red, size: 25),
             iconButtonTheme: IconButtonThemeData(
               style: IconButton.styleFrom(foregroundColor: Colors.green, iconSize: 27),
@@ -2797,7 +2793,7 @@ void main() {
       // When IconButtonTheme is closer to IconButton, IconButtonTheme overrides IconTheme
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
           home: IconTheme.merge(
             data: const IconThemeData(color: Colors.orange, size: 36),
             child: IconButtonTheme(
@@ -2817,7 +2813,7 @@ void main() {
       // When IconTheme is closer to IconButton, IconButtonTheme still overrides IconTheme
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
           home: IconTheme.merge(
             data: const IconThemeData(color: Colors.blue, size: 35),
             child: IconButtonTheme(
@@ -2842,7 +2838,6 @@ void main() {
         MaterialApp(
           theme: ThemeData.from(
             colorScheme: const ColorScheme.dark(),
-            useMaterial3: true,
           ).copyWith(iconTheme: const IconThemeData(color: Colors.white)),
           home: IconButton(icon: const Icon(Icons.account_box), onPressed: () {}),
         ),
@@ -2862,7 +2857,7 @@ void main() {
         // Brightness.dark
         await tester.pumpWidget(
           MaterialApp(
-            theme: ThemeData(colorScheme: darkScheme, useMaterial3: true),
+            theme: ThemeData(colorScheme: darkScheme),
             home: Scaffold(
               body: IconTheme.merge(
                 data: const IconThemeData(size: 26),
@@ -2887,7 +2882,7 @@ void main() {
         // Brightness.dark
         await tester.pumpWidget(
           MaterialApp(
-            theme: ThemeData(colorScheme: lightScheme, useMaterial3: true),
+            theme: ThemeData(colorScheme: lightScheme),
             home: Scaffold(
               body: IconTheme.merge(
                 data: const IconThemeData(size: 26),
@@ -2931,10 +2926,7 @@ void main() {
       // This is a regression test for https://github.com/flutter/flutter/issues/130708.
       Widget buildWidget(bool showIconButton) {
         return showIconButton
-            ? MaterialApp(
-              theme: ThemeData(useMaterial3: true),
-              home: IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-            )
+            ? MaterialApp(home: IconButton(onPressed: () {}, icon: const Icon(Icons.search)))
             : const SizedBox();
       }
 
@@ -3423,7 +3415,7 @@ Widget buildAllVariants({
 Widget wrap({required Widget child, required bool useMaterial3}) {
   return useMaterial3
       ? MaterialApp(
-        theme: ThemeData.from(colorScheme: const ColorScheme.light(), useMaterial3: true),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
         home: FocusTraversalGroup(
           policy: ReadingOrderTraversalPolicy(),
           child: Directionality(textDirection: TextDirection.ltr, child: Center(child: child)),

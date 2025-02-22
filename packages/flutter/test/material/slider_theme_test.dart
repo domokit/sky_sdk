@@ -116,7 +116,7 @@ void main() {
 
   testWidgets('Slider defaults', (WidgetTester tester) async {
     debugDisableShadows = false;
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final ColorScheme colorScheme = theme.colorScheme;
     const double trackHeight = 4.0;
     final Color activeTrackColor = Color(colorScheme.primary.value);
@@ -2236,7 +2236,7 @@ void main() {
   testWidgets('Default value indicator color', (WidgetTester tester) async {
     debugDisableShadows = false;
     try {
-      final ThemeData theme = ThemeData(useMaterial3: true, platform: TargetPlatform.android);
+      final ThemeData theme = ThemeData(platform: TargetPlatform.android);
       Widget buildApp(
         String value, {
         double sliderValue = 0.5,

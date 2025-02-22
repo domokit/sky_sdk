@@ -91,7 +91,7 @@ void main() {
   });
 
   testWidgets('Material3 - Passing no CardTheme returns defaults', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await tester.pumpWidget(MaterialApp(theme: theme, home: const Scaffold(body: Card())));
 
     final Padding padding = _getCardPadding(tester);
@@ -180,7 +180,7 @@ void main() {
   testWidgets('Material3 - ThemeData properties are used when no CardTheme is set', (
     WidgetTester tester,
   ) async {
-    final ThemeData themeData = ThemeData(useMaterial3: true);
+    final ThemeData themeData = ThemeData();
 
     await tester.pumpWidget(MaterialApp(theme: themeData, home: const Scaffold(body: Card())));
 
@@ -199,7 +199,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(cardTheme: cardTheme, useMaterial3: true),
+        theme: ThemeData(cardTheme: cardTheme),
         home: Scaffold(
           body: RepaintBoundary(
             key: painterKey,

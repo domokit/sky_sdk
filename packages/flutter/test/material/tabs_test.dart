@@ -334,7 +334,7 @@ void main() {
   testWidgets('TabBar default selected/unselected label style (primary)', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final List<String> tabs = <String>['A', 'B', 'C'];
 
     const String selectedValue = 'A';
@@ -362,7 +362,7 @@ void main() {
   testWidgets('TabBar default selected/unselected label style (secondary)', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final List<String> tabs = <String>['A', 'B', 'C'];
 
     const String selectedValue = 'A';
@@ -508,7 +508,7 @@ void main() {
   });
 
   testWidgets('TabBar default overlay (primary)', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final List<String> tabs = <String>['A', 'B'];
 
     const String selectedValue = 'A';
@@ -557,7 +557,7 @@ void main() {
   });
 
   testWidgets('TabBar default overlay (secondary)', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final List<String> tabs = <String>['A', 'B'];
 
     const String selectedValue = 'A';
@@ -6458,7 +6458,7 @@ void main() {
 
   testWidgets('Tab has correct selected/unselected hover color', (WidgetTester tester) async {
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final List<String> tabs = <String>['A', 'B', 'C'];
 
     await tester.pumpWidget(buildFrame(tabs: tabs, value: 'C', useMaterial3: theme.useMaterial3));
@@ -6485,7 +6485,7 @@ void main() {
 
   testWidgets('Tab has correct selected/unselected focus color', (WidgetTester tester) async {
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final List<String> tabs = <String>['A', 'B', 'C'];
 
     await tester.pumpWidget(
@@ -6511,7 +6511,7 @@ void main() {
   });
 
   testWidgets('Tab has correct selected/unselected pressed color', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final List<String> tabs = <String>['A', 'B', 'C'];
 
     await tester.pumpWidget(
@@ -6579,7 +6579,7 @@ void main() {
   testWidgets('TabAlignment.fill only supports non-scrollable tab bar', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final List<String> tabs = <String>['A', 'B'];
 
     // Test TabAlignment.fill with non-scrollable tab bar.
@@ -6611,7 +6611,7 @@ void main() {
   testWidgets('TabAlignment.start & TabAlignment.startOffset only supports scrollable tab bar', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final List<String> tabs = <String>['A', 'B'];
 
     // Test TabAlignment.start with scrollable tab bar.
@@ -6896,10 +6896,7 @@ void main() {
     const Color dividerColor = Colors.yellow;
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(
-          useMaterial3: true,
-          tabBarTheme: const TabBarThemeData(dividerColor: dividerColor),
-        ),
+        theme: ThemeData(tabBarTheme: const TabBarThemeData(dividerColor: dividerColor)),
         home: Scaffold(
           appBar: AppBar(
             bottom: TabBar(
@@ -6921,10 +6918,7 @@ void main() {
     const Color dividerColor = Colors.yellow;
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(
-          useMaterial3: true,
-          tabBarTheme: const TabBarThemeData(dividerColor: dividerColor),
-        ),
+        theme: ThemeData(tabBarTheme: const TabBarThemeData(dividerColor: dividerColor)),
         home: Scaffold(
           body: DefaultTabController(
             length: 2,

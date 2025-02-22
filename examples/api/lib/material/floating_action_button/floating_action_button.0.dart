@@ -15,10 +15,7 @@ class FloatingActionButtonExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const FloatingActionButtonExample(),
-    );
+    return const MaterialApp(home: FloatingActionButtonExample());
   }
 }
 
