@@ -507,10 +507,10 @@ class Border extends BoxBorder {
   @override
   EdgeInsetsGeometry get dimensions {
     return EdgeInsets.fromLTRB(
-      left.strokeInset,
-      top.strokeInset,
-      right.strokeInset,
-      bottom.strokeInset,
+      left.strokeOutset,
+      top.strokeOutset,
+      right.strokeOutset,
+      bottom.strokeOutset,
     );
   }
 
@@ -859,10 +859,10 @@ class BorderDirectional extends BoxBorder {
   @override
   EdgeInsetsGeometry get dimensions {
     return EdgeInsetsDirectional.fromSTEB(
-      start.strokeInset,
-      top.strokeInset,
-      end.strokeInset,
-      bottom.strokeInset,
+      start.strokeOutset,
+      top.strokeOutset,
+      end.strokeOutset,
+      bottom.strokeOutset,
     );
   }
 
