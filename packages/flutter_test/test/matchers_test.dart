@@ -393,6 +393,17 @@ void main() {
     expect(const Color(0x00000000), isSameColorAs(const Color(0x00000002), threshold: 0.008));
   });
 
+  testWidgets('isSystemTextScaler', (WidgetTester tester) async {
+    addTearDown(tester.platformDispatcher.clearAllTestValues);
+    tester.platformDispatcher.textScaleFactorTestValue = 123;
+
+    final MediaQueryData mediaQueryData = MediaQueryData.fromView(tester.view);
+    final TextScaler systemScaler = mediaQueryData.textScaler;
+    expect(systemScaler, isSystemTextScaler());
+    expect(systemScaler, isSystemTextScaler(withScaleFactor: 123));
+    expect(systemScaler, isNot(isSystemTextScaler(withScaleFactor: 2)));
+  });
+
   group('coversSameAreaAs', () {
     test('empty Paths', () {
       expect(
