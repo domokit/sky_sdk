@@ -1060,6 +1060,74 @@ typedef struct {
   FlutterRemoveViewCallback remove_view_callback;
 } FlutterRemoveViewInfo;
 
+/// Represents the direction in which the focus transitioned across
+/// [FlutterView]s.
+typedef enum {
+  /// Indicates the focus transition did not have a direction.
+  ///
+  /// This is typically associated with focus being programmatically requested
+  /// or when focus is lost.
+  kUndefined,
+
+  /// Indicates the focus transition was performed in a forward direction.
+  ///
+  /// This is typically result of the user pressing tab.
+  kForward,
+
+  /// Indicates the focus transition was performed in a backward direction.
+  ///
+  /// This is typically result of the user pressing shift + tab.
+  kBackward,
+} FlutterViewFocusDirection;
+
+/// Represents the focus state of a given [FlutterView].
+typedef enum {
+  /// Specifies that a view does not have platform focus.
+  kUnfocused,
+
+  /// Specifies that a view has platform focus.
+  kFocused,
+} FlutterViewFocusState;
+
+/// A view focus event is sent to the engine by the embedder when a native view
+/// focus state has changed.
+///
+/// Passed through FlutterEngineSendViewFocusEvent.
+typedef struct {
+  /// The size of this struct.
+  /// Must be sizeof(FlutterViewFocusEvent).
+  size_t struct_size;
+
+  /// The identifier of the view that received the focus event.
+  FlutterViewId view_id;
+
+  /// The focus state of the view.
+  FlutterViewFocusState state;
+
+  /// The direction in which the focus transitioned across [FlutterView]s.
+  FlutterViewFocusDirection direction;
+} FlutterViewFocusEvent;
+
+/// A FlutterViewFocusChangeRequest is sent by the engine to the embedder when
+/// when a FlutterView focus state has changed and native view focus
+/// needs to be updated.
+///
+/// Received in FlutterProjectArgs.view_focus_change_request_callback.
+typedef struct {
+  /// The size of this struct.
+  /// Must be sizeof(FlutterViewFocusChangeRequest).
+  size_t struct_size;
+
+  /// The identifier of the view that received the focus event.
+  FlutterViewId view_id;
+
+  /// The focus state of the view.
+  FlutterViewFocusState state;
+
+  /// The direction in which the focus transitioned across [FlutterView]s.
+  FlutterViewFocusDirection direction;
+} FlutterViewFocusChangeRequest;
+
 /// The phase of the pointer event.
 typedef enum {
   kCancel,
@@ -1642,6 +1710,10 @@ typedef struct {
 
 typedef void (*FlutterChannelUpdateCallback)(
     const FlutterChannelUpdate* /* channel update */,
+    void* /* user data */);
+
+typedef void (*FlutterViewFocusChangeRequestCallback)(
+    const FlutterViewFocusChangeRequest* /* request */,
     void* /* user data */);
 
 typedef struct _FlutterTaskRunner* FlutterTaskRunner;
@@ -2553,6 +2625,12 @@ typedef struct {
   /// being registered on the framework side. The callback is invoked from
   /// a task posted to the platform thread.
   FlutterChannelUpdateCallback channel_update_callback;
+
+  /// The callback invoked by the engine when FlutterView focus state has
+  /// changed. The embedder can use this callback to request focus change for
+  /// native view. The callback is invoked from a task posted to the platform
+  /// thread.
+  FlutterViewFocusChangeRequestCallback view_focus_change_request_callback;
 } FlutterProjectArgs;
 
 #ifndef FLUTTER_ENGINE_NO_PROTOTYPES
@@ -2756,6 +2834,16 @@ FLUTTER_EXPORT
 FlutterEngineResult FlutterEngineRemoveView(FLUTTER_API_SYMBOL(FlutterEngine)
                                                 engine,
                                             const FlutterRemoveViewInfo* info);
+
+//------------------------------------------------------------------------------
+/// @brief      Notifies the engine that platform view focus state has changed.
+///
+/// @param[in]  engine  A running engine instance
+/// @param[in]  event   The focus event data describing the change.
+FLUTTER_EXPORT
+FlutterEngineResult FlutterEngineSendViewFocusEvent(
+    FLUTTER_API_SYMBOL(FlutterEngine) engine,
+    const FlutterViewFocusEvent* event);
 
 FLUTTER_EXPORT
 FlutterEngineResult FlutterEngineSendWindowMetricsEvent(
@@ -3433,6 +3521,9 @@ typedef FlutterEngineResult (*FlutterEngineAddViewFnPtr)(
 typedef FlutterEngineResult (*FlutterEngineRemoveViewFnPtr)(
     FLUTTER_API_SYMBOL(FlutterEngine) engine,
     const FlutterRemoveViewInfo* info);
+typedef FlutterEngineResult (*FlutterEngineSendViewFocusEventFnPtr)(
+    FLUTTER_API_SYMBOL(FlutterEngine) engine,
+    const FlutterViewFocusEvent* event);
 
 /// Function-pointer-based versions of the APIs above.
 typedef struct {
@@ -3481,6 +3572,7 @@ typedef struct {
   FlutterEngineSetNextFrameCallbackFnPtr SetNextFrameCallback;
   FlutterEngineAddViewFnPtr AddView;
   FlutterEngineRemoveViewFnPtr RemoveView;
+  FlutterEngineSendViewFocusEventFnPtr SendViewFocusEvent;
 } FlutterEngineProcTable;
 
 //------------------------------------------------------------------------------

@@ -33,6 +33,10 @@ class MockDelegate : public PlatformView::Delegate {
               (int64_t view_id, RemoveViewCallback callback),
               (override));
   MOCK_METHOD(void,
+              OnPlatformViewSendViewFocusEvent,
+              (const ViewFocusEvent& event),
+              (override));
+  MOCK_METHOD(void,
               OnPlatformViewSetNextFrameCallback,
               (const fml::closure& closure),
               (override));

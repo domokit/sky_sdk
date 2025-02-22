@@ -46,6 +46,9 @@ void PlatformConfiguration::DidCreateIsolate() {
                 Dart_GetField(library, tonic::ToDart("_addView")));
   remove_view_.Set(tonic::DartState::Current(),
                    Dart_GetField(library, tonic::ToDart("_removeView")));
+  send_view_focus_event_.Set(
+      tonic::DartState::Current(),
+      Dart_GetField(library, tonic::ToDart("_sendViewFocusEvent")));
   update_window_metrics_.Set(
       tonic::DartState::Current(),
       Dart_GetField(library, tonic::ToDart("_updateWindowMetrics")));
@@ -146,6 +149,22 @@ bool PlatformConfiguration::RemoveView(int64_t view_id) {
       tonic::DartInvoke(remove_view_.Get(), {
                                                 tonic::ToDart(view_id),
                                             }));
+  return true;
+}
+
+bool PlatformConfiguration::SendFocusEvent(const ViewFocusEvent& event) {
+  std::shared_ptr<tonic::DartState> dart_state =
+      remove_view_.dart_state().lock();
+  if (!dart_state) {
+    return false;
+  }
+  tonic::DartState::Scope scope(dart_state);
+  tonic::CheckAndHandleError(tonic::DartInvoke(
+      send_view_focus_event_.Get(), {
+                                        tonic::ToDart(event.view_id()),
+                                        tonic::ToDart(event.state()),
+                                        tonic::ToDart(event.direction()),
+                                    }));
   return true;
 }
 
@@ -550,6 +569,17 @@ Dart_Handle PlatformConfigurationNativeApi::SendPortPlatformMessage(
           name);
 
   return HandlePlatformMessage(dart_state, name, data_handle, response);
+}
+
+void PlatformConfigurationNativeApi::RequestViewFocusChange(int64_t view_id,
+                                                            int64_t state,
+                                                            int64_t direction) {
+  ViewFocusChangeRequest request{view_id,  //
+                                 static_cast<ViewFocusState>(state),
+                                 static_cast<ViewFocusDirection>(direction)};
+  UIDartState* dart_state = UIDartState::Current();
+  dart_state->platform_configuration()->client()->RequestViewFocusChange(
+      request);
 }
 
 void PlatformConfigurationNativeApi::RespondToPlatformMessage(

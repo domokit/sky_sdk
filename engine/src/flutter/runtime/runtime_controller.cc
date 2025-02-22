@@ -209,6 +209,14 @@ bool RuntimeController::RemoveView(int64_t view_id) {
   return platform_configuration->RemoveView(view_id);
 }
 
+bool RuntimeController::SendViewFocusEvent(const ViewFocusEvent& event) {
+  auto* platform_configuration = GetPlatformConfigurationIfAvailable();
+  if (!platform_configuration) {
+    return false;
+  }
+  return platform_configuration->SendFocusEvent(event);
+}
+
 bool RuntimeController::ViewExists(int64_t view_id) const {
   return platform_data_.viewport_metrics_for_views.count(view_id) != 0;
 }
@@ -647,6 +655,11 @@ bool RuntimeController::SetDisplays(const std::vector<DisplayData>& displays) {
 double RuntimeController::GetScaledFontSize(double unscaled_font_size,
                                             int configuration_id) const {
   return client_.GetScaledFontSize(unscaled_font_size, configuration_id);
+}
+
+void RuntimeController::RequestViewFocusChange(
+    const ViewFocusChangeRequest& request) {
+  client_.RequestViewFocusChange(request);
 }
 
 void RuntimeController::ShutdownPlatformIsolates() {

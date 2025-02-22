@@ -1550,6 +1550,18 @@ double Shell::GetScaledFontSize(double unscaled_font_size,
                                            configuration_id);
 }
 
+void Shell::RequestViewFocusChange(const ViewFocusChangeRequest& request) {
+  FML_DCHECK(is_set_up_);
+
+  fml::TaskRunner::RunNowOrPostTask(
+      task_runners_.GetPlatformTaskRunner(),
+      [view = platform_view_->GetWeakPtr(), request] {
+        if (view) {
+          view->RequestViewFocusChange(request);
+        }
+      });
+}
+
 void Shell::ReportTimings() {
   FML_DCHECK(is_set_up_);
   FML_DCHECK(task_runners_.GetRasterTaskRunner()->RunsTasksOnCurrentThread());
@@ -2099,6 +2111,20 @@ void Shell::OnPlatformViewRemoveView(int64_t view_id,
             rasterizer->CollectView(view_id);
           }
         });
+      });
+}
+
+void Shell::OnPlatformViewSendViewFocusEvent(const ViewFocusEvent& event) {
+  TRACE_EVENT0("flutter", "Shell::RemoveView");
+  FML_DCHECK(is_set_up_);
+  FML_DCHECK(task_runners_.GetPlatformTaskRunner()->RunsTasksOnCurrentThread());
+
+  task_runners_.GetUITaskRunner()->RunNowOrPostTask(
+      task_runners_.GetUITaskRunner(),
+      [engine = engine_->GetWeakPtr(), event = event] {
+        if (engine) {
+          engine->SendViewFocusEvent(event);
+        }
       });
 }
 

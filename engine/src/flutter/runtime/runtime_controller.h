@@ -20,6 +20,7 @@
 #include "flutter/lib/ui/window/platform_configuration.h"
 #include "flutter/lib/ui/window/pointer_data_packet.h"
 #include "flutter/lib/ui/window/pointer_data_packet_converter.h"
+#include "flutter/lib/ui/window/view_focus.h"
 #include "flutter/runtime/dart_vm.h"
 #include "flutter/runtime/platform_data.h"
 #include "flutter/runtime/platform_isolate_manager.h"
@@ -223,6 +224,13 @@ class RuntimeController : public PlatformConfigurationClient,
   ///             is not running, then the pending view creation (if any) is
   ///             cancelled and the return value is always false.
   bool RemoveView(int64_t view_id);
+
+  //----------------------------------------------------------------------------
+  /// @brief      Notify the isolate that the focus state of a native view has
+  ///             changed.
+  ///
+  /// @param[in]  event  The focus event describing the change.
+  bool SendViewFocusEvent(const ViewFocusEvent& event);
 
   //----------------------------------------------------------------------------
   /// @brief      Forward the specified viewport metrics to the running isolate.
@@ -784,6 +792,9 @@ class RuntimeController : public PlatformConfigurationClient,
   // |PlatformConfigurationClient|
   double GetScaledFontSize(double unscaled_font_size,
                            int configuration_id) const override;
+
+  // |PlatformConfigurationClient|
+  void RequestViewFocusChange(const ViewFocusChangeRequest& request) override;
 
   FML_DISALLOW_COPY_AND_ASSIGN(RuntimeController);
 };

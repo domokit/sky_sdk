@@ -82,6 +82,10 @@ class MockDelegate : public Engine::Delegate {
               GetScaledFontSize,
               (double font_size, int configuration_id),
               (const, override));
+  MOCK_METHOD(void,
+              RequestViewFocusChange,
+              (const ViewFocusChangeRequest&),
+              (override));
 };
 
 class MockAnimatorDelegate : public Animator::Delegate {

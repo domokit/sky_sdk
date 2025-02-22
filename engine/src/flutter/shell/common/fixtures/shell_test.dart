@@ -632,3 +632,11 @@ void testDispatchEvents() {
     notifyNative();
   };
 }
+
+@pragma('vm:entry-point')
+void testSendViewFocusEvent() {
+  PlatformDispatcher.instance.onViewFocusChange = (ViewFocusEvent event) {
+    notifyMessage("${event.viewId} ${event.state} ${event.direction}");
+  };
+  notifyNative();
+}

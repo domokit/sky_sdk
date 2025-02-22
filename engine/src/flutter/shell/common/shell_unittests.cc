@@ -117,6 +117,11 @@ class MockPlatformViewDelegate : public PlatformView::Delegate {
               (override));
 
   MOCK_METHOD(void,
+              OnPlatformViewSendViewFocusEvent,
+              (const ViewFocusEvent& event),
+              (override));
+
+  MOCK_METHOD(void,
               OnPlatformViewSetNextFrameCallback,
               (const fml::closure& closure),
               (override));
@@ -4949,6 +4954,56 @@ TEST_F(ShellTest, WillLogWarningWhenImpellerIsOptedOut) {
                   "[Action Required] The application opted out of Impeller") !=
               std::string::npos);
   ASSERT_TRUE(shell);
+  DestroyShell(std::move(shell), task_runners);
+}
+
+TEST_F(ShellTest, SendViewFocusEvent) {
+  Settings settings = CreateSettingsForFixture();
+  TaskRunners task_runners = GetTaskRunnersForFixture();
+  fml::AutoResetWaitableEvent latch;
+  std::string last_event;
+
+  AddNativeCallback(
+      "NotifyNative",
+      CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) { latch.Signal(); }));
+
+  AddNativeCallback("NotifyMessage",
+                    CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
+                      const auto message_from_dart =
+                          tonic::DartConverter<std::string>::FromDart(
+                              Dart_GetNativeArgument(args, 0));
+                      last_event = message_from_dart;
+                      latch.Signal();
+                    }));
+  fml::AutoResetWaitableEvent check_latch;
+
+  std::unique_ptr<Shell> shell = CreateShell(settings, task_runners);
+  ASSERT_TRUE(shell->IsSetup());
+
+  auto configuration = RunConfiguration::InferFromSettings(settings);
+
+  configuration.SetEntrypoint("testSendViewFocusEvent");
+  RunEngine(shell.get(), std::move(configuration));
+  latch.Wait();
+  latch.Reset();
+
+  PostSync(shell->GetTaskRunners().GetPlatformTaskRunner(), [&shell]() {
+    shell->GetPlatformView()->SendViewFocusEvent(ViewFocusEvent(
+        1, ViewFocusState::kFocused, ViewFocusDirection::kUndefined));
+  });
+  latch.Wait();
+  ASSERT_EQ(last_event,
+            "1 ViewFocusState.focused ViewFocusDirection.undefined");
+
+  latch.Reset();
+  PostSync(shell->GetTaskRunners().GetPlatformTaskRunner(), [&shell]() {
+    shell->GetPlatformView()->SendViewFocusEvent(ViewFocusEvent(
+        2, ViewFocusState::kUnfocused, ViewFocusDirection::kBackward));
+  });
+  latch.Wait();
+  ASSERT_EQ(last_event,
+            "2 ViewFocusState.unfocused ViewFocusDirection.backward");
+
   DestroyShell(std::move(shell), task_runners);
 }
 

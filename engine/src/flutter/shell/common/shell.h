@@ -589,6 +589,9 @@ class Shell final : public PlatformView::Delegate,
                                 RemoveViewCallback callback) override;
 
   // |PlatformView::Delegate|
+  void OnPlatformViewSendViewFocusEvent(const ViewFocusEvent& event) override;
+
+  // |PlatformView::Delegate|
   void OnPlatformViewSetViewportMetrics(
       int64_t view_id,
       const ViewportMetrics& metrics) override;
@@ -701,6 +704,9 @@ class Shell final : public PlatformView::Delegate,
   // |Engine::Delegate|
   double GetScaledFontSize(double unscaled_font_size,
                            int configuration_id) const override;
+
+  // |Engine::Delegate|
+  void RequestViewFocusChange(const ViewFocusChangeRequest& request) override;
 
   // |Rasterizer::Delegate|
   void OnFrameRasterized(const FrameTiming&) override;
