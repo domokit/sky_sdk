@@ -20,15 +20,18 @@ import 'package:protobuf/protobuf.dart' as $pb;
 class ReleasePhase extends $pb.ProtobufEnum {
   static const ReleasePhase APPLY_FRAMEWORK_CHERRYPICKS =
       ReleasePhase._(0, _omitEnumNames ? '' : 'APPLY_FRAMEWORK_CHERRYPICKS');
+  static const ReleasePhase UPDATE_ENGINE_VERSION =
+      ReleasePhase._(1, _omitEnumNames ? '' : 'UPDATE_ENGINE_VERSION');
   static const ReleasePhase PUBLISH_VERSION =
-      ReleasePhase._(1, _omitEnumNames ? '' : 'PUBLISH_VERSION');
+      ReleasePhase._(2, _omitEnumNames ? '' : 'PUBLISH_VERSION');
   static const ReleasePhase VERIFY_RELEASE =
-      ReleasePhase._(2, _omitEnumNames ? '' : 'VERIFY_RELEASE');
+      ReleasePhase._(3, _omitEnumNames ? '' : 'VERIFY_RELEASE');
   static const ReleasePhase RELEASE_COMPLETED =
-      ReleasePhase._(3, _omitEnumNames ? '' : 'RELEASE_COMPLETED');
+      ReleasePhase._(4, _omitEnumNames ? '' : 'RELEASE_COMPLETED');
 
   static const $core.List<ReleasePhase> values = <ReleasePhase>[
     APPLY_FRAMEWORK_CHERRYPICKS,
+    UPDATE_ENGINE_VERSION,
     PUBLISH_VERSION,
     VERIFY_RELEASE,
     RELEASE_COMPLETED,

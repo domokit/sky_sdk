@@ -151,6 +151,51 @@ class NextContext extends Context {
         }
 
         await pushWorkingBranch(framework, state.framework);
+      case pb.ReleasePhase.UPDATE_ENGINE_VERSION:
+        final Remote upstream = Remote.upstream(state.framework.upstream.url);
+        final FrameworkRepository framework = FrameworkRepository(
+          checkouts,
+          initialRef: state.framework.workingBranch,
+          upstreamRemote: upstream,
+          previousCheckoutLocation: state.framework.checkoutPath,
+        );
+        final String rev = await framework.reverseParse('HEAD');
+        final File engineVersionFile = (await framework.checkoutDirectory)
+            .childDirectory('bin')
+            .childDirectory('internal')
+            .childFile('engine.version');
+
+        engineVersionFile.writeAsStringSync(rev);
+
+        // Must force add since it is gitignored
+        await framework.git.run(
+          const <String>['add', 'bin/internal/engine.version', '--force'],
+          'adding engine.version file',
+          workingDirectory: (await framework.checkoutDirectory).path,
+        );
+        final String revision = await framework.commit(
+          'Create engine.version file pointing to $rev',
+        );
+        // append to list of cherrypicks so we know a PR is required
+        state.framework.cherrypicks.add(
+          pb.Cherrypick.create()
+            ..appliedRevision = revision
+            ..state = pb.CherrypickState.COMPLETED,
+        );
+
+        if (!autoAccept) {
+          final bool response = await prompt(
+            'Are you ready to push your framework branch to the repository '
+            '${state.framework.mirror.url}?',
+          );
+          if (!response) {
+            stdio.printError('Aborting command.');
+            updateState(state, stdio.logs);
+            return;
+          }
+        }
+
+        await pushWorkingBranch(framework, state.framework);
       case pb.ReleasePhase.PUBLISH_VERSION:
         final String command = '''
           tool-proxy-cli --tool_proxy=/abns/dart-eng-tool-proxy/prod-dart-eng-tool-proxy-tool-proxy.annealed-tool-proxy \\
