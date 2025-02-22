@@ -55,10 +55,10 @@ static void InvokeNextFrameCallback(
 
 std::pair<sk_sp<DlImage>, std::string>
 MultiFrameCodec::State::GetNextFrameImage(
-    fml::WeakPtr<GrDirectContext> resourceContext,
+    const fml::WeakPtr<GrDirectContext>& resourceContext,
     const std::shared_ptr<const fml::SyncSwitch>& gpu_disable_sync_switch,
     const std::shared_ptr<impeller::Context>& impeller_context,
-    fml::RefPtr<flutter::SkiaUnrefQueue> unref_queue) {
+    const fml::RefPtr<flutter::SkiaUnrefQueue>& unref_queue) {
   SkBitmap bitmap = SkBitmap();
   SkImageInfo info = generator_->GetInfo().makeColorType(kN32_SkColorType);
   if (info.alphaType() == kUnpremul_SkAlphaType) {
@@ -175,7 +175,7 @@ MultiFrameCodec::State::GetNextFrameImage(
             }
           }));
 
-  return std::make_pair(DlImageGPU::Make({skImage, std::move(unref_queue)}),
+  return std::make_pair(DlImageGPU::Make({skImage, unref_queue}),
                         std::string());
 #else   //  !SLIMPELLER
   return std::make_pair(nullptr, "Unsupported backend.");
@@ -185,8 +185,8 @@ MultiFrameCodec::State::GetNextFrameImage(
 void MultiFrameCodec::State::GetNextFrameAndInvokeCallback(
     std::unique_ptr<tonic::DartPersistentValue> callback,
     const fml::RefPtr<fml::TaskRunner>& ui_task_runner,
-    fml::WeakPtr<GrDirectContext> resourceContext,
-    fml::RefPtr<flutter::SkiaUnrefQueue> unref_queue,
+    const fml::WeakPtr<GrDirectContext>& resourceContext,
+    const fml::RefPtr<flutter::SkiaUnrefQueue>& unref_queue,
     const std::shared_ptr<const fml::SyncSwitch>& gpu_disable_sync_switch,
     size_t trace_id,
     const std::shared_ptr<impeller::Context>& impeller_context) {
@@ -205,9 +205,8 @@ void MultiFrameCodec::State::GetNextFrameAndInvokeCallback(
   int duration = 0;
   sk_sp<DlImage> dlImage;
   std::string decode_error;
-  std::tie(dlImage, decode_error) =
-      GetNextFrameImage(std::move(resourceContext), gpu_disable_sync_switch,
-                        impeller_context, std::move(unref_queue));
+  std::tie(dlImage, decode_error) = GetNextFrameImage(
+      resourceContext, gpu_disable_sync_switch, impeller_context, unref_queue);
   if (dlImage) {
     image = CanvasImage::Create();
     image->set_image(dlImage);

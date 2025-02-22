@@ -264,7 +264,7 @@ static constexpr int kNumProfilerSamplesPerSec = 5;
 }
 
 - (void)recreatePlatformViewsController {
-  _renderingApi = flutter::GetRenderingAPIForProcess(FlutterView.forceSoftwareRendering);
+  _renderingApi = flutter::GetRenderingAPIForProcess(/*force_software=*/false);
   _platformViewsController = [[FlutterPlatformViewsController alloc] init];
 }
 
@@ -743,7 +743,7 @@ static flutter::ThreadHost MakeThreadHost(NSString* thread_label,
   fml::MessageLoop::EnsureInitializedForCurrentThread();
 
   uint32_t threadHostType = flutter::ThreadHost::Type::kRaster | flutter::ThreadHost::Type::kIo;
-  if (!settings.enable_impeller || !settings.merged_platform_ui_thread) {
+  if (!settings.merged_platform_ui_thread) {
     threadHostType |= flutter::ThreadHost::Type::kUi;
   }
 
@@ -801,8 +801,6 @@ static void SetEntryPoint(flutter::Settings* settings, NSString* entrypoint, NSS
   } else if (settings.route.empty() == false) {
     self.initialRoute = [NSString stringWithUTF8String:settings.route.c_str()];
   }
-
-  FlutterView.forceSoftwareRendering = settings.enable_software_rendering;
 
   auto platformData = [self.dartProject defaultPlatformData];
 
@@ -1495,10 +1493,6 @@ static void SetEntryPoint(flutter::Settings* settings, NSString* entrypoint, NSS
 
 - (FlutterDartProject*)project {
   return self.dartProject;
-}
-
-- (BOOL)isUsingImpeller {
-  return self.project.isImpellerEnabled;
 }
 
 @end

@@ -30,7 +30,7 @@ namespace flutter {
  * The shell provides and requests for UI related data and this PlatformView subclass fulfills
  * it with iOS specific capabilities. As an example, the iOS embedding (the `FlutterEngine` and the
  * `FlutterViewController`) sends pointer data to the shell and receives the shell's request for a
- * Skia GrDirectContext and supplies it.
+ * Impeller AiksContext and supplies it.
  *
  * Despite the name "view", this class is unrelated to UIViews on iOS and doesn't have the same
  * lifecycle. It's a long lived bridge owned by the `FlutterEngine` and can be attached and

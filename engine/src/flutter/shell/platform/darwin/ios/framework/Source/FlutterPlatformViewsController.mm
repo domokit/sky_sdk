@@ -448,14 +448,12 @@ static bool ClipRRectContainsPlatformViewBoundingRect(const SkRRect& clip_rrect,
 }
 
 - (flutter::PostPrerollResult)postPrerollActionWithThreadMerger:
-                                  (const fml::RefPtr<fml::RasterThreadMerger>&)rasterThreadMerger
-                                                impellerEnabled:(BOOL)impellerEnabled {
+    (const fml::RefPtr<fml::RasterThreadMerger>&)rasterThreadMerger {
   return flutter::PostPrerollResult::kSuccess;
 }
 
 - (void)endFrameWithResubmit:(BOOL)shouldResubmitFrame
-                threadMerger:(const fml::RefPtr<fml::RasterThreadMerger>&)rasterThreadMerger
-             impellerEnabled:(BOOL)impellerEnabled {
+                threadMerger:(const fml::RefPtr<fml::RasterThreadMerger>&)rasterThreadMerger {
 }
 
 - (void)pushFilterToVisitedPlatformViews:(const std::shared_ptr<flutter::DlImageFilter>&)filter

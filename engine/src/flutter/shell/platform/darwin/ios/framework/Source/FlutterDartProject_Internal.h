@@ -19,7 +19,6 @@ flutter::Settings FLTDefaultSettingsForBundle(NSBundle* _Nullable bundle = nil,
 @interface FlutterDartProject ()
 
 @property(nonatomic, readonly) BOOL isWideGamutEnabled;
-@property(nonatomic, readonly) BOOL isImpellerEnabled;
 
 /**
  * This is currently used for *only for tests* to override settings.

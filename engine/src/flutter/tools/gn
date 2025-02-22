@@ -451,7 +451,7 @@ def to_gn_args(args):
     gn_args['is_clang'] = True
   else:
     gn_args['is_clang'] = args.clang
-  if args.slimpeller:
+  if args.target_os == 'ios' or args.slimpeller:
     gn_args['skia_enable_graphite'] = False
     gn_args['skia_enable_ganesh'] = False
     gn_args['slimpeller'] = True

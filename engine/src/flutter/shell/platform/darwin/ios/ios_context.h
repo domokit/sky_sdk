@@ -39,7 +39,7 @@ class IOSContext {
  public:
   //----------------------------------------------------------------------------
   /// @brief      Create an iOS context object capable of creating the on-screen
-  ///             and off-screen GPU context for use by Skia.
+  ///             and off-screen GPU context for use by Impeller.
   ///
   ///             In case the engine does not support the specified client
   ///             rendering API, this a `nullptr` may be returned.
