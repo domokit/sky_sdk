@@ -795,6 +795,22 @@ CGRect ConvertRectToGlobal(SemanticsObject* reference, CGRect local_rect) {
 
 #pragma mark - UIAccessibility overrides
 
+- (BOOL)accessibilityRespondsToUserInteraction {
+  const int kSystemActions =
+      static_cast<int32_t>(flutter::SemanticsAction::kDidGainAccessibilityFocus) |
+      static_cast<int32_t>(flutter::SemanticsAction::kDidLoseAccessibilityFocus);
+
+  if ((self.node.actions & ~kSystemActions) != 0) {
+    return true;
+  }
+
+  if (!self.node.customAccessibilityActions.empty()) {
+    return true;
+  }
+
+  return false;
+}
+
 - (UIAccessibilityTraits)accessibilityTraits {
   UIAccessibilityTraits traits = UIAccessibilityTraitNone;
   if (self.node.HasAction(flutter::SemanticsAction::kIncrease) ||
