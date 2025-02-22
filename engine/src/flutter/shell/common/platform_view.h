@@ -503,6 +503,15 @@ class PlatformView {
                                CustomAccessibilityActionUpdates actions);
 
   //----------------------------------------------------------------------------
+  /// @brief      Used by the framework to tell the embedder to prepare or clear
+  ///             resoruce for accepting semantics tree.
+  ///
+  /// @param[in]  enabled  whether framework starts or stops sending semantics
+  ///                      updates
+  ///
+  virtual void SetSemanticsTreeEnabled(bool enabled);
+
+  //----------------------------------------------------------------------------
   /// @brief      Used by the framework to tell the embedder that it has
   ///             registered a listener on a given channel.
   ///

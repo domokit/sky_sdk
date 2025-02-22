@@ -630,6 +630,12 @@ class RuntimeController : public PlatformConfigurationClient,
   // |PlatformConfigurationClient|
   std::shared_ptr<const fml::Mapping> GetPersistentIsolateData() override;
 
+  // |PlatformConfigurationClient|
+  void UpdateSemantics(SemanticsUpdate* update) override;
+
+  // |PlatformConfigurationClient|
+  void SetSemanticsTreeEnabled(bool enabled) override;
+
   const fml::WeakPtr<IOManager>& GetIOManager() const {
     return context_.io_manager;
   }
@@ -706,6 +712,7 @@ class RuntimeController : public PlatformConfigurationClient,
   std::shared_ptr<PlatformIsolateManager> platform_isolate_manager_ =
       std::shared_ptr<PlatformIsolateManager>(new PlatformIsolateManager());
   bool has_flushed_runtime_state_ = false;
+  bool semantics_tree_enabled_ = false;
 
   // Callbacks when `AddView` was called before the Dart isolate is launched.
   //
@@ -754,9 +761,6 @@ class RuntimeController : public PlatformConfigurationClient,
               Scene* scene,
               double width,
               double height) override;
-
-  // |PlatformConfigurationClient|
-  void UpdateSemantics(SemanticsUpdate* update) override;
 
   // |PlatformConfigurationClient|
   void HandlePlatformMessage(std::unique_ptr<PlatformMessage> message) override;

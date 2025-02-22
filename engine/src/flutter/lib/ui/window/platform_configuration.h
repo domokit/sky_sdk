@@ -96,6 +96,13 @@ class PlatformConfigurationClient {
   virtual void UpdateSemantics(SemanticsUpdate* update) = 0;
 
   //--------------------------------------------------------------------------
+  /// @brief      Notifies whether Framework starts generating semantics tree.
+  ///
+  /// @param[in] enabled True if Framework starts generating semantics tree.
+  ///
+  virtual void SetSemanticsTreeEnabled(bool enabled) = 0;
+
+  //--------------------------------------------------------------------------
   /// @brief      When the Flutter application has a message to send to the
   ///             underlying platform, the message needs to be forwarded to
   ///             the platform on the appropriate thread (via the platform
@@ -593,6 +600,8 @@ class PlatformConfigurationNativeApi {
                      double height);
 
   static void UpdateSemantics(SemanticsUpdate* update);
+
+  static void SetSemanticsTreeEnabled(bool enabled);
 
   static void SetNeedsReportTimings(bool value);
 

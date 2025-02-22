@@ -621,6 +621,14 @@ void PlatformConfigurationNativeApi::UpdateSemantics(SemanticsUpdate* update) {
       update);
 }
 
+void PlatformConfigurationNativeApi::SetSemanticsTreeEnabled(bool enabled) {
+  UIDartState::ThrowIfUIOperationsProhibited();
+  UIDartState::Current()
+      ->platform_configuration()
+      ->client()
+      ->SetSemanticsTreeEnabled(enabled);
+}
+
 Dart_Handle PlatformConfigurationNativeApi::ComputePlatformResolvedLocale(
     Dart_Handle supportedLocalesHandle) {
   UIDartState::ThrowIfUIOperationsProhibited();

@@ -667,6 +667,9 @@ class Shell final : public PlatformView::Delegate,
       CustomAccessibilityActionUpdates actions) override;
 
   // |Engine::Delegate|
+  void OnEngineSetSemanticsTreeEnabled(bool enabled) override;
+
+  // |Engine::Delegate|
   void OnEngineHandlePlatformMessage(
       std::unique_ptr<PlatformMessage> message) override;
 
