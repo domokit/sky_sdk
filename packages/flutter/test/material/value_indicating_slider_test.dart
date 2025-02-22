@@ -104,7 +104,7 @@ void main() {
       value: 0,
       textScale: 3,
       decimalCount: 5,
-      useMaterial3: true,
+
     );
 
     await _pressStartThumb(tester);
@@ -119,7 +119,7 @@ void main() {
       value: 0.5,
       textScale: 3,
       decimalCount: 5,
-      useMaterial3: true,
+
     );
 
     await _pressMiddleThumb(tester);
@@ -134,7 +134,7 @@ void main() {
       value: 1,
       textScale: 3,
       decimalCount: 5,
-      useMaterial3: true,
+
     );
 
     await _pressEndThumb(tester);

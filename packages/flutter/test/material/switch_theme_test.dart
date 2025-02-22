@@ -239,7 +239,7 @@ void main() {
     const Icon icon2 = Icon(Icons.close);
 
     final ThemeData themeData = ThemeData(
-      useMaterial3: true,
+
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
           if (states.contains(MaterialState.selected)) {
@@ -553,7 +553,7 @@ void main() {
     const double splashRadius = 2.0;
 
     final ThemeData themeData = ThemeData(
-      useMaterial3: true,
+
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
           if (states.contains(MaterialState.selected)) {
@@ -784,7 +784,7 @@ void main() {
     const Color selectedTrackColor = Color(0xffffff3f);
 
     final ThemeData themeData = ThemeData(
-      useMaterial3: true,
+
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
           if (states.contains(MaterialState.selected)) {
@@ -916,7 +916,7 @@ void main() {
 
     const double splashRadius = 24.0;
     final ThemeData themeData = ThemeData(
-      useMaterial3: true,
+
       switchTheme: SwitchThemeData(
         overlayColor: MaterialStateProperty.resolveWith(getOverlayColor),
         splashRadius: splashRadius,
@@ -1021,7 +1021,7 @@ void main() {
     const double localThemeOutlineWidth = 4.0;
 
     final ThemeData themeData = ThemeData(
-      useMaterial3: true,
+
       switchTheme: const SwitchThemeData(
         thumbColor: MaterialStatePropertyAll<Color>(globalThemeThumbColor),
         trackColor: MaterialStatePropertyAll<Color>(globalThemeTrackColor),

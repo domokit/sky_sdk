@@ -137,7 +137,7 @@ void main() {
         tester,
         (TimeOfDay? time) {},
         locale: locale,
-        useMaterial3: true,
+
       );
       final Text stringFragmentText = tester.widget(timeSelectorSeparatorFinder);
       final double hourLeftOffset = tester.getTopLeft(hourControlFinder).dx;
@@ -318,7 +318,7 @@ void main() {
         tester,
         (TimeOfDay? time) {},
         locale: locale,
-        useMaterial3: true,
+
       );
       final Text stringFragmentText = tester.widget(timeSelectorSeparatorFinder);
       final double hourLeftOffset = tester.getTopLeft(hourControlFinder).dx;
@@ -495,7 +495,7 @@ void main() {
           onChanged: (TimeOfDay? time) {},
           locale: locale,
           entryMode: TimePickerEntryMode.input,
-          useMaterial3: true,
+
         ),
       );
       await tester.tap(find.text('X'));
@@ -596,7 +596,7 @@ void main() {
             result = time;
           },
           locale: locale,
-          useMaterial3: true,
+
         );
         final Size size = tester.getSize(find.byKey(const Key('time-picker-dial')));
         final double dy = (size.height / 2.0 / 10) * factor;

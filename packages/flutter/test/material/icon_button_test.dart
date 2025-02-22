@@ -43,7 +43,7 @@ void main() {
     const ValueKey<String> key = ValueKey<String>('icon-button');
     await tester.pumpWidget(
       wrap(
-        useMaterial3: true,
+
         child: IconButton(key: key, onPressed: () {}, icon: const Icon(Icons.link)),
       ),
     );
@@ -665,7 +665,7 @@ void main() {
 
     await tester.pumpWidget(
       wrap(
-        useMaterial3: true,
+
         child: IconButton(
           onPressed: mockOnPressedFunction.handler,
           isSelected: true,
@@ -2741,7 +2741,7 @@ void main() {
         MaterialApp(
           theme: ThemeData.from(
             colorScheme: const ColorScheme.light(),
-            useMaterial3: true,
+
           ).copyWith(iconTheme: const IconThemeData(color: Colors.red, size: 37)),
           home: IconButton(icon: const Icon(Icons.account_box), onPressed: () {}),
         ),
@@ -2775,7 +2775,7 @@ void main() {
         MaterialApp(
           theme: ThemeData.from(
             colorScheme: const ColorScheme.light(),
-            useMaterial3: true,
+
           ).copyWith(
             iconTheme: const IconThemeData(color: Colors.red, size: 25),
             iconButtonTheme: IconButtonThemeData(
@@ -2842,7 +2842,7 @@ void main() {
         MaterialApp(
           theme: ThemeData.from(
             colorScheme: const ColorScheme.dark(),
-            useMaterial3: true,
+
           ).copyWith(iconTheme: const IconThemeData(color: Colors.white)),
           home: IconButton(icon: const Icon(Icons.account_box), onPressed: () {}),
         ),

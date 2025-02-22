@@ -83,7 +83,7 @@ void main() {
       final DividerThemeData dividerTheme = _dividerTheme();
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(useMaterial3: true, dividerTheme: dividerTheme),
+          theme: ThemeData(   dividerTheme: dividerTheme),
           home: const Scaffold(body: Divider()),
         ),
       );

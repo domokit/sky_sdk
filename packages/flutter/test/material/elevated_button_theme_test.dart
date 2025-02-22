@@ -278,7 +278,7 @@ void main() {
     Widget buildFrame({Color? overallShadowColor, Color? themeShadowColor, Color? shadowColor}) {
       return MaterialApp(
         theme: ThemeData.from(
-          useMaterial3: true,
+
           colorScheme: colorScheme.copyWith(shadow: overallShadowColor),
         ),
         home: Scaffold(
