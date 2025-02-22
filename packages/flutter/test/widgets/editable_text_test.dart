@@ -11969,6 +11969,43 @@ void main() {
     expect(focusNode.hasFocus, true);
   });
 
+  testWidgets('can change tap up outside behavior by overriding actions', (
+    WidgetTester tester,
+  ) async {
+    bool myIntentWasCalled = false;
+    final CallbackAction<EditableTextTapUpOutsideIntent> overrideAction =
+        CallbackAction<EditableTextTapUpOutsideIntent>(
+          onInvoke: (EditableTextTapUpOutsideIntent intent) {
+            myIntentWasCalled = true;
+            return null;
+          },
+        );
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Column(
+          children: <Widget>[
+            SizedBox(key: key, width: 200, height: 200),
+            Actions(
+              actions: <Type, Action<Intent>>{EditableTextTapUpOutsideIntent: overrideAction},
+              child: EditableText(
+                controller: controller,
+                focusNode: focusNode,
+                style: textStyle,
+                cursorColor: Colors.blue,
+                backgroundCursorColor: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(key), warnIfMissed: false);
+    await tester.pump();
+    expect(myIntentWasCalled, isTrue);
+  });
+
   testWidgets('ignore key event from web platform', (WidgetTester tester) async {
     controller.text = 'test\ntest';
     controller.selection = const TextSelection(
