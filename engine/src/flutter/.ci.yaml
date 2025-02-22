@@ -57,7 +57,6 @@ targets:
     timeout: 180
 
   - name: Linux linux_android_emulator_tests
-    bringup: true
     enabled_branches:
       - master
     recipe: engine_v2/engine_v2

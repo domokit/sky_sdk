@@ -4,5 +4,12 @@
   "reorderItemUp": "Lëvize lart",
   "reorderItemDown": "Lëvize poshtë",
   "reorderItemLeft": "Lëvize majtas",
-  "reorderItemRight": "Lëvize djathtas"
+  "reorderItemRight": "Lëvize djathtas",
+  "copyButtonLabel": "Kopjo",
+  "cutButtonLabel": "Prit",
+  "lookUpButtonLabel": "Kërko",
+  "searchWebButtonLabel": "Kërko në ueb",
+  "shareButtonLabel": "Ndaj",
+  "pasteButtonLabel": "Ngjit",
+  "selectAllButtonLabel": "Zgjidh të gjitha"
 }

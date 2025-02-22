@@ -4,5 +4,12 @@
   "reorderItemUp": "Переместить вверх",
   "reorderItemDown": "Переместить вниз",
   "reorderItemLeft": "Переместить влево",
-  "reorderItemRight": "Переместить вправо"
+  "reorderItemRight": "Переместить вправо",
+  "copyButtonLabel": "Копировать",
+  "cutButtonLabel": "Вырезать",
+  "lookUpButtonLabel": "Найти",
+  "searchWebButtonLabel": "Искать в интернете",
+  "shareButtonLabel": "Поделиться",
+  "pasteButtonLabel": "Вставить",
+  "selectAllButtonLabel": "Выбрать все"
 }

@@ -90,6 +90,9 @@ class StubSceneCanvas implements SceneCanvas {
   void clipRRect(ui.RRect rrect, {bool doAntiAlias = true}) {}
 
   @override
+  void clipRSuperellipse(ui.RSuperellipse rse, {bool doAntiAlias = true}) {}
+
+  @override
   void clipRect(ui.Rect rect, {ui.ClipOp clipOp = ui.ClipOp.intersect, bool doAntiAlias = true}) {}
 
   @override
@@ -150,6 +153,9 @@ class StubSceneCanvas implements SceneCanvas {
 
   @override
   void drawRRect(ui.RRect rrect, ui.Paint paint) {}
+
+  @override
+  void drawRSuperellipse(ui.RSuperellipse rse, ui.Paint paint) {}
 
   @override
   void drawRawAtlas(

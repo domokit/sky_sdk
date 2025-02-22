@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.annotation.TargetApi;
@@ -297,6 +298,23 @@ public class FlutterFragmentActivityTest {
 
     // Clean up.
     flutterFragmentActivityActivityScenario.close();
+  }
+
+  @Test
+  @Config(minSdk = Build.API_LEVELS.API_34)
+  @TargetApi(Build.API_LEVELS.API_34)
+  public void onBackPressedCallsGetForwardedToFragment() {
+    FlutterFragmentActivityWithProvidedEngine activity =
+        spy(Robolectric.buildActivity(FlutterFragmentActivityWithProvidedEngine.class).get());
+
+    FlutterFragment fragment = mock(FlutterFragment.class);
+    when(activity.retrieveExistingFlutterFragmentIfPossible()).thenReturn(null, fragment);
+    FlutterEngine engine = mock(FlutterEngine.class);
+    when(fragment.getFlutterEngine()).thenReturn(engine);
+    activity.onCreate(null);
+
+    activity.onBackPressed();
+    verify(fragment).onBackPressed();
   }
 
   @Test

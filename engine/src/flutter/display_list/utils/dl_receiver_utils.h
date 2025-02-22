@@ -47,6 +47,9 @@ class IgnoreClipDispatchHelper : public virtual DlOpReceiver {
                      DlClipOp clip_op,
                      bool is_aa) override {}
   void clipPath(const DlPath& path, DlClipOp clip_op, bool is_aa) override {}
+  void clipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                             DlClipOp clip_op,
+                             bool is_aa) override {}
 };
 
 // A utility class that will ignore all DlOpReceiver methods relating
@@ -92,6 +95,7 @@ class IgnoreDrawDispatchHelper : public virtual DlOpReceiver {
   void drawRoundRect(const DlRoundRect& rrect) override {}
   void drawDiffRoundRect(const DlRoundRect& outer,
                          const DlRoundRect& inner) override {}
+  void drawRoundSuperellipse(const DlRoundSuperellipse& rse) override {}
   void drawPath(const DlPath& path) override {}
   void drawArc(const DlRect& oval_bounds,
                DlScalar start_degrees,

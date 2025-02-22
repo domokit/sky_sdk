@@ -4,5 +4,12 @@
   "reorderItemUp": "Sogeza juu",
   "reorderItemDown": "Sogeza chini",
   "reorderItemLeft": "Sogeza kushoto",
-  "reorderItemRight": "Sogeza kulia"
+  "reorderItemRight": "Sogeza kulia",
+  "copyButtonLabel": "Nakili",
+  "cutButtonLabel": "Kata",
+  "lookUpButtonLabel": "Tafuta",
+  "searchWebButtonLabel": "Tafuta kwenye Wavuti",
+  "shareButtonLabel": "Tuma",
+  "pasteButtonLabel": "Bandika",
+  "selectAllButtonLabel": "Chagua vyote"
 }

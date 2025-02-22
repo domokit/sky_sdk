@@ -4,5 +4,12 @@
   "reorderItemUp": "ზემოთ გადატანა",
   "reorderItemDown": "ქვემოთ გადატანა",
   "reorderItemLeft": "მარცხნივ გადატანა",
-  "reorderItemRight": "მარჯვნივ გადატანა"
+  "reorderItemRight": "მარჯვნივ გადატანა",
+  "copyButtonLabel": "კოპირება",
+  "cutButtonLabel": "ამოჭრა",
+  "lookUpButtonLabel": "აიხედეთ ზემოთ",
+  "searchWebButtonLabel": "ვებში ძიება",
+  "shareButtonLabel": "გაზიარება",
+  "pasteButtonLabel": "ჩასმა",
+  "selectAllButtonLabel": "ყველას არჩევა"
 }

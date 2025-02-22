@@ -157,6 +157,13 @@ void DlSkCanvasAdapter::ClipRoundRect(const DlRoundRect& rrect,
   delegate_->clipRRect(ToSkRRect(rrect), ToSk(clip_op), is_aa);
 }
 
+void DlSkCanvasAdapter::ClipRoundSuperellipse(const DlRoundSuperellipse& rse,
+                                              DlClipOp clip_op,
+                                              bool is_aa) {
+  // Skia doesn't support round superellipse, thus fall back to round rectangle.
+  delegate_->clipRRect(ToApproximateSkRRect(rse), ToSk(clip_op), is_aa);
+}
+
 void DlSkCanvasAdapter::ClipPath(const DlPath& path,
                                  DlClipOp clip_op,
                                  bool is_aa) {
@@ -233,6 +240,12 @@ void DlSkCanvasAdapter::DrawDiffRoundRect(const DlRoundRect& outer,
                                           const DlRoundRect& inner,
                                           const DlPaint& paint) {
   delegate_->drawDRRect(ToSkRRect(outer), ToSkRRect(inner), ToSk(paint));
+}
+
+void DlSkCanvasAdapter::DrawRoundSuperellipse(const DlRoundSuperellipse& rse,
+                                              const DlPaint& paint) {
+  // Skia doesn't support round superellipse, thus fall back to round rectangle.
+  delegate_->drawRRect(ToApproximateSkRRect(rse), ToSk(paint));
 }
 
 void DlSkCanvasAdapter::DrawPath(const DlPath& path, const DlPaint& paint) {

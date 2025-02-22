@@ -4,6 +4,7 @@
 
 #include "flutter/impeller/geometry/round_superellipse.h"
 
+#include "flutter/impeller/geometry/round_rect.h"
 #include "flutter/impeller/geometry/round_superellipse_param.h"
 
 namespace impeller {
@@ -28,6 +29,13 @@ RoundSuperellipse RoundSuperellipse::MakeRectRadii(
   }
   auto param = RoundSuperellipseParam::MakeBoundsRadii(bounds_, radii_);
   return param.Contains(p);
+}
+
+RoundRect RoundSuperellipse::ToApproximateRoundRect() const {
+  // Experiments have shown that using the same corner radii for the RRect
+  // provides an approximation that is close to optimal, as achieving a perfect
+  // match is not feasible.
+  return RoundRect::MakeRectRadii(GetBounds(), GetRadii());
 }
 
 }  // namespace impeller

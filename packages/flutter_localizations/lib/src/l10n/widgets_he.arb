@@ -4,5 +4,12 @@
   "reorderItemUp": "העברה למעלה",
   "reorderItemDown": "העברה למטה",
   "reorderItemLeft": "העברה שמאלה",
-  "reorderItemRight": "העברה ימינה"
+  "reorderItemRight": "העברה ימינה",
+  "copyButtonLabel": "העתקה",
+  "cutButtonLabel": "גזירה",
+  "lookUpButtonLabel": "חיפוש",
+  "searchWebButtonLabel": "חיפוש באינטרנט",
+  "shareButtonLabel": "שיתוף",
+  "pasteButtonLabel": "הדבקה",
+  "selectAllButtonLabel": "בחירת הכול"
 }

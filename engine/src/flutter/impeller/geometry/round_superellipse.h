@@ -12,6 +12,8 @@
 
 namespace impeller {
 
+struct RoundRect;
+
 struct RoundSuperellipse {
   RoundSuperellipse() = default;
 
@@ -123,6 +125,14 @@ struct RoundSuperellipse {
   [[nodiscard]] constexpr bool operator!=(const RoundSuperellipse& r) const {
     return !(*this == r);
   }
+
+  // Approximates a rounded superellipse with a round rectangle to the
+  // best practical accuracy.
+  //
+  // This is used for Skia backends, which does not support rounded
+  // superellipses directly, so rendering rounded superellipses
+  // falls back to RRect.
+  [[nodiscard]] RoundRect ToApproximateRoundRect() const;
 
  private:
   constexpr RoundSuperellipse(const Rect& bounds, const RoundingRadii& radii)

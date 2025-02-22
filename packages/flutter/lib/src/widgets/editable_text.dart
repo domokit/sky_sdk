@@ -3025,6 +3025,8 @@ class EditableTextState extends State<EditableText>
   ///
   /// * [EditableText.getEditableButtonItems], which performs a similar role,
   ///   but for any editable field, not just specifically EditableText.
+  /// * [SystemContextMenu.getDefaultItems], which performs a similar role, but
+  ///   for the system-rendered context menu.
   /// * [SelectableRegionState.contextMenuButtonItems], which performs a similar
   ///   role but for content that is selectable but not editable.
   /// * [contextMenuAnchors], which provides the anchor points for the default

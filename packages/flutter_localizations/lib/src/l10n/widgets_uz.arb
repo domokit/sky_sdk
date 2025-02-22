@@ -4,5 +4,12 @@
   "reorderItemUp": "Tepaga siljitish",
   "reorderItemDown": "Pastga siljitish",
   "reorderItemLeft": "Chapga siljitish",
-  "reorderItemRight": "Oʻngga siljitish"
+  "reorderItemRight": "Oʻngga siljitish",
+  "copyButtonLabel": "Nusxa olish",
+  "cutButtonLabel": "Kesib olish",
+  "lookUpButtonLabel": "Tepaga qarang",
+  "searchWebButtonLabel": "Internetdan qidirish",
+  "shareButtonLabel": "Ulashish",
+  "pasteButtonLabel": "Joylash",
+  "selectAllButtonLabel": "Hammasi"
 }

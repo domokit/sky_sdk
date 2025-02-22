@@ -4,5 +4,12 @@
   "reorderItemUp": "উপরের দিকে সরান",
   "reorderItemDown": "নিচের দিকে সরান",
   "reorderItemLeft": "বাঁদিকে সরান",
-  "reorderItemRight": "ডানদিকে সরান"
+  "reorderItemRight": "ডানদিকে সরান",
+  "copyButtonLabel": "কপি করুন",
+  "cutButtonLabel": "কাট করুন",
+  "lookUpButtonLabel": "লুক-আপ",
+  "searchWebButtonLabel": "ওয়েবে সার্চ করুন",
+  "shareButtonLabel": "শেয়ার করুন",
+  "pasteButtonLabel": "পেস্ট করুন",
+  "selectAllButtonLabel": "সব বেছে নিন"
 }

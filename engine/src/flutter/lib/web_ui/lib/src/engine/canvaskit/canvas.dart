@@ -52,6 +52,12 @@ class CkCanvas {
     skCanvas.clipRRect(toSkRRect(rrect), _clipOpIntersect, doAntiAlias);
   }
 
+  void clipRSuperellipse(ui.RSuperellipse rse, bool doAntiAlias) {
+    // TODO(dkwingsmt): Properly implement clipRSE on Web instead of falling
+    // back to RRect.  https://github.com/flutter/flutter/issues/163718
+    skCanvas.clipRRect(toSkRRect(rse.toApproximateRRect()), _clipOpIntersect, doAntiAlias);
+  }
+
   void clipRect(ui.Rect rect, ui.ClipOp clipOp, bool doAntiAlias) {
     skCanvas.clipRect(toSkRect(rect), toSkClipOp(clipOp), doAntiAlias);
   }

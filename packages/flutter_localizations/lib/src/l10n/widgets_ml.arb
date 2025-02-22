@@ -4,5 +4,12 @@
   "reorderItemUp": "മുകളിലോട്ട് നീക്കുക",
   "reorderItemDown": "താഴോട്ട് നീക്കുക",
   "reorderItemLeft": "ഇടത്തോട്ട് നീക്കുക",
-  "reorderItemRight": "വലത്തോട്ട് നീക്കുക"
+  "reorderItemRight": "വലത്തോട്ട് നീക്കുക",
+  "copyButtonLabel": "പകർത്തുക",
+  "cutButtonLabel": "മുറിക്കുക",
+  "lookUpButtonLabel": "മുകളിലേക്ക് നോക്കുക",
+  "searchWebButtonLabel": "വെബിൽ തിരയുക",
+  "shareButtonLabel": "പങ്കിടുക",
+  "pasteButtonLabel": "ഒട്ടിക്കുക",
+  "selectAllButtonLabel": "എല്ലാം തിരഞ്ഞെടുക്കുക"
 }

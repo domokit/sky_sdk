@@ -4,5 +4,12 @@
   "reorderItemUp": "वर हलवा",
   "reorderItemDown": "खाली हलवा",
   "reorderItemLeft": "डावीकडे हलवा",
-  "reorderItemRight": "उजवीकडे हलवा"
+  "reorderItemRight": "उजवीकडे हलवा",
+  "copyButtonLabel": "कॉपी करा",
+  "cutButtonLabel": "कट करा",
+  "lookUpButtonLabel": "शोध घ्या",
+  "searchWebButtonLabel": "वेबवर शोधा",
+  "shareButtonLabel": "शेअर करा",
+  "pasteButtonLabel": "पेस्ट करा",
+  "selectAllButtonLabel": "सर्व निवडा"
 }

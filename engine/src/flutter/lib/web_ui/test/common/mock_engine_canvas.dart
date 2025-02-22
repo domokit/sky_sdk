@@ -93,6 +93,11 @@ class MockEngineCanvas implements EngineCanvas {
   }
 
   @override
+  void clipRSuperellipse(RSuperellipse rse) {
+    _called('clipRSuperellipse', arguments: rse);
+  }
+
+  @override
   void clipPath(Path path) {
     _called('clipPath', arguments: path);
   }

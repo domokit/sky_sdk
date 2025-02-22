@@ -43,6 +43,7 @@ class DisplayListMatrixClipState {
   bool rect_covers_cull(const DlRect& content) const;
   bool oval_covers_cull(const DlRect& content_bounds) const;
   bool rrect_covers_cull(const DlRoundRect& content) const;
+  bool rsuperellipse_covers_cull(const DlRoundSuperellipse& content) const;
 
   bool content_culled(const DlRect& content_bounds) const;
   bool is_cull_rect_empty() const { return cull_rect_.IsEmpty(); }
@@ -107,6 +108,9 @@ class DisplayListMatrixClipState {
   void clipRect(const DlRect& rect, DlClipOp op, bool is_aa);
   void clipOval(const DlRect& bounds, DlClipOp op, bool is_aa);
   void clipRRect(const DlRoundRect& rrect, DlClipOp op, bool is_aa);
+  void clipRSuperellipse(const DlRoundSuperellipse& rse,
+                         DlClipOp op,
+                         bool is_aa);
   void clipPath(const DlPath& path, DlClipOp op, bool is_aa);
 
  private:

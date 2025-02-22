@@ -147,6 +147,22 @@ class SurfaceSceneBuilder implements ui.SceneBuilder {
     return _pushSurface<PersistedClipRRect>(PersistedClipRRect(oldLayer, rrect, clipBehavior));
   }
 
+  /// Pushes a rounded-superellipse clip operation onto the operation stack.
+  ///
+  /// Rasterization outside the given rounded rectangle is discarded.
+  ///
+  /// See [pop] for details about the operation stack.
+  @override
+  ui.ClipRSuperellipseEngineLayer pushClipRSuperellipse(
+    ui.RSuperellipse rse, {
+    ui.Clip? clipBehavior,
+    ui.ClipRSuperellipseEngineLayer? oldLayer,
+  }) {
+    return _pushSurface<PersistedClipRSuperellipse>(
+      PersistedClipRSuperellipse(oldLayer, rse, clipBehavior),
+    );
+  }
+
   /// Pushes a path clip operation onto the operation stack.
   ///
   /// Rasterization outside the given path is discarded.
