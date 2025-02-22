@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "వెతకండి",
   "searchWebButtonLabel": "వెబ్‌లో సెర్చ్ చేయండి",
   "shareButtonLabel": "షేర్ చేయండి...",
-  "clearButtonLabel": "క్లియర్ చేయండి"
+  "clearButtonLabel": "క్లియర్ చేయండి",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

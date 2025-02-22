@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Փնտրել",
   "searchWebButtonLabel": "Որոնել համացանցում",
   "shareButtonLabel": "Կիսվել...",
-  "clearButtonLabel": "Մաքրել"
+  "clearButtonLabel": "Մաքրել",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

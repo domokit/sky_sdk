@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Tepaga qarang",
   "searchWebButtonLabel": "Internetdan qidirish",
   "shareButtonLabel": "Ulashish…",
-  "clearButtonLabel": "Tozalash"
+  "clearButtonLabel": "Tozalash",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

@@ -27,5 +27,7 @@
   "menuDismissLabel": "বাতিল করার মেনু",
   "lookUpButtonLabel": "লুক-আপ",
   "searchWebButtonLabel": "ওয়েবে সার্চ করুন",
-  "shareButtonLabel": "শেয়ার করুন..."
+  "shareButtonLabel": "শেয়ার করুন...",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

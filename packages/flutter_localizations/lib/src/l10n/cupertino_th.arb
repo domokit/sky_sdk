@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "ค้นหา",
   "searchWebButtonLabel": "ค้นหาบนอินเทอร์เน็ต",
   "shareButtonLabel": "แชร์...",
-  "clearButtonLabel": "ล้าง"
+  "clearButtonLabel": "ล้าง",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

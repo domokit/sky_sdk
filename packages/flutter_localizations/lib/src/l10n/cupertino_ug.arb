@@ -27,5 +27,7 @@
   "noSpellCheckReplacementsLabel": "مۇۋاپىق ئۆزگەرتىش تېپىلمىدى",
   "searchTextFieldPlaceholderLabel": "ئىزدەش",
   "modalBarrierDismissLabel": "يېپىش",
-  "menuDismissLabel": "تىزىملىكنى يېپىش"
+  "menuDismissLabel": "تىزىملىكنى يېپىش",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

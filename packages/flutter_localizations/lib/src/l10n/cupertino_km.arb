@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "រកមើល",
   "searchWebButtonLabel": "ស្វែងរក​លើបណ្ដាញ",
   "shareButtonLabel": "ចែករំលែក...",
-  "clearButtonLabel": "សម្អាត"
+  "clearButtonLabel": "សម្អាត",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

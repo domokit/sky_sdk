@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "தேடு",
   "searchWebButtonLabel": "இணையத்தில் தேடு",
   "shareButtonLabel": "பகிர்...",
-  "clearButtonLabel": "அழி"
+  "clearButtonLabel": "அழி",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Cerca",
   "searchWebButtonLabel": "Cerca sul web",
   "shareButtonLabel": "Condividi…",
-  "clearButtonLabel": "Cancella"
+  "clearButtonLabel": "Cancella",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

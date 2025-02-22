@@ -739,7 +739,7 @@ void main() {
     expect(tester.getBottomLeft(find.text('Title')).dy, 44.0); // Extension gone.
   });
 
-  testWidgets('Auto back/close button', (WidgetTester tester) async {
+  testWidgets('Auto back/cancel button', (WidgetTester tester) async {
     await tester.pumpWidget(
       const CupertinoApp(home: CupertinoNavigationBar(middle: Text('Home page'))),
     );
@@ -776,10 +776,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    expect(find.widgetWithText(CupertinoButton, 'Close'), findsOneWidget);
+    expect(find.widgetWithText(CupertinoButton, 'Cancel'), findsOneWidget);
 
     // Test popping goes back correctly.
-    await tester.tap(find.text('Close'));
+    await tester.tap(find.text('Cancel'));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));

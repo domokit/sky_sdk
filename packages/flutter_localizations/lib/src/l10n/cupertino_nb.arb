@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Slå opp",
   "searchWebButtonLabel": "Søk på nettet",
   "shareButtonLabel": "Del…",
-  "clearButtonLabel": "Slett"
+  "clearButtonLabel": "Slett",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

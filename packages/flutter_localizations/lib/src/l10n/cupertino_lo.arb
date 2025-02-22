@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "ຊອກຫາຂໍ້ມູນ",
   "searchWebButtonLabel": "ຊອກຫາຢູ່ອິນເຕີເນັດ",
   "shareButtonLabel": "ແບ່ງປັນ...",
-  "clearButtonLabel": "ລຶບລ້າງ"
+  "clearButtonLabel": "ລຶບລ້າງ",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

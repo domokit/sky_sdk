@@ -17,6 +17,7 @@ import 'button.dart';
 import 'colors.dart';
 import 'constants.dart';
 import 'icons.dart';
+import 'localizations.dart';
 import 'page_scaffold.dart';
 import 'route.dart';
 import 'search_field.dart';
@@ -241,7 +242,7 @@ bool _isTransitionable(BuildContext context) {
 /// toolbar, typically for actions and navigation.
 ///
 /// The [leading] widget will automatically be a back chevron icon button (or a
-/// close button in case of a fullscreen dialog) to pop the current route if none
+/// cancel button in case of a fullscreen dialog) to pop the current route if none
 /// is provided and [automaticallyImplyLeading] is true (true by default).
 ///
 /// This toolbar should be placed at top of the screen where it will
@@ -412,7 +413,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   ///
   /// Specifically this navigation bar will:
   ///
-  /// 1. Show a 'Close' button if the current route is a `fullscreenDialog`.
+  /// 1. Show a 'Cancel' button if the current route is a `fullscreenDialog`.
   /// 2. Show a back chevron with [previousPageTitle] if [previousPageTitle] is
   ///    not null.
   /// 3. Show a back chevron with the previous route's `title` if the current
@@ -729,6 +730,7 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
       userLargeTitle: widget.largeTitle,
       large: widget.largeTitle != null,
       staticBar: true, // This one does not scroll
+      context: context,
     );
 
     // Standard persistent components
@@ -840,7 +842,7 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 /// widget on the static section on top that remains while scrolling.
 ///
 /// The [leading] widget will automatically be a back chevron icon button (or a
-/// close button in case of a fullscreen dialog) to pop the current route if none
+/// cancel button in case of a fullscreen dialog) to pop the current route if none
 /// is provided and [automaticallyImplyLeading] is true (true by default).
 ///
 /// The [largeTitle] widget will automatically be a title text from the current
@@ -1266,6 +1268,7 @@ class _CupertinoSliverNavigationBarState extends State<CupertinoSliverNavigation
       padding: widget.padding,
       large: true,
       staticBar: false, // This one scrolls.
+      context: context,
     );
 
     return MediaQuery.withNoTextScaling(
@@ -1802,12 +1805,14 @@ class _NavigationBarStaticComponents {
     required EdgeInsetsDirectional? padding,
     required bool large,
     required bool staticBar,
+    required BuildContext context,
   }) : leading = createLeading(
          leadingKey: keys.leadingKey,
          userLeading: userLeading,
          route: route,
          automaticallyImplyLeading: automaticallyImplyLeading,
          padding: padding,
+         context: context,
        ),
        backChevron = createBackChevron(
          backChevronKey: keys.backChevronKey,
@@ -1865,6 +1870,7 @@ class _NavigationBarStaticComponents {
     required ModalRoute<dynamic>? route,
     required bool automaticallyImplyLeading,
     required EdgeInsetsDirectional? padding,
+    required BuildContext context,
   }) {
     Widget? leadingContent;
 
@@ -1879,7 +1885,7 @@ class _NavigationBarStaticComponents {
         onPressed: () {
           route.navigator!.maybePop();
         },
-        child: const Text('Close'),
+        child: Text(CupertinoLocalizations.of(context).cancelButtonLabel),
       );
     }
 
@@ -2094,12 +2100,13 @@ class CupertinoNavigationBarBackButton extends StatelessWidget {
       );
     }
 
+    final CupertinoLocalizations localizations = CupertinoLocalizations.of(context);
     return CupertinoButton(
       padding: EdgeInsets.zero,
       child: Semantics(
         container: true,
         excludeSemantics: true,
-        label: 'Back',
+        label: localizations.backButtonLabel,
         button: true,
         child: DefaultTextStyle(
           style: actionTextStyle,
@@ -2191,7 +2198,7 @@ class _BackLabel extends StatelessWidget {
     Text textWidget = Text(previousTitle, maxLines: 1, overflow: TextOverflow.ellipsis);
 
     if (previousTitle.length > 12) {
-      textWidget = const Text('Back');
+      textWidget = Text(CupertinoLocalizations.of(context).backButtonLabel);
     }
 
     return Align(alignment: AlignmentDirectional.centerStart, widthFactor: 1.0, child: textWidget);
@@ -2227,6 +2234,7 @@ class _CancelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final CupertinoLocalizations localizations = CupertinoLocalizations.of(context);
     return Align(
       alignment: Alignment.centerLeft,
       child: Opacity(
@@ -2234,9 +2242,7 @@ class _CancelButton extends StatelessWidget {
         child: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: onPressed,
-          // TODO(victorsanni): Localize this string.
-          // See https://github.com/flutter/flutter/issues/48616.
-          child: const Text('Cancel', maxLines: 1, overflow: TextOverflow.clip),
+          child: Text(localizations.cancelButtonLabel, maxLines: 1, overflow: TextOverflow.clip),
         ),
       ),
     );

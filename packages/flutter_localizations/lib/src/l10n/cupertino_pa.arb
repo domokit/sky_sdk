@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "ਖੋਜੋ",
   "searchWebButtonLabel": "ਵੈੱਬ 'ਤੇ ਖੋਜੋ",
   "shareButtonLabel": "ਸਾਂਝਾ ਕਰੋ...",
-  "clearButtonLabel": "ਕਲੀਅਰ ਕਰੋ"
+  "clearButtonLabel": "ਕਲੀਅਰ ਕਰੋ",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

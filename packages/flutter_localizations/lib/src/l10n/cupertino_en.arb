@@ -203,5 +203,15 @@
   "menuDismissLabel": "Dismiss menu",
   "@menuDismissLabel": {
     "description": "Label read out by accessibility tools (TalkBack or VoiceOver) for the area around a menu to indicate that a tap dismisses the menu."
+  },
+
+  "cancelButtonLabel": "Cancel",
+  "@cancelButtonLabel": {
+    "description": "Label for the cancel button in modal views."
+  },
+
+  "backButtonLabel": "Back",
+  "@backButtonLabel": {
+    "description": "Label for the back button. Used as the semantic label for the back button in CupertinoNavigationBar and CupertinoSliverNavigationBar and as a fallback display when the previous page title is truncated."
   }
 }

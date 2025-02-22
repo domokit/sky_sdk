@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "調べる",
   "searchWebButtonLabel": "ウェブを検索",
   "shareButtonLabel": "共有...",
-  "clearButtonLabel": "消去"
+  "clearButtonLabel": "消去",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

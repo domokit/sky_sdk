@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Bheka Phezulu",
   "searchWebButtonLabel": "Sesha Iwebhu",
   "shareButtonLabel": "Yabelana...",
-  "clearButtonLabel": "Sula"
+  "clearButtonLabel": "Sula",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

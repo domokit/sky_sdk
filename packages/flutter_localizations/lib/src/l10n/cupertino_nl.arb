@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Opzoeken",
   "searchWebButtonLabel": "Op internet zoeken",
   "shareButtonLabel": "Delen...",
-  "clearButtonLabel": "Wissen"
+  "clearButtonLabel": "Wissen",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Hae",
   "searchWebButtonLabel": "Hae verkosta",
   "shareButtonLabel": "Jaa…",
-  "clearButtonLabel": "Tyhjennä"
+  "clearButtonLabel": "Tyhjennä",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

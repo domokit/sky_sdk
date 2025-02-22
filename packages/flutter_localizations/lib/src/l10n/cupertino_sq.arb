@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Kërko",
   "searchWebButtonLabel": "Kërko në ueb",
   "shareButtonLabel": "Ndaj...",
-  "clearButtonLabel": "Pastro"
+  "clearButtonLabel": "Pastro",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

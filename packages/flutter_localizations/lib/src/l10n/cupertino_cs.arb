@@ -37,5 +37,7 @@
   "menuDismissLabel": "Zavřít nabídku",
   "lookUpButtonLabel": "Vyhledat",
   "searchWebButtonLabel": "Vyhledávat na webu",
-  "shareButtonLabel": "Sdílet…"
+  "shareButtonLabel": "Sdílet…",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

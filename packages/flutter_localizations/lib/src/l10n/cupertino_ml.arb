@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "മുകളിലേക്ക് നോക്കുക",
   "searchWebButtonLabel": "വെബിൽ തിരയുക",
   "shareButtonLabel": "പങ്കിടുക...",
-  "clearButtonLabel": "മായ്ക്കുക"
+  "clearButtonLabel": "മായ്ക്കുക",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

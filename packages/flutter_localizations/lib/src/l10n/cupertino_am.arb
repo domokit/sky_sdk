@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "ይመልከቱ",
   "searchWebButtonLabel": "ድርን ፈልግ",
   "shareButtonLabel": "አጋራ...",
-  "clearButtonLabel": "አጽዳ"
+  "clearButtonLabel": "አጽዳ",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

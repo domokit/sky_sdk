@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "جستجو",
   "searchWebButtonLabel": "جستجو در وب",
   "shareButtonLabel": "هم‌رسانی…",
-  "clearButtonLabel": "پاک کردن"
+  "clearButtonLabel": "پاک کردن",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

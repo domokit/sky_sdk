@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Titta upp",
   "searchWebButtonLabel": "Sök på webben",
   "shareButtonLabel": "Dela …",
-  "clearButtonLabel": "Rensa"
+  "clearButtonLabel": "Rensa",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

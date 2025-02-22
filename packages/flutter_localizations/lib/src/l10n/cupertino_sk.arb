@@ -37,5 +37,7 @@
   "lookUpButtonLabel": "Pohľad nahor",
   "searchWebButtonLabel": "Hľadať na webe",
   "shareButtonLabel": "Zdieľať…",
-  "clearButtonLabel": "Vymazať"
+  "clearButtonLabel": "Vymazať",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

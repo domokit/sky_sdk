@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Cari",
   "searchWebButtonLabel": "Telusuri di Web",
   "shareButtonLabel": "Bagikan...",
-  "clearButtonLabel": "Hapus"
+  "clearButtonLabel": "Hapus",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

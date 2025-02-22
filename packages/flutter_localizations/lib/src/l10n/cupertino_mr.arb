@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "शोध घ्या",
   "searchWebButtonLabel": "वेबवर शोधा",
   "shareButtonLabel": "शेअर करा...",
-  "clearButtonLabel": "साफ करा"
+  "clearButtonLabel": "साफ करा",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

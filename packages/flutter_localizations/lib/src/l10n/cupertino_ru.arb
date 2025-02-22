@@ -37,5 +37,7 @@
   "lookUpButtonLabel": "Найти",
   "searchWebButtonLabel": "Искать в интернете",
   "shareButtonLabel": "Поделиться",
-  "clearButtonLabel": "Очистить"
+  "clearButtonLabel": "Очистить",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

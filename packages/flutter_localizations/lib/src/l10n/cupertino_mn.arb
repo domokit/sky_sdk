@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Дээшээ харах",
   "searchWebButtonLabel": "Вебээс хайх",
   "shareButtonLabel": "Хуваалцах...",
-  "clearButtonLabel": "Арилгах"
+  "clearButtonLabel": "Арилгах",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }
