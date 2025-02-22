@@ -156,6 +156,7 @@ export 'engine/semantics/incrementable.dart';
 export 'engine/semantics/label_and_value.dart';
 export 'engine/semantics/link.dart';
 export 'engine/semantics/live_region.dart';
+export 'engine/semantics/menu.dart';
 export 'engine/semantics/platform_view.dart';
 export 'engine/semantics/route.dart';
 export 'engine/semantics/scrollable.dart';

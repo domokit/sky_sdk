@@ -28,6 +28,7 @@ import 'incrementable.dart';
 import 'label_and_value.dart';
 import 'link.dart';
 import 'live_region.dart';
+import 'menu.dart';
 import 'platform_view.dart';
 import 'route.dart';
 import 'scrollable.dart';
@@ -440,6 +441,9 @@ enum EngineSemanticsRole {
   ///
   /// Provides a label or a value.
   generic,
+
+  /// A input field with a dropdown list box attached.
+  comboBox,
 }
 
 /// Responsible for setting the `role` ARIA attribute, for attaching
@@ -1228,6 +1232,9 @@ class SemanticsObject {
   ///  * [isHeading], which determines whether this node represents a heading.
   bool get isHeader => hasFlag(ui.SemanticsFlag.isHeader);
 
+  /// Whether the menu is expanded.
+  bool get isExpanded => hasFlag(ui.SemanticsFlag.isExpanded);
+
   /// See [ui.SemanticsUpdateBuilder.updateNode].
   String? get identifier => _identifier;
   String? _identifier;
@@ -1776,12 +1783,13 @@ class SemanticsObject {
         return EngineSemanticsRole.row;
       case ui.SemanticsRole.columnHeader:
         return EngineSemanticsRole.columnHeader;
+      case ui.SemanticsRole.comboBox:
+        return EngineSemanticsRole.comboBox;
       // TODO(chunhtai): implement these roles.
       // https://github.com/flutter/flutter/issues/159741.
       case ui.SemanticsRole.searchBox:
       case ui.SemanticsRole.dragHandle:
       case ui.SemanticsRole.spinButton:
-      case ui.SemanticsRole.comboBox:
       case ui.SemanticsRole.menuBar:
       case ui.SemanticsRole.menu:
       case ui.SemanticsRole.menuItem:
@@ -1847,6 +1855,7 @@ class SemanticsObject {
       EngineSemanticsRole.cell => SemanticCell(this),
       EngineSemanticsRole.row => SemanticRow(this),
       EngineSemanticsRole.columnHeader => SemanticColumnHeader(this),
+      EngineSemanticsRole.comboBox => SemanticComboBox(this),
       EngineSemanticsRole.generic => GenericRole(this),
     };
   }

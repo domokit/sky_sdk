@@ -126,6 +126,9 @@ void runSemanticsTests() {
   group('table', () {
     _testTables();
   });
+  group('menu', () {
+    _testMenus();
+  });
 }
 
 void _testSemanticRole() {
@@ -3883,6 +3886,31 @@ void _testTables() {
     final SemanticsObject object = pumpSemantics();
     expect(object.semanticRole?.kind, EngineSemanticsRole.columnHeader);
     expect(object.element.getAttribute('role'), 'columnheader');
+  });
+
+  semantics().semanticsEnabled = false;
+}
+
+void _testMenus() {
+  test('nodes with combo box role', () {
+    semantics()
+      ..debugOverrideTimestampFunction(() => _testTime)
+      ..semanticsEnabled = true;
+
+    SemanticsObject pumpSemantics() {
+      final SemanticsTester tester = SemanticsTester(owner());
+      tester.updateNode(
+        id: 0,
+        role: ui.SemanticsRole.comboBox,
+        rect: const ui.Rect.fromLTRB(0, 0, 100, 50),
+      );
+      tester.apply();
+      return tester.getSemanticsObject(0);
+    }
+
+    final SemanticsObject object = pumpSemantics();
+    expect(object.semanticRole?.kind, EngineSemanticsRole.comboBox);
+    expect(object.element.getAttribute('role'), 'combobox');
   });
 
   semantics().semanticsEnabled = false;
