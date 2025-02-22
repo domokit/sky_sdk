@@ -2793,6 +2793,75 @@ void main() {
       );
     });
   });
+
+  testWidgets(
+    'overlay child can compute the paint transform of the regular child relative to the Overlay',
+    (WidgetTester tester) async {
+      late StateSetter setState;
+      EdgeInsets padding = const EdgeInsets.only(left: 10.0);
+      late Matrix4 computedPaintTransform;
+      double zOffset = 123.0;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Overlay(
+            initialEntries: <OverlayEntry>[
+              OverlayEntry(
+                builder: (BuildContext context) {
+                  return StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setter) {
+                      setState = setter;
+                      return Transform(
+                        transform: Matrix4.translationValues(0.0, 0.0, zOffset),
+                        child: Padding(
+                          padding: padding,
+                          child: OverlayPortal(
+                            controller: controller1,
+                            overlayChildBuilder: (BuildContext context) {
+                              return LayoutBuilder(
+                                builder: (BuildContext context, BoxConstraints constraints) {
+                                  final RenderBox placeholderRenderBox = tester.renderObject(
+                                    find.byType(Placeholder),
+                                  );
+                                  final RenderBox overlayRenderBox = tester.renderObject(
+                                    find.byType(Overlay),
+                                  );
+                                  computedPaintTransform = placeholderRenderBox.getTransformTo(
+                                    overlayRenderBox,
+                                  );
+                                  assert(placeholderRenderBox.hasSize);
+                                  return const SizedBox();
+                                },
+                              );
+                            },
+                            child: const Placeholder(),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // During the initial layout, the Padding wouldn't have computed its
+      // child's offset if the overlay child was laid out via treewalk, since
+      // RenderPadding.performLayout calls child.layout before computing the
+      // child offset.
+      expect(computedPaintTransform, Matrix4.translationValues(10.0, 0.0, 123.0));
+
+      setState(() {
+        padding = const EdgeInsets.only(top: 20.0);
+        zOffset = 321.0;
+      });
+      await tester.pump();
+      expect(computedPaintTransform, Matrix4.translationValues(0.0, 20.0, 321.0));
+    },
+  );
 }
 
 class OverlayStatefulEntry extends OverlayEntry {

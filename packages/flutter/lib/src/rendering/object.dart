@@ -2574,7 +2574,7 @@ abstract class RenderObject with DiagnosticableTreeMixin implements HitTestTarge
   void scheduleInitialLayout() {
     assert(!_debugDisposed);
     assert(attached);
-    assert(parent is! RenderObject);
+    assert(parent == null);
     assert(!owner!._debugDoingLayout);
     assert(_relayoutBoundary == null);
     _relayoutBoundary = this;
@@ -2857,6 +2857,11 @@ abstract class RenderObject with DiagnosticableTreeMixin implements HitTestTarge
   /// parentUsesSize ensures that this render object will undergo layout if the
   /// child undergoes layout. Otherwise, the child can change its layout
   /// information without informing this render object.
+  ///
+  /// It is recommended to establish / update the paint transform of this render
+  /// object in this method instead of [paint], such that certain render object
+  /// subclasses can change its layout based on the paint transform of an already
+  /// laid out subtree.
   @protected
   void performLayout();
 
@@ -3476,8 +3481,9 @@ abstract class RenderObject with DiagnosticableTreeMixin implements HitTestTarge
   /// Applies the transform that would be applied when painting the given child
   /// to the given matrix.
   ///
-  /// Used by coordinate conversion functions to translate coordinates local to
-  /// one render object into coordinates local to another render object.
+  /// Used by coordinate conversion functions ([getTransformTo], for example) to
+  /// translate coordinates local to one render object into coordinates local to
+  /// another render object.
   ///
   /// Some RenderObjects will provide a zeroed out matrix in this method,
   /// indicating that the child should not paint anything or respond to hit
