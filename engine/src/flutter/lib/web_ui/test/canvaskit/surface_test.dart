@@ -12,6 +12,10 @@ import 'package:ui/ui.dart' as ui;
 
 import 'common.dart';
 
+/// Remove this and unskip the test it is blocking once
+/// https://github.com/flutter/flutter/issues/163775 is resolved.
+const bool isIssue163775Resolved = false;
+
 void main() {
   internalBootstrapBrowserTest(() => testMain);
 }
@@ -320,7 +324,8 @@ void testMain() {
       final CkPicture picture = recorder.endRecording();
       await surface.rasterizeToCanvas(const BitmapSize(10, 10), renderCanvas, <CkPicture>[picture]);
       expect(transferToImageBitmapCalls, 1);
-    }, skip: !Surface.offscreenCanvasSupported);
+      // Skip this until the issues with `transferToImageBitmap` are resolved
+    }, skip: !isIssue163775Resolved);
 
     test('throws error if CanvasKit.MakeGrContext returns null', () async {
       final Object originalMakeGrContext = js_util.getProperty(canvasKit, 'MakeGrContext');

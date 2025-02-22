@@ -149,18 +149,19 @@ class Surface extends DisplayCanvas {
 
     if (browserSupportsCreateImageBitmap) {
       JSObject bitmapSource;
-      DomImageBitmap bitmap;
       if (useOffscreenCanvas) {
-        bitmap = _offscreenCanvas!.transferToImageBitmap();
+        bitmapSource = _offscreenCanvas! as JSObject;
       } else {
         bitmapSource = _canvasElement! as JSObject;
-        bitmap = await createImageBitmap(bitmapSource, (
-          x: 0,
-          y: _pixelHeight - bitmapSize.height,
-          width: bitmapSize.width,
-          height: bitmapSize.height,
-        ));
       }
+      // TODO(harryterkelsen): Switch to using `transferToImageBitmap` once
+      // Chrome issues with it have been resolved, https://github.com/flutter/flutter/issues/163775.
+      final DomImageBitmap bitmap = await createImageBitmap(bitmapSource, (
+        x: 0,
+        y: _pixelHeight - bitmapSize.height,
+        width: bitmapSize.width,
+        height: bitmapSize.height,
+      ));
       canvas.render(bitmap);
     } else {
       // If the browser doesn't support `createImageBitmap` (e.g. Safari 14)
