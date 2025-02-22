@@ -3764,6 +3764,7 @@ targets:
         ["framework", "hostonly", "shard", "mac"]
 
   - name: Mac_benchmark complex_layout_macos__start_up
+    bringup: true # Flaky https://github.com/flutter/flutter/issues/163599
     presubmit: false
     recipe: devicelab/devicelab_drone
     timeout: 60
