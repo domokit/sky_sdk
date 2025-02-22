@@ -820,6 +820,7 @@ void main() {
               isEnabled: true,
               isFocusable: true,
               hasEnabledState: true,
+              hasSelectedState: true,
               label: 'Switch tile',
               hasTapAction: true,
               hasFocusAction: true,
