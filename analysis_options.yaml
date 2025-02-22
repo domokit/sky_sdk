@@ -92,7 +92,7 @@ linter:
     # - close_sinks # not reliable enough
     - collection_methods_unrelated_type
     - combinators_ordering
-    # - comment_references # blocked on https://github.com/dart-lang/linter/issues/1142
+    # - comment_references # enabled for packages that we publish docs for (see packages/analysis_options.yaml)
     - conditional_uri_does_not_exist
     # - constant_identifier_names # needs an opt-out https://github.com/dart-lang/linter/issues/204
     - control_flow_in_finally

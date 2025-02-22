@@ -5,5 +5,6 @@ include: ../analysis_options.yaml
 
 linter:
   rules:
+    - comment_references # Packages with published docs must have working comment references.
     - public_member_api_docs # see https://github.com/flutter/flutter/blob/main/docs/contributing/Style-guide-for-Flutter-repo.md#documentation-dartdocs-javadocs-etc
     - no_runtimeType_toString # use objectRuntimeType from package:foundation
