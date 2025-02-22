@@ -20,6 +20,17 @@ enum class GpuPreference {
   LowPowerPreference,
 };
 
+// Configures the thread policy for running the UI isolate.
+enum class UIThreadPolicy {
+  // Default value. Currently will run the UI isolate on separate thread,
+  // later will be changed to running the UI isolate on platform thread.
+  Default,
+  // Run the UI isolate on platform thread.
+  RunOnPlatformThread,
+  // Run the UI isolate on a separate thread.
+  RunOnSeparateThread,
+};
+
 // A set of Flutter and Dart assets used to initialize a Flutter engine.
 class DartProject {
  public:
@@ -90,17 +101,14 @@ class DartProject {
   // Defaults to NoPreference.
   GpuPreference gpu_preference() const { return gpu_preference_; }
 
-  // Sets whether the UI isolate should run on the platform thread.
-  // In a future release, this setting will become a no-op when
-  // Flutter Windows requires merged platform and UI threads.
-  void set_merged_platform_ui_thread(bool merged_platform_ui_thread) {
-    merged_platform_ui_thread_ = merged_platform_ui_thread;
+  // Sets the thread policy for UI isolate.
+  void set_ui_thread_policy(UIThreadPolicy policy) {
+    ui_thread_policy_ = policy;
   }
 
-  // Returns whether the UI isolate should run on the platform thread.
-  // Defaults to false. In a future release, this setting will default
-  // to true.
-  bool merged_platform_ui_thread() const { return merged_platform_ui_thread_; }
+  // REturns the policy for UI isolate.
+  // Defaults to UIThreadPolicy::Default.
+  UIThreadPolicy ui_thread_policy() const { return ui_thread_policy_; }
 
  private:
   // Accessors for internals are private, so that they can be changed if more
@@ -128,8 +136,8 @@ class DartProject {
   std::vector<std::string> dart_entrypoint_arguments_;
   // The preference for GPU to be used by flutter engine.
   GpuPreference gpu_preference_ = GpuPreference::NoPreference;
-  // Whether the UI isolate should run on the platform thread.
-  bool merged_platform_ui_thread_ = false;
+  // Thread policy for UI isolate.
+  UIThreadPolicy ui_thread_policy_ = UIThreadPolicy::Default;
 };
 
 }  // namespace flutter

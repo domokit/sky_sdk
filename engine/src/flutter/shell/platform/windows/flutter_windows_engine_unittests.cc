@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <thread>
 #include "flutter/shell/platform/windows/flutter_windows_engine.h"
 
 #include "flutter/fml/logging.h"
@@ -26,6 +27,18 @@
 
 // winbase.h defines GetCurrentTime as a macro.
 #undef GetCurrentTime
+
+namespace {
+// Process the next win32 message if there is one. This can be used to
+// pump the Windows platform thread task runner.
+void PumpMessage() {
+  ::MSG msg;
+  if (::GetMessage(&msg, nullptr, 0, 0)) {
+    ::TranslateMessage(&msg);
+    ::DispatchMessage(&msg);
+  }
+}
+}  // namespace
 
 namespace flutter {
 namespace testing {
@@ -1311,6 +1324,26 @@ TEST_F(FlutterWindowsEngineTest, RemoveViewFailureDoesNotHang) {
   ASSERT_TRUE(engine->Run());
   EXPECT_DEBUG_DEATH(engine->RemoveView(123),
                      "FlutterEngineRemoveView returned an unexpected result");
+}
+
+TEST_F(FlutterWindowsEngineTest, MergedUIThread) {
+  auto& context = GetContext();
+  WindowsConfigBuilder builder{context};
+  builder.SetDartEntrypoint("mergedUIThread");
+  builder.SetUIThreadPolicy(FlutterDesktopUIThreadPolicy::RunOnPlatformThread);
+
+  std::optional<std::thread::id> ui_thread_id;
+
+  auto native_entry = CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
+    ui_thread_id = std::this_thread::get_id();
+  });
+  context.AddNativeFunction("Signal", native_entry);
+
+  EnginePtr engine{builder.RunHeadless()};
+  while (!ui_thread_id) {
+    PumpMessage();
+  }
+  ASSERT_EQ(*ui_thread_id, std::this_thread::get_id());
 }
 
 }  // namespace testing

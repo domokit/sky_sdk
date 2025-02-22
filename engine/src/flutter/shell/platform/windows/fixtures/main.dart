@@ -391,3 +391,8 @@ void onMetricsChangedSignalViewIds() {
 
   signal();
 }
+
+@pragma('vm:entry-point')
+void mergedUIThread() {
+  signal();
+}
