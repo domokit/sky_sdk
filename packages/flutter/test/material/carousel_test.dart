@@ -26,8 +26,10 @@ void main() {
       ),
     );
 
-    final Finder carouselViewMaterial =
-        find.descendant(of: find.byType(CarouselView), matching: find.byType(Material)).first;
+    final Finder carouselViewMaterial = find
+        .descendant(
+            of: find.byType(CarouselView), matching: find.byType(Material))
+        .first;
 
     final Material material = tester.widget<Material>(carouselViewMaterial);
     expect(material.clipBehavior, Clip.antiAlias);
@@ -35,7 +37,8 @@ void main() {
     expect(material.elevation, 0.0);
     expect(
       material.shape,
-      const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0))),
+      const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(28.0))),
     );
   });
 
@@ -52,7 +55,8 @@ void main() {
             backgroundColor: Colors.amber,
             elevation: 10.0,
             shape: const StadiumBorder(),
-            overlayColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+            overlayColor:
+                WidgetStateProperty.resolveWith((Set<WidgetState> states) {
               if (states.contains(WidgetState.pressed)) {
                 return Colors.yellow;
               }
@@ -67,7 +71,8 @@ void main() {
             itemExtent: 200,
             children: List<Widget>.generate(10, (int index) {
               if (index == 0) {
-                return Center(key: key, child: Center(child: Text('Item $index')));
+                return Center(
+                    key: key, child: Center(child: Text('Item $index')));
               }
               return Center(child: Text('Item $index'));
             }),
@@ -76,8 +81,10 @@ void main() {
       ),
     );
 
-    final Finder carouselViewMaterial =
-        find.descendant(of: find.byType(CarouselView), matching: find.byType(Material)).first;
+    final Finder carouselViewMaterial = find
+        .descendant(
+            of: find.byType(CarouselView), matching: find.byType(Material))
+        .first;
 
     expect(
       tester.getSize(carouselViewMaterial).width,
@@ -89,7 +96,8 @@ void main() {
     expect(material.shape, const StadiumBorder());
 
     RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
+      (RenderObject object) =>
+          object.runtimeType.toString() == '_RenderInkFeatures',
     );
 
     // On hovered.
@@ -102,7 +110,8 @@ void main() {
     await gesture.down(tester.getCenter(find.byKey(key)));
     await tester.pumpAndSettle();
     inkFeatures = tester.allRenderObjects.firstWhere(
-      (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
+      (RenderObject object) =>
+          object.runtimeType.toString() == '_RenderInkFeatures',
     );
     expect(
       inkFeatures,
@@ -161,7 +170,8 @@ void main() {
     expect(tapIndex, 2);
   });
 
-  testWidgets('CarouselView layout (Uncontained layout)', (WidgetTester tester) async {
+  testWidgets('CarouselView layout (Uncontained layout)',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -175,7 +185,8 @@ void main() {
       ),
     );
 
-    final Size viewportSize = MediaQuery.sizeOf(tester.element(find.byType(CarouselView)));
+    final Size viewportSize =
+        MediaQuery.sizeOf(tester.element(find.byType(CarouselView)));
     expect(viewportSize, const Size(800, 600));
 
     expect(find.text('Item 0'), findsOneWidget);
@@ -213,7 +224,8 @@ void main() {
 
     await tester.pumpWidget(buildCarouselView(weights: <int>[4, 3, 2, 1]));
 
-    final Size viewportSize = MediaQuery.of(tester.element(find.byType(CarouselView))).size;
+    final Size viewportSize =
+        MediaQuery.of(tester.element(find.byType(CarouselView))).size;
     expect(viewportSize, const Size(800, 600));
 
     expect(find.text('Item 0'), findsOneWidget);
@@ -274,7 +286,8 @@ void main() {
       ),
     );
 
-    final Size viewportSize = MediaQuery.sizeOf(tester.element(find.byType(CarouselView)));
+    final Size viewportSize =
+        MediaQuery.sizeOf(tester.element(find.byType(CarouselView)));
     expect(viewportSize, const Size(800, 600));
 
     expect(find.text('Item 5'), findsOneWidget);
@@ -311,7 +324,8 @@ void main() {
       ),
     );
 
-    final Size viewportSize = MediaQuery.of(tester.element(find.byType(CarouselView))).size;
+    final Size viewportSize =
+        MediaQuery.of(tester.element(find.byType(CarouselView))).size;
     expect(viewportSize, const Size(800, 600));
 
     expect(find.text('Item 5'), findsOneWidget);
@@ -328,7 +342,9 @@ void main() {
     expect(find.text('Item 7'), findsNothing);
   });
 
-  testWidgets('The initialItem should be the first item with expanded size(max extent)', (
+  testWidgets(
+      'The initialItem should be the first item with expanded size(max extent)',
+      (
     WidgetTester tester,
   ) async {
     final CarouselController controller = CarouselController(initialItem: 5);
@@ -348,7 +364,8 @@ void main() {
       ),
     );
 
-    final Size viewportSize = MediaQuery.of(tester.element(find.byType(CarouselView))).size;
+    final Size viewportSize =
+        MediaQuery.of(tester.element(find.byType(CarouselView))).size;
     expect(viewportSize, const Size(800, 600));
 
     // Item 5 should have be the expanded item.
@@ -370,7 +387,8 @@ void main() {
     expect(find.text('Item 7'), findsNothing);
   });
 
-  testWidgets('CarouselView respects itemSnapping', (WidgetTester tester) async {
+  testWidgets('CarouselView respects itemSnapping',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -416,7 +434,8 @@ void main() {
     expect(getItem(3), findsOneWidget);
   });
 
-  testWidgets('CarouselView.weighted respects itemSnapping', (WidgetTester tester) async {
+  testWidgets('CarouselView.weighted respects itemSnapping',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -462,7 +481,8 @@ void main() {
     expect(getItem(3), findsNothing);
   });
 
-  testWidgets('CarouselView respect itemSnapping when fling', (WidgetTester tester) async {
+  testWidgets('CarouselView respect itemSnapping when fling',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -514,7 +534,8 @@ void main() {
     expect(getItem(4), findsNothing);
   });
 
-  testWidgets('CarouselView.weighted respect itemSnapping when fling', (WidgetTester tester) async {
+  testWidgets('CarouselView.weighted respect itemSnapping when fling',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -532,9 +553,10 @@ void main() {
     await tester.pumpAndSettle();
 
     Finder getItem(int index) => find.descendant(
-      of: find.byType(CarouselView),
-      matching: find.ancestor(of: find.text('$index'), matching: find.byType(Padding)),
-    );
+          of: find.byType(CarouselView),
+          matching: find.ancestor(
+              of: find.text('$index'), matching: find.byType(Padding)),
+        );
 
     // Show item 0, 1, and 2.
     expect(getItem(0), findsOneWidget);
@@ -609,7 +631,8 @@ void main() {
     expect(getItem(3), findsOneWidget);
   });
 
-  testWidgets('CarouselView.weighted respects scrollingDirection: Axis.vertical', (
+  testWidgets(
+      'CarouselView.weighted respects scrollingDirection: Axis.vertical', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -739,7 +762,8 @@ void main() {
     expect(rect3, const Rect.fromLTRB(0.0, 0.0, 200.0, 600.0));
   });
 
-  testWidgets('CarouselView.weighted respects reverse', (WidgetTester tester) async {
+  testWidgets('CarouselView.weighted respects reverse',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -767,7 +791,8 @@ void main() {
     const int item1Width = 80 * 3;
     expect(
       rect1,
-      const Rect.fromLTRB(800.0 - item0Width - item1Width, 0.0, 800.0 - item0Width, 600.0),
+      const Rect.fromLTRB(
+          800.0 - item0Width - item1Width, 0.0, 800.0 - item0Width, 600.0),
     );
 
     expect(getItem(2), findsOneWidget);
@@ -789,11 +814,13 @@ void main() {
     // Item 3 should be placed before item 2.
     expect(
       rect3,
-      const Rect.fromLTRB(0.0, 0.0, 800.0 - item0Width - item1Width - item2Width, 600.0),
+      const Rect.fromLTRB(
+          0.0, 0.0, 800.0 - item0Width - item1Width - item2Width, 600.0),
     );
   });
 
-  testWidgets('CarouselView.weighted respects reverse + vertical scroll direction', (
+  testWidgets(
+      'CarouselView.weighted respects reverse + vertical scroll direction', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -824,7 +851,8 @@ void main() {
     const int item1Height = 60 * 3;
     expect(
       rect1,
-      const Rect.fromLTRB(0.0, 600.0 - item0Height - item1Height, 800.0, 600.0 - item0Height),
+      const Rect.fromLTRB(
+          0.0, 600.0 - item0Height - item1Height, 800.0, 600.0 - item0Height),
     );
 
     expect(getItem(2), findsOneWidget);
@@ -846,11 +874,14 @@ void main() {
     // Item 3 should be placed before item 2.
     expect(
       rect3,
-      const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0 - item0Height - item1Height - item2Height),
+      const Rect.fromLTRB(
+          0.0, 0.0, 800.0, 600.0 - item0Height - item1Height - item2Height),
     );
   });
 
-  testWidgets('CarouselView.weighted respects reverse + vertical scroll direction + itemSnapping', (
+  testWidgets(
+      'CarouselView.weighted respects reverse + vertical scroll direction + itemSnapping',
+      (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -907,7 +938,8 @@ void main() {
     expect(getItem(4), findsOneWidget);
   });
 
-  testWidgets('CarouselView respects shrinkExtent', (WidgetTester tester) async {
+  testWidgets('CarouselView respects shrinkExtent',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -940,7 +972,8 @@ void main() {
     );
     await tester.pump();
     // The item 0 should be pinned and has a size change from 350 to 50.
-    expect(tester.getRect(getItem(0)), const Rect.fromLTRB(0.0, 0.0, 300.0, 600.0));
+    expect(tester.getRect(getItem(0)),
+        const Rect.fromLTRB(0.0, 0.0, 300.0, 600.0));
     // Keep dragging to left, extent of item 0 won't change (still 300) and part of item 0 will
     // be off screen.
     await tester.drag(
@@ -952,7 +985,8 @@ void main() {
     expect(tester.getRect(getItem(0)), const Rect.fromLTRB(-50, 0.0, 250, 600));
   });
 
-  testWidgets('CarouselView.weighted respects consumeMaxWeight', (WidgetTester tester) async {
+  testWidgets('CarouselView.weighted respects consumeMaxWeight',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -981,7 +1015,8 @@ void main() {
     // After scrolling the carousel 7 times, the last item(item 9) should be on
     // the end of the screen.
     expect(getItem(9), findsOneWidget);
-    expect(tester.getRect(getItem(9)), const Rect.fromLTRB(720.0, 0.0, 800.0, 600.0));
+    expect(tester.getRect(getItem(9)),
+        const Rect.fromLTRB(720.0, 0.0, 800.0, 600.0));
 
     // Keep snapping twice. Item 9 should be fully expanded to the max size.
     for (int i = 0; i < 2; i++) {
@@ -989,10 +1024,12 @@ void main() {
       await tester.pumpAndSettle();
     }
     expect(getItem(9), findsOneWidget);
-    expect(tester.getRect(getItem(9)), const Rect.fromLTRB(240.0, 0.0, 560.0, 600.0));
+    expect(tester.getRect(getItem(9)),
+        const Rect.fromLTRB(240.0, 0.0, 560.0, 600.0));
   });
 
-  testWidgets('The initialItem stays when the flexWeights is updated', (WidgetTester tester) async {
+  testWidgets('The initialItem stays when the flexWeights is updated',
+      (WidgetTester tester) async {
     final CarouselController controller = CarouselController(initialItem: 3);
     addTearDown(controller.dispose);
 
@@ -1038,7 +1075,9 @@ void main() {
     expect(rect4, const Rect.fromLTRB(700.0, 0.0, 800.0, 600.0));
   });
 
-  testWidgets('The item that currently occupies max weight stays when the flexWeights is updated', (
+  testWidgets(
+      'The item that currently occupies max weight stays when the flexWeights is updated',
+      (
     WidgetTester tester,
   ) async {
     final CarouselController controller = CarouselController(initialItem: 3);
@@ -1087,7 +1126,8 @@ void main() {
     expect(rect5, const Rect.fromLTRB(700.0, 0.0, 800.0, 600.0));
   });
 
-  testWidgets('The initialItem stays when the itemExtent is updated', (WidgetTester tester) async {
+  testWidgets('The initialItem stays when the itemExtent is updated',
+      (WidgetTester tester) async {
     final CarouselController controller = CarouselController(initialItem: 3);
     addTearDown(controller.dispose);
 
@@ -1128,6 +1168,22 @@ void main() {
     expect(rect3BottomRight.dy, 600.0);
   });
 
+  test('animateToItem animates to the correct item offset', () async {
+    when(mockCarouselViewState._itemExtent).thenReturn(100.0);
+
+    carouselController._attach(mockCarouselViewState);
+
+    await carouselController.animateToItem(1);
+
+    verify(carouselController.animateTo(
+      100.0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    )).called(1);
+
+    carouselController._detach(mockCarouselViewState);
+  });
+
   testWidgets(
     'While scrolling, one extra item will show at the end of the screen during items transition',
     (WidgetTester tester) async {
@@ -1152,7 +1208,8 @@ void main() {
 
       // Drag the first item to the middle. So the progress for the first item size change
       // is 50%, original width is 80.
-      await tester.drag(getItem(0), const Offset(-40.0, 0.0), kind: PointerDeviceKind.trackpad);
+      await tester.drag(getItem(0), const Offset(-40.0, 0.0),
+          kind: PointerDeviceKind.trackpad);
       await tester.pump();
       expect(tester.getRect(getItem(0)).width, 40.0);
 
@@ -1178,9 +1235,14 @@ void main() {
       for (int i = 0; i < 5; i++) {
         sum += tester.getRect(getItem(i)).width;
       }
-      expect(sum, lessThan(MediaQuery.of(tester.element(find.byType(CarouselView))).size.width));
+      expect(
+          sum,
+          lessThan(MediaQuery.of(tester.element(find.byType(CarouselView)))
+              .size
+              .width));
       final double difference =
-          MediaQuery.of(tester.element(find.byType(CarouselView))).size.width - sum;
+          MediaQuery.of(tester.element(find.byType(CarouselView))).size.width -
+              sum;
 
       // One more item should show on screen to fill the rest of the viewport.
       expect(getItem(5), findsOneWidget);
@@ -1188,7 +1250,8 @@ void main() {
     },
   );
 
-  testWidgets('Updating CarouselView does not cause exception', (WidgetTester tester) async {
+  testWidgets('Updating CarouselView does not cause exception',
+      (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/152787
     bool isLight = true;
     await tester.pumpWidget(
@@ -1197,7 +1260,8 @@ void main() {
           return MaterialApp(
             theme: Theme.of(
               context,
-            ).copyWith(brightness: isLight ? Brightness.light : Brightness.dark),
+            ).copyWith(
+                brightness: isLight ? Brightness.light : Brightness.dark),
             home: Scaffold(
               appBar: AppBar(
                 actions: <Widget>[
@@ -1309,7 +1373,9 @@ void main() {
     expect(tappedIndex, 2);
   });
 
-  testWidgets('CarouselView with enableSplash true - children are not directly interactive', (
+  testWidgets(
+      'CarouselView with enableSplash true - children are not directly interactive',
+      (
     WidgetTester tester,
   ) async {
     bool buttonPressed = false;
@@ -1336,7 +1402,9 @@ void main() {
     expect(buttonPressed, isFalse);
   });
 
-  testWidgets('CarouselView with enableSplash false - children are directly interactive', (
+  testWidgets(
+      'CarouselView with enableSplash false - children are directly interactive',
+      (
     WidgetTester tester,
   ) async {
     bool buttonPressed = false;
@@ -1418,13 +1486,16 @@ void main() {
 Finder getItem(int index) {
   return find.descendant(
     of: find.byType(CarouselView),
-    matching: find.ancestor(of: find.text('Item $index'), matching: find.byType(Padding)),
+    matching: find.ancestor(
+        of: find.text('Item $index'), matching: find.byType(Padding)),
   );
 }
 
-Future<TestGesture> hoverPointerOverCarouselItem(WidgetTester tester, Key key) async {
+Future<TestGesture> hoverPointerOverCarouselItem(
+    WidgetTester tester, Key key) async {
   final Offset center = tester.getCenter(find.byKey(key));
-  final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+  final TestGesture gesture =
+      await tester.createGesture(kind: PointerDeviceKind.mouse);
 
   // On hovered.
   await gesture.addPointer();
