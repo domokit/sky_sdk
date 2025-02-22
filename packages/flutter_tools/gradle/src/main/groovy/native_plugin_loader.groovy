@@ -52,9 +52,6 @@ class NativePluginLoader {
         return nativePlugins
     }
 
-
-    private Map<String, Object> parsedFlutterPluginsDependencies
-
     /**
      * Parses <project-src>/.flutter-plugins-dependencies
      */
@@ -117,14 +114,10 @@ class NativePluginLoader {
         // `plugin-c` doesn't depend on anything.
         // `plugin-d` also doesn't depend on anything, but it is a dev
         // dependency to the Flutter project, so it is marked as such.
-        if (parsedFlutterPluginsDependencies) {
-            return parsedFlutterPluginsDependencies
-        }
         File pluginsDependencyFile = new File(flutterSourceDirectory, flutterPluginsDependenciesFile)
         if (pluginsDependencyFile.exists()) {
             def object = new JsonSlurper().parseText(pluginsDependencyFile.text)
             assert(object instanceof Map<String, Object>)
-            parsedFlutterPluginsDependencies = object
             return object
         }
         return null
