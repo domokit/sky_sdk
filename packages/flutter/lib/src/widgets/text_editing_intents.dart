@@ -116,6 +116,38 @@ class ExtendSelectionByCharacterIntent extends DirectionalCaretMovementIntent {
 }
 
 /// Extends, or moves the current selection from the current
+/// [TextSelection.extent] position to the left or the right character
+/// boundary.
+class HorizontalExtendSelectionByCharacterIntent extends ExtendSelectionByCharacterIntent {
+  /// Creates an [HorizontalExtendSelectionByCharacterIntent].
+  const HorizontalExtendSelectionByCharacterIntent({
+    required this.right,
+    required super.collapseSelection,
+    TextDirection textDirection = TextDirection.ltr,
+  }) : super(forward: textDirection == TextDirection.rtl ? !right : right);
+
+  /// Whether the input field, if applicable, should perform the text editing
+  /// operation from the current caret location towards the right direction.
+  ///
+  /// Unless otherwise specified by the recipient of this intent, this parameter
+  /// uses the visual order of characters on the screen to determine the
+  /// direction, and is not affected by the logical order of the text.
+  final bool right;
+
+  /// Creates a new instance of [HorizontalExtendSelectionByCharacterIntent] with the
+  /// specified [textDirection].
+  ///
+  /// The new instance retains the current values of [right] and [collapseSelection],
+  /// allowing dynamic adjustment of the intent based on the given text direction.
+  HorizontalExtendSelectionByCharacterIntent withTextDirection(TextDirection textDirection) =>
+      HorizontalExtendSelectionByCharacterIntent(
+        right: right,
+        textDirection: textDirection,
+        collapseSelection: collapseSelection,
+      );
+}
+
+/// Extends, or moves the current selection from the current
 /// [TextSelection.extent] position to the previous or the next word
 /// boundary.
 class ExtendSelectionToNextWordBoundaryIntent extends DirectionalCaretMovementIntent {

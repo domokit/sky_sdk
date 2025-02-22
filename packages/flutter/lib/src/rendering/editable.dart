@@ -164,7 +164,7 @@ class VerticalCaretMovementRun implements Iterator<TextPosition> {
     final List<ui.LineMetrics> newLineMetrics = _editable._textPainter.computeLineMetrics();
     // Use the implementation detail of the computeLineMetrics method to figure
     // out if the current text layout has been invalidated.
-    if (!identical(newLineMetrics, _lineMetrics)) {
+    if (!listEquals(newLineMetrics, _lineMetrics)) {
       _isValid = false;
     }
     return _isValid;
