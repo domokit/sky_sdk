@@ -7936,7 +7936,7 @@ class CupertinoLocalizationKo extends GlobalCupertinoLocalizations {
   String get datePickerDateOrderString => 'ymd';
 
   @override
-  String get datePickerDateTimeOrderString => 'date_time_dayPeriod';
+  String get datePickerDateTimeOrderString => 'date_dayPeriod_time';
 
   @override
   String? get datePickerHourSemanticsLabelFew => null;
