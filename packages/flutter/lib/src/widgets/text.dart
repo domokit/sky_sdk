@@ -512,6 +512,7 @@ class Text extends StatelessWidget {
     this.textScaler,
     this.maxLines,
     this.semanticsLabel,
+    this.semanticsIdentifier,
     this.textWidthBasis,
     this.textHeightBehavior,
     this.selectionColor,
@@ -548,6 +549,7 @@ class Text extends StatelessWidget {
     this.textScaler,
     this.maxLines,
     this.semanticsLabel,
+    this.semanticsIdentifier,
     this.textWidthBasis,
     this.textHeightBehavior,
     this.selectionColor,
@@ -665,6 +667,14 @@ class Text extends StatelessWidget {
   /// {@endtemplate}
   final String? semanticsLabel;
 
+  /// A unique identifier for the semantics node for this widget.
+  ///
+  /// This is useful for cases where the text widget needs to have a uniquely
+  /// identifiable ID that is recognized through the automation tools without
+  /// having a dependency on the actual content of the text that can possibly be
+  /// dynamic in nature.
+  final String? semanticsIdentifier;
+
   /// {@macro flutter.painting.textPainter.textWidthBasis}
   final TextWidthBasis? textWidthBasis;
 
@@ -756,11 +766,12 @@ class Text extends StatelessWidget {
         ),
       );
     }
-    if (semanticsLabel != null) {
+    if (semanticsLabel != null || semanticsIdentifier != null) {
       result = Semantics(
         textDirection: textDirection,
         label: semanticsLabel,
-        child: ExcludeSemantics(child: result),
+        identifier: semanticsIdentifier,
+        child: ExcludeSemantics(excluding: semanticsLabel != null, child: result),
       );
     }
     return result;
@@ -803,6 +814,9 @@ class Text extends StatelessWidget {
     );
     if (semanticsLabel != null) {
       properties.add(StringProperty('semanticsLabel', semanticsLabel));
+    }
+    if (semanticsIdentifier != null) {
+      properties.add(StringProperty('semanticsIdentifier', semanticsIdentifier));
     }
   }
 }
