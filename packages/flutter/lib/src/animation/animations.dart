@@ -379,9 +379,7 @@ class ReverseAnimation extends Animation<double>
 class CurvedAnimation extends Animation<double> with AnimationWithParentMixin<double> {
   /// Creates a curved animation.
   CurvedAnimation({required this.parent, required this.curve, this.reverseCurve}) {
-    assert(
-      debugMaybeDispatchObjectCreated('package:flutter/animation.dart', 'CurvedAnimation', this),
-    );
+    assert(debugMaybeDispatchCreated('animation', 'CurvedAnimation', this));
     _updateCurveDirection(parent.status);
     parent.addStatusListener(_updateCurveDirection);
   }
@@ -428,7 +426,7 @@ class CurvedAnimation extends Animation<double> with AnimationWithParentMixin<do
 
   /// Cleans up any listeners added by this CurvedAnimation.
   void dispose() {
-    assert(debugMaybeDispatchObjectDisposed(this));
+    assert(debugMaybeDispatchDisposed(this));
     isDisposed = true;
     parent.removeStatusListener(_updateCurveDirection);
   }
