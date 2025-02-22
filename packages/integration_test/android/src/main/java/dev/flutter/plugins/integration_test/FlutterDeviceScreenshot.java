@@ -58,9 +58,9 @@ class FlutterDeviceScreenshot {
   @VisibleForTesting
   public static FlutterView getFlutterView(@NonNull Activity activity) {
     if (activity instanceof FlutterActivity) {
-      return (FlutterView)activity.findViewById(FlutterActivity.FLUTTER_VIEW_ID);
+      return (FlutterView)activity.findViewById(((FlutterActivity) activity).flutterViewId);
     } else if (activity instanceof FlutterFragmentActivity) {
-      return (FlutterView)activity.findViewById(FlutterFragment.FLUTTER_VIEW_ID);
+      return (FlutterView)activity.findViewById(((FlutterFragmentActivity) activity).getFlutterFragmentViewId());
     } else {
       return null;
     }
