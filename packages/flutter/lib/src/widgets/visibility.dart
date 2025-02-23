@@ -12,6 +12,7 @@ library;
 import 'package:flutter/rendering.dart';
 
 import 'basic.dart';
+import 'focus_scope.dart';
 import 'framework.dart';
 import 'sliver.dart';
 import 'ticker_provider.dart';
@@ -245,7 +246,7 @@ class Visibility extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget result = child;
+    Widget result = ExcludeFocus(excluding: !visible && !maintainInteractivity, child: child);
     if (maintainSize) {
       result = _Visibility(
         visible: visible,

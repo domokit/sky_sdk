@@ -396,6 +396,123 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('Visibility with maintain* false excludes focus of child when not visible', (
+    WidgetTester tester,
+  ) async {
+    Future<void> pumpVisibility(bool visible) async {
+      await tester.pumpWidget(
+        Visibility(
+          visible: visible,
+          child: const Focus(child: Text('child', textDirection: TextDirection.ltr)),
+        ),
+      );
+    }
+
+    await pumpVisibility(true);
+
+    final Element child = tester.element(find.text('child', skipOffstage: false));
+    final FocusNode childFocusNode = Focus.of(child);
+
+    childFocusNode.requestFocus();
+    await tester.pump();
+
+    expect(childFocusNode.hasFocus, true);
+
+    await pumpVisibility(false);
+
+    expect(childFocusNode.hasFocus, false);
+  });
+
+  testWidgets(
+    'Visibility with maintainInteractivity true does not exclude focus of child when not visible',
+    (WidgetTester tester) async {
+      Future<void> pumpVisibility(bool visible) async {
+        await tester.pumpWidget(
+          Visibility(
+            visible: visible,
+            maintainInteractivity: true,
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            child: const Focus(child: Text('child', textDirection: TextDirection.ltr)),
+          ),
+        );
+      }
+
+      await pumpVisibility(true);
+
+      final Element child = tester.element(find.text('child', skipOffstage: false));
+      final FocusNode childFocusNode = Focus.of(child);
+
+      childFocusNode.requestFocus();
+      await tester.pump();
+
+      expect(childFocusNode.hasFocus, true);
+
+      await pumpVisibility(false);
+
+      expect(childFocusNode.hasFocus, true);
+    },
+  );
+
+  testWidgets('Visibility with maintainState true excludes focus of child when not visible', (
+    WidgetTester tester,
+  ) async {
+    Future<void> pumpVisibility(bool visible) async {
+      await tester.pumpWidget(
+        Visibility(
+          visible: visible,
+          maintainState: true,
+          child: const Focus(child: Text('child', textDirection: TextDirection.ltr)),
+        ),
+      );
+    }
+
+    await pumpVisibility(true);
+
+    final Element child = tester.element(find.text('child', skipOffstage: false));
+    final FocusNode childFocusNode = Focus.of(child);
+
+    childFocusNode.requestFocus();
+    await tester.pump();
+
+    expect(childFocusNode.hasFocus, true);
+
+    await pumpVisibility(false);
+
+    expect(childFocusNode.hasFocus, false);
+  });
+
+  testWidgets(
+    'Visibility with maintainState and maintainAnimation true excludes focus of child when not visible',
+    (WidgetTester tester) async {
+      Future<void> pumpVisibility(bool visible) async {
+        await tester.pumpWidget(
+          Visibility(
+            visible: visible,
+            maintainState: true,
+            maintainAnimation: true,
+            child: const Focus(child: Text('child', textDirection: TextDirection.ltr)),
+          ),
+        );
+      }
+
+      await pumpVisibility(true);
+
+      final Element child = tester.element(find.text('child', skipOffstage: false));
+      final FocusNode childFocusNode = Focus.of(child);
+
+      childFocusNode.requestFocus();
+      await tester.pump();
+
+      expect(childFocusNode.hasFocus, true);
+
+      await pumpVisibility(false);
+
+      expect(childFocusNode.hasFocus, false);
+    },
+  );
+
   testWidgets('Visibility does not force compositing when visible and maintain*', (
     WidgetTester tester,
   ) async {
