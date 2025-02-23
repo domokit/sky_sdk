@@ -442,6 +442,19 @@ class Border extends BoxBorder {
       bottom = side,
       left = side;
 
+  /// Creates a border where specified sides are set while unspecified
+  /// sides are set to [side].
+  const Border.mostly(
+    BorderSide side, {
+    BorderSide? top,
+    BorderSide? bottom,
+    BorderSide? right,
+    BorderSide? left,
+  }) : top = top ?? side,
+       right = right ?? side,
+       bottom = bottom ?? side,
+       left = left ?? side;
+
   /// Creates a border with symmetrical vertical and horizontal sides.
   ///
   /// The `vertical` argument applies to the [left] and [right] sides, and the

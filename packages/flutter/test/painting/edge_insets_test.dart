@@ -33,6 +33,11 @@ void main() {
     const EdgeInsets symmetric = EdgeInsets.symmetric(horizontal: 10, vertical: 20);
     expect(symmetric.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(10, 20, 10, 20)));
     expect(symmetric.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(10, 20, 10, 20)));
+
+    //mostly
+    const EdgeInsets mostly = EdgeInsets.mostly(8, left: 40);
+    expect(mostly.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(40, 8, 8, 8)));
+    expect(mostly.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(40, 8, 8, 8)));
   });
 
   test('EdgeInsetsDirectional constructors', () {
@@ -80,6 +85,11 @@ void main() {
     );
     expect(symmetric.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(10, 20, 10, 20)));
     expect(symmetric.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(10, 20, 10, 20)));
+
+    //mostly
+    const EdgeInsetsDirectional mostly = EdgeInsetsDirectional.mostly(8, top: 40);
+    expect(mostly.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(8, 40, 8, 8)));
+    expect(mostly.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(8, 40, 8, 8)));
   });
 
   test('EdgeInsets control test', () {
