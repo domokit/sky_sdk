@@ -50,19 +50,6 @@ typedef gboolean (*FlEnginePlatformMessageHandler)(
     gpointer user_data);
 
 /**
- * FlEngineUpdateSemanticsHandler:
- * @engine: an #FlEngine.
- * @node: semantic node information.
- * @user_data: (closure): data provided when registering this handler.
- *
- * Function called when semantics node updates are received.
- */
-typedef void (*FlEngineUpdateSemanticsHandler)(
-    FlEngine* engine,
-    const FlutterSemanticsUpdate2* update,
-    gpointer user_data);
-
-/**
  * fl_engine_new_with_binary_messenger:
  * @binary_messenger: an #FlBinaryMessenger.
  *
@@ -227,22 +214,6 @@ gboolean fl_engine_remove_view_finish(FlEngine* engine,
 void fl_engine_set_platform_message_handler(
     FlEngine* engine,
     FlEnginePlatformMessageHandler handler,
-    gpointer user_data,
-    GDestroyNotify destroy_notify);
-
-/**
- * fl_engine_set_update_semantics_handler:
- * @engine: an #FlEngine.
- * @handler: function to call when a semantics update is received.
- * @user_data: (closure): user data to pass to @handler.
- * @destroy_notify: (allow-none): a function which gets called to free
- * @user_data, or %NULL.
- *
- * Registers the function called when a semantics update is received.
- */
-void fl_engine_set_update_semantics_handler(
-    FlEngine* engine,
-    FlEngineUpdateSemanticsHandler handler,
     gpointer user_data,
     GDestroyNotify destroy_notify);
 
