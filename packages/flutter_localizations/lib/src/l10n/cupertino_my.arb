@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "အပေါ်ကြည့်ရန်",
   "searchWebButtonLabel": "ဝဘ်တွင်ရှာရန်",
   "shareButtonLabel": "မျှဝေရန်...",
-  "clearButtonLabel": "ဖယ်ရှားရန်"
+  "clearButtonLabel": "ဖယ်ရှားရန်",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

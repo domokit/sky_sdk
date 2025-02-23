@@ -37,5 +37,7 @@
   "lookUpButtonLabel": "Pogled gor",
   "searchWebButtonLabel": "Iskanje v spletu",
   "shareButtonLabel": "Deli …",
-  "clearButtonLabel": "Počisti"
+  "clearButtonLabel": "Počisti",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Tra cứu",
   "searchWebButtonLabel": "Tìm kiếm trên web",
   "shareButtonLabel": "Chia sẻ...",
-  "clearButtonLabel": "Xoá"
+  "clearButtonLabel": "Xoá",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

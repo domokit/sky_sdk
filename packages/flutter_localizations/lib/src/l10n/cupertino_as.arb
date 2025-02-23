@@ -27,5 +27,7 @@
   "menuDismissLabel": "অগ্ৰাহ্য কৰাৰ মেনু",
   "lookUpButtonLabel": "ওপৰলৈ চাওক",
   "searchWebButtonLabel": "ৱেবত সন্ধান কৰক",
-  "shareButtonLabel": "শ্বেয়াৰ কৰক…"
+  "shareButtonLabel": "শ্বেয়াৰ কৰক…",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

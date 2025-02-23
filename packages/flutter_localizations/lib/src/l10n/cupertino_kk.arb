@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Іздеу",
   "searchWebButtonLabel": "Интернеттен іздеу",
   "shareButtonLabel": "Бөлісу…",
-  "clearButtonLabel": "Өшіру"
+  "clearButtonLabel": "Өшіру",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

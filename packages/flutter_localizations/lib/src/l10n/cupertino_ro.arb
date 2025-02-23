@@ -32,5 +32,7 @@
   "lookUpButtonLabel": "Privire în sus",
   "searchWebButtonLabel": "Căutați pe web",
   "shareButtonLabel": "Trimiteți…",
-  "clearButtonLabel": "Ștergeți"
+  "clearButtonLabel": "Ștergeți",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

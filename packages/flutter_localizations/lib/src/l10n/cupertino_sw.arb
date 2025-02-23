@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Tafuta",
   "searchWebButtonLabel": "Tafuta kwenye Wavuti",
   "shareButtonLabel": "Shiriki...",
-  "clearButtonLabel": "Futa"
+  "clearButtonLabel": "Futa",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

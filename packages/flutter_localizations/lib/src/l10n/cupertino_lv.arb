@@ -32,5 +32,7 @@
   "lookUpButtonLabel": "Meklēt",
   "searchWebButtonLabel": "Meklēt tīmeklī",
   "shareButtonLabel": "Kopīgot…",
-  "clearButtonLabel": "Notīrīt"
+  "clearButtonLabel": "Notīrīt",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

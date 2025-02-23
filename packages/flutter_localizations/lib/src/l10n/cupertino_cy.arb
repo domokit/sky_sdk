@@ -47,5 +47,7 @@
   "menuDismissLabel": "Diystyru'r ddewislen",
   "lookUpButtonLabel": "Chwilio",
   "searchWebButtonLabel": "Chwilio'r We",
-  "shareButtonLabel": "Rhannu..."
+  "shareButtonLabel": "Rhannu...",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Издөө",
   "searchWebButtonLabel": "Интернеттен издөө",
   "shareButtonLabel": "Бөлүшүү…",
-  "clearButtonLabel": "Тазалоо"
+  "clearButtonLabel": "Тазалоо",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

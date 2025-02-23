@@ -27,5 +27,7 @@
   "noSpellCheckReplacementsLabel": "བརྗེས་ལེན་མ་རྙེད།",
   "searchTextFieldPlaceholderLabel": "འཚོལ་བཤེར།",
   "modalBarrierDismissLabel": "འདོར་བ།",
-  "menuDismissLabel": "ཐོ་གཞུང་འདོར་བ།"
+  "menuDismissLabel": "ཐོ་གཞུང་འདོར་བ།",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

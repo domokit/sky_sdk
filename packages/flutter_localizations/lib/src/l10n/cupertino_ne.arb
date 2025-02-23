@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "माथितिर हेर्नुहोस्",
   "searchWebButtonLabel": "वेबमा खोज्नुहोस्",
   "shareButtonLabel": "सेयर गर्नुहोस्...",
-  "clearButtonLabel": "हटाउनुहोस्"
+  "clearButtonLabel": "हटाउनुहोस्",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

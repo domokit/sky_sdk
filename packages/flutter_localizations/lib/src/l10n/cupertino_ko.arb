@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "찾기",
   "searchWebButtonLabel": "웹 검색",
   "shareButtonLabel": "공유...",
-  "clearButtonLabel": "삭제"
+  "clearButtonLabel": "삭제",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

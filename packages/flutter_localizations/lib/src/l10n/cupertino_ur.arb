@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "تفصیل دیکھیں",
   "searchWebButtonLabel": "ویب تلاش کریں",
   "shareButtonLabel": "اشتراک کریں...",
-  "clearButtonLabel": "صاف کریں"
+  "clearButtonLabel": "صاف کریں",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

@@ -27,5 +27,7 @@
   "menuDismissLabel": "Menyunu qapadın",
   "lookUpButtonLabel": "Axtarın",
   "searchWebButtonLabel": "Vebdə axtarın",
-  "shareButtonLabel": "Paylaşın..."
+  "shareButtonLabel": "Paylaşın...",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

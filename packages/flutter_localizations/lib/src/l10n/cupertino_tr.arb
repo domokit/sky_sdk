@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Ara",
   "searchWebButtonLabel": "Web'de Ara",
   "shareButtonLabel": "Paylaş...",
-  "clearButtonLabel": "Temizle"
+  "clearButtonLabel": "Temizle",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

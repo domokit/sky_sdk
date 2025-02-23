@@ -27,5 +27,7 @@
   "lookUpButtonLabel": "Kyk op",
   "searchWebButtonLabel": "Deursoek web",
   "shareButtonLabel": "Deel …",
-  "clearButtonLabel": "Vee uit"
+  "clearButtonLabel": "Vee uit",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

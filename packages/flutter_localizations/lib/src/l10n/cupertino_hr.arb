@@ -32,5 +32,7 @@
   "lookUpButtonLabel": "Pogled prema gore",
   "searchWebButtonLabel": "Pretraži web",
   "shareButtonLabel": "Dijeli...",
-  "clearButtonLabel": "Izbriši"
+  "clearButtonLabel": "Izbriši",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

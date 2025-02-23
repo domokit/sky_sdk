@@ -27,5 +27,7 @@
   "menuDismissLabel": "Ignora el menú",
   "lookUpButtonLabel": "Mira amunt",
   "searchWebButtonLabel": "Cerca al web",
-  "shareButtonLabel": "Comparteix..."
+  "shareButtonLabel": "Comparteix...",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

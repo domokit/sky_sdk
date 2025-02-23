@@ -27,5 +27,7 @@
   "menuDismissLabel": "Παράβλεψη μενού",
   "lookUpButtonLabel": "Look Up",
   "searchWebButtonLabel": "Αναζήτηση στον ιστό",
-  "shareButtonLabel": "Κοινοποίηση…"
+  "shareButtonLabel": "Κοινοποίηση…",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

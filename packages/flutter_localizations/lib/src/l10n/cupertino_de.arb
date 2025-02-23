@@ -27,5 +27,7 @@
   "menuDismissLabel": "Menü schließen",
   "lookUpButtonLabel": "Nachschlagen",
   "searchWebButtonLabel": "Im Web suchen",
-  "shareButtonLabel": "Teilen…"
+  "shareButtonLabel": "Teilen…",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }

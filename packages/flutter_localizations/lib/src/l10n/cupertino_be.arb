@@ -37,5 +37,7 @@
   "menuDismissLabel": "Закрыць меню",
   "lookUpButtonLabel": "Знайсці",
   "searchWebButtonLabel": "Пошук у сетцы",
-  "shareButtonLabel": "Абагуліць..."
+  "shareButtonLabel": "Абагуліць...",
+  "cancelButtonLabel": "Cancel",
+  "backButtonLabel": "Back"
 }
