@@ -68,6 +68,7 @@ class DatePickerThemeData with Diagnosticable {
     this.yearForegroundColor,
     this.yearBackgroundColor,
     this.yearOverlayColor,
+    this.yearShape,
     this.rangePickerBackgroundColor,
     this.rangePickerElevation,
     this.rangePickerShadowColor,
@@ -252,6 +253,19 @@ class DatePickerThemeData with Diagnosticable {
   /// or pressed.
   final MaterialStateProperty<Color?>? yearOverlayColor;
 
+  /// Overrides the default shape used to paint the shape decoration of the
+  /// year labels in the list of the year picker.
+  ///
+  /// If the selected year is the current year, the provided shape with the
+  /// value of [todayBackgroundColor] is used to paint the shape decoration of
+  /// the year label and the value of [todayBorder] and [todayForegroundColor] is
+  /// used to paint the border.
+  ///
+  /// If the selected year is not the current year, the provided shape with the
+  /// value of [yearBackgroundColor] is used to paint the shape decoration of
+  /// the year label.
+  final MaterialStateProperty<OutlinedBorder?>? yearShape;
+
   /// Overrides the default [Scaffold.backgroundColor] for
   /// [DateRangePickerDialog].
   final Color? rangePickerBackgroundColor;
@@ -385,6 +399,7 @@ class DatePickerThemeData with Diagnosticable {
     MaterialStateProperty<Color?>? yearForegroundColor,
     MaterialStateProperty<Color?>? yearBackgroundColor,
     MaterialStateProperty<Color?>? yearOverlayColor,
+    MaterialStateProperty<OutlinedBorder?>? yearShape,
     Color? rangePickerBackgroundColor,
     double? rangePickerElevation,
     Color? rangePickerShadowColor,
@@ -425,6 +440,7 @@ class DatePickerThemeData with Diagnosticable {
       yearForegroundColor: yearForegroundColor ?? this.yearForegroundColor,
       yearBackgroundColor: yearBackgroundColor ?? this.yearBackgroundColor,
       yearOverlayColor: yearOverlayColor ?? this.yearOverlayColor,
+      yearShape: yearShape ?? this.yearShape,
       rangePickerBackgroundColor: rangePickerBackgroundColor ?? this.rangePickerBackgroundColor,
       rangePickerElevation: rangePickerElevation ?? this.rangePickerElevation,
       rangePickerShadowColor: rangePickerShadowColor ?? this.rangePickerShadowColor,
@@ -521,6 +537,12 @@ class DatePickerThemeData with Diagnosticable {
         t,
         Color.lerp,
       ),
+      yearShape: MaterialStateProperty.lerp<OutlinedBorder?>(
+        a?.yearShape,
+        b?.yearShape,
+        t,
+        OutlinedBorder.lerp,
+      ),
       rangePickerBackgroundColor: Color.lerp(
         a?.rangePickerBackgroundColor,
         b?.rangePickerBackgroundColor,
@@ -607,6 +629,7 @@ class DatePickerThemeData with Diagnosticable {
     yearForegroundColor,
     yearBackgroundColor,
     yearOverlayColor,
+    yearShape,
     rangePickerBackgroundColor,
     rangePickerElevation,
     rangePickerShadowColor,
@@ -653,6 +676,7 @@ class DatePickerThemeData with Diagnosticable {
         other.yearForegroundColor == yearForegroundColor &&
         other.yearBackgroundColor == yearBackgroundColor &&
         other.yearOverlayColor == yearOverlayColor &&
+        other.yearShape == yearShape &&
         other.rangePickerBackgroundColor == rangePickerBackgroundColor &&
         other.rangePickerElevation == rangePickerElevation &&
         other.rangePickerShadowColor == rangePickerShadowColor &&
@@ -763,6 +787,13 @@ class DatePickerThemeData with Diagnosticable {
       DiagnosticsProperty<MaterialStateProperty<Color?>>(
         'yearOverlayColor',
         yearOverlayColor,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<MaterialStateProperty<OutlinedBorder?>>(
+        'yearShape',
+        yearShape,
         defaultValue: null,
       ),
     );
@@ -944,6 +975,9 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
         elevation: 24.0,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0))),
         dayShape: const MaterialStatePropertyAll<OutlinedBorder>(CircleBorder()),
+        yearShape: const MaterialStatePropertyAll<OutlinedBorder>(
+          RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0))),
+        ),
         rangePickerElevation: 0.0,
         rangePickerShape: const RoundedRectangleBorder(),
       );
@@ -1118,6 +1152,7 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
         // TODO(tahatesser): Update this to use token when gen_defaults
         // supports `CircleBorder` for fully rounded corners.
         dayShape: const MaterialStatePropertyAll<OutlinedBorder>(CircleBorder()),
+        yearShape: const MaterialStatePropertyAll<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0)))),
         rangePickerElevation: 0.0,
         rangePickerShape: const RoundedRectangleBorder(),
       );
