@@ -242,6 +242,7 @@ shared_library("ios_test_flutter") {
     "ios_context_noop_unittests.mm",
     "ios_surface_noop_unittests.mm",
     "platform_message_handler_ios_test.mm",
+    "platform_view_ios_test.mm",
   ]
   deps = [
     ":flutter_framework",

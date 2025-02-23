@@ -28,6 +28,7 @@ mixin SemanticsBinding on BindingBase {
       ..onSemanticsActionEvent = _handleSemanticsActionEvent
       ..onAccessibilityFeaturesChanged = handleAccessibilityFeaturesChanged;
     _handleSemanticsEnabledChanged();
+    addSemanticsEnabledListener(_handleFrameworkSemanticsEnabledChanged);
   }
 
   /// The current [SemanticsBinding], if one has been created.
@@ -152,6 +153,10 @@ mixin SemanticsBinding on BindingBase {
       }
     }
     performSemanticsAction(decodedAction);
+  }
+
+  void _handleFrameworkSemanticsEnabledChanged() {
+    platformDispatcher.setSemanticsTreeEnabled(semanticsEnabled);
   }
 
   /// Called whenever the platform requests an action to be performed on a
