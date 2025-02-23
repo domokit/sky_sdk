@@ -246,6 +246,7 @@ class ExpansionTile extends StatefulWidget {
     this.expandedCrossAxisAlignment,
     this.expandedAlignment,
     this.childrenPadding,
+    this.childrenPaddingColor,
     this.backgroundColor,
     this.collapsedBackgroundColor,
     this.textColor,
@@ -406,6 +407,12 @@ class ExpansionTile extends StatefulWidget {
   /// * [ExpansionTileTheme.of], which returns the nearest [ExpansionTileTheme]'s
   ///   [ExpansionTileThemeData].
   final EdgeInsetsGeometry? childrenPadding;
+
+  /// The color to display behind the expanded children section of the tile.
+  ///
+  /// If this property is null, the value from [ExpansionTileThemeData.childrenPaddingColor] is
+  /// used. If both are null, then [backgroundColor] will be used.
+  final Color? childrenPaddingColor;
 
   /// The icon color of tile's expansion arrow icon when the sublist is expanded.
   ///
@@ -708,6 +715,8 @@ class _ExpansionTileState extends State<ExpansionTile> with SingleTickerProvider
     final ExpansionTileThemeData expansionTileTheme = ExpansionTileTheme.of(context);
     final Color backgroundColor =
         _backgroundColor.value ?? expansionTileTheme.backgroundColor ?? Colors.transparent;
+    final Color childrenPaddingColor =
+        widget.childrenPaddingColor ?? expansionTileTheme.childrenPaddingColor ?? backgroundColor;
     final ShapeBorder expansionTileBorder =
         _border.value ??
         const Border(
@@ -776,7 +785,7 @@ class _ExpansionTileState extends State<ExpansionTile> with SingleTickerProvider
                   expansionTileTheme.expandedAlignment ??
                   Alignment.center,
               heightFactor: _heightFactor.value,
-              child: child,
+              child: ColoredBox(color: childrenPaddingColor, child: child),
             ),
           ),
         ],
@@ -921,9 +930,11 @@ class _ExpansionTileState extends State<ExpansionTile> with SingleTickerProvider
         enabled: !closed,
         child: Padding(
           padding: widget.childrenPadding ?? expansionTileTheme.childrenPadding ?? EdgeInsets.zero,
-          child: Column(
-            crossAxisAlignment: widget.expandedCrossAxisAlignment ?? CrossAxisAlignment.center,
-            children: widget.children,
+          child: Material(
+            child: Column(
+              crossAxisAlignment: widget.expandedCrossAxisAlignment ?? CrossAxisAlignment.center,
+              children: widget.children,
+            ),
           ),
         ),
       ),

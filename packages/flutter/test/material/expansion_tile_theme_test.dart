@@ -48,8 +48,8 @@ class TestTextState extends State<TestText> {
 }
 
 void main() {
-  Material getMaterial(WidgetTester tester) {
-    return tester.widget<Material>(
+  Material getFirstMaterial(WidgetTester tester) {
+    return tester.firstWidget<Material>(
       find.descendant(of: find.byType(ExpansionTile), matching: find.byType(Material)),
     );
   }
@@ -75,6 +75,7 @@ void main() {
     expect(theme.tilePadding, null);
     expect(theme.expandedAlignment, null);
     expect(theme.childrenPadding, null);
+    expect(theme.childrenPaddingColor, null);
     expect(theme.iconColor, null);
     expect(theme.collapsedIconColor, null);
     expect(theme.textColor, null);
@@ -106,6 +107,7 @@ void main() {
       tilePadding: EdgeInsets.all(20.0),
       expandedAlignment: Alignment.bottomCenter,
       childrenPadding: EdgeInsets.all(10.0),
+      childrenPaddingColor: Color(0xffBEBEBE),
       iconColor: Color(0xffa7c61c),
       collapsedIconColor: Color(0xffdd0b1f),
       textColor: Color(0xffffffff),
@@ -130,6 +132,7 @@ void main() {
         'tilePadding: EdgeInsets.all(20.0)',
         'expandedAlignment: Alignment.bottomCenter',
         'childrenPadding: EdgeInsets.all(10.0)',
+        'childrenPaddingColor: ${const Color(0xffBEBEBE)}',
         'iconColor: ${const Color(0xffa7c61c)}',
         'collapsedIconColor: ${const Color(0xffdd0b1f)}',
         'textColor: ${const Color(0xffffffff)}',
@@ -196,7 +199,7 @@ void main() {
     // When a custom shape is provided, ExpansionTile will use the
     // Material widget to draw the shape and background color
     // instead of a Container.
-    final Material material = getMaterial(tester);
+    final Material material = getFirstMaterial(tester);
 
     // ExpansionTile should have Clip.antiAlias as clipBehavior.
     expect(material.clipBehavior, clipBehavior);
@@ -235,6 +238,7 @@ void main() {
     final Key iconKey = UniqueKey();
     const Color backgroundColor = Colors.orange;
     const Color collapsedBackgroundColor = Colors.red;
+    const Color childrenPaddingColor = Colors.brown;
     const Color iconColor = Colors.green;
     const Color collapsedIconColor = Colors.blue;
     const Color textColor = Colors.black;
@@ -258,6 +262,7 @@ void main() {
             tilePadding: EdgeInsets.fromLTRB(8, 12, 4, 10),
             expandedAlignment: Alignment.centerRight,
             childrenPadding: EdgeInsets.all(20.0),
+            childrenPaddingColor: childrenPaddingColor,
             iconColor: iconColor,
             collapsedIconColor: collapsedIconColor,
             textColor: textColor,
@@ -284,9 +289,12 @@ void main() {
     // When a custom shape is provided, ExpansionTile will use the
     // Material widget to draw the shape and background color
     // instead of a Container.
-    final Material material = getMaterial(tester);
+    final Material material = getFirstMaterial(tester);
     // Check the tile's background color when backgroundColor is applied.
     expect(material.color, backgroundColor);
+
+    // Check the children background color when childrenPaddingColor is applied.
+    expect(tester.widget<ColoredBox>(find.byType(ColoredBox).first).color, childrenPaddingColor);
 
     final Rect titleRect = tester.getRect(find.text('Expanded Tile'));
     final Rect trailingRect = tester.getRect(find.byIcon(Icons.expand_more));
