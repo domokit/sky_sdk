@@ -54,6 +54,7 @@ import io.flutter.embedding.engine.FlutterShellArgs;
 import io.flutter.embedding.engine.plugins.activity.ActivityControlSurface;
 import io.flutter.embedding.engine.plugins.util.GeneratedPluginRegister;
 import io.flutter.plugin.platform.PlatformPlugin;
+import io.flutter.plugin.view.SensitiveContentPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1317,6 +1318,14 @@ public class FlutterActivity extends Activity
   public PlatformPlugin providePlatformPlugin(
       @Nullable Activity activity, @NonNull FlutterEngine flutterEngine) {
     return new PlatformPlugin(getActivity(), flutterEngine.getPlatformChannel(), this);
+  }
+
+  @Nullable
+  @Override
+  public SensitiveContentPlugin provideSensitiveContentPlugin(
+      @Nullable Activity activity, @NonNull FlutterEngine flutterEngine) {
+    return new SensitiveContentPlugin(
+        FLUTTER_VIEW_ID, activity, flutterEngine.getSensitiveContentChannel());
   }
 
   /**
