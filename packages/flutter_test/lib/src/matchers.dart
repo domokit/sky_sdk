@@ -246,6 +246,18 @@ Matcher isSameColorAs(Color color, {double threshold = colorEpsilon}) {
   return _ColorMatcher(color, threshold);
 }
 
+/// Asserts that the object is a [TextScaler] that reflects the user's font
+/// scale preferences, typically from the platform's accessibility settings.
+///
+/// In widget tests, the value of the system font scale preference can be
+/// changed via [TestPlatformDispatcher.textScaleFactorTestValue].
+///
+/// If `withScaleFactor` is specified and non-null, this matcher also asserts
+/// that the [TextScaler]'s' `textScaleFactor` equals `withScaleFactor`.
+Matcher isSystemTextScaler({ double? withScaleFactor }) {
+  return _IsSystemTextScaler(withScaleFactor);
+}
+
 /// Asserts that an object's toString() is a plausible one-line description.
 ///
 /// Specifically, this matcher checks that the string does not contains newline
@@ -1203,6 +1215,46 @@ class _IsNotInCard extends Matcher {
 
   @override
   Description describe(Description description) => description.add('not in card');
+}
+
+class _IsSystemTextScaler extends Matcher {
+  const _IsSystemTextScaler(this.expectedUserTextScaleFactor);
+
+  final double? expectedUserTextScaleFactor;
+
+  // TODO(LongCatIsLooong): update the runtime type after introducing _SystemTextScaler.
+  static final Type _expectedRuntimeType = (const TextScaler.linear(2)).runtimeType;
+
+  @override
+  bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
+    if (item is! TextScaler) {
+      return failWithDescription(matchState, '${item.runtimeType} is not a TextScaler');
+    }
+    if (!identical(item.runtimeType, _expectedRuntimeType)) {
+      return failWithDescription(matchState, '${item.runtimeType} is not a system TextScaler');
+    }
+    final double actualTextScaleFactor = item.textScaleFactor;
+    if (expectedUserTextScaleFactor != null && expectedUserTextScaleFactor != actualTextScaleFactor) {
+      return failWithDescription(matchState, 'expecting a scale factor of $expectedUserTextScaleFactor, but got $actualTextScaleFactor');
+    }
+    return true;
+  }
+
+  @override
+  Description describe(Description description) {
+    final String scaleFactorExpectation = expectedUserTextScaleFactor == null ? '' : '(${expectedUserTextScaleFactor}x)';
+    return description.add('A TextScaler that reflects the font scale settings in the system user preference ($_expectedRuntimeType$scaleFactorExpectation)');
+  }
+
+  bool failWithDescription(Map<dynamic, dynamic> matchState, String description) {
+    matchState['failure'] = description;
+    return false;
+  }
+
+  @override
+  Description describeMismatch(dynamic item, Description mismatchDescription, Map<dynamic, dynamic> matchState, bool verbose) {
+    return mismatchDescription.add(matchState['failure'] as String);
+  }
 }
 
 class _HasOneLineDescription extends Matcher {
