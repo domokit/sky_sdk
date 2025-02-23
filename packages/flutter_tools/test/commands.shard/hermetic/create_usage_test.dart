@@ -7,18 +7,19 @@ import 'package:flutter_tools/src/android/java.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/commands/create.dart';
-import 'package:flutter_tools/src/convert.dart';
 import 'package:flutter_tools/src/dart/pub.dart';
 import 'package:flutter_tools/src/doctor.dart';
 import 'package:flutter_tools/src/doctor_validator.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/project.dart';
+import 'package:package_config/package_config.dart';
 import 'package:test/fake.dart';
 
 import '../../src/common.dart';
 import '../../src/context.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 import '../../src/test_flutter_command_runner.dart';
 import '../../src/testbed.dart';
 
@@ -39,10 +40,7 @@ class FakePub extends Fake implements Pub {
     bool shouldSkipThirdPartyGenerator = true,
     PubOutputMode outputMode = PubOutputMode.all,
   }) async {
-    project.directory
-        .childDirectory('.dart_tool')
-        .childFile('package_config.json')
-        .createSync(recursive: true);
+    writePackageConfigForProject(project);
     if (offline) {
       calledGetOffline += 1;
     } else {
@@ -138,15 +136,6 @@ void main() {
             globals.fs.directory(templatePath).createSync(recursive: true);
           }
           // Set up enough of the packages to satisfy the templating code.
-          final File packagesFile = globals.fs.file(
-            globals.fs.path.join(
-              'flutter',
-              'packages',
-              'flutter_tools',
-              '.dart_tool',
-              'package_config.json',
-            ),
-          );
           final File flutterManifest = globals.fs.file(
             globals.fs.path.join(
               'flutter',
@@ -158,19 +147,11 @@ void main() {
           )..createSync(recursive: true);
           final Directory templateImagesDirectory = globals.fs.directory('flutter_template_images');
           templateImagesDirectory.createSync(recursive: true);
-          packagesFile.createSync(recursive: true);
-          packagesFile.writeAsStringSync(
-            json.encode(<String, Object>{
-              'configVersion': 2,
-              'packages': <Object>[
-                <String, Object>{
-                  'name': 'flutter_template_images',
-                  'languageVersion': '2.8',
-                  'rootUri': templateImagesDirectory.uri.toString(),
-                  'packageUri': 'lib/',
-                },
-              ],
-            }),
+          writePackageConfig(
+            globals.fs.directory(globals.fs.path.join('flutter', 'packages', 'flutter_tools')),
+            packages: <Package>[
+              Package('flutter_template_images', templateImagesDirectory.absolute.uri),
+            ],
           );
           flutterManifest.writeAsStringSync('{"files":[]}');
         },

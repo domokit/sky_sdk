@@ -77,12 +77,7 @@ void main() {
 
           expect(projectUnderTest.flutterPluginsFile, isNot(exists));
           expect(projectUnderTest.flutterPluginsDependenciesFile, isNot(exists));
-          expect(
-            projectUnderTest.directory
-                .childDirectory('.dart_tool')
-                .childFile('package_config.json'),
-            isNot(exists),
-          );
+          expect(projectUnderTest.packageConfig, isNot(exists));
 
           expect(xcodeProjectInterpreter.workspaces, const <CleanWorkspaceCall>[
             CleanWorkspaceCall('/ios/Runner.xcworkspace', 'Runner', false),

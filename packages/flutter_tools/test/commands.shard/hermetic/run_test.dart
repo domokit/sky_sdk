@@ -35,6 +35,7 @@ import '../../src/common.dart';
 import '../../src/context.dart';
 import '../../src/fake_devices.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 import '../../src/test_flutter_command_runner.dart';
 
 void main() {
@@ -203,14 +204,7 @@ void main() {
         fs = MemoryFileSystem.test();
 
         fs.currentDirectory.childFile('pubspec.yaml').writeAsStringSync('name: flutter_app');
-        fs.currentDirectory.childDirectory('.dart_tool').childFile('package_config.json')
-          ..createSync(recursive: true)
-          ..writeAsStringSync('''
-{
-  "packages": [],
-  "configVersion": 2
-}
-''');
+        writePackageConfig(fs.currentDirectory);
         final Directory libDir = fs.currentDirectory.childDirectory('lib');
         libDir.createSync();
         final File mainFile = libDir.childFile('main.dart');

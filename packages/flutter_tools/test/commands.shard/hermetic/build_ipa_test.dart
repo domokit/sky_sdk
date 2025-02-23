@@ -17,6 +17,7 @@ import 'package:flutter_tools/src/commands/build_ios.dart';
 import 'package:flutter_tools/src/dart/pub.dart';
 import 'package:flutter_tools/src/ios/plist_parser.dart';
 import 'package:flutter_tools/src/ios/xcodeproj.dart';
+import 'package:package_config/package_config.dart';
 import 'package:test/fake.dart';
 import 'package:unified_analytics/unified_analytics.dart';
 
@@ -26,6 +27,7 @@ import '../../src/context.dart';
 import '../../src/fake_process_manager.dart';
 import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 import '../../src/test_build_system.dart';
 import '../../src/test_flutter_command_runner.dart';
 
@@ -78,6 +80,7 @@ void main() {
 
   setUpAll(() {
     Cache.disableLocking();
+    Cache.flutterRoot = '';
   });
 
   setUp(() {
@@ -94,7 +97,7 @@ void main() {
   // Sets up the minimal mock project files necessary to look like a Flutter project.
   void createCoreMockProjectFiles() {
     fileSystem.file('pubspec.yaml').createSync();
-    fileSystem.directory('.dart_tool').childFile('package_config.json').createSync(recursive: true);
+    writePackageConfig(fileSystem.currentDirectory);
     fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
   }
 
@@ -109,23 +112,16 @@ void main() {
     fileSystem
         .file(fileSystem.path.join('ios', 'Runner.xcodeproj', 'project.pbxproj'))
         .createSync();
-    final String packageConfigPath =
-        '${Cache.flutterRoot!}/packages/flutter_tools/.dart_tool/package_config.json';
-    fileSystem.file(packageConfigPath)
-      ..createSync(recursive: true)
-      ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "flutter_template_images",
-      "rootUri": "/flutter_template_images",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    }
-  ]
-}
-''');
+    writePackageConfig(
+      fileSystem.directory('${Cache.flutterRoot!}packages/flutter_tools'),
+      packages: <Package>[
+        Package(
+          'flutter_template_images',
+          fileSystem.directory('flutter_template_images').absolute.uri,
+          packageUriRoot: Uri(path: 'lib/'),
+        ),
+      ],
+    );
     createCoreMockProjectFiles();
   }
 
@@ -287,10 +283,7 @@ void main() {
         osUtils: FakeOperatingSystemUtils(),
       );
       fileSystem.file('pubspec.yaml').createSync();
-      fileSystem
-          .directory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfig(fileSystem.currentDirectory);
       fileSystem.file(fileSystem.path.join('lib', 'main.dart')).createSync(recursive: true);
 
       final bool supported =
