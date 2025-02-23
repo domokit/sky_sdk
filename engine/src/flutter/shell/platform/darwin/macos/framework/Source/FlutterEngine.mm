@@ -89,7 +89,9 @@ constexpr char kTextPlainFormat[] = "text/plain";
 /**
  * Private interface declaration for FlutterEngine.
  */
-@interface FlutterEngine () <FlutterBinaryMessenger, FlutterMouseCursorPluginDelegate>
+@interface FlutterEngine () <FlutterBinaryMessenger,
+                             FlutterMouseCursorPluginDelegate,
+                             FlutterKeyboardManagerDelegate>
 
 /**
  * A mutable array that holds one bool value that determines if responses to platform messages are
@@ -473,6 +475,11 @@ static void OnPlatformMessage(const FlutterPlatformMessage* message, void* user_
   // Weak reference to last view that received a pointer event. This is used to
   // pair cursor change with a view.
   __weak FlutterView* _lastViewWithPointerEvent;
+
+  // Pointer to a keyboard manager, a hub that manages how key events are
+  // dispatched to various Flutter key responders, and whether the event is
+  // propagated to the next NSResponder.
+  FlutterKeyboardManager* _keyboardManager;
 }
 
 - (instancetype)initWithName:(NSString*)labelPrefix project:(FlutterDartProject*)project {
@@ -513,6 +520,7 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
   _binaryMessenger = [[FlutterBinaryMessengerRelay alloc] initWithParent:self];
   _isResponseValid = [[NSMutableArray alloc] initWithCapacity:1];
   [_isResponseValid addObject:@YES];
+  _keyboardManager = [[FlutterKeyboardManager alloc] initWithDelegate:self];
 
   _embedderAPI.struct_size = sizeof(FlutterEngineProcTable);
   FlutterEngineGetProcAddresses(&_embedderAPI);
@@ -1022,12 +1030,6 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
   _lastViewWithPointerEvent = [self viewControllerForIdentifier:kFlutterImplicitViewId].flutterView;
 }
 
-- (void)sendKeyEvent:(const FlutterKeyEvent&)event
-            callback:(FlutterKeyEventCallback)callback
-            userData:(void*)userData {
-  _embedderAPI.SendKeyEvent(_engine, &event, callback, userData);
-}
-
 - (void)setSemanticsEnabled:(BOOL)enabled {
   if (_semanticsEnabled == enabled) {
     return;
@@ -1125,6 +1127,7 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
     [nextViewController onPreEngineRestart];
   }
   [_platformViewController reset];
+  _keyboardManager = [[FlutterKeyboardManager alloc] initWithDelegate:self];
 }
 
 - (void)onVSync:(uintptr_t)baton {
@@ -1555,6 +1558,17 @@ static void SetThreadPriority(FlutterThreadPriority priority) {
 // Getter used by test harness, only exposed through the FlutterEngine(Test) category
 - (flutter::FlutterCompositor*)macOSCompositor {
   return _macOSCompositor.get();
+}
+
+#pragma mark - FlutterKeyboardManagerDelegate
+
+/**
+ * Dispatches the given pointer event data to engine.
+ */
+- (void)sendKeyEvent:(const FlutterKeyEvent&)event
+            callback:(FlutterKeyEventCallback)callback
+            userData:(void*)userData {
+  _embedderAPI.SendKeyEvent(_engine, &event, callback, userData);
 }
 
 @end

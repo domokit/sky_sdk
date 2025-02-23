@@ -24,8 +24,6 @@
 #pragma mark - Static types and data.
 
 namespace {
-using flutter::KeyboardLayoutNotifier;
-using flutter::LayoutClue;
 
 // Use different device ID for mouse and pan/zoom events, since we can't differentiate the actual
 // device (mouse v.s. trackpad).
@@ -160,7 +158,7 @@ struct MouseState {
 /**
  * Private interface declaration for FlutterViewController.
  */
-@interface FlutterViewController () <FlutterViewDelegate>
+@interface FlutterViewController () <FlutterViewDelegate, FlutterKeyboardManagerViewDelegate>
 
 /**
  * The tracking area used to generate hover events, if enabled.
@@ -178,17 +176,6 @@ struct MouseState {
 @property(nonatomic) id keyUpMonitor;
 
 /**
- * Pointer to a keyboard manager, a hub that manages how key events are
- * dispatched to various Flutter key responders, and whether the event is
- * propagated to the next NSResponder.
- */
-@property(nonatomic, readonly, nonnull) FlutterKeyboardManager* keyboardManager;
-
-@property(nonatomic) KeyboardLayoutNotifier keyboardLayoutNotifier;
-
-@property(nonatomic) NSData* keyboardLayoutData;
-
-/**
  * Starts running |engine|, including any initial setup.
  */
 - (BOOL)launchEngine;
@@ -198,11 +185,6 @@ struct MouseState {
  * the correct mode if tracking is enabled, or removing it if not.
  */
 - (void)configureTrackingArea;
-
-/**
- * Creates and registers keyboard related components.
- */
-- (void)initializeKeyboard;
 
 /**
  * Calls dispatchMouseEvent:phase: with a phase determined by self.mouseState.
@@ -221,31 +203,9 @@ struct MouseState {
  */
 - (void)dispatchMouseEvent:(nonnull NSEvent*)event phase:(FlutterPointerPhase)phase;
 
-/**
- * Called when the active keyboard input source changes.
- *
- * Input sources may be simple keyboard layouts, or more complex input methods involving an IME,
- * such as Chinese, Japanese, and Korean.
- */
-- (void)onKeyboardLayoutChanged;
-
 @end
 
 #pragma mark - FlutterViewWrapper implementation.
-
-/**
- * NotificationCenter callback invoked on kTISNotifySelectedKeyboardInputSourceChanged events.
- */
-static void OnKeyboardLayoutChanged(CFNotificationCenterRef center,
-                                    void* observer,
-                                    CFStringRef name,
-                                    const void* object,
-                                    CFDictionaryRef userInfo) {
-  FlutterViewController* controller = (__bridge FlutterViewController*)observer;
-  if (controller != nil) {
-    [controller onKeyboardLayoutChanged];
-  }
-}
 
 @implementation FlutterViewWrapper {
   FlutterView* _flutterView;
@@ -367,14 +327,7 @@ static void CommonInit(FlutterViewController* controller, FlutterEngine* engine)
             controller.engine, controller.viewIdentifier);
   controller->_mouseTrackingMode = kFlutterMouseTrackingModeInKeyWindow;
   controller->_textInputPlugin = [[FlutterTextInputPlugin alloc] initWithViewController:controller];
-  [controller initializeKeyboard];
   [controller notifySemanticsEnabledChanged];
-  // macOS fires this message when changing IMEs.
-  CFNotificationCenterRef cfCenter = CFNotificationCenterGetDistributedCenter();
-  __weak FlutterViewController* weakSelf = controller;
-  CFNotificationCenterAddObserver(cfCenter, (__bridge void*)weakSelf, OnKeyboardLayoutChanged,
-                                  kTISNotifySelectedKeyboardInputSourceChanged, NULL,
-                                  CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 - (instancetype)initWithCoder:(NSCoder*)coder {
@@ -416,7 +369,7 @@ static void CommonInit(FlutterViewController* controller, FlutterEngine* engine)
 }
 
 - (BOOL)isDispatchingKeyEvent:(NSEvent*)event {
-  return [_keyboardManager isDispatchingKeyEvent:event];
+  return [_engine.keyboardManager isDispatchingKeyEvent:event];
 }
 
 - (void)loadView {
@@ -463,8 +416,6 @@ static void CommonInit(FlutterViewController* controller, FlutterEngine* engine)
   if ([self attached]) {
     [_engine removeViewController:self];
   }
-  CFNotificationCenterRef cfCenter = CFNotificationCenterGetDistributedCenter();
-  CFNotificationCenterRemoveEveryObserver(cfCenter, (__bridge void*)self);
 }
 
 #pragma mark - Public methods
@@ -488,7 +439,6 @@ static void CommonInit(FlutterViewController* controller, FlutterEngine* engine)
 }
 
 - (void)onPreEngineRestart {
-  [self initializeKeyboard];
 }
 
 - (void)notifySemanticsEnabledChanged {
@@ -635,12 +585,6 @@ static void CommonInit(FlutterViewController* controller, FlutterEngine* engine)
     [self.flutterView removeTrackingArea:_trackingArea];
     _trackingArea = nil;
   }
-}
-
-- (void)initializeKeyboard {
-  // TODO(goderbauer): Seperate keyboard/textinput stuff into ViewController specific and Engine
-  // global parts. Move the global parts to FlutterEngine.
-  _keyboardManager = [[FlutterKeyboardManager alloc] initWithViewDelegate:self];
 }
 
 - (void)dispatchMouseEvent:(nonnull NSEvent*)event {
@@ -808,7 +752,7 @@ static void CommonInit(FlutterViewController* controller, FlutterEngine* engine)
     }
   }
 
-  [_keyboardManager syncModifiersIfNeeded:event.modifierFlags timestamp:event.timestamp];
+  [_engine.keyboardManager syncModifiersIfNeeded:event.modifierFlags timestamp:event.timestamp];
   [_engine sendPointerEvent:flutterEvent];
 
   // Update tracking of state as reported to Flutter.
@@ -851,13 +795,6 @@ static void CommonInit(FlutterViewController* controller, FlutterEngine* engine)
                                  viewIdentifier:_viewIdentifier];
 }
 
-- (void)onKeyboardLayoutChanged {
-  _keyboardLayoutData = nil;
-  if (_keyboardLayoutNotifier != nil) {
-    _keyboardLayoutNotifier();
-  }
-}
-
 - (NSString*)lookupKeyForAsset:(NSString*)asset {
   return [FlutterDartProject lookupKeyForAsset:asset];
 }
@@ -896,78 +833,8 @@ static void CommonInit(FlutterViewController* controller, FlutterEngine* engine)
 
 #pragma mark - FlutterKeyboardViewDelegate
 
-/**
- * Returns the current Unicode layout data (kTISPropertyUnicodeKeyLayoutData).
- *
- * To use the returned data, convert it to CFDataRef first, finds its bytes
- * with CFDataGetBytePtr, then reinterpret it into const UCKeyboardLayout*.
- * It's returned in NSData* to enable auto reference count.
- */
-static NSData* CurrentKeyboardLayoutData() {
-  fml::CFRef<TISInputSourceRef> source(TISCopyCurrentKeyboardInputSource());
-  CFTypeRef layout_data = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData);
-  if (layout_data == nil) {
-    // TISGetInputSourceProperty returns null with Japanese keyboard layout.
-    // Using TISCopyCurrentKeyboardLayoutInputSource to fix NULL return.
-    // https://github.com/microsoft/node-native-keymap/blob/5f0699ded00179410a14c0e1b0e089fe4df8e130/src/keyboard_mac.mm#L91
-    source.Reset(TISCopyCurrentKeyboardLayoutInputSource());
-    layout_data = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData);
-  }
-  return (__bridge NSData*)layout_data;
-}
-
-- (void)sendKeyEvent:(const FlutterKeyEvent&)event
-            callback:(nullable FlutterKeyEventCallback)callback
-            userData:(nullable void*)userData {
-  [_engine sendKeyEvent:event callback:callback userData:userData];
-}
-
-- (id<FlutterBinaryMessenger>)getBinaryMessenger {
-  return _engine.binaryMessenger;
-}
-
 - (BOOL)onTextInputKeyEvent:(nonnull NSEvent*)event {
   return [_textInputPlugin handleKeyEvent:event];
-}
-
-- (void)subscribeToKeyboardLayoutChange:(nullable KeyboardLayoutNotifier)callback {
-  _keyboardLayoutNotifier = callback;
-}
-
-- (LayoutClue)lookUpLayoutForKeyCode:(uint16_t)keyCode shift:(BOOL)shift {
-  if (_keyboardLayoutData == nil) {
-    _keyboardLayoutData = CurrentKeyboardLayoutData();
-  }
-  const UCKeyboardLayout* layout = reinterpret_cast<const UCKeyboardLayout*>(
-      CFDataGetBytePtr((__bridge CFDataRef)_keyboardLayoutData));
-
-  UInt32 deadKeyState = 0;
-  UniCharCount stringLength = 0;
-  UniChar resultChar;
-
-  UInt32 modifierState = ((shift ? shiftKey : 0) >> 8) & 0xFF;
-  UInt32 keyboardType = LMGetKbdLast();
-
-  bool isDeadKey = false;
-  OSStatus status =
-      UCKeyTranslate(layout, keyCode, kUCKeyActionDown, modifierState, keyboardType,
-                     kUCKeyTranslateNoDeadKeysBit, &deadKeyState, 1, &stringLength, &resultChar);
-  // For dead keys, press the same key again to get the printable representation of the key.
-  if (status == noErr && stringLength == 0 && deadKeyState != 0) {
-    isDeadKey = true;
-    status =
-        UCKeyTranslate(layout, keyCode, kUCKeyActionDown, modifierState, keyboardType,
-                       kUCKeyTranslateNoDeadKeysBit, &deadKeyState, 1, &stringLength, &resultChar);
-  }
-
-  if (status == noErr && stringLength == 1 && !std::iscntrl(resultChar)) {
-    return LayoutClue{resultChar, isDeadKey};
-  }
-  return LayoutClue{0, false};
-}
-
-- (nonnull NSDictionary*)getPressedState {
-  return [_keyboardManager getPressedState];
 }
 
 #pragma mark - NSResponder
@@ -977,15 +844,15 @@ static NSData* CurrentKeyboardLayoutData() {
 }
 
 - (void)keyDown:(NSEvent*)event {
-  [_keyboardManager handleEvent:event];
+  [_engine.keyboardManager handleEvent:event withViewDelegate:self];
 }
 
 - (void)keyUp:(NSEvent*)event {
-  [_keyboardManager handleEvent:event];
+  [_engine.keyboardManager handleEvent:event withViewDelegate:self];
 }
 
 - (void)flagsChanged:(NSEvent*)event {
-  [_keyboardManager handleEvent:event];
+  [_engine.keyboardManager handleEvent:event withViewDelegate:self];
 }
 
 - (void)mouseEntered:(NSEvent*)event {

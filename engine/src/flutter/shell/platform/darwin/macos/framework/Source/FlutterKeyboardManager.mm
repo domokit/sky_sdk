@@ -11,6 +11,7 @@
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterEmbedderKeyResponder.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterEngine_Internal.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterKeyPrimaryResponder.h"
+#import "flutter/shell/platform/darwin/macos/framework/Source/FlutterKeyboardLayout.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/KeyCodeMap_Internal.h"
 
 // Turn on this flag to print complete layout data when switching IMEs. The data
@@ -35,36 +36,54 @@ NSString* debugFormatLayoutData(NSString* debugLayoutData,
 }
 #endif
 
-// Someohow this pointer type must be defined as a single type for the compiler
-// to compile the function pointer type (due to _Nullable).
-typedef NSResponder* _NSResponderPtr;
-typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
-
 bool isEascii(const LayoutClue& clue) {
   return clue.character < 256 && !clue.isDeadKey;
 }
 
 typedef void (^VoidBlock)();
 
-// Someohow this pointer type must be defined as a single type for the compiler
-// to compile the function pointer type (due to _Nullable).
-typedef NSResponder* _NSResponderPtr;
-typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
 }  // namespace
 
-@interface FlutterKeyboardManager ()
+@interface FlutterEventWithViewDelegate : NSObject
+
+@property(nonatomic, readonly) NSEvent* event;
+@property(nonatomic, readonly) id<FlutterKeyboardManagerViewDelegate> viewDelegate;
+
+- (instancetype)initWithEvent:(NSEvent*)event
+                 viewDelegate:(nonnull id<FlutterKeyboardManagerViewDelegate>)viewDelegate;
+
+@end
+
+@implementation FlutterEventWithViewDelegate {
+  NSEvent* _event;
+  id<FlutterKeyboardManagerViewDelegate> _viewDelegate;
+}
+
+- (instancetype)initWithEvent:(NSEvent*)event
+                 viewDelegate:(id<FlutterKeyboardManagerViewDelegate>)viewDelegate {
+  self = [super init];
+  if (self) {
+    _event = event;
+    _viewDelegate = viewDelegate;
+  }
+  return self;
+}
+
+@end
+
+@interface FlutterKeyboardManager () <FlutterKeyboardLayoutDelegate>
 
 /**
  * The text input plugin set by initialization.
  */
-@property(nonatomic, weak) id<FlutterKeyboardViewDelegate> viewDelegate;
+@property(nonatomic, weak) id<FlutterKeyboardManagerDelegate> delegate;
 
 /**
  * The primary responders added by addPrimaryResponder.
  */
 @property(nonatomic) NSMutableArray<id<FlutterKeyPrimaryResponder>>* primaryResponders;
 
-@property(nonatomic) NSMutableArray<NSEvent*>* pendingEvents;
+@property(nonatomic) NSMutableArray<FlutterEventWithViewDelegate*>* pendingEvents;
 
 @property(nonatomic) BOOL processingEvent;
 
@@ -94,13 +113,16 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
  *
  * This function is called by processNextEvent.
  */
-- (void)performProcessEvent:(NSEvent*)event onFinish:(nonnull VoidBlock)onFinish;
+- (void)performProcessEvent:(NSEvent*)event
+               viewDelegate:(nonnull id<FlutterKeyboardManagerViewDelegate>)viewDelegate
+                   onFinish:(nonnull VoidBlock)onFinish;
 
 /**
  * Dispatch an event that's not hadled by the responders to text input plugin,
  * and potentially to the next responder.
  */
-- (void)dispatchTextEvent:(nonnull NSEvent*)pendingEvent;
+- (void)dispatchTextEvent:(nonnull NSEvent*)pendingEvent
+             viewDelegate:(nonnull id<FlutterKeyboardManagerViewDelegate>)viewDelegate;
 
 /**
  * Clears the current layout and build a new one based on the current layout.
@@ -110,18 +132,23 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
 @end
 
 @implementation FlutterKeyboardManager {
-  NextResponderProvider _getNextResponder;
+  FlutterKeyboardLayout* _keyboardLayout;
 }
 
-- (nonnull instancetype)initWithViewDelegate:(nonnull id<FlutterKeyboardViewDelegate>)viewDelegate {
+- (nonnull instancetype)initWithDelegate:(nonnull id<FlutterKeyboardManagerDelegate>)delegate {
+  return [self initWithDelegate:delegate keyboardLayout:[[FlutterKeyboardLayout alloc] init]];
+}
+
+- (nonnull instancetype)initWithDelegate:(nonnull id<FlutterKeyboardManagerDelegate>)delegate
+                          keyboardLayout:(nonnull FlutterKeyboardLayout*)keyboardLayout {
   self = [super init];
   if (self != nil) {
     _processingEvent = FALSE;
-    _viewDelegate = viewDelegate;
+    _delegate = delegate;
 
     FlutterMethodChannel* keyboardChannel =
         [FlutterMethodChannel methodChannelWithName:@"flutter/keyboard"
-                                    binaryMessenger:[_viewDelegate getBinaryMessenger]
+                                    binaryMessenger:_delegate.binaryMessenger
                                               codec:[FlutterStandardMethodCodec sharedInstance]];
 
     [keyboardChannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
@@ -136,30 +163,28 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
                                                       FlutterKeyEventCallback callback,
                                                       void* userData) {
                                     __strong __typeof__(weakSelf) strongSelf = weakSelf;
-                                    [strongSelf.viewDelegate sendKeyEvent:event
-                                                                 callback:callback
-                                                                 userData:userData];
+                                    [strongSelf.delegate sendKeyEvent:event
+                                                             callback:callback
+                                                             userData:userData];
                                   }]];
 
     [self
         addPrimaryResponder:[[FlutterChannelKeyResponder alloc]
                                 initWithChannel:[FlutterBasicMessageChannel
                                                     messageChannelWithName:@"flutter/keyevent"
-                                                           binaryMessenger:[_viewDelegate
-                                                                               getBinaryMessenger]
+                                                           binaryMessenger:_delegate.binaryMessenger
                                                                      codec:[FlutterJSONMessageCodec
                                                                                sharedInstance]]]];
 
     _pendingEvents = [[NSMutableArray alloc] init];
     _layoutMap = [NSMutableDictionary<NSNumber*, NSNumber*> dictionary];
+
+    _keyboardLayout = keyboardLayout;
+    _keyboardLayout.delegate = self;
     [self buildLayout];
     for (id<FlutterKeyPrimaryResponder> responder in _primaryResponders) {
       responder.layoutMap = _layoutMap;
     }
-
-    [_viewDelegate subscribeToKeyboardLayoutChange:^() {
-      [weakSelf buildLayout];
-    }];
   }
   return self;
 }
@@ -176,7 +201,8 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
   [_primaryResponders addObject:responder];
 }
 
-- (void)handleEvent:(nonnull NSEvent*)event {
+- (void)handleEvent:(nonnull NSEvent*)event
+    withViewDelegate:(nonnull id<FlutterKeyboardManagerViewDelegate>)viewDelegate {
   // The `handleEvent` does not process the event immediately, but instead put
   // events into a queue. Events are processed one by one by `processNextEvent`.
 
@@ -187,7 +213,8 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
     return;
   }
 
-  [_pendingEvents addObject:event];
+  [_pendingEvents addObject:[[FlutterEventWithViewDelegate alloc] initWithEvent:event
+                                                                   viewDelegate:viewDelegate]];
   [self processNextEvent];
 }
 
@@ -205,7 +232,7 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
     _processingEvent = TRUE;
   }
 
-  NSEvent* pendingEvent = [_pendingEvents firstObject];
+  FlutterEventWithViewDelegate* pendingEvent = [_pendingEvents firstObject];
   [_pendingEvents removeObjectAtIndex:0];
 
   __weak __typeof__(self) weakSelf = self;
@@ -213,10 +240,14 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
     weakSelf.processingEvent = FALSE;
     [weakSelf processNextEvent];
   };
-  [self performProcessEvent:pendingEvent onFinish:onFinish];
+  [self performProcessEvent:pendingEvent.event
+               viewDelegate:pendingEvent.viewDelegate
+                   onFinish:onFinish];
 }
 
-- (void)performProcessEvent:(NSEvent*)event onFinish:(VoidBlock)onFinish {
+- (void)performProcessEvent:(NSEvent*)event
+               viewDelegate:(id<FlutterKeyboardManagerViewDelegate>)viewDelegate
+                   onFinish:(VoidBlock)onFinish {
   // Having no primary responders require extra logic, but Flutter hard-codes
   // all primary responders, so this is a situation that Flutter will never
   // encounter.
@@ -232,7 +263,7 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
     anyHandled = anyHandled || handled;
     if (unreplied == 0) {
       if (!anyHandled) {
-        [weakSelf dispatchTextEvent:event];
+        [weakSelf dispatchTextEvent:event viewDelegate:viewDelegate];
       }
       onFinish();
     }
@@ -243,11 +274,12 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
   }
 }
 
-- (void)dispatchTextEvent:(NSEvent*)event {
-  if ([_viewDelegate onTextInputKeyEvent:event]) {
+- (void)dispatchTextEvent:(NSEvent*)event
+             viewDelegate:(id<FlutterKeyboardManagerViewDelegate>)viewDelegate {
+  if ([viewDelegate onTextInputKeyEvent:event]) {
     return;
   }
-  NSResponder* nextResponder = _viewDelegate.nextResponder;
+  NSResponder* nextResponder = viewDelegate.nextResponder;
   if (nextResponder == nil) {
     return;
   }
@@ -298,8 +330,8 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
 #endif
   for (uint16_t keyCode = 0; keyCode <= kMaxKeyCode; keyCode += 1) {
     std::vector<LayoutClue> thisKeyClues = {
-        [_viewDelegate lookUpLayoutForKeyCode:keyCode shift:false],
-        [_viewDelegate lookUpLayoutForKeyCode:keyCode shift:true]};
+        [_keyboardLayout lookUpLayoutForKeyCode:keyCode shift:false],
+        [_keyboardLayout lookUpLayoutForKeyCode:keyCode shift:true]};
 #ifdef DEBUG_PRINT_LAYOUT
     debugLayoutData =
         debugFormatLayoutData(debugLayoutData, keyCode, thisKeyClues[0], thisKeyClues[1]);
@@ -348,6 +380,11 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
   }
 }
 
+- (void)reset {
+  _processingEvent = FALSE;
+  [_pendingEvents removeAllObjects];
+}
+
 /**
  * Returns the keyboard pressed state.
  *
@@ -359,6 +396,14 @@ typedef _Nullable _NSResponderPtr (^NextResponderProvider)();
   FlutterEmbedderKeyResponder* embedderResponder =
       (FlutterEmbedderKeyResponder*)_primaryResponders[0];
   return [embedderResponder getPressedState];
+}
+
+- (void)keyboardLayoutDidChange {
+  [self buildLayout];
+}
+
+- (void)replaceKeyboardLayout:(nonnull FlutterKeyboardLayout*)keyboardLayout {
+  _keyboardLayout = keyboardLayout;
 }
 
 @end
