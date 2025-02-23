@@ -16,6 +16,7 @@
 #include "flutter/shell/platform/android/android_context_gl_impeller.h"
 #include "flutter/shell/platform/android/android_context_gl_skia.h"
 #include "flutter/shell/platform/android/android_context_vk_impeller.h"
+#include "flutter/shell/platform/android/android_rendering_selector.h"
 #include "flutter/shell/platform/android/android_surface_gl_impeller.h"
 #include "flutter/shell/platform/android/android_surface_gl_skia.h"
 #include "flutter/shell/platform/android/android_surface_software.h"
@@ -79,7 +80,6 @@ std::unique_ptr<AndroidSurface> AndroidSurfaceFactoryImpl::CreateSurface() {
 }
 
 static std::shared_ptr<flutter::AndroidContext> CreateAndroidContext(
-    bool use_software_rendering,
     const flutter::TaskRunners& task_runners,
     AndroidRenderingAPI android_rendering_api,
     bool enable_opengl_gpu_tracing,
@@ -106,15 +106,14 @@ PlatformViewAndroid::PlatformViewAndroid(
     PlatformView::Delegate& delegate,
     const flutter::TaskRunners& task_runners,
     const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade,
-    bool use_software_rendering)
+    AndroidRenderingAPI rendering_api)
     : PlatformViewAndroid(
           delegate,
           task_runners,
           jni_facade,
           CreateAndroidContext(
-              use_software_rendering,
               task_runners,
-              delegate.OnPlatformViewGetSettings().android_rendering_api,
+              rendering_api,
               delegate.OnPlatformViewGetSettings().enable_opengl_gpu_tracing,
               CreateContextSettings(delegate.OnPlatformViewGetSettings()))) {}
 
