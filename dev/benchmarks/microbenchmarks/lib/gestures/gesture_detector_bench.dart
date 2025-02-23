@@ -20,9 +20,11 @@ Future<void> execute() async {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
+    final addPosition = tester.getCenter(find.text('Add 1'));
+
     Future<void> iter() async {
       // Press a button to update the screen
-      await tester.tapAt(const Offset(760.0, 30.0));
+      await tester.tapAt(addPosition);
       await tester.pump();
     }
 
