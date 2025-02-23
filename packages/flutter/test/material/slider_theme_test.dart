@@ -1855,7 +1855,7 @@ void main() {
           overlayShape: SliderComponentShape.noOverlay,
           thumbShape: SliderComponentShape.noThumb,
           tickMarkShape: SliderTickMarkShape.noTickMark,
-          showValueIndicator: ShowValueIndicator.always,
+          showValueIndicator: ShowValueIndicator.onDrag,
         ),
         value: 0.5,
         divisions: 4,
