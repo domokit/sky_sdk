@@ -19,7 +19,9 @@ class ImageExternalTextureGLSkia : public ImageExternalTextureGL {
       const std::shared_ptr<AndroidContextGLSkia>& context,
       int64_t id,
       const fml::jni::ScopedJavaGlobalRef<jobject>& image_textury_entry,
-      const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade);
+      const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade,
+      const ImageExternalTexture::ImageLifecycle lifecycle =
+          ImageExternalTexture::ImageLifecycle::kReset);
 
  private:
   // |ImageExternalTexture|

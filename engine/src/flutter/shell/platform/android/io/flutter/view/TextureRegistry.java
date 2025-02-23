@@ -18,12 +18,58 @@ import androidx.annotation.Nullable;
  */
 public interface TextureRegistry {
   /**
-   * Creates and registers a SurfaceProducer texture managed by the Flutter engine.
+   * Creates and registers a {@link SurfaceProducer}, or a Flutter-managed {@link Surface}.
+   *
+   * <p>Uses the {@link SurfaceLifecycle#manual} lifecycle implicitly.
    *
    * @return A SurfaceProducer.
    */
   @NonNull
-  SurfaceProducer createSurfaceProducer();
+  default SurfaceProducer createSurfaceProducer() {
+    return createSurfaceProducer(SurfaceLifecycle.manual);
+  }
+
+  /**
+   * Creates and a {@link SurfaceProducer}, or a Flutter-managed {@link Surface}.
+   *
+   * @param lifecycle Whether to automatically reset the last image and release the surface.
+   * @return A SurfaceProducer.
+   */
+  @NonNull
+  SurfaceProducer createSurfaceProducer(SurfaceLifecycle lifecycle);
+
+  /**
+   * How a {@link SurfaceProducer} created by {@link #createSurfaceProducer()} manages the lifecycle
+   * of the created surface.
+   */
+  enum SurfaceLifecycle {
+    /**
+     * The surface and latest image should be kept, even if the app enters the background.
+     *
+     * <p>The application, or calling code, can choose to (manually) reset the surface at the
+     * appropriate time (such as to lower memory pressure, or cleanup an unused surface), but by
+     * default the surface will never be reset, and as a result, new images do not have to be drawn
+     * to the surface.
+     *
+     * <p>This is an appropriate lifecycle for external textures, as it is not guaranteed that new
+     * images will be drawn to the surface, and whether the image should be kept when the app is
+     * backgrounded.
+     */
+    manual,
+
+    /**
+     * The surface may be reset if the app enters the background.
+     *
+     * <p>While the application can choose to manually reset the surface, Flutter may automatically
+     * reset the surface when the app enters the background. If the surface is reset, and no new
+     * images are drawn to the surface, the texture will appear blank.
+     *
+     * <p>This is an appropriate lifecycle for platform views, as the platform implementation will
+     * request a new surface, and draw to, as appropriate when resuming from the background, and
+     * producing a new image when coming back to the foreground.
+     */
+    resetInBackground
+  }
 
   /**
    * Creates and registers a SurfaceTexture managed by the Flutter engine.

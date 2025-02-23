@@ -931,19 +931,23 @@ public class FlutterJNI {
    */
   @UiThread
   public void registerImageTexture(
-      long textureId, @NonNull TextureRegistry.ImageConsumer imageTexture) {
+      long textureId,
+      @NonNull TextureRegistry.ImageConsumer imageTexture,
+      boolean resetOnBackground) {
     ensureRunningOnMainThread();
     ensureAttachedToNative();
     nativeRegisterImageTexture(
         nativeShellHolderId,
         textureId,
-        new WeakReference<TextureRegistry.ImageConsumer>(imageTexture));
+        new WeakReference<TextureRegistry.ImageConsumer>(imageTexture),
+        resetOnBackground);
   }
 
   private native void nativeRegisterImageTexture(
       long nativeShellHolderId,
       long textureId,
-      @NonNull WeakReference<TextureRegistry.ImageConsumer> imageTexture);
+      @NonNull WeakReference<TextureRegistry.ImageConsumer> imageTexture,
+      boolean resetOnBackground);
 
   /**
    * Call this method to inform Flutter that a texture previously registered with {@link

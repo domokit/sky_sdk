@@ -16,10 +16,12 @@ namespace flutter {
 ImageExternalTexture::ImageExternalTexture(
     int64_t id,
     const fml::jni::ScopedJavaGlobalRef<jobject>& image_texture_entry,
-    const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade)
+    const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade,
+    const ImageLifecycle lifecycle)
     : Texture(id),
       image_texture_entry_(image_texture_entry),
-      jni_facade_(jni_facade) {}
+      jni_facade_(jni_facade),
+      texture_lifecycle_(lifecycle) {}
 
 ImageExternalTexture::~ImageExternalTexture() = default;
 
@@ -66,8 +68,19 @@ void ImageExternalTexture::OnGrContextCreated() {
 // Implementing flutter::ContextListener.
 void ImageExternalTexture::OnGrContextDestroyed() {
   if (state_ == AttachmentState::kAttached) {
-    dl_image_.reset();
-    image_lru_.Clear();
+    switch (texture_lifecycle_) {
+      case ImageLifecycle::kReset:
+        dl_image_.reset();
+        image_lru_.Clear();
+        break;
+      case ImageLifecycle::kKeepAlive:
+        // Intentionally do nothing.
+        ///
+        // If we reset the image, we are not able to re-acquire it, but the
+        // producer of the image will not know to reproduce it, resulting in a
+        // blank image. See https://github.com/flutter/flutter/issues/163561.
+        break;
+    }
     Detach();
   }
   state_ = AttachmentState::kDetached;

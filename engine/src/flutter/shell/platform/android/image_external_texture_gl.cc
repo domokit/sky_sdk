@@ -8,24 +8,17 @@
 #include <android/sensor.h>
 
 #include "flutter/common/graphics/texture.h"
-#include "flutter/impeller/core/formats.h"
-#include "flutter/impeller/display_list/dl_image_impeller.h"
 #include "flutter/impeller/toolkit/android/hardware_buffer.h"
 #include "flutter/impeller/toolkit/egl/image.h"
-#include "flutter/impeller/toolkit/gles/texture.h"
-#include "third_party/skia/include/core/SkAlphaType.h"
-#include "third_party/skia/include/core/SkColorType.h"
-#include "third_party/skia/include/gpu/ganesh/SkImageGanesh.h"
-#include "third_party/skia/include/gpu/ganesh/gl/GrGLBackendSurface.h"
-#include "third_party/skia/include/gpu/ganesh/gl/GrGLTypes.h"
 
 namespace flutter {
 
 ImageExternalTextureGL::ImageExternalTextureGL(
     int64_t id,
     const fml::jni::ScopedJavaGlobalRef<jobject>& image_texture_entry,
-    const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade)
-    : ImageExternalTexture(id, image_texture_entry, jni_facade) {}
+    const std::shared_ptr<PlatformViewAndroidJNI>& jni_facade,
+    const ImageExternalTexture::ImageLifecycle lifecycle)
+    : ImageExternalTexture(id, image_texture_entry, jni_facade, lifecycle) {}
 
 void ImageExternalTextureGL::Attach(PaintContext& context) {
   if (state_ == AttachmentState::kUninitialized) {
