@@ -207,7 +207,7 @@ abstract class RunCommandBase extends FlutterCommand with DeviceBasedDevelopment
     usesTargetOption();
     usesPortOptions(verboseHelp: verboseHelp);
     usesIpv6Flag(verboseHelp: verboseHelp);
-    usesPubOption();
+    usesPackageTooling();
     usesTrackWidgetCreation(verboseHelp: verboseHelp);
     addNullSafetyModeOptions(hide: !verboseHelp);
     usesDeviceUserOption();
@@ -622,6 +622,9 @@ class RunCommand extends RunCommandBase {
 
     return super.shouldRunPub;
   }
+
+  @override
+  bool get shouldEnsurePlatformTooling => !runningWithPrebuiltApplication;
 
   bool shouldUseHotMode(BuildInfo buildInfo) {
     final bool hotArg = boolArg('hot');

@@ -668,7 +668,7 @@ abstract class _BuildIOSSubCommand extends BuildSubCommand {
     addBuildModeFlags(verboseHelp: verboseHelp);
     usesTargetOption();
     usesFlavorOption();
-    usesPubOption();
+    usesPackageTooling();
     usesBuildNumberOption();
     usesBuildNameOption();
     addDartObfuscationOption();

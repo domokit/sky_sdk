@@ -132,6 +132,10 @@ void main() {
       fileSystem.file('lib/main.dart').createSync(recursive: true);
       fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
       fileSystem.file('pubspec.yaml').createSync();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
 
       await expectLater(
         () => createTestCommandRunner(
@@ -166,6 +170,11 @@ void main() {
       fileSystem.file('lib/main.dart').createSync(recursive: true);
       fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
       fileSystem.file('pubspec.yaml').createSync();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
+
       fileSystem.directory('drive_screenshots').createSync();
 
       final Device screenshotDevice = ThrowingScreenshotDevice()..supportsScreenshot = false;
@@ -209,6 +218,11 @@ void main() {
       fileSystem.file('lib/main.dart').createSync(recursive: true);
       fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
       fileSystem.file('pubspec.yaml').createSync();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
+
       fileSystem.directory('drive_screenshots').createSync();
 
       final Device screenshotDevice = ScreenshotDevice();
@@ -251,6 +265,11 @@ void main() {
       fileSystem.file('lib/main.dart').createSync(recursive: true);
       fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
       fileSystem.file('pubspec.yaml').createSync();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
+
       fileSystem.directory('drive_screenshots').createSync();
 
       final Device screenshotDevice = ThrowingScreenshotDevice();
@@ -295,6 +314,11 @@ void main() {
       fileSystem.file('lib/main.dart').createSync(recursive: true);
       fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
       fileSystem.file('pubspec.yaml').createSync();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
+
       fileSystem.directory('drive_screenshots').createSync();
 
       final Device screenshotDevice = ScreenshotDevice();
@@ -348,6 +372,11 @@ void main() {
       fileSystem.file('lib/main.dart').createSync(recursive: true);
       fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
       fileSystem.file('pubspec.yaml').createSync();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
+
       fileSystem.file('drive_screenshots').createSync();
 
       final Device screenshotDevice = ThrowingScreenshotDevice();
@@ -395,6 +424,11 @@ void main() {
       fileSystem.file('lib/main.dart').createSync(recursive: true);
       fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
       fileSystem.file('pubspec.yaml').createSync();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
+
       fileSystem.directory('drive_screenshots').createSync();
 
       final ScreenshotDevice screenshotDevice = ScreenshotDevice();
@@ -465,6 +499,10 @@ void main() {
       fileSystem.file('lib/main.dart').createSync(recursive: true);
       fileSystem.file('test_driver/main_test.dart').createSync(recursive: true);
       fileSystem.file('pubspec.yaml').createSync();
+      fileSystem
+          .directory('.dart_tool')
+          .childFile('package_config.json')
+          .createSync(recursive: true);
       fileSystem.directory('drive_screenshots').createSync();
 
       final ScreenshotDevice screenshotDevice = ScreenshotDevice();

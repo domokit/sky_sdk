@@ -197,8 +197,6 @@ abstract class FlutterCommand extends Command<void> {
   /// Whether this command uses the 'target' option.
   bool _usesTargetOption = false;
 
-  bool _usesPubOption = false;
-
   bool _usesPortOption = false;
 
   bool _usesIpv6Flag = false;
@@ -207,7 +205,11 @@ abstract class FlutterCommand extends Command<void> {
 
   DeprecationBehavior get deprecationBehavior => DeprecationBehavior.none;
 
-  bool get shouldRunPub => _usesPubOption && boolArg('pub');
+  /// Whether [regeneratePlatformSpecificToolingIfApplicable] should be invoked.
+  bool get shouldEnsurePlatformTooling => _usesPackageTooling;
+
+  /// Whether `flutter pub get` should be implicitly executed.
+  bool get shouldRunPub => _usesPackageTooling && boolArg('pub');
 
   bool get shouldUpdateCache => true;
 
@@ -432,20 +434,33 @@ abstract class FlutterCommand extends Command<void> {
           ? stringsArg(FlutterOptions.kFileSystemRoot)
           : null;
 
-  void usesPubOption({bool hide = false}) {
+  /// Whether the command requires package and/or platform tooling.
+  ///
+  /// A command, such as `flutter build`, typically needs Dart tooling to have
+  /// been resolved (i.e. the side-effect of `flutter pub get`), and often
+  /// platform-specific tooling (package managers, plugin registrants).
+  ///
+  /// By using this method:
+  /// - [shouldRunPub] will return `true` unless `--no-pub` is provided;
+  /// - [shouldEnsurePlatformTooling] will _always_ return `true`.
+  ///
+  /// [hide] indicates whether or not to hide these options on `--help`.
+  @protected
+  void usesPackageTooling({bool hide = false}) {
     argParser.addFlag(
       'pub',
       defaultsTo: true,
       hide: hide,
       help: 'Whether to run "flutter pub get" before executing this command.',
     );
-    _usesPubOption = true;
+    _usesPackageTooling = true;
   }
+
+  bool _usesPackageTooling = false;
 
   /// Adds flags for using a specific filesystem root and scheme.
   ///
-  /// The `hide` argument indicates whether or not to hide these options when
-  /// the user asks for help.
+  /// [hide] indicates whether or not to hide these options on `--help`.
   void usesFilesystemOptions({required bool hide}) {
     argParser
       ..addOption(
@@ -1143,7 +1158,7 @@ abstract class FlutterCommand extends Command<void> {
     usesAnalyzeSizeFlag();
     usesDartDefineOption();
     usesExtraDartFlagOptions(verboseHelp: verboseHelp);
-    usesPubOption();
+    usesPackageTooling();
     usesTargetOption();
     usesTrackWidgetCreation(verboseHelp: verboseHelp);
     usesBuildNumberOption();
@@ -1876,9 +1891,9 @@ Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and 
 
   /// Runs [FlutterProject.regeneratePlatformSpecificTooling] for [project] with appropriate configuration.
   ///
-  /// This method should only be called when [shouldRunPub] is `true`:
+  /// This method should only be called when [shouldEnsurePlatformTooling] is `true`:
   /// ```dart
-  /// if (shouldRunPub) {
+  /// if (shouldEnsurePlatformTooling) {
   ///   await regeneratePlatformSpecificTooling(project);
   /// }
   /// ```
@@ -1892,7 +1907,7 @@ Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and 
     FlutterProject project, {
     required bool releaseMode,
   }) async {
-    if (!shouldRunPub) {
+    if (!shouldEnsurePlatformTooling) {
       return;
     }
     await project.regeneratePlatformSpecificTooling(
