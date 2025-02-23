@@ -153,11 +153,15 @@ std::weak_ptr<DartIsolate> DartIsolate::CreateRunningRootIsolate(
     return {};
   }
 
-  if (settings.root_isolate_create_callback) {
-    // Isolate callbacks always occur in isolate scope and before user code has
-    // had a chance to run.
+  {
     tonic::DartState::Scope scope(isolate.get());
-    settings.root_isolate_create_callback(*isolate.get());
+    Dart_SetCurrentThreadOwnsIsolate();
+
+    if (settings.root_isolate_create_callback) {
+      // Isolate callbacks always occur in isolate scope and before user code
+      // has had a chance to run.
+      settings.root_isolate_create_callback(*isolate.get());
+    }
   }
 
   if (root_isolate_create_callback) {

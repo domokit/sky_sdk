@@ -1112,6 +1112,61 @@ TEST_F(DartIsolateTest, PlatformIsolateMainThrowsError) {
   // root isolate will be auto-shutdown
 }
 
+TEST_F(DartIsolateTest, RootIsolateIsOwnedByMainThread) {
+  ASSERT_FALSE(DartVMRef::IsInstanceRunning());
+  auto settings = CreateSettingsForFixture();
+  auto vm_ref = DartVMRef::Create(settings);
+  ASSERT_TRUE(vm_ref);
+  auto vm_data = vm_ref.GetVMData();
+  ASSERT_TRUE(vm_data);
+  TaskRunners task_runners(GetCurrentTestName(),    //
+                           GetCurrentTaskRunner(),  //
+                           GetCurrentTaskRunner(),  //
+                           GetCurrentTaskRunner(),  //
+                           GetCurrentTaskRunner()   //
+  );
+
+  auto isolate_configuration =
+      IsolateConfiguration::InferFromSettings(settings);
+
+  UIDartState::Context context(task_runners);
+  context.advisory_script_uri = "main.dart";
+  context.advisory_script_entrypoint = "main";
+  auto weak_isolate = DartIsolate::CreateRunningRootIsolate(
+      vm_data->GetSettings(),              // settings
+      vm_data->GetIsolateSnapshot(),       // isolate snapshot
+      nullptr,                             // platform configuration
+      DartIsolate::Flags{},                // flags
+      nullptr,                             // root_isolate_create_callback
+      settings.isolate_create_callback,    // isolate create callback
+      settings.isolate_shutdown_callback,  // isolate shutdown callback
+      "main",                              // dart entrypoint
+      std::nullopt,                        // dart entrypoint library
+      {},                                  // dart entrypoint arguments
+      std::move(isolate_configuration),    // isolate configuration
+      context                              // engine context
+  );
+  auto root_isolate = weak_isolate.lock();
+
+  Dart_Port main_port;
+  {
+    tonic::DartState::Scope scope(root_isolate.get());
+    main_port = Dart_GetMainPortId();
+
+    ASSERT_TRUE(Dart_GetCurrentThreadOwnsIsolate(main_port));
+  }
+
+  ASSERT_TRUE(Dart_GetCurrentThreadOwnsIsolate(main_port));
+
+  std::thread([main_port]() {
+    ASSERT_FALSE(Dart_GetCurrentThreadOwnsIsolate(main_port));
+  }).join();
+
+  ASSERT_TRUE(root_isolate->Shutdown());
+
+  ASSERT_FALSE(Dart_GetCurrentThreadOwnsIsolate(main_port));
+}
+
 }  // namespace testing
 }  // namespace flutter
 
