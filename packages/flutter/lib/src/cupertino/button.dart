@@ -89,6 +89,7 @@ class CupertinoButton extends StatefulWidget {
     this.focusNode,
     this.onFocusChange,
     this.autofocus = false,
+    this.mouseCursor,
     this.onLongPress,
     required this.onPressed,
   }) : assert(pressedOpacity == null || (pressedOpacity >= 0.0 && pressedOpacity <= 1.0)),
@@ -124,6 +125,7 @@ class CupertinoButton extends StatefulWidget {
     this.focusNode,
     this.onFocusChange,
     this.autofocus = false,
+    this.mouseCursor,
     this.onLongPress,
     required this.onPressed,
   }) : assert(minimumSize == null || minSize == null),
@@ -153,6 +155,7 @@ class CupertinoButton extends StatefulWidget {
     this.focusNode,
     this.onFocusChange,
     this.autofocus = false,
+    this.mouseCursor,
     this.onLongPress,
     required this.onPressed,
   }) : assert(pressedOpacity == null || (pressedOpacity >= 0.0 && pressedOpacity <= 1.0)),
@@ -256,6 +259,12 @@ class CupertinoButton extends StatefulWidget {
 
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
+
+  /// The cursor that will be shown when hovering over the button.
+  ///
+  /// If null, defaults to [SystemMouseCursors.click] on web and
+  /// [MouseCursor.defer] on other platforms.
+  final MouseCursor? mouseCursor;
 
   final _CupertinoButtonStyle _style;
 
@@ -431,7 +440,7 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
     );
 
     return MouseRegion(
-      cursor: enabled && kIsWeb ? SystemMouseCursors.click : MouseCursor.defer,
+      cursor: enabled ? widget.mouseCursor ?? (kIsWeb ? SystemMouseCursors.click : MouseCursor.defer) : MouseCursor.defer,
       child: FocusableActionDetector(
         actions: _actionMap,
         focusNode: widget.focusNode,
