@@ -16,6 +16,7 @@
 #include "flutter/shell/platform/common/json_method_codec.h"
 #include "flutter/shell/platform/common/text_editing_delta.h"
 #include "flutter/shell/platform/common/text_input_model.h"
+#include "flutter/shell/platform/embedder/embedder.h"
 #include "flutter/shell/platform/windows/keyboard_handler_base.h"
 
 namespace flutter {
@@ -70,6 +71,9 @@ class TextInputPlugin {
   virtual void ComposeChangeHook(const std::u16string& text, int cursor_pos);
 
  private:
+  // Allows modifying the TextInputPlugin in tests.
+  friend class TextInputPluginModifier;
+
   // Sends the current state of the given model to the Flutter engine.
   void SendStateUpdate(const TextInputModel& model);
 
@@ -97,6 +101,9 @@ class TextInputPlugin {
 
   // The active client id.
   int client_id_;
+
+  // The active view id.
+  FlutterViewId view_id_;
 
   // The active model. nullptr if not set.
   std::unique_ptr<TextInputModel> active_model_;
