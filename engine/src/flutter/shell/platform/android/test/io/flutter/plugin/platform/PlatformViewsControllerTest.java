@@ -1653,6 +1653,9 @@ public class PlatformViewsControllerTest {
               }
 
               @Override
+              public void setReleaseMemoryIfRequested(boolean enable) {}
+
+              @Override
               public boolean handlesCropAndRotation() {
                 return false;
               }

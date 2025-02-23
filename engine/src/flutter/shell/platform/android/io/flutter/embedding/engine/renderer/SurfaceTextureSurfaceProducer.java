@@ -56,6 +56,11 @@ final class SurfaceTextureSurfaceProducer
   }
 
   @Override
+  public void setReleaseMemoryIfRequested(boolean enable) {
+    // Intentionally blank: SurfaceTextures don't respond to trim memory.
+  }
+
+  @Override
   public void setCallback(Callback callback) {
     // Intentionally blank: SurfaceTextures don't get platform notifications or cleanup.
   }

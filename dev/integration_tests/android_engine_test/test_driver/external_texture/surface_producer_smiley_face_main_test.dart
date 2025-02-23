@@ -41,22 +41,26 @@ void main() async {
     await flutterDriver.close();
   });
 
-  test('should screenshot and match an external smiley face texture', () async {
-    // On Android: Background the app, trim memory, and restore the app.
-    if (nativeDriver case final AndroidNativeDriver nativeDriver) {
-      print('Backgrounding the app, trimming memory, and resuming the app.');
-      await nativeDriver.backgroundApp();
+  test(
+    'should screenshot and match an external smiley face texture on background/resume',
+    () async {
+      // On Android: Background the app, trim memory, and restore the app.
+      if (nativeDriver case final AndroidNativeDriver nativeDriver) {
+        print('Backgrounding the app, trimming memory, and resuming the app.');
+        await nativeDriver.backgroundApp();
 
-      print('Trimming memory.');
-      await nativeDriver.simulateLowMemory(appName: appName);
+        print('Trimming memory.');
+        await nativeDriver.simulateLowMemory(appName: appName);
 
-      print('Resuming the app.');
-      await nativeDriver.resumeApp(appName: appName);
-    }
+        print('Resuming the app.');
+        await nativeDriver.resumeApp(appName: appName);
+      }
 
-    await expectLater(
-      nativeDriver.screenshot(),
-      matchesGoldenFile('external_texture_surface_producer_smiley_face.png'),
-    );
-  }, timeout: Timeout.none);
+      await expectLater(
+        nativeDriver.screenshot(),
+        matchesGoldenFile('external_texture_surface_producer_smiley_face.png'),
+      );
+    },
+    timeout: Timeout.none,
+  );
 }
