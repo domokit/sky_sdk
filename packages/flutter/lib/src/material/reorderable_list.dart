@@ -328,6 +328,9 @@ class _ReorderableListViewState extends State<ReorderableListView> {
       return true;
     }());
 
+    // Always wrap item in Material if it's not already a Material.
+    final Widget wrappedItem = (item is Material) ? item : Material(child: item);
+
     final Key itemGlobalKey = _ReorderableListViewChildGlobalKey(item.key!, this);
 
     if (widget.buildDefaultDragHandles) {
@@ -355,7 +358,7 @@ class _ReorderableListViewState extends State<ReorderableListView> {
               return Stack(
                 key: itemGlobalKey,
                 children: <Widget>[
-                  item,
+                  wrappedItem,
                   Positioned.directional(
                     textDirection: Directionality.of(context),
                     start: 0,
@@ -372,7 +375,7 @@ class _ReorderableListViewState extends State<ReorderableListView> {
               return Stack(
                 key: itemGlobalKey,
                 children: <Widget>[
-                  item,
+                  wrappedItem,
                   Positioned.directional(
                     textDirection: Directionality.of(context),
                     top: 0,
@@ -390,11 +393,15 @@ class _ReorderableListViewState extends State<ReorderableListView> {
         case TargetPlatform.iOS:
         case TargetPlatform.android:
         case TargetPlatform.fuchsia:
-          return ReorderableDelayedDragStartListener(key: itemGlobalKey, index: index, child: item);
+          return ReorderableDelayedDragStartListener(
+            key: itemGlobalKey,
+            index: index,
+            child: wrappedItem,
+          );
       }
     }
 
-    return KeyedSubtree(key: itemGlobalKey, child: item);
+    return KeyedSubtree(key: itemGlobalKey, child: wrappedItem);
   }
 
   Widget _proxyDecorator(Widget child, int index, Animation<double> animation) {
