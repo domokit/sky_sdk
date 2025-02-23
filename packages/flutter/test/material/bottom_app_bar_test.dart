@@ -254,7 +254,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData.light(
-          useMaterial3: true,
+
         ).copyWith(bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xffffff00))),
         home: Builder(
           builder: (BuildContext context) {
@@ -317,7 +317,7 @@ void main() {
     const ColorScheme colorScheme = ColorScheme.dark();
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(useMaterial3: true, colorScheme: colorScheme),
+        theme: ThemeData.from(   colorScheme: colorScheme),
         home: Scaffold(bottomNavigationBar: BottomAppBar(color: colorScheme.surfaceContainer)),
       ),
     );

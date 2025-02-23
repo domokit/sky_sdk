@@ -1416,7 +1416,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
+
           snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
         ),
         home: MediaQuery(
@@ -1539,7 +1539,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(
-            useMaterial3: true,
+
             snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
           ),
           home: MediaQuery(

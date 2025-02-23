@@ -734,7 +734,7 @@ void main() {
         value: 'AAAAAA',
         isScrollable: true,
         tabBarKey: tabBarKey,
-        useMaterial3: true,
+
       ),
     );
     final TabController controller = DefaultTabController.of(tester.element(find.text('AAAAAA')));
@@ -824,7 +824,7 @@ void main() {
         isScrollable: true,
         tabBarKey: tabBarKey,
         padding: padding,
-        useMaterial3: true,
+
       ),
     );
     final TabController controller = DefaultTabController.of(tester.element(find.text('AAAAAA')));
@@ -917,7 +917,7 @@ void main() {
           tabBarKey: tabBarKey,
           padding: padding,
           textDirection: TextDirection.rtl,
-          useMaterial3: true,
+
         ),
       );
       final TabController controller = DefaultTabController.of(tester.element(find.text('AAAAAA')));
@@ -1002,7 +1002,7 @@ void main() {
         value: 'AAAA',
         isScrollable: true,
         tabBarKey: tabBarKey,
-        useMaterial3: true,
+
       ),
     );
     final TabController controller = DefaultTabController.of(tester.element(find.text('AAAA')));
@@ -3502,7 +3502,7 @@ void main() {
             tabs: tabs,
           ),
         ),
-        useMaterial3: true,
+
       ),
     );
 
@@ -6734,7 +6734,7 @@ void main() {
         value: 'B',
         isScrollable: true,
         tabAlignment: TabAlignment.start,
-        useMaterial3: true,
+
       ),
     );
     await tester.pumpAndSettle();
@@ -6756,7 +6756,7 @@ void main() {
         value: 'B',
         isScrollable: true,
         tabAlignment: TabAlignment.center,
-        useMaterial3: true,
+
       ),
     );
     await tester.pumpAndSettle();
@@ -6777,7 +6777,7 @@ void main() {
         value: 'B',
         isScrollable: true,
         tabAlignment: TabAlignment.startOffset,
-        useMaterial3: true,
+
       ),
     );
     await tester.pumpAndSettle();
@@ -6811,7 +6811,7 @@ void main() {
           value: 'B',
           isScrollable: true,
           textDirection: TextDirection.rtl,
-          useMaterial3: true,
+
         ),
       );
 
@@ -6840,7 +6840,7 @@ void main() {
           isScrollable: true,
           tabAlignment: TabAlignment.start,
           textDirection: TextDirection.rtl,
-          useMaterial3: true,
+
         ),
       );
       await tester.pumpAndSettle();
@@ -6867,7 +6867,7 @@ void main() {
           isScrollable: true,
           tabAlignment: TabAlignment.startOffset,
           textDirection: TextDirection.rtl,
-          useMaterial3: true,
+
         ),
       );
       await tester.pumpAndSettle();
@@ -6897,7 +6897,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
+
           tabBarTheme: const TabBarThemeData(dividerColor: dividerColor),
         ),
         home: Scaffold(
@@ -6922,7 +6922,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
+
           tabBarTheme: const TabBarThemeData(dividerColor: dividerColor),
         ),
         home: Scaffold(

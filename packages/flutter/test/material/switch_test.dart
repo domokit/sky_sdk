@@ -3441,7 +3441,7 @@ void main() {
     testWidgets('M3 Switch has a stadium shape in the middle of the track', (
       WidgetTester tester,
     ) async {
-      final ThemeData theme = ThemeData(useMaterial3: true, colorSchemeSeed: Colors.deepPurple);
+      final ThemeData theme = ThemeData(   colorSchemeSeed: Colors.deepPurple);
       bool value = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -3944,7 +3944,7 @@ void main() {
 
     testWidgets('Switch can set icon - M3', (WidgetTester tester) async {
       final ThemeData themeData = ThemeData(
-        useMaterial3: true,
+
         colorSchemeSeed: const Color(0xff6750a4),
         brightness: Brightness.light,
       );

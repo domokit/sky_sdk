@@ -362,7 +362,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
+
           textTheme: const TextTheme(titleLarge: titleTextStyle, titleSmall: subtitleTextStyle),
         ),
         home: const Center(child: LicensePage()),
@@ -1098,7 +1098,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData.light(
-          useMaterial3: true,
+
         ).copyWith(scaffoldBackgroundColor: scaffoldColor, cardColor: cardColor),
         home: Scaffold(
           body: Center(
@@ -1618,7 +1618,7 @@ void main() {
     // This is a regression test for https://github.com/flutter/flutter/issues/108991
     final ThemeData theme = ThemeData(
       appBarTheme: const AppBarTheme(foregroundColor: Color(0xFFFFFFFF)),
-      useMaterial3: true,
+
     );
     const String title = 'License ABC';
     LicenseRegistry.addLicense(() {

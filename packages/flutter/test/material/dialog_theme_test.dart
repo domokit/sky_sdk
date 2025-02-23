@@ -416,7 +416,7 @@ void main() {
       alignment: Alignment.topRight,
     );
     final ThemeData theme = ThemeData(
-      useMaterial3: true,
+
       dialogTheme: const DialogThemeData(alignment: Alignment.bottomLeft),
     );
 
@@ -461,7 +461,7 @@ void main() {
     );
     const AlertDialog dialog = AlertDialog(title: Text('Title'), actions: <Widget>[]);
     final ThemeData theme = ThemeData(
-      useMaterial3: true,
+
       dialogTheme: const DialogThemeData(shape: customBorder),
     );
 
@@ -611,7 +611,7 @@ void main() {
     const TextStyle titleTextStyle = TextStyle(color: Colors.pink);
     const AlertDialog dialog = AlertDialog(title: Text(titleText));
     final ThemeData theme = ThemeData(
-      useMaterial3: true,
+
       textTheme: const TextTheme(headlineSmall: titleTextStyle),
     );
 
@@ -728,7 +728,7 @@ void main() {
     const TextStyle contentTextStyle = TextStyle(color: Colors.pink);
     const AlertDialog dialog = AlertDialog(content: Text(contentText));
     final ThemeData theme = ThemeData(
-      useMaterial3: true,
+
       textTheme: const TextTheme(bodyMedium: contentTextStyle),
     );
 

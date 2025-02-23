@@ -892,7 +892,7 @@ void main() {
     }) {
       return MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
+
           inputDecorationTheme: inputDecorationTheme,
           datePickerTheme: datePickerTheme,
         ),
@@ -1066,7 +1066,7 @@ void main() {
       MaterialApp(
         theme: ThemeData(
           datePickerTheme: DatePickerThemeData(yearOverlayColor: yearOverlayColor),
-          useMaterial3: true,
+
         ),
         home: Directionality(
           textDirection: TextDirection.ltr,
@@ -1146,7 +1146,7 @@ void main() {
           datePickerTheme: DatePickerThemeData(
             rangeSelectionOverlayColor: rangeSelectionOverlayColor,
           ),
-          useMaterial3: true,
+
         ),
         home: Directionality(
           textDirection: TextDirection.ltr,

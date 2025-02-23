@@ -1017,7 +1017,7 @@ void main() {
       platform: TargetPlatform.android,
       scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(10.0)),
       splashFactory: InkRipple.splashFactory,
-      useMaterial3: true,
+
       visualDensity: VisualDensity.standard,
       // COLOR
       canvasColor: Colors.white,

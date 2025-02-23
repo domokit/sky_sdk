@@ -103,7 +103,7 @@ void main() {
       return MaterialApp(
         theme: ThemeData.from(
           colorScheme: const ColorScheme.light(),
-          useMaterial3: true,
+
         ).copyWith(iconButtonTheme: IconButtonThemeData(style: overallStyle)),
         home: Scaffold(
           body: Center(
@@ -230,7 +230,7 @@ void main() {
       return MaterialApp(
         theme: ThemeData.from(
           colorScheme: colorScheme,
-          useMaterial3: true,
+
         ).copyWith(shadowColor: overallShadowColor),
         home: Scaffold(
           body: Center(

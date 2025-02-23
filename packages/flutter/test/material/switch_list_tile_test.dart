@@ -1353,7 +1353,7 @@ void main() {
   ) async {
     Widget buildSwitchListTile(bool applyCupertinoTheme, TargetPlatform platform) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true, platform: platform),
+        theme: ThemeData(   platform: platform),
         home: Material(
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {

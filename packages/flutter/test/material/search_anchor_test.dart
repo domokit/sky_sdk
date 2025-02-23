@@ -2797,7 +2797,7 @@ void main() {
       constraints: BoxConstraints(maxWidth: 300),
     );
     final ThemeData theme = ThemeData(
-      useMaterial3: true,
+
       inputDecorationTheme: inputDecorationTheme,
     );
 

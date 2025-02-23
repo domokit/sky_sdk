@@ -76,7 +76,7 @@ final ShapeBorder _defaultM3DialogShape = RoundedRectangleBorder(
 );
 
 void main() {
-  final ThemeData material3Theme = ThemeData(useMaterial3: true, brightness: Brightness.dark);
+  final ThemeData material3Theme = ThemeData(   brightness: Brightness.dark);
   final ThemeData material2Theme = ThemeData(useMaterial3: false, brightness: Brightness.dark);
 
   testWidgets('Dialog is scrollable', (WidgetTester tester) async {
