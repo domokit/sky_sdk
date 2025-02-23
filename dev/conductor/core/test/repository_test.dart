@@ -73,7 +73,7 @@ vars = {
       );
     });
 
-    test('commit() throws if there are no local changes to commit', () {
+    test('commit() throws if there are no local changes to commit and addFirst = true', () {
       const String commit1 = 'abc123';
       const String commit2 = 'def456';
       const String message = 'This is a commit message.';
@@ -106,7 +106,7 @@ vars = {
 
       final FrameworkRepository repo = FrameworkRepository(checkouts);
       expect(
-        () async => repo.commit(message),
+        () async => repo.commit(message, addFirst: true),
         throwsExceptionWith('Tried to commit with message $message but no changes were present'),
       );
     });
@@ -129,10 +129,6 @@ vars = {
         ),
         const FakeCommand(command: <String>['git', 'checkout', FrameworkRepository.defaultBranch]),
         const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: commit1),
-        const FakeCommand(
-          command: <String>['git', 'status', '--porcelain'],
-          stdout: 'MM path/to/file.txt',
-        ),
         const FakeCommand(command: <String>['git', 'commit', '--message', message]),
         const FakeCommand(command: <String>['git', 'rev-parse', 'HEAD'], stdout: commit2),
       ]);

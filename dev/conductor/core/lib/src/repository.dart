@@ -411,16 +411,18 @@ abstract class Repository {
   }
 
   Future<String> commit(String message, {bool addFirst = false, String? author}) async {
-    final bool hasChanges =
-        (await git.getOutput(
-          <String>['status', '--porcelain'],
-          'check for uncommitted changes',
-          workingDirectory: (await checkoutDirectory).path,
-        )).trim().isNotEmpty;
-    if (!hasChanges) {
-      throw ConductorException('Tried to commit with message $message but no changes were present');
-    }
     if (addFirst) {
+      final bool hasChanges =
+          (await git.getOutput(
+            <String>['status', '--porcelain'],
+            'check for uncommitted changes',
+            workingDirectory: (await checkoutDirectory).path,
+          )).trim().isNotEmpty;
+      if (!hasChanges) {
+        throw ConductorException(
+          'Tried to commit with message $message but no changes were present',
+        );
+      }
       await git.run(
         <String>['add', '--all'],
         'add all changes to the index',

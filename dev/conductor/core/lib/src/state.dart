@@ -156,6 +156,8 @@ String phaseInstructions(pb.ConductorState state) {
       return <String>[
         'Either all cherrypicks have been auto-applied or there were none.',
       ].join('\n');
+    case ReleasePhase.UPDATE_ENGINE_VERSION:
+      return 'The conductor will now update the engine.version file to point at the previous commit.';
     case ReleasePhase.PUBLISH_VERSION:
       if (!requiresFrameworkPR(state)) {
         return 'Since there are no code changes in this release, no Framework '
@@ -223,18 +225,11 @@ String githubAccount(String remoteUrl) {
 /// Will throw a [ConductorException] if [ReleasePhase.RELEASE_COMPLETED] is
 /// passed as an argument, as there is no next phase.
 ReleasePhase getNextPhase(ReleasePhase currentPhase) {
-  switch (currentPhase) {
-    case ReleasePhase.PUBLISH_VERSION:
-      return ReleasePhase.VERIFY_RELEASE;
-    case ReleasePhase.APPLY_FRAMEWORK_CHERRYPICKS:
-    case ReleasePhase.VERIFY_RELEASE:
-    case ReleasePhase.RELEASE_COMPLETED:
-      final ReleasePhase? nextPhase = ReleasePhase.valueOf(currentPhase.value + 1);
-      if (nextPhase != null) {
-        return nextPhase;
-      }
+  final ReleasePhase? nextPhase = ReleasePhase.valueOf(currentPhase.value + 1);
+  if (nextPhase != null) {
+    return nextPhase;
   }
-  throw globals.ConductorException('There is no next ReleasePhase!');
+  throw globals.ConductorException('There is no next ReleasePhase after $currentPhase!');
 }
 
 // Indent two spaces.
