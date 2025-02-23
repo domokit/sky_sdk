@@ -642,39 +642,49 @@ Future<Codec> instantiateImageCodecFromBuffer(
   int? targetWidth,
   int? targetHeight,
   bool allowUpscaling = true,
-}) => engine.renderer.instantiateImageCodec(
-  buffer._list!,
-  targetWidth: targetWidth,
-  targetHeight: targetHeight,
-  allowUpscaling: allowUpscaling,
-);
+}) {
+  try {
+    return engine.renderer.instantiateImageCodec(
+      buffer._list!,
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+      allowUpscaling: allowUpscaling,
+    );
+  } finally {
+    buffer.dispose();
+  }
+}
 
 Future<Codec> instantiateImageCodecWithSize(
   ImmutableBuffer buffer, {
   TargetImageSizeCallback? getTargetSize,
 }) async {
-  if (getTargetSize == null) {
-    return engine.renderer.instantiateImageCodec(buffer._list!);
-  } else {
-    final Codec codec = await engine.renderer.instantiateImageCodec(buffer._list!);
-    try {
-      final FrameInfo info = await codec.getNextFrame();
+  try {
+    if (getTargetSize == null) {
+      return engine.renderer.instantiateImageCodec(buffer._list!);
+    } else {
+      final Codec codec = await engine.renderer.instantiateImageCodec(buffer._list!);
       try {
-        final int width = info.image.width;
-        final int height = info.image.height;
-        final TargetImageSize targetSize = getTargetSize(width, height);
-        return engine.renderer.instantiateImageCodec(
-          buffer._list!,
-          targetWidth: targetSize.width,
-          targetHeight: targetSize.height,
-          allowUpscaling: false,
-        );
+        final FrameInfo info = await codec.getNextFrame();
+        try {
+          final int width = info.image.width;
+          final int height = info.image.height;
+          final TargetImageSize targetSize = getTargetSize(width, height);
+          return engine.renderer.instantiateImageCodec(
+            buffer._list!,
+            targetWidth: targetSize.width,
+            targetHeight: targetSize.height,
+            allowUpscaling: false,
+          );
+        } finally {
+          info.image.dispose();
+        }
       } finally {
-        info.image.dispose();
+        codec.dispose();
       }
-    } finally {
-      codec.dispose();
     }
+  } finally {
+    buffer.dispose();
   }
 }
 
