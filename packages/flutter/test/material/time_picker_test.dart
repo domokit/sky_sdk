@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// This file is run as part of a reduced test set in CI on Mac and Windows
+// machines.
+@Tags(<String>['reduced-test-set'])
 @TestOn('!chrome')
 library;
 
@@ -1395,6 +1398,58 @@ void main() {
         expect(semantics, isNot(includesNodeWith(label: pmString)));
 
         semantics.dispose();
+      });
+
+      testWidgets('TimePicker dialog displays centered separator between hour and minute selectors', (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(400, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: const MediaQuery(
+              data: MediaQueryData(),
+              child: Material(
+                child: TimePickerDialog(
+                  initialTime: TimeOfDay(hour: 12, minute: 0),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await expectLater(
+          find.byType(Dialog),
+          matchesGoldenFile('m2_time_picker.dialog.separator.alignment.png'),
+        );
+      });
+
+      testWidgets('TimePicker dialog displays centered separator between hour and minute selectors', (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(400, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: true),
+            home: const MediaQuery(
+              data: MediaQueryData(),
+              child: Material(
+                child: TimePickerDialog(
+                  initialTime: TimeOfDay(hour: 12, minute: 0),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await expectLater(
+          find.byType(Dialog),
+          matchesGoldenFile('m3_time_picker.dialog.separator.alignment.png'),
+        );
       });
 
       testWidgets('provides semantics information for text fields', (WidgetTester tester) async {
