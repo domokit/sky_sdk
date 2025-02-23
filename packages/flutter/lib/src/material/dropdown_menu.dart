@@ -6,6 +6,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' show SemanticsRole;
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -1122,6 +1123,12 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       },
     );
 
+    menuAnchor = Semantics(
+      role: SemanticsRole.comboBox,
+      expanded: _controller.isOpen,
+      child: menuAnchor,
+    );
+
     if (widget.expandedInsets case final EdgeInsetsGeometry padding) {
       menuAnchor = Padding(
         // Clamp the top and bottom padding to 0.
@@ -1417,6 +1424,18 @@ class _RenderDropdownMenuBody extends RenderBox
       }
     }
     return false;
+  }
+
+  // Children are laid out for measurement purpose but not painted.
+  @override
+  void visitChildrenForSemantics(RenderObjectVisitor visitor) {
+    visitChildren((RenderObject renderObjectChild) {
+      final RenderBox child = renderObjectChild as RenderBox;
+      if (child == firstChild) {
+        visitor(renderObjectChild);
+      }
+      return;
+    });
   }
 }
 
