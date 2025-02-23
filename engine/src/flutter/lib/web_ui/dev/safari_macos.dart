@@ -15,7 +15,7 @@ import 'webdriver_browser.dart';
 /// Provides an environment for the desktop variant of Safari running on macOS.
 class SafariMacOsEnvironment extends BrowserEnvironment {
   static const Duration _waitBetweenRetries = Duration(seconds: 1);
-  static const int _maxRetryCount = 5;
+  static const int _maxRetryCount = 10;
 
   late int _portNumber;
   late Process _driverProcess;
@@ -88,16 +88,9 @@ $stackTrace
 
       await _waitForSafariDriverServerReady();
 
-      // Smoke-test the web driver process by connecting to it and asking for a
-      // list of windows. It doesn't matter how many windows there are.
-      webDriver = await createDriver(
-        uri: _driverUri,
-        desired: <String, dynamic>{'browserName': packageTestRuntime.identifier},
-      );
-
-      await webDriver!.windows.toList();
+      webDriver = await _createDriverSessionWithRetry();
     } catch (_) {
-      print('safaridriver failed to start.');
+      print('safaridriver failed to reach a healthy state.');
 
       final badDriver = webDriver;
       webDriver = null; // let's not keep faulty driver around
@@ -138,6 +131,48 @@ $stackTrace
 
       // Rethrow the error to allow the caller to retry, if need be.
       rethrow;
+    }
+  }
+
+  /// Creates a WebDriver session with a rety mechanism.
+  ///
+  /// The retry mechanism is used to combat intermittent errors of the form:
+  ///
+  /// > Could not create a session: The session timed out while connecting to a Safari instance.
+  ///
+  /// See also: https://github.com/flutter/flutter/issues/163790
+  Future<WebDriver> _createDriverSessionWithRetry() async {
+    const kSessionRetryCount = 10;
+    int retryCount = 0;
+    while (true) {
+      // Give Safari a chance to launch.
+      //
+      // 100ms seems enough in most cases, but feel free to revisit this.
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      retryCount += 1;
+      try {
+        final candidateDriver = await createDriver(
+          uri: _driverUri,
+          desired: <String, dynamic>{'browserName': packageTestRuntime.identifier},
+        );
+
+        // Smoke-test the web driver process by asking for a list of windows. It
+        // doesn't matter how many windows there are, only that the driver is
+        // capable of answering the question.
+        await candidateDriver.windows.toList();
+
+        return candidateDriver;
+      } catch (_) {
+        if (retryCount < kSessionRetryCount) {
+          print('Failed to create a WebDriver session with Safari. Retrying...');
+        } else {
+          print(
+            'Failed to create a WebDriver session with Safari after $kSessionRetryCount retries. Giving up.',
+          );
+          rethrow;
+        }
+      }
     }
   }
 
