@@ -446,7 +446,7 @@ class _CupertinoCheckboxState extends State<CupertinoCheckbox>
               ..shape =
                   widget.shape ?? RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0))
               ..side = effectiveBorderSide
-              ..brightness = CupertinoTheme.of(context).brightness,
+              ..brightness = CupertinoTheme.brightnessOf(context),
       ),
     );
   }

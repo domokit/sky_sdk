@@ -5070,7 +5070,7 @@ class _InputDecoratorDefaultsM2 extends InputDecorationTheme {
 
   @override
   Color? get fillColor => MaterialStateColor.resolveWith((Set<MaterialState> states) {
-    return switch ((Theme.of(context).brightness, states.contains(MaterialState.disabled))) {
+    return switch ((Theme.brightnessOf(context), states.contains(MaterialState.disabled))) {
       (Brightness.dark, true) => const Color(0x0DFFFFFF), //  5% white
       (Brightness.dark, false) => const Color(0x1AFFFFFF), // 10% white
       (Brightness.light, true) => const Color(0x05000000), //  2% black
@@ -5086,7 +5086,7 @@ class _InputDecoratorDefaultsM2 extends InputDecorationTheme {
     if (states.contains(MaterialState.focused)) {
       return Theme.of(context).colorScheme.primary;
     }
-    return switch (Theme.of(context).brightness) {
+    return switch (Theme.brightnessOf(context)) {
       Brightness.dark => Colors.white70,
       Brightness.light => Colors.black45,
     };
@@ -5100,7 +5100,7 @@ class _InputDecoratorDefaultsM2 extends InputDecorationTheme {
     if (states.contains(MaterialState.focused)) {
       return Theme.of(context).colorScheme.primary;
     }
-    return switch (Theme.of(context).brightness) {
+    return switch (Theme.brightnessOf(context)) {
       Brightness.dark => Colors.white70,
       Brightness.light => Colors.black45,
     };
@@ -5117,7 +5117,7 @@ class _InputDecoratorDefaultsM2 extends InputDecorationTheme {
     if (states.contains(MaterialState.focused)) {
       return Theme.of(context).colorScheme.primary;
     }
-    return switch (Theme.of(context).brightness) {
+    return switch (Theme.brightnessOf(context)) {
       Brightness.dark => Colors.white70,
       Brightness.light => Colors.black45,
     };

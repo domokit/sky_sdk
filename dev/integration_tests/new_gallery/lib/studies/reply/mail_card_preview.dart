@@ -288,7 +288,7 @@ class _MailPreviewActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = Theme.brightnessOf(context) == Brightness.dark;
     final Color color = isDark ? ReplyColors.white50 : ReplyColors.blue600;
     final bool isDesktop = isDisplayDesktop(context);
     final Color starredIconColor = isStarred ? Theme.of(context).colorScheme.secondary : color;

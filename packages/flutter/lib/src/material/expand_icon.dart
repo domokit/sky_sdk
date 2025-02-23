@@ -173,7 +173,7 @@ class _ExpandIconState extends State<ExpandIcon> with SingleTickerProviderStateM
       return widget.color!;
     }
 
-    return switch (Theme.of(context).brightness) {
+    return switch (Theme.brightnessOf(context)) {
       Brightness.light => Colors.black54,
       Brightness.dark => Colors.white60,
     };
