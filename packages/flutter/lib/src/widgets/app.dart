@@ -296,7 +296,7 @@ class WidgetsApp extends StatefulWidget {
   /// _must_ contain an entry for `'/'`.
   ///
   /// If [home] or [routes] are not null, the routing implementation needs to know how
-  /// appropriately build [PageRoute]s. This can be achieved by supplying the
+  /// to appropriately build [PageRoute]s. This can be achieved by supplying the
   /// [pageRouteBuilder] parameter. The [pageRouteBuilder] is used by [MaterialApp]
   /// and [CupertinoApp] to create [MaterialPageRoute]s and [CupertinoPageRoute],
   /// respectively.
@@ -305,7 +305,7 @@ class WidgetsApp extends StatefulWidget {
   /// content of the app in some other widget. It is recommended that you use [home]
   /// rather than [builder] if you intend to only display a single route in your app.
   ///
-  /// [WidgetsApp] is also possible to provide a custom implementation of routing via the
+  /// [WidgetsApp] is also able to provide a custom implementation of routing via the
   /// [onGenerateRoute] and [onUnknownRoute] parameters. These parameters correspond
   /// to [Navigator.onGenerateRoute] and [Navigator.onUnknownRoute]. If [home], [routes],
   /// and [builder] are null, or if they fail to create a requested route,
