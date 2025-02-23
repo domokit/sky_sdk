@@ -1230,6 +1230,47 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Infinite Scrolling in CarouselView works correctly', (WidgetTester tester) async {
+    // Build the CarouselView widget with a few items
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView(
+            isInfinite: true,
+            children: List.generate(5, (index) {
+              return Container(
+                key: Key('item_$index'),
+                color: Colors.blue[(index + 1) * 100],
+                height: 100.0,
+                width: 100.0,
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+
+    // Verify the first item is visible
+    expect(find.byKey(Key('item_0')), findsOneWidget);
+
+    // Scroll to the last item
+    await tester.drag(find.byType(CarouselView), Offset(-300.0, 0.0));
+    await tester.pumpAndSettle();
+
+    // Verify that the last item is visible after scrolling
+    expect(find.byKey(Key('item_4')), findsOneWidget); // Last item should be visible
+    expect(find.byKey(Key('item_0')), findsNothing); // First item should not be visible
+
+    // Scroll back to the first item (infinite scrolling should work)
+    await tester.drag(find.byType(CarouselView), Offset(300.0, 0.0));
+    await tester.pumpAndSettle();
+
+    // Verify that the carousel loops back correctly
+    expect(find.byKey(Key('item_0')), findsOneWidget); // The first item should be visible again
+  });
+
+
+
   testWidgets('The shrinkExtent should keep the same when the item is tapped', (
     WidgetTester tester,
   ) async {
