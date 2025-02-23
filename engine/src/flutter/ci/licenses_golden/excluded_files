@@ -3395,6 +3395,7 @@
 ../../../fuchsia/sdk/linux/fidl/fuchsia.bluetooth.le/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.bluetooth.sys/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.bluetooth/meta.json
+../../../fuchsia/sdk/linux/fidl/fuchsia.boot.metadata/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.buildinfo.test/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.buildinfo/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.buttons/meta.json
@@ -3431,6 +3432,7 @@
 ../../../fuchsia/sdk/linux/fidl/fuchsia.factory/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.feedback/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.fonts/meta.json
+../../../fuchsia/sdk/linux/fidl/fuchsia.gnss.types/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.gpu.agis/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.gpu.magma/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.adc/meta.json
@@ -3440,7 +3442,10 @@
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.bluetooth/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.clock/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.clockimpl/meta.json
+../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.cpu.ctrl/meta.json
+../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.gnss/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.gpio/meta.json
+../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.hrtimer/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.i2c.businfo/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.i2c/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.hardware.i2cimpl/meta.json
@@ -3524,6 +3529,7 @@
 ../../../fuchsia/sdk/linux/fidl/fuchsia.power.profile/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.power.system/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.power.systemmode/meta.json
+../../../fuchsia/sdk/linux/fidl/fuchsia.power/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.process.lifecycle/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.process/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.recovery.ui/meta.json
@@ -3533,6 +3539,7 @@
 ../../../fuchsia/sdk/linux/fidl/fuchsia.session/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.settings.policy/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.settings/meta.json
+../../../fuchsia/sdk/linux/fidl/fuchsia.storage.ftl/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.sysinfo/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.sysmem/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.sysmem2/meta.json
@@ -3579,6 +3586,7 @@
 ../../../fuchsia/sdk/linux/fidl/fuchsia.wlan.product.deprecatedclient/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.wlan.product.deprecatedconfiguration/meta.json
 ../../../fuchsia/sdk/linux/fidl/fuchsia.wlan.softmac/meta.json
+../../../fuchsia/sdk/linux/fidl/fuchsia.wlan.stats/meta.json
 ../../../fuchsia/sdk/linux/fidl/zx/meta.json
 ../../../fuchsia/sdk/linux/meta
 ../../../fuchsia/sdk/linux/obj/arm64-api-16/sysroot/dist/lib/asan/ld.so.1
@@ -3642,7 +3650,6 @@
 ../../../fuchsia/sdk/linux/packages/fake-build-info/meta.json
 ../../../fuchsia/sdk/linux/packages/heapdump-collector/meta.json
 ../../../fuchsia/sdk/linux/packages/intl_property_manager/meta.json
-../../../fuchsia/sdk/linux/packages/magma_conformance_tests/meta.json
 ../../../fuchsia/sdk/linux/packages/realm_builder_server/meta.json
 ../../../fuchsia/sdk/linux/packages/vkcopy-test/meta.json
 ../../../fuchsia/sdk/linux/packages/vkext-test/meta.json
@@ -3667,6 +3674,7 @@
 ../../../fuchsia/sdk/linux/pkg/driver_component_cpp/meta.json
 ../../../fuchsia/sdk/linux/pkg/driver_devfs_cpp/meta.json
 ../../../fuchsia/sdk/linux/pkg/driver_fake_bti_cpp/meta.json
+../../../fuchsia/sdk/linux/pkg/driver_fake_mmio_reg_cpp/meta.json
 ../../../fuchsia/sdk/linux/pkg/driver_fake_object_cpp/meta.json
 ../../../fuchsia/sdk/linux/pkg/driver_fake_platform_device_cpp/meta.json
 ../../../fuchsia/sdk/linux/pkg/driver_fake_resource_cpp/meta.json
