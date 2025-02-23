@@ -143,10 +143,17 @@ sealed class _DebugSemanticsRoleChecks {
       return FlutterError('A tab needs selected states');
     }
 
-    if (!node.areUserActionsBlocked && !data.hasAction(SemanticsAction.tap)) {
-      return FlutterError('A tab must have a tap action');
+    if (node.areUserActionsBlocked) {
+      return null;
     }
 
+    if (!data.hasFlag(SemanticsFlag.hasEnabledState)) {
+      if (!data.hasAction(SemanticsAction.tap)) {
+        return FlutterError('A tab must have a tap action');
+      }
+    } else if (data.hasFlag(SemanticsFlag.isEnabled) && !data.hasAction(SemanticsAction.tap)) {
+      return FlutterError('A tab must have a tap action');
+    }
     return null;
   }
 
