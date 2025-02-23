@@ -128,6 +128,196 @@ void main() {
     });
   }
 
+  testWithoutContext(
+    'AndroidDevice.startApp in release mode finds immediate startup errors',
+    () async {
+      final BufferLogger logger = BufferLogger.test();
+      final AndroidDevice device = AndroidDevice(
+        '1234',
+        modelID: 'TestModel',
+        fileSystem: fileSystem,
+        processManager: processManager,
+        logger: logger,
+        platform: FakePlatform(),
+        androidSdk: androidSdk,
+      );
+      final File apkFile = fileSystem.file('app-debug.apk')..createSync();
+      final AndroidApk apk = AndroidApk(
+        id: 'FlutterApp',
+        applicationPackage: apkFile,
+        launchActivity: 'FlutterActivity',
+        versionCode: 1,
+      );
+
+      // These commands are required to install and start the app
+      processManager.addCommand(kAdbVersionCommand);
+      processManager.addCommand(kStartServer);
+
+      processManager.addCommand(
+        FakeCommand(
+          command: const <String>['adb', '-s', '1234', 'shell', 'getprop'],
+          stdout:
+              '[ro.product.cpu.abi]: '
+              '[${getAndroidArchForName(getNameForTargetPlatform(TargetPlatform.android_arm64)).archName}]',
+        ),
+      );
+      processManager.addCommand(
+        const FakeCommand(
+          command: <String>['adb', '-s', '1234', 'shell', 'am', 'force-stop', 'FlutterApp'],
+        ),
+      );
+
+      processManager.addCommand(
+        const FakeCommand(
+          command: <String>['adb', '-s', '1234', 'install', '-t', '-r', 'app-debug.apk'],
+        ),
+      );
+      processManager.addCommand(kShaCommand);
+
+      // This configures the output of logcat to simulate error/status messages.
+      processManager.addCommand(
+        const FakeCommand(
+          command: <String>['adb', '-s', '1234', 'shell', '-x', 'logcat', '-v', 'time'],
+          stdout: '05-11 12:54:46.665 E/flutter ( 7243): [ERROR:file.cc] We did a bad\n',
+        ),
+      );
+
+      processManager.addCommand(
+        const FakeCommand(
+          command: <String>[
+            'adb',
+            '-s',
+            '1234',
+            'shell',
+            'am',
+            'start',
+            '-a',
+            'android.intent.action.MAIN',
+            '-c',
+            'android.intent.category.LAUNCHER',
+            '-f',
+            '0x20000000',
+            '--ez',
+            'enable-dart-profiling',
+            'true',
+            'FlutterActivity',
+          ],
+        ),
+      );
+
+      final LaunchResult launchResult = await device.startApp(
+        apk,
+        prebuiltApplication: true,
+        debuggingOptions: DebuggingOptions.disabled(BuildInfo.release),
+        platformArgs: <String, dynamic>{},
+      );
+      expect(
+        launchResult.started,
+        false,
+        reason: 'Expected the app not to be started because of "Error:" in logcat',
+      );
+      expect(logger.errorText, contains('We did a bad'));
+    },
+  );
+
+  testWithoutContext(
+    'AndroidDevice.startApp in debug modes finds startup errors before the VM service',
+    () async {
+      final BufferLogger logger = BufferLogger.test();
+      final AndroidDevice device = AndroidDevice(
+        '1234',
+        modelID: 'TestModel',
+        fileSystem: fileSystem,
+        processManager: processManager,
+        logger: logger,
+        platform: FakePlatform(),
+        androidSdk: androidSdk,
+      );
+      final File apkFile = fileSystem.file('app-debug.apk')..createSync();
+      final AndroidApk apk = AndroidApk(
+        id: 'FlutterApp',
+        applicationPackage: apkFile,
+        launchActivity: 'FlutterActivity',
+        versionCode: 1,
+      );
+
+      // These commands are required to install and start the app
+      processManager.addCommand(kAdbVersionCommand);
+      processManager.addCommand(kStartServer);
+
+      processManager.addCommand(
+        FakeCommand(
+          command: const <String>['adb', '-s', '1234', 'shell', 'getprop'],
+          stdout:
+              '[ro.product.cpu.abi]: '
+              '[${getAndroidArchForName(getNameForTargetPlatform(TargetPlatform.android_arm64)).archName}]',
+        ),
+      );
+      processManager.addCommand(
+        const FakeCommand(
+          command: <String>['adb', '-s', '1234', 'shell', 'am', 'force-stop', 'FlutterApp'],
+        ),
+      );
+
+      processManager.addCommand(
+        const FakeCommand(
+          command: <String>['adb', '-s', '1234', 'install', '-t', '-r', 'app-debug.apk'],
+        ),
+      );
+      processManager.addCommand(kShaCommand);
+
+      // This configures the output of logcat to simulate error/status messages.
+      processManager.addCommand(
+        const FakeCommand(
+          command: <String>['adb', '-s', '1234', 'shell', '-x', 'logcat', '-v', 'time'],
+          stdout: '05-11 12:54:46.665 E/flutter ( 7243): [ERROR:file.cc] We did a bad\n',
+        ),
+      );
+
+      processManager.addCommand(
+        const FakeCommand(
+          command: <String>[
+            'adb',
+            '-s',
+            '1234',
+            'shell',
+            'am',
+            'start',
+            '-a',
+            'android.intent.action.MAIN',
+            '-c',
+            'android.intent.category.LAUNCHER',
+            '-f',
+            '0x20000000',
+            '--ez',
+            'enable-dart-profiling',
+            'true',
+            '--ez',
+            'enable-checked-mode',
+            'true',
+            '--ez',
+            'verify-entry-points',
+            'true',
+            'FlutterActivity',
+          ],
+        ),
+      );
+
+      final LaunchResult launchResult = await device.startApp(
+        apk,
+        prebuiltApplication: true,
+        debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
+        platformArgs: <String, dynamic>{},
+      );
+      expect(
+        launchResult.started,
+        false,
+        reason: 'Expected the app not to be started because of "Error:" in logcat',
+      );
+      expect(logger.errorText, contains('We did a bad'));
+    },
+  );
+
   testWithoutContext('AndroidDevice.startApp does not allow release builds on x86', () async {
     final AndroidDevice device = AndroidDevice(
       '1234',
