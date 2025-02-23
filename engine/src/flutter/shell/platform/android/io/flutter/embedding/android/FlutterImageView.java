@@ -197,6 +197,9 @@ public class FlutterImageView extends View implements RenderSurface {
     // or some special Android devices so the calls to `invalidate()` queued up
     // until the device produces a new frame.
     // 3. While the engine will also stop producing frames, there is a race condition.
+    // CAMILLE: actual screenshot taking. Q: This is interesting because it assumes an image reader
+    // is used?
+    // Is this never not true? A: yes because the test ensures the surface is converted to image :)
     final Image newImage = imageReader.acquireLatestImage();
     if (newImage != null) {
       // Only close current image after acquiring valid new image

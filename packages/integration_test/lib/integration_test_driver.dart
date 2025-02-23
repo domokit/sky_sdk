@@ -36,6 +36,11 @@ Future<void> writeResponseData(
   await file.writeAsString(resultString);
 }
 
+// CAMILLE: why would we do this?
+// flutter tool actually when you run flutter test, checks for integration_test import. if it sees it, generates file
+// that has init code then calls your main function. init stuff is like using fake async and not using real timing.
+// if u wanted to do ur own integration like background theapp, clear app storage, read yaml file in local file system, ten
+// you have to write ustom driver script
 /// Adaptor to run an integration test using `flutter drive`.
 ///
 /// To run an integration test `<test_name>.dart` using `flutter drive`, put a file named

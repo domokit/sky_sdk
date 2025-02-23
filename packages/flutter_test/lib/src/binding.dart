@@ -854,6 +854,7 @@ abstract class TestWidgetsFlutterBinding extends BindingBase
     }
   }
 
+  // CAMILLE: is this where we are saying "run on the device?"
   Future<void> _runTest(
     Future<void> Function() testBody,
     VoidCallback invariantTester,

@@ -36,13 +36,12 @@ class _IOCallbackManager implements CallbackManager {
       case 'request_data':
         final bool allTestsPassed = await testRunner.allTestsPassed.future;
         response = <String, String>{
-          'message':
-              allTestsPassed
-                  ? Response.allTestsPassed(data: testRunner.reportData).toJson()
-                  : Response.someTestsFailed(
-                    testRunner.failureMethodsDetails,
-                    data: testRunner.reportData,
-                  ).toJson(),
+          'message': allTestsPassed
+              ? Response.allTestsPassed(data: testRunner.reportData).toJson()
+              : Response.someTestsFailed(
+                  testRunner.failureMethodsDetails,
+                  data: testRunner.reportData,
+                ).toJson(),
         };
       case 'get_health':
         response = <String, String>{'status': 'ok'};
@@ -68,17 +67,20 @@ class _IOCallbackManager implements CallbackManager {
       // No-op on other platforms.
       return;
     }
+    // CAMILLE: call to convert surface to image made here
     assert(!_isSurfaceRendered, 'Surface already converted to an image');
     await integrationTestChannel.invokeMethod<void>('convertFlutterSurfaceToImage');
     _isSurfaceRendered = true;
 
     addTearDown(() async {
       assert(_isSurfaceRendered, 'Surface is not an image');
+      // CAMILLE: cleanup
       await integrationTestChannel.invokeMethod<void>('revertFlutterImage');
       _isSurfaceRendered = false;
     });
   }
 
+  // CAMILLE: take screensot implementation
   @override
   Future<Map<String, dynamic>> takeScreenshot(
     String screenshot, [
@@ -89,6 +91,8 @@ class _IOCallbackManager implements CallbackManager {
       throw StateError('Call convertFlutterSurfaceToImage() before taking a screenshot');
     }
     integrationTestChannel.setMethodCallHandler(_onMethodChannelCall);
+
+    // CAMILLE: call to native side. Can I try adb call?
     final List<int>? rawBytes = await integrationTestChannel.invokeMethod<List<int>>(
       'captureScreenshot',
       <String, dynamic>{'name': screenshot},

@@ -11,6 +11,7 @@ library;
 import 'dart:async';
 import 'dart:convert';
 
+// CAMILLE: when do we use integrationDriver?
 /// A callback to use with [integrationDriver].
 ///
 /// The callback receives the name of screenshot passed to `binding.takeScreenshot(<name>)`,
