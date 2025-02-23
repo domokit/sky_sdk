@@ -11,6 +11,7 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -1893,48 +1894,102 @@ void main() {
     );
   });
 
-  group('Viewport childrenInPaintOrder control test', () {
-    test('RenderViewport', () async {
-      final List<RenderSliver> children = <RenderSliver>[
-        RenderSliverToBoxAdapter(),
-        RenderSliverToBoxAdapter(),
-        RenderSliverToBoxAdapter(),
-      ];
+  group('Viewport paint order', () {
+    final List<int> paintLog = <int>[];
 
-      final RenderViewport renderViewport = RenderViewport(
-        crossAxisDirection: AxisDirection.right,
-        offset: ViewportOffset.zero(),
-        children: children,
+    Widget makeSliver(int i) {
+      return SliverToBoxAdapter(
+        key: ValueKey<int>(i),
+        child: CustomPaint(
+          painter: TestCustomPainter()..onPaint = (_, _) => paintLog.add(i),
+          child: Text('Item $i'),
+        ),
+      );
+    }
+
+    testWidgets('default (firstIsTop)', (WidgetTester tester) async {
+      addTearDown(paintLog.clear);
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: CustomScrollView(
+            center: const ValueKey<int>(2),
+            anchor: 0.5,
+            slivers: List<Widget>.generate(5, makeSliver),
+          ),
+        ),
       );
 
-      // Children should be painted in reverse order to the list given
-      expect(renderViewport.childrenInPaintOrder, equals(children.reversed));
-      // childrenInPaintOrder should be reverse of childrenInHitTestOrder
+      // First sliver paints last, over other slivers; last sliver paints first.
+      expect(paintLog, equals(<int>[4, 3, 2, 1, 0]));
+    });
+
+    testWidgets('lastIsTop', (WidgetTester tester) async {
+      addTearDown(paintLog.clear);
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: CustomScrollView(
+            paintOrder: SliverPaintOrder.lastIsTop,
+            center: const ValueKey<int>(2),
+            anchor: 0.5,
+            slivers: List<Widget>.generate(5, makeSliver),
+          ),
+        ),
+      );
+
+      // Last sliver paints last, over other slivers; first sliver paints first.
+      expect(paintLog, equals(<int>[0, 1, 2, 3, 4]));
+    });
+  });
+
+  group('Viewport hit-test order', () {
+    Widget makeSliver(int i) {
+      return _AllOverlapSliver(key: ValueKey<int>(i), id: i);
+    }
+
+    testWidgets('default (firstIsTop)', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: CustomScrollView(
+            center: const ValueKey<int>(2),
+            anchor: 0.5,
+            slivers: List<Widget>.generate(5, makeSliver),
+          ),
+        ),
+      );
+
+      final HitTestResult result = tester.hitTestOnBinding(const Offset(400, 300));
       expect(
-        renderViewport.childrenInPaintOrder,
-        equals(renderViewport.childrenInHitTestOrder.toList().reversed),
+        result.path
+            .map((HitTestEntry<HitTestTarget> e) => e.target)
+            .map((HitTestTarget t) => t is _RenderAllOverlapSliver ? t.id : null)
+            .nonNulls,
+        equals(<int>[0, 1, 2, 3, 4]),
       );
     });
 
-    test('RenderShrinkWrappingViewport', () async {
-      final List<RenderSliver> children = <RenderSliver>[
-        RenderSliverToBoxAdapter(),
-        RenderSliverToBoxAdapter(),
-        RenderSliverToBoxAdapter(),
-      ];
-
-      final RenderShrinkWrappingViewport renderViewport = RenderShrinkWrappingViewport(
-        crossAxisDirection: AxisDirection.right,
-        offset: ViewportOffset.zero(),
-        children: children,
+    testWidgets('lastIsTop', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: CustomScrollView(
+            paintOrder: SliverPaintOrder.lastIsTop,
+            center: const ValueKey<int>(2),
+            anchor: 0.5,
+            slivers: List<Widget>.generate(5, makeSliver),
+          ),
+        ),
       );
 
-      // Children should be painted in reverse order to the list given
-      expect(renderViewport.childrenInPaintOrder, equals(children.reversed));
-      // childrenInPaintOrder should be reverse of childrenInHitTestOrder
+      final HitTestResult result = tester.hitTestOnBinding(const Offset(400, 300));
       expect(
-        renderViewport.childrenInPaintOrder,
-        equals(renderViewport.childrenInHitTestOrder.toList().reversed),
+        result.path
+            .map((HitTestEntry<HitTestTarget> e) => e.target)
+            .map((HitTestTarget t) => t is _RenderAllOverlapSliver ? t.id : null)
+            .nonNulls,
+        equals(<int>[4, 3, 2, 1, 0]),
       );
     });
   });
@@ -2438,6 +2493,69 @@ void main() {
       tester: tester,
     );
   });
+}
+
+class TestCustomPainter extends CustomPainter {
+  void Function(Canvas canvas, Size size)? onPaint;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (onPaint != null) {
+      onPaint!(canvas, size);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+/// A sliver that overlaps with other slivers as far as possible,
+/// and does nothing else.
+class _AllOverlapSliver extends LeafRenderObjectWidget {
+  const _AllOverlapSliver({super.key, required this.id});
+
+  final int id;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) => _RenderAllOverlapSliver(id);
+}
+
+class _RenderAllOverlapSliver extends RenderSliver {
+  _RenderAllOverlapSliver(this.id);
+
+  final int id;
+
+  @override
+  void performLayout() {
+    geometry = SliverGeometry(
+      paintExtent: constraints.remainingPaintExtent,
+      maxPaintExtent: constraints.remainingPaintExtent,
+      layoutExtent: 0.0,
+    );
+  }
+
+  @override
+  bool hitTest(
+    SliverHitTestResult result, {
+    required double mainAxisPosition,
+    required double crossAxisPosition,
+  }) {
+    if (mainAxisPosition >= 0.0 &&
+        mainAxisPosition < geometry!.hitTestExtent &&
+        crossAxisPosition >= 0.0 &&
+        crossAxisPosition < constraints.crossAxisExtent) {
+      result.add(
+        SliverHitTestEntry(
+          this,
+          mainAxisPosition: mainAxisPosition,
+          crossAxisPosition: crossAxisPosition,
+        ),
+      );
+    }
+    return false;
+  }
 }
 
 // Simple sliver that applies N scroll offset corrections.
