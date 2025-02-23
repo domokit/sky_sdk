@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../widgets/navigator_utils.dart';
@@ -743,6 +744,74 @@ void main() {
     final double sheetNavBarHeight = tester.getSize(find.byKey(sheetBarKey)).height;
 
     expect(sheetNavBarHeight, lessThan(homeNavBardHeight));
+  });
+
+  testWidgets('Previous route corner radius goes to same when sheet route is popped', (
+    WidgetTester tester,
+  ) async {
+    final GlobalKey scaffoldKey = GlobalKey();
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoPageScaffold(
+          key: scaffoldKey,
+          child: Column(
+            children: <Widget>[
+              const Text('Page 1'),
+              CupertinoButton(
+                onPressed: () {
+                  Navigator.push<void>(
+                    scaffoldKey.currentContext!,
+                    CupertinoSheetRoute<void>(
+                      builder: (BuildContext context) {
+                        return CupertinoPageScaffold(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: const Icon(Icons.arrow_back_ios),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+                child: const Text('Push Page 2'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Page 1'), findsOneWidget);
+    expect(
+      tester
+          .getTopLeft(
+            find.ancestor(of: find.text('Page 1'), matching: find.byType(CupertinoPageScaffold)),
+          )
+          .dy,
+      equals(0.0),
+    );
+    expect(find.byType(Icon), findsNothing);
+
+    await tester.tap(find.text('Push Page 2'));
+    await tester.pumpAndSettle();
+
+    // Previous page is still visible behind the new sheet.
+    expect(find.text('Page 1'), findsOneWidget);
+    final Offset pageOneOffset = tester.getTopLeft(
+      find.ancestor(of: find.text('Page 1'), matching: find.byType(CupertinoPageScaffold)),
+    );
+    expect(pageOneOffset.dy, greaterThan(0.0));
+    expect(pageOneOffset.dx, greaterThan(0.0));
+    expect(find.byType(Icon), findsOneWidget);
+
+    // Pop Sheet Route
+    await tester.tap(find.byType(Icon));
+    await tester.pumpAndSettle();
+
+    final Finder clipRRectFinder = find.byType(ClipRRect);
+    final Rect clipRect = tester.getRect(clipRRectFinder);
+    expect(clipRect.center, equals(const Offset(400, 300)));
   });
 
   group('drag dismiss gesture', () {
