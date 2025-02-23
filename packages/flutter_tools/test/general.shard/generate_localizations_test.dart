@@ -1689,6 +1689,33 @@ import 'output-localization-file_en.dart' deferred as output-localization-file_e
           expect(content, contains("String get helloWorld => 'Hello {name}'"));
         },
       );
+
+      testWithoutContext('translations can copy the placeholder definitions for plurals', () {
+        setupLocalizations(<String, String>{
+          'en': '''
+{
+  "helloWorld": "{count, plural, one{Hello World!} other{Hello Worlds!}}",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting",
+    "placeholders": {
+      "count": {}
+    }
+  }
+}''',
+          'de': '''
+{
+  "helloWorld": "{count, plural, one{Hallo Welt!} other{Hallo Welten!}}",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting",
+    "placeholders": {
+      "count": {}
+    }
+  }
+}''',
+        });
+        final String content = getSyntheticGeneratedFileContent(locale: 'en');
+        expect(content, contains('String helloWorld(num count) {'));
+      });
     });
 
     group('DateTime tests', () {
@@ -2155,7 +2182,7 @@ import 'output-localization-file_en.dart' deferred as output-localization-file_e
         "description": "The first day of spring",
         "placeholders": {
           "springStartDate": {
-            "format": "MMMMd"
+            "format": "MMMd"
           }
         }
       }
@@ -2167,7 +2194,7 @@ import 'output-localization-file_en.dart' deferred as output-localization-file_e
                 (L10nException e) => e.message,
                 'message',
                 contains(
-                  'The placeholder, springStartDate, has its "type" resource attribute set to the "null" type in locale "ja", but it is "DateTime" in the template placeholder.',
+                  'The placeholder, springStartDate, has its "type" resource attribute set to the "Object" type in locale "ja", but it is "DateTime" in the template placeholder.',
                 ),
               ),
             ),
