@@ -256,7 +256,6 @@ typedef struct MouseState {
   if (!project) {
     project = [[FlutterDartProject alloc] init];
   }
-  FlutterView.forceSoftwareRendering = project.settings.enable_software_rendering;
   FlutterEngine* engine = [[FlutterEngine alloc] initWithName:@"io.flutter"
                                                       project:project
                                        allowHeadlessExecution:self.engineAllowHeadlessExecution

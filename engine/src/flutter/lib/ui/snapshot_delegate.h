@@ -24,7 +24,7 @@ class SnapshotDelegate {
   /// @brief      A data structure used by the Skia implementation of deferred
   ///             GPU based images.
   struct GpuImageResult {
-    GpuImageResult(
+    explicit GpuImageResult(
 #if !SLIMPELLER
         const GrBackendTexture& p_texture,
 #endif  //  !SLIMPELLER

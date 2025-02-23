@@ -64,7 +64,6 @@ void main(List<String> args) async {
         deviceIdentifier: results.option('device-identifier')!,
         osRuntime: results.option('os-runtime')!,
         osVersion: results.option('os-version')!,
-        withImpeller: results.flag('with-impeller'),
         dumpXcresultOnFailure: dumpXcresultOnFailurePath,
       );
       completer.complete();
@@ -111,7 +110,6 @@ Future<void> _run(
   required String deviceIdentifier,
   required String osRuntime,
   required String osVersion,
-  required bool withImpeller,
   required String? dumpXcresultOnFailure,
 }) async {
   // Terminate early on SIGINT.
@@ -132,37 +130,35 @@ Future<void> _run(
 
   cleanup.add(() => _deleteIfPresent(resultBundle));
 
-  if (withImpeller) {
-    final process = await _runTests(
-      outScenariosPath: scenarioPath,
-      resultBundlePath: resultBundle.path,
-      osVersion: osVersion,
-      deviceName: deviceName,
-      iosEngineVariant: iosEngineVariant,
-    );
-    cleanup.add(process.kill);
+  final process = await _runTests(
+    outScenariosPath: scenarioPath,
+    resultBundlePath: resultBundle.path,
+    osVersion: osVersion,
+    deviceName: deviceName,
+    iosEngineVariant: iosEngineVariant,
+  );
+  cleanup.add(process.kill);
 
-    // Create a temporary directory, if needed.
-    var storePath = dumpXcresultOnFailure;
-    if (storePath == null) {
-      final dumpDir = io.Directory.systemTemp.createTempSync();
-      storePath = dumpDir.path;
-      cleanup.add(() => dumpDir.delete(recursive: true));
-    }
-
-    if (await process.exitCode != 0) {
-      final String outputPath = _zipAndStoreFailedTestResults(
-        iosEngineVariant: iosEngineVariant,
-        resultBundle: resultBundle,
-        storePath: storePath,
-      );
-      io.stderr.writeln('Failed test results are stored at $outputPath');
-      throw _ToolFailure('test failed.');
-    } else {
-      io.stderr.writeln('test succcess.');
-    }
-    _deleteIfPresent(resultBundle);
+  // Create a temporary directory, if needed.
+  var storePath = dumpXcresultOnFailure;
+  if (storePath == null) {
+    final dumpDir = io.Directory.systemTemp.createTempSync();
+    storePath = dumpDir.path;
+    cleanup.add(() => dumpDir.delete(recursive: true));
   }
+
+  if (await process.exitCode != 0) {
+    final String outputPath = _zipAndStoreFailedTestResults(
+      iosEngineVariant: iosEngineVariant,
+      resultBundle: resultBundle,
+      storePath: storePath,
+    );
+    io.stderr.writeln('Failed test results are stored at $outputPath');
+    throw _ToolFailure('test failed.');
+  } else {
+    io.stderr.writeln('test succcess.');
+  }
+  _deleteIfPresent(resultBundle);
 }
 
 /// Exception thrown when the tool should halt execution intentionally.
@@ -197,11 +193,6 @@ final _args =
         'os-version',
         help: 'The OS version of the iOS simulator device to use.',
         defaultsTo: '17.0',
-      )
-      ..addFlag(
-        'with-impeller',
-        help: 'Whether to use the Impeller backend to run the tests.',
-        defaultsTo: true,
       )
       ..addOption(
         'dump-xcresult-on-failure',

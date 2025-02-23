@@ -16,14 +16,14 @@ std::unique_ptr<ImageDecoder> ImageDecoder::Make(
     const Settings& settings,
     const TaskRunners& runners,
     std::shared_ptr<fml::ConcurrentTaskRunner> concurrent_task_runner,
-    fml::WeakPtr<IOManager> io_manager,
+    const fml::WeakPtr<IOManager>& io_manager,
     const std::shared_ptr<fml::SyncSwitch>& gpu_disabled_switch) {
 #if IMPELLER_SUPPORTS_RENDERING
   if (settings.enable_impeller) {
     return std::make_unique<ImageDecoderImpeller>(
         runners,                            //
         std::move(concurrent_task_runner),  //
-        std::move(io_manager),              //
+        io_manager,                         //
         settings.enable_wide_gamut,         //
         gpu_disabled_switch);
   }
@@ -32,7 +32,7 @@ std::unique_ptr<ImageDecoder> ImageDecoder::Make(
   return std::make_unique<ImageDecoderSkia>(
       runners,                            //
       std::move(concurrent_task_runner),  //
-      std::move(io_manager)               //
+      io_manager                          //
   );
 #else   //  !SLIMPELLER
   FML_LOG(FATAL) << "Could not setup an image decoder.";

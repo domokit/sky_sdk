@@ -48,7 +48,7 @@ flutter::Settings FLTDefaultSettingsForBundle(NSBundle* bundle, NSProcessInfo* p
   auto command_line = flutter::CommandLineFromNSProcessInfo(processInfoOrNil);
 
   // Precedence:
-  // 1. Settings from the specified NSBundle (except for enable-impeller).
+  // 1. Settings from the specified NSBundle.
   // 2. Settings passed explicitly via command-line arguments.
   // 3. Settings from the NSBundle with the default bundle ID.
   // 4. Settings from the main NSBundle and default values.
@@ -401,10 +401,6 @@ flutter::Settings FLTDefaultSettingsForBundle(NSBundle* bundle, NSProcessInfo* p
 
 - (BOOL)isWideGamutEnabled {
   return _settings.enable_wide_gamut;
-}
-
-- (BOOL)isImpellerEnabled {
-  return _settings.enable_impeller;
 }
 
 @end

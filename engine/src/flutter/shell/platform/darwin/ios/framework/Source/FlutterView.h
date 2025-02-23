@@ -13,7 +13,6 @@
 
 @protocol FlutterViewEngineDelegate <NSObject>
 
-@property(nonatomic, readonly) BOOL isUsingImpeller;
 @property(nonatomic, readonly) FlutterPlatformViewsController* platformViewsController;
 
 - (flutter::Rasterizer::Screenshot)takeScreenshot:(flutter::Rasterizer::ScreenshotType)type
@@ -44,8 +43,6 @@
 - (UIScreen*)screen;
 - (MTLPixelFormat)pixelFormat;
 
-// Set by FlutterEngine or FlutterViewController to override software rendering.
-@property(class, nonatomic) BOOL forceSoftwareRendering;
 @end
 
 #endif  // FLUTTER_SHELL_PLATFORM_DARWIN_IOS_FRAMEWORK_SOURCE_FLUTTERVIEW_H_
