@@ -207,6 +207,7 @@ typedef CanvasPath Path;
   V(ImageFilter, initComposeFilter)              \
   V(ImageFilter, initShader)                     \
   V(ImageFilter, initMatrix)                     \
+  V(ImageFilter, equals)                         \
   V(ImageShader, dispose)                        \
   V(ImageShader, initWithImage)                  \
   V(ImmutableBuffer, dispose)                    \

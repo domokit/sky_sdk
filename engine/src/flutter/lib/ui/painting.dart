@@ -4474,8 +4474,13 @@ class _FragmentShaderImageFilter implements ImageFilter {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _FragmentShaderImageFilter && other.shader == shader;
+    return other is _FragmentShaderImageFilter &&
+        other.shader == shader &&
+        _equals(nativeFilter, other.nativeFilter);
   }
+
+  @Native<Bool Function(Handle, Handle)>(symbol: 'ImageFilter::equal')
+  external static bool _equals(_ImageFilter a, _ImageFilter b);
 
   @override
   int get hashCode => shader.hashCode;

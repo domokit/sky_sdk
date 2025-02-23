@@ -36,6 +36,7 @@ class ImageFilter : public RefCountedDartWrappable<ImageFilter> {
   void initColorFilter(ColorFilter* colorFilter);
   void initComposeFilter(ImageFilter* outer, ImageFilter* inner);
   void initShader(ReusableFragmentShader* shader);
+  bool equals(ImageFilter* a, ImageFilter* b);
 
   const std::shared_ptr<DlImageFilter> filter(DlTileMode mode) const;
 
