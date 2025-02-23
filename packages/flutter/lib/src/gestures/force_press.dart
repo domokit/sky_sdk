@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart' show clampDouble;
+import 'package:flutter/foundation.dart';
 
 import 'events.dart';
+import 'positioned_details.dart';
 import 'recognizer.dart';
 
 export 'dart:ui' show Offset, PointerDeviceKind;
@@ -43,20 +44,23 @@ enum _ForceState {
 ///  * [ForcePressGestureRecognizer.onStart], [ForcePressGestureRecognizer.onPeak],
 ///    [ForcePressGestureRecognizer.onEnd], and [ForcePressGestureRecognizer.onUpdate]
 ///    which use [ForcePressDetails].
-class ForcePressDetails {
+class ForcePressDetails extends PositionedGestureDetails {
   /// Creates details for a [GestureForcePressStartCallback],
   /// [GestureForcePressPeakCallback] or [GestureForcePressEndCallback].
-  ForcePressDetails({required this.globalPosition, Offset? localPosition, required this.pressure})
-    : localPosition = localPosition ?? globalPosition;
-
-  /// The global position at which the function was called.
-  final Offset globalPosition;
-
-  /// The local position at which the function was called.
-  final Offset localPosition;
+  const ForcePressDetails({
+    required super.globalPosition,
+    Offset? localPosition,
+    required this.pressure,
+  }) : super(localPosition: localPosition ?? globalPosition);
 
   /// The pressure of the pointer on the screen.
   final double pressure;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('pressure', pressure));
+  }
 }
 
 /// Signature used by a [ForcePressGestureRecognizer] for when a pointer has

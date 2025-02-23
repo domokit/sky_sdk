@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'arena.dart';
 import 'constants.dart';
 import 'events.dart';
+import 'positioned_details.dart';
 import 'recognizer.dart';
 
 export 'dart:ui' show Offset, PointerDeviceKind;
@@ -28,19 +29,19 @@ export 'events.dart' show PointerCancelEvent, PointerDownEvent, PointerEvent, Po
 ///
 ///  * [GestureDetector.onTapDown], which receives this information.
 ///  * [TapGestureRecognizer], which passes this information to one of its callbacks.
-class TapDownDetails {
+class TapDownDetails extends PositionedGestureDetails {
   /// Creates details for a [GestureTapDownCallback].
-  TapDownDetails({this.globalPosition = Offset.zero, Offset? localPosition, this.kind})
-    : localPosition = localPosition ?? globalPosition;
-
-  /// The global position at which the pointer contacted the screen.
-  final Offset globalPosition;
+  const TapDownDetails({super.globalPosition = Offset.zero, Offset? localPosition, this.kind})
+    : super(localPosition: localPosition ?? globalPosition);
 
   /// The kind of the device that initiated the event.
   final PointerDeviceKind? kind;
 
-  /// The local position at which the pointer contacted the screen.
-  final Offset localPosition;
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(EnumProperty<PointerDeviceKind?>('kind', kind));
+  }
 }
 
 /// {@template flutter.gestures.tap.GestureTapDownCallback}
@@ -63,19 +64,22 @@ typedef GestureTapDownCallback = void Function(TapDownDetails details);
 ///
 ///  * [GestureDetector.onTapUp], which receives this information.
 ///  * [TapGestureRecognizer], which passes this information to one of its callbacks.
-class TapUpDetails {
+class TapUpDetails extends PositionedGestureDetails {
   /// Creates a [TapUpDetails] data object.
-  TapUpDetails({required this.kind, this.globalPosition = Offset.zero, Offset? localPosition})
-    : localPosition = localPosition ?? globalPosition;
-
-  /// The global position at which the pointer contacted the screen.
-  final Offset globalPosition;
-
-  /// The local position at which the pointer contacted the screen.
-  final Offset localPosition;
+  const TapUpDetails({
+    required this.kind,
+    super.globalPosition = Offset.zero,
+    Offset? localPosition,
+  }) : super(localPosition: localPosition ?? globalPosition);
 
   /// The kind of the device that initiated the event.
   final PointerDeviceKind kind;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(EnumProperty<PointerDeviceKind>('kind', kind));
+  }
 }
 
 /// {@template flutter.gestures.tap.GestureTapUpCallback}
@@ -340,7 +344,7 @@ abstract class BaseTapGestureRecognizer extends PrimaryPointerGestureRecognizer 
         defaultValue: _up?.position,
       ),
     );
-    properties.add(DiagnosticsProperty<int>('button', _down?.buttons, defaultValue: null));
+    properties.add(IntProperty('button', _down?.buttons, defaultValue: null));
     properties.add(FlagProperty('sentTapDown', value: _sentTapDown, ifTrue: 'sent tap down'));
   }
 }
