@@ -298,6 +298,15 @@ class FlutterWindowsEngine {
     return windows_proc_table_;
   }
 
+  // Sets the cursor that should be used when the mouse is over the Flutter
+  // content. See mouse_cursor.dart for the values and meanings of cursor_name.
+  // Returns false if there are no views to set the cursor.
+  bool UpdateFlutterCursor(const std::string& cursor_name) const;
+
+  // Sets the cursor directly from a cursor handle.
+  // Returns false if there are no views to set the cursor.
+  bool SetFlutterCursor(HCURSOR cursor) const;
+
  protected:
   // Creates the keyboard key handler.
   //

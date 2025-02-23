@@ -983,6 +983,29 @@ std::optional<LRESULT> FlutterWindowsEngine::ProcessExternalWindowMessage(
   return std::nullopt;
 }
 
+bool FlutterWindowsEngine::UpdateFlutterCursor(
+    const std::string& cursor_name) const {
+  std::shared_lock read_lock(views_mutex_);
+  if (views_.empty()) {
+    return false;
+  }
+  for (const auto& [_, view] : views_) {
+    view->UpdateFlutterCursor(cursor_name);
+  }
+  return true;
+}
+
+bool FlutterWindowsEngine::SetFlutterCursor(HCURSOR cursor) const {
+  std::shared_lock read_lock(views_mutex_);
+  if (views_.empty()) {
+    return false;
+  }
+  for (const auto& [_, view] : views_) {
+    view->SetFlutterCursor(cursor);
+  }
+  return true;
+}
+
 void FlutterWindowsEngine::OnChannelUpdate(std::string name, bool listening) {
   if (name == "flutter/platform" && listening) {
     lifecycle_manager_->BeginProcessingExit();

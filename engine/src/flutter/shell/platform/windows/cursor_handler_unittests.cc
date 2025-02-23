@@ -79,11 +79,7 @@ class CursorHandlerTest : public WindowsTest {
 
     window_ = window.get();
     engine_ = builder.Build();
-    view_ = std::make_unique<FlutterWindowsView>(kImplicitViewId, engine_.get(),
-                                                 std::move(window));
-
-    EngineModifier modifier{engine_.get()};
-    modifier.SetImplicitView(view_.get());
+    view_ = engine_->CreateView(std::move(window));
   }
 
  private:
