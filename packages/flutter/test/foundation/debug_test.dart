@@ -66,8 +66,8 @@ void main() {
       FlutterMemoryAllocations.instance.removeListener(listener);
     });
 
-    test('debugMaybeDispatchObjectCreated', () async {
-      debugMaybeDispatchObjectCreated('library', 'class', object);
+    test('debugMaybeDispatchCreated', () async {
+      debugMaybeDispatchCreated('library', 'class', object);
 
       if (kFlutterMemoryAllocationsEnabled) {
         final ObjectEvent? theEvent = dispatchedEvent;
@@ -77,15 +77,15 @@ void main() {
         }
 
         expect(theEvent.object, object);
-        expect(theEvent.library, 'library');
+        expect(theEvent.library, 'package:flutter/library.dart');
         expect(theEvent.className, 'class');
       } else {
         expect(dispatchedEvent, isNull);
       }
     });
 
-    test('debugMaybeDispatchObjectDisposed', () async {
-      debugMaybeDispatchObjectDisposed(object);
+    test('debugMaybeDispatchDisposed', () async {
+      debugMaybeDispatchDisposed(object);
 
       if (kFlutterMemoryAllocationsEnabled) {
         final ObjectEvent? theEvent = dispatchedEvent;
