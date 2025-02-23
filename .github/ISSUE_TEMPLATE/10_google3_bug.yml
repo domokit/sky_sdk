@@ -1,0 +1,137 @@
+name: Report a google3 bug
+description: |
+  You found a bug in Flutter causing your application to crash or
+  throw an exception, a widget is buggy, or something looks wrong.
+title: "[Google3 Bug]: "
+labels: 'customer: google'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for using Flutter!
+
+        If you are looking for support, please check out our documentation
+        or consider asking a question on Stack Overflow:
+
+          - https://flutter.dev/
+          - https://api.flutter.dev/
+          - https://stackoverflow.com/questions/tagged/flutter?sort=frequent
+  - type: markdown
+    attributes:
+      value: |
+        Before filling the form fields, please consider the following:
+        - Ensure that you have searched the [existing issues](https://github.com/flutter/flutter/issues)
+        - Read the [guide to filing a bug](https://flutter.dev/docs/resources/bug-reports)
+  - type: markdown
+    attributes:
+      value: |
+        Flutter GitHub issues are public and so you must avoid posting any Google confidential information in them.
+  - type: checkboxes
+    id: priority-indicator
+    attributes:
+      label: Help us understand the severity of this issue
+      description: Please only choose one
+      options:
+        - label: causing severe production issues e.g. malfunctions or data loss
+        - label: blocking next binary release
+        - label: blocking a client feature launch within a quarter
+        - label: nice-to-have but does not block a launch within the next quarter
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Please tell us exactly how to reproduce the problem you are running into.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected results
+      description: Please tell us what is expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Actual results
+      description: Please tell us what is actually happening.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Code sample
+      description: |
+        Please create a minimal reproducible sample that shows the problem
+        and attach it below between the lines with the backticks.
+
+        To create it, use the `flutter create bug` command and update the `main.dart` file.
+
+        Alternatively, you can use https://dartpad.dev/ or create a public GitHub
+        repository to share your sample.
+
+        Without this we will unlikely be able to progress on the issue, and because of that
+        we regretfully will have to close it.
+
+        Note: Please do not upload screenshots of text. Instead, use code blocks
+        or the above mentioned ways to upload your code sample.
+      value: |
+        <details open><summary>Code sample</summary>
+
+        ```dart
+        [Paste your code here]
+        ```
+
+        </details>
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Screenshots or Video
+      description: |
+        Upload any screenshots or video of the bug if applicable.
+      value: |
+        <details open>
+        <summary>Screenshots / Video demonstration</summary>
+
+        [Upload media here]
+
+        </details>
+  - type: textarea
+    attributes:
+      label: Logs
+      description: |
+        Include the full logs of the commands you are running between the lines
+        with the backticks below. If you are running any `flutter` commands,
+        please include the output of running them with `--verbose`; for example,
+        the output of running `flutter --verbose create foo`.
+
+        If the logs are too large to be uploaded to GitHub, you may upload
+        them as a `txt` file or use online tools like https://pastebin.com to
+        share it.
+
+        Note: Please do not upload screenshots of text. Instead, use code blocks
+        or the above mentioned ways to upload logs.
+      value: |
+        <details open><summary>Logs</summary>
+
+        ```console
+        [Paste your logs here]
+        ```
+
+        </details>
+  - type: textarea
+    attributes:
+      label: Flutter Doctor output
+      description: |
+        Please provide the full output of running `flutter doctor -v`
+      value: |
+        <details open><summary>Doctor output</summary>
+
+        ```console
+        [Paste your output here]
+        ```
+
+        </details>
+    validations:
+      required: true
