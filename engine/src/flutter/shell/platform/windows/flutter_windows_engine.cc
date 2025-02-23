@@ -26,6 +26,7 @@
 #include "flutter/shell/platform/windows/system_utils.h"
 #include "flutter/shell/platform/windows/task_runner.h"
 #include "flutter/third_party/accessibility/ax/ax_node.h"
+#include "shell/platform/windows/flutter_project_bundle.h"
 
 // winbase.h defines GetCurrentTime as a macro.
 #undef GetCurrentTime
@@ -294,7 +295,8 @@ bool FlutterWindowsEngine::Run(std::string_view entrypoint) {
   custom_task_runners.thread_priority_setter =
       &WindowsPlatformThreadPrioritySetter;
 
-  if (project_->merged_platform_ui_thread()) {
+  if (project_->ui_thread_policy() ==
+      FlutterUIThreadPolicy::RunOnPlatformThread) {
     FML_LOG(WARNING)
         << "Running with merged platform and UI thread. Experimental.";
     custom_task_runners.ui_task_runner = &platform_task_runner;
