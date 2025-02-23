@@ -3595,7 +3595,7 @@ targets:
 
   - name: Mac_arm64 build_ios_framework_module_test
     recipe: devicelab/devicelab_drone
-    presubmit: false
+    presubmit: true
     timeout: 60
     properties:
       dependencies: >-
