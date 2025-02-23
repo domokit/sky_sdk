@@ -1343,6 +1343,51 @@ void main() {
       },
     );
   });
+
+  test('Test skipping some duration.', () {
+    final AnimationController controller = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      value: 0.0,
+      vsync: const TestVSync(),
+    );
+
+    expect(controller.value, 0.0);
+    controller.forward(skipDuration: const Duration(milliseconds: 10));
+    tick(Duration.zero);
+    tick(const Duration(milliseconds: 15));
+    expect(controller.value, 0.25);
+    tick(const Duration(milliseconds: 40));
+    expect(controller.value, 0.5);
+    tick(const Duration(milliseconds: 89));
+    expect(controller.value, 0.99);
+    tick(const Duration(milliseconds: 90));
+    expect(controller.value, 1);
+
+    controller.reverse(skipDuration: const Duration(milliseconds: 10));
+    tick(Duration.zero);
+    tick(const Duration(milliseconds: 15));
+    expect(controller.value, 0.75);
+    tick(const Duration(milliseconds: 40));
+    expect(controller.value, 0.5);
+    tick(const Duration(milliseconds: 90));
+    expect(controller.value, 0);
+
+    controller.reset();
+    controller.animateTo(
+      0.6,
+      duration: const Duration(milliseconds: 100),
+      skipDuration: const Duration(milliseconds: 10),
+    );
+    tick(Duration.zero);
+    tick(const Duration(milliseconds: 15));
+    expect(controller.value, 0.15);
+    tick(const Duration(milliseconds: 40));
+    expect(controller.value, 0.3);
+    tick(const Duration(milliseconds: 90));
+    expect(controller.value, 0.6);
+
+    controller.dispose();
+  });
 }
 
 class TestSimulation extends Simulation {
