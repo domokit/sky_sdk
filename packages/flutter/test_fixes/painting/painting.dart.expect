@@ -21,5 +21,10 @@ void main() {
 
   Color color = Color.from(alpha: 1, red: 0, green: 1, blue: 0);
   print(color.a);
+  print(color.toARGB32());
+  print(color.a);
+  print(color.r * 255.0).round() & 0xff);
+  print(color.b * 255.0).round() & 0xff);
+  print(color.g * 255.0).round() & 0xff);
   color = color.withValues(alpha: 0.55);
 }
