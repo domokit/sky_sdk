@@ -107,6 +107,7 @@ typedef CanvasPath Path;
   V(PlatformConfigurationNativeApi::GetRootIsolateToken)           \
   V(PlatformConfigurationNativeApi::RegisterBackgroundIsolate)     \
   V(PlatformConfigurationNativeApi::SendPortPlatformMessage)       \
+  V(PlatformConfigurationNativeApi::RequestViewFocusChange)        \
   V(PlatformConfigurationNativeApi::SendChannelUpdate)             \
   V(PlatformConfigurationNativeApi::GetScaledFontSize)             \
   V(PlatformIsolateNativeApi::IsRunningOnPlatformThread)           \

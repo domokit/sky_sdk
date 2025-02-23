@@ -263,6 +263,7 @@ class FlutterPlatformViewsTestMockPlatformViewDelegate : public PlatformView::De
                              const ViewportMetrics& viewport_metrics,
                              AddViewCallback callback) override {}
   void OnPlatformViewRemoveView(int64_t view_id, RemoveViewCallback callback) override {}
+  void OnPlatformViewSendViewFocusEvent(const ViewFocusEvent& event) override {};
   void OnPlatformViewSetNextFrameCallback(const fml::closure& closure) override {}
   void OnPlatformViewSetViewportMetrics(int64_t view_id, const ViewportMetrics& metrics) override {}
   const flutter::Settings& OnPlatformViewGetSettings() const override { return settings_; }

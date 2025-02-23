@@ -207,6 +207,13 @@ void PlatformViewEmbedder::SendChannelUpdate(const std::string& name,
   }
 }
 
+void PlatformViewEmbedder::RequestViewFocusChange(
+    const ViewFocusChangeRequest& request) {
+  if (platform_dispatch_table_.view_focus_change_request_callback != nullptr) {
+    platform_dispatch_table_.view_focus_change_request_callback(request);
+  }
+}
+
 std::shared_ptr<PlatformMessageHandler>
 PlatformViewEmbedder::GetPlatformMessageHandler() const {
   return platform_message_handler_;
