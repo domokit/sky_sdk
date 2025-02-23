@@ -234,6 +234,8 @@ class RenderWrap extends RenderBox
     TextDirection? textDirection,
     VerticalDirection verticalDirection = VerticalDirection.down,
     Clip clipBehavior = Clip.none,
+    bool equalWidthPerRow = false,
+
   }) : _direction = direction,
        _alignment = alignment,
        _spacing = spacing,
@@ -242,9 +244,11 @@ class RenderWrap extends RenderBox
        _crossAxisAlignment = crossAxisAlignment,
        _textDirection = textDirection,
        _verticalDirection = verticalDirection,
-       _clipBehavior = clipBehavior {
-    addAll(children);
-  }
+       _clipBehavior = clipBehavior,
+       _equalWidthPerRow = equalWidthPerRow{
+        addAll(children);
+       }
+
 
   /// The direction to use as the main axis.
   ///
@@ -449,6 +453,14 @@ class RenderWrap extends RenderBox
       markNeedsPaint();
       markNeedsSemanticsUpdate();
     }
+  }
+
+  bool get equalWidthPerRow => _equalWidthPerRow;
+  bool _equalWidthPerRow;
+  set equalWidthPerRow(bool value) {
+    if (_equalWidthPerRow == value) return;
+    _equalWidthPerRow = value;
+    markNeedsLayout();
   }
 
   bool get _debugHasNecessaryDirections {
@@ -731,50 +743,80 @@ class RenderWrap extends RenderBox
     );
   }
 
-  (_AxisSize childrenSize, List<_RunMetrics> runMetrics) _computeRuns(
-    BoxConstraints constraints,
-    ChildLayouter layoutChild,
-  ) {
-    assert(firstChild != null);
-    final (BoxConstraints childConstraints, double mainAxisLimit) = switch (direction) {
-      Axis.horizontal => (BoxConstraints(maxWidth: constraints.maxWidth), constraints.maxWidth),
-      Axis.vertical => (BoxConstraints(maxHeight: constraints.maxHeight), constraints.maxHeight),
-    };
+(_AxisSize childrenSize, List<_RunMetrics> runMetrics) _computeRuns(
+  BoxConstraints constraints,
+  ChildLayouter layoutChild,
+) {
+  assert(firstChild != null);
+  final (BoxConstraints childConstraints, double mainAxisLimit) = switch (direction) {
+    Axis.horizontal => (BoxConstraints(maxWidth: constraints.maxWidth), constraints.maxWidth),
+    Axis.vertical => (BoxConstraints(maxHeight: constraints.maxHeight), constraints.maxHeight),
+  };
 
-    final (bool flipMainAxis, _) = _areAxesFlipped;
-    final double spacing = this.spacing;
-    final List<_RunMetrics> runMetrics = <_RunMetrics>[];
+  final (bool flipMainAxis, _) = _areAxesFlipped;
+  final double spacing = this.spacing;
+  final List<_RunMetrics> runMetrics = <_RunMetrics>[];
 
-    _RunMetrics? currentRun;
-    _AxisSize childrenAxisSize = _AxisSize.empty;
-    for (RenderBox? child = firstChild; child != null; child = childAfter(child)) {
-      final _AxisSize childSize = _AxisSize.fromSize(
-        size: layoutChild(child, childConstraints),
-        direction: direction,
-      );
-      final _RunMetrics? newRun =
-          currentRun == null
-              ? _RunMetrics(child, childSize)
-              : currentRun.tryAddingNewChild(
-                child,
-                childSize,
-                flipMainAxis,
-                spacing,
-                mainAxisLimit,
-              );
-      if (newRun != null) {
-        runMetrics.add(newRun);
-        childrenAxisSize += currentRun?.axisSize.flipped ?? _AxisSize.empty;
-        currentRun = newRun;
+  _RunMetrics? currentRun;
+  _AxisSize childrenAxisSize = _AxisSize.empty;
+  for (RenderBox? child = firstChild; child != null; child = childAfter(child)) {
+    final _AxisSize childSize = _AxisSize.fromSize(
+      size: layoutChild(child, childConstraints),
+      direction: direction,
+    );
+    final _RunMetrics? newRun =
+        currentRun == null
+            ? _RunMetrics(child, childSize)
+            : currentRun.tryAddingNewChild(
+              child,
+              childSize,
+              flipMainAxis,
+              spacing,
+              mainAxisLimit,
+            );
+    if (newRun != null) {
+      if (_equalWidthPerRow && currentRun != null) {
+        double maxWidth = 0.0;
+        RenderBox? runChild = currentRun.leadingChild;
+
+        // Find max width in current run
+        for (int i = 0; i < currentRun.childCount; i++) {
+          final Size childSize = _getChildSize(runChild!);
+          maxWidth = math.max(maxWidth, _getMainAxisExtent(childSize));
+          runChild = childAfter(runChild);
+        }
+
+        // Apply max width to all children in run
+        runChild = currentRun.leadingChild;
+        for (int i = 0; i < currentRun.childCount; i++) {
+          final BoxConstraints equalWidthConstraints = switch (direction) {
+            Axis.horizontal => BoxConstraints(
+                minWidth: maxWidth,
+                maxWidth: maxWidth,
+                maxHeight: constraints.maxHeight,
+              ),
+            Axis.vertical => BoxConstraints(
+                minHeight: maxWidth,
+                maxHeight: maxWidth,
+                maxWidth: constraints.maxWidth,
+              ),
+          };
+          layoutChild(runChild!, equalWidthConstraints);
+          runChild = childAfter(runChild);
+        }
       }
+      runMetrics.add(newRun);
+      childrenAxisSize += currentRun?.axisSize.flipped ?? _AxisSize.empty;
+      currentRun = newRun;
     }
-    assert(runMetrics.isNotEmpty);
-    final double totalRunSpacing = runSpacing * (runMetrics.length - 1);
-    childrenAxisSize +=
-        _AxisSize(mainAxisExtent: totalRunSpacing, crossAxisExtent: 0.0) +
-        currentRun!.axisSize.flipped;
-    return (childrenAxisSize.flipped, runMetrics);
   }
+  assert(runMetrics.isNotEmpty);
+  final double totalRunSpacing = runSpacing * (runMetrics.length - 1);
+  childrenAxisSize +=
+      _AxisSize(mainAxisExtent: totalRunSpacing, crossAxisExtent: 0.0) +
+      currentRun!.axisSize.flipped;
+  return (childrenAxisSize.flipped, runMetrics);
+}
 
   void _positionChildren(
     List<_RunMetrics> runMetrics,
