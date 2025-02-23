@@ -6,43 +6,78 @@ import 'dart:convert';
 
 import 'package:flutter_tools/src/base/file_system.dart';
 import 'package:flutter_tools/src/base/io.dart';
+import 'package:flutter_tools/src/features.dart';
 
 import '../src/common.dart';
 import 'test_utils.dart';
 
 class SwiftPackageManagerUtils {
-  static Future<void> enableSwiftPackageManager(String flutterBin, String workingDirectory) async {
+  static Future<void> enableSwiftPackageManager(
+    String flutterBin,
+    String workingDirectory, {
+    bool enableMigration = true,
+  }) async {
+    await _enableFeature(flutterBin, workingDirectory, swiftPackageManager);
+
+    if (enableMigration) {
+      await _enableFeature(flutterBin, workingDirectory, swiftPackageManagerMigration);
+    }
+  }
+
+  static Future<void> disableSwiftPackageManager(
+    String flutterBin,
+    String workingDirectory, {
+    bool disableMigration = true,
+  }) async {
+    if (disableMigration) {
+      await _disableFeature(flutterBin, workingDirectory, swiftPackageManagerMigration);
+    }
+
+    await _disableFeature(flutterBin, workingDirectory, swiftPackageManager);
+  }
+
+  static Future<void> _enableFeature(
+    String flutterBin,
+    String workingDirectory,
+    Feature feature,
+  ) async {
     final ProcessResult result = await processManager.run(<String>[
       flutterBin,
       ...getLocalEngineArguments(),
       'config',
-      '--enable-swift-package-manager',
+      '--${feature.configSetting}',
       '-v',
     ], workingDirectory: workingDirectory);
+
     expect(
       result.exitCode,
       0,
       reason:
-          'Failed to enable Swift Package Manager: \n'
+          'Failed to enable feature "${feature.name}": \n'
           'stdout: \n${result.stdout}\n'
           'stderr: \n${result.stderr}\n',
       verbose: true,
     );
   }
 
-  static Future<void> disableSwiftPackageManager(String flutterBin, String workingDirectory) async {
+  static Future<void> _disableFeature(
+    String flutterBin,
+    String workingDirectory,
+    Feature feature,
+  ) async {
     final ProcessResult result = await processManager.run(<String>[
       flutterBin,
       ...getLocalEngineArguments(),
       'config',
-      '--no-enable-swift-package-manager',
+      '--no-${feature.configSetting}',
       '-v',
     ], workingDirectory: workingDirectory);
+
     expect(
       result.exitCode,
       0,
       reason:
-          'Failed to disable Swift Package Manager: \n'
+          'Failed to disable feature "${feature.name}": \n'
           'stdout: \n${result.stdout}\n'
           'stderr: \n${result.stderr}\n',
       verbose: true,
