@@ -6,5 +6,7 @@ linter:
   rules:
     # Samples want to print things pretty often.
     avoid_print: false
+    # Samples are published in our API docs and must have working comment references.
+    comment_references: true
     # Samples are sometimes incomplete and don't show usage of everything.
     unreachable_from_main: false
