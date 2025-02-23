@@ -1110,4 +1110,29 @@ void main() {
 
     expect(didTap, isFalse);
   });
+
+  testGesture('onTapMove works', (GestureTester tester) {
+    TapMoveDetails? tapMoveDetails;
+    final TapGestureRecognizer tap = TapGestureRecognizer(postAcceptSlopTolerance: null)
+      ..onTapMove = (TapMoveDetails detail) {
+        tapMoveDetails = detail;
+      };
+    addTearDown(tap.dispose);
+
+    final TestPointer pointer1 = TestPointer();
+    final PointerDownEvent down = pointer1.down(Offset.zero);
+    tap.addPointer(down);
+    tester.closeArena(1);
+    tester.route(down);
+    tester.route(pointer1.move(const Offset(50.0, 0)));
+    expect(tapMoveDetails, isNotNull);
+    expect(tapMoveDetails!.globalPosition, const Offset(50.0, 0));
+    expect(tapMoveDetails!.delta, const Offset(50.0, 0));
+    tapMoveDetails = null;
+
+    tester.route(pointer1.move(const Offset(60.0, 10)));
+    expect(tapMoveDetails, isNotNull);
+    expect(tapMoveDetails!.globalPosition, const Offset(60.0, 10));
+    expect(tapMoveDetails!.delta, const Offset(10.0, 10));
+  });
 }

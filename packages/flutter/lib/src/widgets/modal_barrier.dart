@@ -402,6 +402,11 @@ class _AnyTapGestureRecognizer extends BaseTapGestureRecognizer {
 
   @override
   String get debugDescription => 'any tap';
+
+  @override
+  void handleTapMove({required PointerMoveEvent move}) {
+    // Do nothing.
+  }
 }
 
 class _AnyTapGestureRecognizerFactory extends GestureRecognizerFactory<_AnyTapGestureRecognizer> {
