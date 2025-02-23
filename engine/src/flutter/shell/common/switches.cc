@@ -532,6 +532,17 @@ Settings SettingsFromCommandLine(const fml::CommandLine& command_line) {
   settings.merged_platform_ui_thread = !command_line.HasOption(
       FlagForSwitch(Switch::DisableMergedPlatformUIThread));
 
+#if FML_OS_WIN
+  // Process the EnableMultiWindow switch on Windows.
+  {
+    std::string enable_multi_window_value;
+    if (command_line.GetOptionValue(FlagForSwitch(Switch::EnableMultiWindow),
+                                    &enable_multi_window_value)) {
+      settings.enable_multi_window = "true" == enable_multi_window_value;
+    }
+  }
+#endif  // FML_OS_WIN
+
   return settings;
 }
 

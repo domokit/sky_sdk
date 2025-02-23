@@ -194,6 +194,10 @@ FlutterWindowsEngine::FlutterWindowsEngine(
   enable_impeller_ = std::find(switches.begin(), switches.end(),
                                "--enable-impeller=true") != switches.end();
 
+  enable_multi_window_ =
+      std::find(switches.begin(), switches.end(),
+                "--enable-multi-window=true") != switches.end();
+
   egl_manager_ = egl::Manager::Create(
       static_cast<egl::GpuPreference>(project_->gpu_preference()));
   window_proc_delegate_manager_ = std::make_unique<WindowProcDelegateManager>();
@@ -204,6 +208,7 @@ FlutterWindowsEngine::FlutterWindowsEngine(
         FlutterWindowsEngine* that =
             static_cast<FlutterWindowsEngine*>(user_data);
         BASE_DCHECK(that->lifecycle_manager_);
+        that->ForwardToHostWindowController(hwnd, msg, wpar, lpar);
         return that->lifecycle_manager_->WindowProc(hwnd, msg, wpar, lpar,
                                                     result);
       },
@@ -223,12 +228,19 @@ FlutterWindowsEngine::FlutterWindowsEngine(
       std::make_unique<CursorHandler>(messenger_wrapper_.get(), this);
   platform_handler_ =
       std::make_unique<PlatformHandler>(messenger_wrapper_.get(), this);
+  if (enable_multi_window_) {
+    host_window_controller_ =
+        std::make_unique<FlutterHostWindowController>(this);
+    windowing_handler_ = std::make_unique<WindowingHandler>(
+        messenger_wrapper_.get(), host_window_controller_.get());
+  }
   settings_plugin_ = std::make_unique<SettingsPlugin>(messenger_wrapper_.get(),
                                                       task_runner_.get());
 }
 
 FlutterWindowsEngine::~FlutterWindowsEngine() {
   messenger_->SetEngine(nullptr);
+  host_window_controller_.reset();
   Stop();
 }
 
@@ -787,6 +799,41 @@ void FlutterWindowsEngine::SetLifecycleState(flutter::AppLifecycleState state) {
   if (lifecycle_manager_) {
     lifecycle_manager_->SetLifecycleState(state);
   }
+}
+
+void FlutterWindowsEngine::ForwardToHostWindowController(HWND hwnd,
+                                                         UINT message,
+                                                         WPARAM wparam,
+                                                         LPARAM lparam) const {
+  if (!host_window_controller_) {
+    return;
+  }
+  if (!FlutterHostWindow::GetThisFromHandle(hwnd)) {
+    if (FlutterWindowsView* const view = GetViewFromTopLevelWindow(hwnd)) {
+      host_window_controller_->CreateHostWindowFromExisting(hwnd, view);
+    } else {
+      FML_LOG(ERROR)
+          << "Failed to retrieve FlutterWindowsView from top-level window: "
+             "the view's native window must be a child of the top-level "
+             "window.";
+      return;
+    }
+  }
+  host_window_controller_->HandleMessage(hwnd, message, wparam, lparam);
+}
+
+FlutterWindowsView* FlutterWindowsEngine::GetViewFromTopLevelWindow(
+    HWND hwnd) const {
+  std::shared_lock read_lock(views_mutex_);
+  auto const iterator =
+      std::find_if(views_.begin(), views_.end(), [hwnd](auto const& pair) {
+        FlutterWindowsView* const view = pair.second;
+        return GetParent(view->GetWindowHandle()) == hwnd;
+      });
+  if (iterator != views_.end()) {
+    return iterator->second;
+  }
+  return nullptr;
 }
 
 void FlutterWindowsEngine::SendSystemLocales() {

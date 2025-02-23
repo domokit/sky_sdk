@@ -45,6 +45,7 @@ class Size {
   bool operator==(const Size& other) const {
     return width_ == other.width_ && height_ == other.height_;
   }
+  bool operator!=(const Size& other) const { return !(*this == other); }
 
  private:
   double width_ = 0.0;

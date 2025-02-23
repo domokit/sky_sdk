@@ -79,6 +79,7 @@ class TestCommand extends FlutterCommand with DeviceBasedDevelopmentArtifacts {
     usesDeviceUserOption();
     usesFlavorOption();
     addEnableImpellerFlag(verboseHelp: verboseHelp);
+    addMultiWindowFlag(verboseHelp: verboseHelp);
 
     argParser
       ..addFlag(

@@ -142,11 +142,14 @@ source_set("common_cpp_core") {
   public = [
     "geometry.h",
     "path_utils.h",
+    "windowing.h",
   ]
 
   sources = [ "path_utils.cc" ]
 
   public_configs = [ "//flutter:config" ]
+
+  deps = [ "//flutter/fml:fml" ]
 }
 
 if (enable_unittests) {
