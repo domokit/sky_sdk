@@ -561,7 +561,7 @@ optional("png_encode") {
 
   public = skia_encode_png_public
   deps = [ "//flutter/third_party/libpng" ]
-  sources = skia_encode_png_srcs
+  sources = skia_encode_png_base + skia_encode_libpng_srcs
 }
 
 optional("typeface_freetype") {
