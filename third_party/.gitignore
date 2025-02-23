@@ -1,0 +1,9 @@
+# Ignore everything by default, as these come from gclient/DEPS.
+# We'll explicitly include the folders we want to track.
+/*
+
+# Include the .gitignore file itself.
+!.gitignore
+
+# Allow custom README.flutter files in each folder.
+**/README.flutter
