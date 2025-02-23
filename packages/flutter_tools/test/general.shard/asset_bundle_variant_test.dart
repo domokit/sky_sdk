@@ -19,6 +19,7 @@ import 'package:flutter_tools/src/project.dart';
 import 'package:standard_message_codec/standard_message_codec.dart';
 
 import '../src/common.dart';
+import '../src/package_config.dart';
 
 void main() {
   Future<Map<String, List<String>>> extractAssetManifestJsonFromBundle(
@@ -58,14 +59,7 @@ void main() {
         fileSystem: fs,
         userMessages: UserMessages(),
       );
-      fs.directory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": []
-}
-''');
+      writePackageConfigFile(directory: fs.currentDirectory, mainLibName: 'test');
     });
 
     void createPubspec({required List<String> assets}) {
@@ -292,14 +286,7 @@ ${assets.map((String entry) => '    - $entry').join('\n')}
         userMessages: UserMessages(),
       );
 
-      fs.directory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "configVersion": 2,
-  "packages": []
-}
-''');
+      writePackageConfigFile(directory: fs.currentDirectory, mainLibName: 'test');
 
       fs.file('pubspec.yaml').writeAsStringSync('''
 name: test

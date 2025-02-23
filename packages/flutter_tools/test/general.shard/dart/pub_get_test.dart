@@ -17,6 +17,7 @@ import 'package:flutter_tools/src/project.dart';
 import '../../src/common.dart';
 import '../../src/fake_process_manager.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 
 void main() {
   setUpAll(() {
@@ -750,12 +751,7 @@ exit code: 66
           'get',
           '--example',
         ],
-        onRun: (_) {
-          fileSystem.currentDirectory
-              .childDirectory('.dart_tool')
-              .childFile('package_config.json')
-              .createSync(recursive: true);
-        },
+        onRun: (_) => writePackageConfigFile(directory: fileSystem.currentDirectory),
       ),
     ]);
 
@@ -907,12 +903,7 @@ exit code: 66
           'FLUTTER_ROOT': '',
           'PUB_ENVIRONMENT': 'flutter_cli:flutter_tests',
         },
-        onRun: (_) {
-          fileSystem.currentDirectory
-              .childDirectory('.dart_tool')
-              .childFile('package_config.json')
-              .createSync(recursive: true);
-        },
+        onRun: (_) => writePackageConfigFile(directory: fileSystem.currentDirectory),
       ),
     ]);
 

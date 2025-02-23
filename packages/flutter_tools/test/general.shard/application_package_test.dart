@@ -24,6 +24,7 @@ import '../src/common.dart';
 import '../src/context.dart';
 import '../src/fake_process_manager.dart';
 import '../src/fakes.dart';
+import '../src/package_config.dart';
 
 void main() {
   group('Apk with partial Android SDK works', () {
@@ -982,9 +983,7 @@ class FakeAndroidSdkVersion extends Fake implements AndroidSdkVersion {
 
 Future<FlutterProject> aModuleProject() async {
   final Directory directory = globals.fs.directory('module_project');
-  directory.childDirectory('.dart_tool').childFile('package_config.json')
-    ..createSync(recursive: true)
-    ..writeAsStringSync('{"configVersion":2,"packages":[]}');
+  writePackageConfigFile(directory: directory);
   directory.childFile('pubspec.yaml').writeAsStringSync('''
 name: my_module
 flutter:

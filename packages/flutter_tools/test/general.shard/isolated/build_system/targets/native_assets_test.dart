@@ -18,6 +18,7 @@ import 'package:native_assets_cli/code_assets_builder.dart';
 import '../../../../src/common.dart';
 import '../../../../src/context.dart';
 import '../../../../src/fakes.dart';
+import '../../../../src/package_config.dart';
 import '../../fake_native_assets_build_runner.dart';
 
 void main() {
@@ -73,7 +74,7 @@ void main() {
   });
 
   testUsingContext('NativeAssets defaults to ios archs if missing', () async {
-    await createPackageConfig(iosEnvironment);
+    writePackageConfigFile(directory: iosEnvironment.projectDir);
 
     iosEnvironment.defines.remove(kIosArchs);
 
@@ -90,7 +91,7 @@ void main() {
     'NativeAssets throws error if missing sdk root',
     overrides: <Type, Generator>{FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: true)},
     () async {
-      await createPackageConfig(iosEnvironment);
+      writePackageConfigFile(directory: iosEnvironment.projectDir);
 
       final FlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner(
         packagesWithNativeAssetsResult: <String>['foo'],
@@ -116,7 +117,7 @@ void main() {
         FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: isNativeAssetsEnabled),
       },
       () async {
-        await createPackageConfig(iosEnvironment);
+        writePackageConfigFile(directory: iosEnvironment.projectDir);
 
         final FlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner();
         await DartBuildForNative(buildRunner: buildRunner).build(iosEnvironment);
@@ -186,7 +187,7 @@ void main() {
       FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: true),
     },
     () async {
-      await createPackageConfig(iosEnvironment);
+      writePackageConfigFile(directory: iosEnvironment.projectDir);
 
       final List<CodeAsset> codeAssets = <CodeAsset>[
         CodeAsset(
@@ -252,7 +253,7 @@ void main() {
         FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: true),
       },
       () async {
-        await createPackageConfig(androidEnvironment);
+        writePackageConfigFile(directory: androidEnvironment.projectDir);
         await fileSystem.file('libfoo.so').create();
 
         final List<CodeAsset> codeAssets = <CodeAsset>[
@@ -278,12 +279,4 @@ void main() {
       },
     );
   }
-}
-
-Future<void> createPackageConfig(Environment iosEnvironment) async {
-  final File packageConfig = iosEnvironment.projectDir
-      .childDirectory('.dart_tool')
-      .childFile('package_config.json');
-  await packageConfig.parent.create();
-  await packageConfig.create();
 }

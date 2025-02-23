@@ -33,6 +33,7 @@ import '../src/common.dart';
 import '../src/context.dart';
 import '../src/fake_pub_deps.dart';
 import '../src/fakes.dart' hide FakeOperatingSystemUtils;
+import '../src/package_config.dart';
 import '../src/pubspec_schema.dart';
 
 /// Information for a platform entry in the 'platforms' section of a plugin's
@@ -197,14 +198,7 @@ void main() {
 
       // Add basic properties to the Flutter project and subprojects
       setUpProject(fs);
-      flutterProject.directory.childDirectory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "packages": [],
-  "configVersion": 2
-}
-''');
+      writePackageConfigFile(directory: flutterProject.directory);
     });
 
     void addToPackageConfig(String name, Directory packageDir) {
@@ -254,14 +248,7 @@ void main() {
 
       final List<Directory> directories = <Directory>[];
       final Directory fakePubCache = fileSystem.systemTempDirectory.childDirectory('cache');
-      flutterProject.directory.childDirectory('.dart_tool').childFile('package_config.json')
-        ..createSync(recursive: true)
-        ..writeAsStringSync('''
-{
-  "packages": [],
-  "configVersion": 2
-}
-''');
+      writePackageConfigFile(directory: flutterProject.directory);
       for (final String nameOrPath in pluginNamesOrPaths) {
         final String name = fileSystem.path.basename(nameOrPath);
         final Directory pluginDirectory =
@@ -1317,7 +1304,7 @@ flutter:
 
             final FlutterManifest manifest =
                 FlutterManifest.createFromString('''
-name: test
+name: my_app
 version: 1.0.0
 
 dependencies:
@@ -1590,7 +1577,7 @@ flutter:
 
           final FlutterManifest manifest =
               FlutterManifest.createFromString('''
-name: test
+name: my_app
 version: 1.0.0
 
 dependencies:
@@ -1663,7 +1650,7 @@ flutter:
 
           final FlutterManifest manifest =
               FlutterManifest.createFromString('''
-name: test
+name: my_app
 version: 1.0.0
 
 dependencies:
@@ -2445,10 +2432,7 @@ flutter:
           ..flutterPluginsDependenciesFile = dependenciesFile
           ..windows = windowsProject;
 
-        flutterProject.directory
-            .childDirectory('.dart_tool')
-            .childFile('package_config.json')
-            .createSync(recursive: true);
+        writePackageConfigFile(directory: flutterProject.directory);
 
         const String dependenciesFileContents = r'''
 {
@@ -2817,10 +2801,7 @@ flutter:
         )
         ..windows = windowsProject;
 
-      flutterProject.directory
-          .childDirectory('.dart_tool')
-          .childFile('package_config.json')
-          .createSync(recursive: true);
+      writePackageConfigFile(directory: flutterProject.directory);
 
       createPluginSymlinks(
         flutterProject,

@@ -23,6 +23,7 @@ import '../../src/context.dart';
 import '../../src/fake_process_manager.dart';
 import '../../src/fake_pub_deps.dart';
 import '../../src/fakes.dart';
+import '../../src/package_config.dart';
 
 enum _StdioStream { stdout, stderr }
 
@@ -58,10 +59,19 @@ void main() {
   }
 
   FlutterProject setupProjectUnderTest() {
+    fileSystem.directory('project').childFile('pubspec.yaml')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+name: my_app
+environement:
+  sdk: '^3.5.0'
+''');
+
     // This needs to be run within testWithoutContext and not setUp since FlutterProject uses context.
     final FlutterProject projectUnderTest = FlutterProject.fromDirectory(
       fileSystem.directory('project'),
     );
+    writePackageConfigFile(directory: projectUnderTest.directory);
     projectUnderTest.ios.xcodeProject.createSync(recursive: true);
     projectUnderTest.macos.xcodeProject.createSync(recursive: true);
     return projectUnderTest;
@@ -389,11 +399,6 @@ void main() {
       'includes Pod config in xcconfig files, if the user manually added Pod dependencies without using Flutter plugins',
       () async {
         final FlutterProject projectUnderTest = setupProjectUnderTest();
-        final File packageConfigFile = fileSystem.file(
-          fileSystem.path.join('project', '.dart_tool', 'package_config.json'),
-        );
-        packageConfigFile.createSync(recursive: true);
-        packageConfigFile.writeAsStringSync('{"configVersion":2,"packages":[]}');
         projectUnderTest.ios.podfile
           ..createSync()
           ..writeAsStringSync('Custom Podfile');
