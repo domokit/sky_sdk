@@ -679,17 +679,15 @@ targets:
           "--device", "model=redfin,version=30",
           "--device", "model=griffin,version=24"
         ]
-      # TODO(flutter/flutter#123331): This device is flaking.
-      # "--device", "model=Nexus6P,version=25"
       virtual_devices: >-
         [
           "--device", "model=Nexus5.gce_x86,version=21",
           "--device", "model=Nexus5.gce_x86,version=22",
           "--device", "model=Nexus5.gce_x86,version=23",
           "--device", "model=Nexus6P,version=25",
-          "--device", "model=Nexus6P,version=26",
-          "--device", "model=Nexus6P,version=27",
-          "--device", "model=NexusLowRes,version=29"
+          "--device", "model=MediumPhone.arm,version=26",
+          "--device", "model=MediumPhone.arm,version=27",
+          "--device", "model=SmallPhone.arm,version=29"
         ]
 
   - name: Linux flutter_packaging_test
