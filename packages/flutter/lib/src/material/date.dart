@@ -8,38 +8,285 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import 'material_localizations.dart';
 
+/// Controls the calendar system used in the date picker.
+///
+/// A [CalendarDelegate] defines how dates are interpreted, formatted, and
+/// navigated within the picker. Different calendar systems (e.g., Gregorian,
+/// Nepali, Hijri, Buddhist) can be supported by providing custom implementations.
+///
+/// {@tool dartpad}
+/// This example demonstrates how a [CalendarDelegate] is used to implement a
+/// custom calendar system in the date picker.
+///
+/// ** See code in examples/api/lib/material/date_picker/custom_calendar_date_picker.0.dart **
+/// {@end-tool}
+///
+/// See also:
+///
+///  * [GregorianCalendarDelegate], the default implementation for the Gregorian calendar.
+///  * [CalendarDatePicker], which uses this delegate to manage calendar-specific behavior.
+abstract class CalendarDelegate {
+  /// Creates a calendar delegate.
+  const CalendarDelegate();
+
+  /// Returns a [DateTime] representing the current date and time.
+  DateTime now();
+
+  /// {@macro flutter.material.date.dateOnly}
+  DateTime dateOnly(covariant DateTime date);
+
+  /// {@macro flutter.material.date.datesOnly}
+  DateTimeRange datesOnly(covariant DateTimeRange range);
+
+  /// {@macro flutter.material.date.isSameDay}
+  bool isSameDay(covariant DateTime? dateA, covariant DateTime? dateB);
+
+  /// {@macro flutter.material.date.isSameMonth}
+  bool isSameMonth(covariant DateTime? dateA, covariant DateTime? dateB);
+
+  /// {@macro flutter.material.date.monthDelta}
+  int monthDelta(covariant DateTime startDate, covariant DateTime endDate);
+
+  /// {@macro flutter.material.date.addMonthsToMonthDate}
+  DateTime addMonthsToMonthDate(covariant DateTime monthDate, int monthsToAdd);
+
+  /// {@macro flutter.material.date.addDaysToDate}
+  DateTime addDaysToDate(covariant DateTime date, int days);
+
+  /// {@macro flutter.material.date.firstDayOffset}
+  int firstDayOffset(int year, int month, MaterialLocalizations localizations);
+
+  /// Returns the number of days in a month, according to the calendar system.
+  int getDaysInMonth(int year, int month);
+
+  /// Returns a [DateTime] with the given [year] and [month].
+  DateTime getMonth(int year, int month);
+
+  /// Returns a [DateTime] with the given [year], [month], and [day].
+  DateTime getDay(int year, int month, int day);
+
+  /// Formats the month and the year of the given [date].
+  ///
+  /// The returned string does not contain the day of the month. This appears
+  /// in the date picker invoked using [showDatePicker].
+  String formatMonthYear(covariant DateTime date, MaterialLocalizations localizations);
+
+  /// Full unabbreviated year format, e.g. 2017 rather than 17.
+  String formatYear(int year, MaterialLocalizations localizations);
+
+  /// Formats the date using a medium-width format.
+  ///
+  /// Abbreviates month and days of week. This appears in the header of the date
+  /// picker invoked using [showDatePicker].
+  ///
+  /// Examples:
+  ///
+  /// - US English: Wed, Sep 27
+  /// - Russian: ср, сент. 27
+  String formatMediumDate(covariant DateTime date, MaterialLocalizations localizations);
+
+  /// Formats the month and day of the given [date].
+  ///
+  /// Examples:
+  ///
+  /// - US English: Feb 21
+  /// - Russian: 21 февр.
+  String formatShortMonthDay(covariant DateTime date, MaterialLocalizations localizations);
+
+  /// Formats the date using a short-width format.
+  ///
+  /// Includes the abbreviation of the month, the day and year.
+  ///
+  /// Examples:
+  ///
+  /// - US English: Feb 21, 2019
+  /// - Russian: 21 февр. 2019 г.
+  String formatShortDate(covariant DateTime date, MaterialLocalizations localizations);
+
+  /// Formats day of week, month, day of month and year in a long-width format.
+  ///
+  /// Does not abbreviate names. Appears in spoken announcements of the date
+  /// picker invoked using [showDatePicker], when accessibility mode is on.
+  ///
+  /// Examples:
+  ///
+  /// - US English: Wednesday, September 27, 2017
+  /// - Russian: Среда, Сентябрь 27, 2017
+  String formatFullDate(covariant DateTime date, MaterialLocalizations localizations);
+
+  /// Formats the date in a compact format.
+  ///
+  /// Usually just the numeric values for the for day, month and year are used.
+  ///
+  /// Examples:
+  ///
+  /// - US English: 02/21/2019
+  /// - Russian: 21.02.2019
+  ///
+  /// See also:
+  ///   * [parseCompactDate], which will convert a compact date string to a [DateTime].
+  String formatCompactDate(covariant DateTime date, MaterialLocalizations localizations);
+
+  /// Converts the given compact date formatted string into a [DateTime].
+  ///
+  /// The format of the string must be a valid compact date format for the
+  /// given locale. If the text doesn't represent a valid date, `null` will be
+  /// returned.
+  ///
+  /// See also:
+  ///   * [formatCompactDate], which will convert a [DateTime] into a string in the compact format.
+  DateTime? parseCompactDate(String? inputString, MaterialLocalizations localizations);
+
+  /// The help text used on an empty [InputDatePickerFormField] to indicate
+  /// to the user the date format being asked for.
+  String dateHelpText(MaterialLocalizations localizations);
+}
+
+/// A [CalendarDelegate] implementation for the Gregorian calendar system.
+///
+/// The Gregorian calendar is the most widely used civil calendar worldwide.
+/// This delegate provides standard date interpretation, formatting, and
+/// navigation based on the Gregorian system.
+///
+/// This delegate is the default calendar system for [CalendarDatePicker].
+///
+/// See also:
+/// * [CalendarDelegate], the base class for defining custom calendars.
+/// * [CalendarDatePicker], which uses this delegate for date selection.
+class GregorianCalendarDelegate extends CalendarDelegate {
+  /// Creates a calendar delegate that uses the Gregorian calendar and the
+  /// conventions of the current [MaterialLocalizations].
+  const GregorianCalendarDelegate();
+
+  @override
+  DateTime now() => DateTime.now();
+
+  @override
+  DateTime dateOnly(DateTime date) => DateUtils.dateOnly(date);
+
+  @override
+  DateTimeRange datesOnly(DateTimeRange range) => DateUtils.datesOnly(range);
+
+  @override
+  bool isSameDay(DateTime? dateA, DateTime? dateB) => DateUtils.isSameDay(dateA, dateB);
+
+  @override
+  bool isSameMonth(DateTime? dateA, DateTime? dateB) => DateUtils.isSameMonth(dateA, dateB);
+
+  @override
+  int monthDelta(DateTime startDate, DateTime endDate) => DateUtils.monthDelta(startDate, endDate);
+
+  @override
+  DateTime addMonthsToMonthDate(DateTime monthDate, int monthsToAdd) {
+    return DateUtils.addMonthsToMonthDate(monthDate, monthsToAdd);
+  }
+
+  @override
+  DateTime addDaysToDate(DateTime date, int days) => DateUtils.addDaysToDate(date, days);
+
+  @override
+  int firstDayOffset(int year, int month, MaterialLocalizations localizations) {
+    return DateUtils.firstDayOffset(year, month, localizations);
+  }
+
+  /// {@macro flutter.material.date.getDaysInMonth}
+  @override
+  int getDaysInMonth(int year, int month) => DateUtils.getDaysInMonth(year, month);
+
+  @override
+  DateTime getMonth(int year, int month) => DateTime(year, month);
+
+  @override
+  DateTime getDay(int year, int month, int day) => DateTime(year, month, day);
+
+  @override
+  String formatMonthYear(DateTime date, MaterialLocalizations localizations) {
+    return localizations.formatMonthYear(date);
+  }
+
+  @override
+  String formatYear(int year, MaterialLocalizations localizations) {
+    return localizations.formatYear(DateTime(year));
+  }
+
+  @override
+  String formatMediumDate(DateTime date, MaterialLocalizations localizations) {
+    return localizations.formatMediumDate(date);
+  }
+
+  @override
+  String formatShortMonthDay(DateTime date, MaterialLocalizations localizations) {
+    return localizations.formatShortMonthDay(date);
+  }
+
+  @override
+  String formatShortDate(DateTime date, MaterialLocalizations localizations) {
+    return localizations.formatShortDate(date);
+  }
+
+  @override
+  String formatFullDate(DateTime date, MaterialLocalizations localizations) {
+    return localizations.formatFullDate(date);
+  }
+
+  @override
+  String formatCompactDate(DateTime date, MaterialLocalizations localizations) {
+    return localizations.formatCompactDate(date);
+  }
+
+  @override
+  DateTime? parseCompactDate(String? inputString, MaterialLocalizations localizations) {
+    return localizations.parseCompactDate(inputString);
+  }
+
+  @override
+  String dateHelpText(MaterialLocalizations localizations) {
+    return localizations.dateHelpText;
+  }
+}
+
 /// Utility functions for working with dates.
 abstract final class DateUtils {
+  /// {@template flutter.material.date.dateOnly}
   /// Returns a [DateTime] with the date of the original, but time set to
   /// midnight.
+  /// {@endtemplate}
   static DateTime dateOnly(DateTime date) {
     return DateTime(date.year, date.month, date.day);
   }
 
+  /// {@template flutter.material.date.datesOnly}
   /// Returns a [DateTimeRange] with the dates of the original, but with times
   /// set to midnight.
   ///
   /// See also:
   ///  * [dateOnly], which does the same thing for a single date.
+  /// {@endtemplate}
   static DateTimeRange datesOnly(DateTimeRange range) {
     return DateTimeRange(start: dateOnly(range.start), end: dateOnly(range.end));
   }
 
+  /// {@template flutter.material.date.isSameDay}
   /// Returns true if the two [DateTime] objects have the same day, month, and
   /// year, or are both null.
+  /// {@endtemplate}
   static bool isSameDay(DateTime? dateA, DateTime? dateB) {
     return dateA?.year == dateB?.year && dateA?.month == dateB?.month && dateA?.day == dateB?.day;
   }
 
+  /// {@template flutter.material.date.isSameMonth}
   /// Returns true if the two [DateTime] objects have the same month and
   /// year, or are both null.
+  /// {@endtemplate}
   static bool isSameMonth(DateTime? dateA, DateTime? dateB) {
     return dateA?.year == dateB?.year && dateA?.month == dateB?.month;
   }
 
+  /// {@template flutter.material.date.monthDelta}
   /// Determines the number of months between two [DateTime] objects.
   ///
   /// For example:
@@ -51,10 +298,12 @@ abstract final class DateUtils {
   /// ```
   ///
   /// The value for `delta` would be `7`.
+  /// {@endtemplate}
   static int monthDelta(DateTime startDate, DateTime endDate) {
     return (endDate.year - startDate.year) * 12 + endDate.month - startDate.month;
   }
 
+  /// {@template flutter.material.date.addMonthsToMonthDate}
   /// Returns a [DateTime] that is [monthDate] with the added number
   /// of months and the day set to 1 and time set to midnight.
   ///
@@ -67,16 +316,20 @@ abstract final class DateUtils {
   ///
   /// `date` would be January 15, 2019.
   /// `futureDate` would be April 1, 2019 since it adds 3 months.
+  /// {@endtemplate}
   static DateTime addMonthsToMonthDate(DateTime monthDate, int monthsToAdd) {
     return DateTime(monthDate.year, monthDate.month + monthsToAdd);
   }
 
+  /// {@template flutter.material.date.addDaysToDate}
   /// Returns a [DateTime] with the added number of days and time set to
   /// midnight.
+  /// {@endtemplate}
   static DateTime addDaysToDate(DateTime date, int days) {
     return DateTime(date.year, date.month, date.day + days);
   }
 
+  /// {@template flutter.material.date.firstDayOffset}
   /// Computes the offset from the first day of the week that the first day of
   /// the [month] falls on.
   ///
@@ -105,6 +358,7 @@ abstract final class DateUtils {
   ///   into the [MaterialLocalizations.narrowWeekdays] list.
   /// - [MaterialLocalizations.narrowWeekdays] list provides localized names of
   ///   days of week, always starting with Sunday and ending with Saturday.
+  /// {@endtemplate}
   static int firstDayOffset(int year, int month, MaterialLocalizations localizations) {
     // 0-based day of week for the month and year, with 0 representing Monday.
     final int weekdayFromMonday = DateTime(year, month).weekday - 1;
@@ -121,11 +375,13 @@ abstract final class DateUtils {
     return (weekdayFromMonday - firstDayOfWeekIndex) % 7;
   }
 
+  /// {@template flutter.material.date.getDaysInMonth}
   /// Returns the number of days in a month, according to the proleptic
   /// Gregorian calendar.
   ///
   /// This applies the leap year logic introduced by the Gregorian reforms of
   /// 1582. It will not give valid results for dates prior to that time.
+  /// {@endtemplate}
   static int getDaysInMonth(int year, int month) {
     if (month == DateTime.february) {
       final bool isLeapYear = (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0);
@@ -203,15 +459,16 @@ typedef SelectableDayPredicate = bool Function(DateTime day);
 ///  * [showDateRangePicker], which displays a dialog that allows the user to
 ///    select a date range.
 @immutable
-class DateTimeRange {
-  /// Creates a date range for the given start and end [DateTime].
+@optionalTypeArgs
+class DateTimeRange<T extends DateTime> {
+  /// Creates a date range for the given start and end [T].
   DateTimeRange({required this.start, required this.end}) : assert(!start.isAfter(end));
 
   /// The start of the range of dates.
-  final DateTime start;
+  final T start;
 
   /// The end of the range of dates.
-  final DateTime end;
+  final T end;
 
   /// Returns a [Duration] of the time between [start] and [end].
   ///
