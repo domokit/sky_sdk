@@ -709,6 +709,7 @@ class TextSelectionOverlay {
   TextSelection? _dragStartSelection;
 
   void _handleSelectionEndHandleDragStart(DragStartDetails details) {
+    print('justin _handleSelectionEndHandleDragStart.');
     if (!renderObject.attached) {
       return;
     }
@@ -765,6 +766,7 @@ class TextSelectionOverlay {
   }
 
   void _handleSelectionEndHandleDragUpdate(DragUpdateDetails details) {
+    print('justin _handleSelectionEndHandleDragUpdate.');
     if (!renderObject.attached) {
       return;
     }
@@ -851,6 +853,7 @@ class TextSelectionOverlay {
   late double _startHandleDragTarget;
 
   void _handleSelectionStartHandleDragStart(DragStartDetails details) {
+    print('justin _handleSelectionStartHandleDragStart');
     if (!renderObject.attached) {
       return;
     }
@@ -882,6 +885,7 @@ class TextSelectionOverlay {
   }
 
   void _handleSelectionStartHandleDragUpdate(DragUpdateDetails details) {
+    print('justin _handleSelectionStartHandleDragUpdate');
     if (!renderObject.attached) {
       return;
     }
@@ -960,6 +964,7 @@ class TextSelectionOverlay {
   }
 
   void _handleAnyDragEnd(DragEndDetails details) {
+    print('justin _handleAnyDragEnd');
     if (!context.mounted) {
       return;
     }
@@ -1189,6 +1194,7 @@ class SelectionOverlay {
   final ValueChanged<DragStartDetails>? onStartHandleDragStart;
 
   void _handleStartHandleDragStart(DragStartDetails details) {
+    print('justin _handleStartHandleDragStart.');
     assert(!_isDraggingStartHandle);
     // Calling OverlayEntry.remove may not happen until the following frame, so
     // it's possible for the handles to receive a gesture after calling remove.
@@ -1201,6 +1207,7 @@ class SelectionOverlay {
   }
 
   void _handleStartHandleDragUpdate(DragUpdateDetails details) {
+    print('justin _handleStartHandleDragUpdate.');
     // Calling OverlayEntry.remove may not happen until the following frame, so
     // it's possible for the handles to receive a gesture after calling remove.
     if (_handles == null) {
@@ -1218,6 +1225,7 @@ class SelectionOverlay {
   final ValueChanged<DragEndDetails>? onStartHandleDragEnd;
 
   void _handleStartHandleDragEnd(DragEndDetails details) {
+    print('justin _handleStartHandleDragEnd.');
     _isDraggingStartHandle = false;
     // Calling OverlayEntry.remove may not happen until the following frame, so
     // it's possible for the handles to receive a gesture after calling remove.
@@ -1269,6 +1277,7 @@ class SelectionOverlay {
   final ValueChanged<DragStartDetails>? onEndHandleDragStart;
 
   void _handleEndHandleDragStart(DragStartDetails details) {
+    print('justin _handleEndHandleDragStart.');
     assert(!_isDraggingEndHandle);
     // Calling OverlayEntry.remove may not happen until the following frame, so
     // it's possible for the handles to receive a gesture after calling remove.
@@ -1281,6 +1290,7 @@ class SelectionOverlay {
   }
 
   void _handleEndHandleDragUpdate(DragUpdateDetails details) {
+    print('justin _handleEndHandleDragUpdate.');
     // Calling OverlayEntry.remove may not happen until the following frame, so
     // it's possible for the handles to receive a gesture after calling remove.
     if (_handles == null) {
@@ -1298,6 +1308,7 @@ class SelectionOverlay {
   final ValueChanged<DragEndDetails>? onEndHandleDragEnd;
 
   void _handleEndHandleDragEnd(DragEndDetails details) {
+    print('justin _handleEndHandleDragEnd.');
     _isDraggingEndHandle = false;
     // Calling OverlayEntry.remove may not happen until the following frame, so
     // it's possible for the handles to receive a gesture after calling remove.
