@@ -33,6 +33,31 @@ void main() {
     const EdgeInsets symmetric = EdgeInsets.symmetric(horizontal: 10, vertical: 20);
     expect(symmetric.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(10, 20, 10, 20)));
     expect(symmetric.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(10, 20, 10, 20)));
+
+    // some
+    const EdgeInsets someLeft = EdgeInsets.some(left: 10, rest: 20);
+    expect(someLeft.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(10, 20, 20, 20)));
+    expect(someLeft.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(10, 20, 20, 20)));
+
+    const EdgeInsets someTop = EdgeInsets.some(top: 10, rest: 20);
+    expect(someTop.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(20, 10, 20, 20)));
+    expect(someTop.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(20, 10, 20, 20)));
+
+    const EdgeInsets someRight = EdgeInsets.some(right: 10, rest: 20);
+    expect(someRight.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(20, 20, 10, 20)));
+    expect(someRight.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(20, 20, 10, 20)));
+
+    const EdgeInsets someBottom = EdgeInsets.some(bottom: 10, rest: 20);
+    expect(someBottom.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(20, 20, 20, 10)));
+    expect(someBottom.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(20, 20, 20, 10)));
+
+    const EdgeInsets someAll = EdgeInsets.some(left: 10, top: 20, right: 30, bottom: 40, rest: 50);
+    expect(someAll.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(10, 20, 30, 40)));
+    expect(someAll.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(10, 20, 30, 40)));
+
+    const EdgeInsets someNone = EdgeInsets.some(rest: 50);
+    expect(someNone.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(50, 50, 50, 50)));
+    expect(someNone.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(50, 50, 50, 50)));
   });
 
   test('EdgeInsetsDirectional constructors', () {
@@ -80,6 +105,38 @@ void main() {
     );
     expect(symmetric.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(10, 20, 10, 20)));
     expect(symmetric.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(10, 20, 10, 20)));
+
+    // some
+    const EdgeInsetsDirectional someStart = EdgeInsetsDirectional.some(start: 10, rest: 20);
+    expect(someStart.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(10, 20, 20, 20)));
+    expect(someStart.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(20, 20, 10, 20)));
+
+    const EdgeInsetsDirectional someTop = EdgeInsetsDirectional.some(top: 10, rest: 20);
+    expect(someTop.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(20, 10, 20, 20)));
+    expect(someTop.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(20, 10, 20, 20)));
+
+    const EdgeInsetsDirectional someEnd = EdgeInsetsDirectional.some(end: 10, rest: 20);
+    expect(someEnd.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(20, 20, 10, 20)));
+    expect(someEnd.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(10, 20, 20, 20)));
+
+    const EdgeInsetsDirectional someBottom = EdgeInsetsDirectional.some(bottom: 10, rest: 20);
+    expect(someBottom.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(20, 20, 20, 10)));
+    expect(someBottom.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(20, 20, 20, 10)));
+
+    const EdgeInsetsDirectional someAll = EdgeInsetsDirectional.some(
+      start: 10,
+      top: 20,
+      end: 30,
+      bottom: 40,
+      rest: 50,
+    );
+
+    expect(someAll.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(10, 20, 30, 40)));
+    expect(someAll.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(30, 20, 10, 40)));
+
+    const EdgeInsetsDirectional someNone = EdgeInsetsDirectional.some(rest: 50);
+    expect(someNone.resolve(TextDirection.ltr), equals(const EdgeInsets.fromLTRB(50, 50, 50, 50)));
+    expect(someNone.resolve(TextDirection.rtl), equals(const EdgeInsets.fromLTRB(50, 50, 50, 50)));
   });
 
   test('EdgeInsets control test', () {

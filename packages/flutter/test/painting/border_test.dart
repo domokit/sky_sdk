@@ -34,6 +34,57 @@ void main() {
     expect(border.bottom, same(side2));
   });
 
+  test('Border.some constructor', () {
+    const BorderSide side1 = BorderSide(color: Color(0xFFFFFFFF));
+    const BorderSide side2 = BorderSide();
+    const BorderSide side3 = BorderSide(width: 2.0);
+    const BorderSide side4 = BorderSide(width: 2.0, color: Color(0xFFFFFFFF));
+    const BorderSide side5 = BorderSide(width: 3.0);
+
+    const Border borderWithDifferentLeft = Border.some(left: side1, rest: side2);
+    expect(borderWithDifferentLeft.left, same(side1));
+    expect(borderWithDifferentLeft.top, same(side2));
+    expect(borderWithDifferentLeft.right, same(side2));
+    expect(borderWithDifferentLeft.bottom, same(side2));
+
+    const Border borderWithDifferentTop = Border.some(top: side1, rest: side2);
+    expect(borderWithDifferentTop.left, same(side2));
+    expect(borderWithDifferentTop.top, same(side1));
+    expect(borderWithDifferentTop.right, same(side2));
+    expect(borderWithDifferentTop.bottom, same(side2));
+
+    const Border borderWithDifferentRight = Border.some(right: side1, rest: side2);
+    expect(borderWithDifferentRight.left, same(side2));
+    expect(borderWithDifferentRight.top, same(side2));
+    expect(borderWithDifferentRight.right, same(side1));
+    expect(borderWithDifferentRight.bottom, same(side2));
+
+    const Border borderWithDifferentBottom = Border.some(bottom: side1, rest: side2);
+    expect(borderWithDifferentBottom.left, same(side2));
+    expect(borderWithDifferentBottom.top, same(side2));
+    expect(borderWithDifferentBottom.right, same(side2));
+    expect(borderWithDifferentBottom.bottom, same(side1));
+
+    const Border borderWithAllSidesDifferent = Border.some(
+      left: side1,
+      top: side2,
+      right: side3,
+      bottom: side4,
+      rest: side5,
+    );
+
+    expect(borderWithAllSidesDifferent.left, same(side1));
+    expect(borderWithAllSidesDifferent.top, same(side2));
+    expect(borderWithAllSidesDifferent.right, same(side3));
+    expect(borderWithAllSidesDifferent.bottom, same(side4));
+
+    const Border borderWithAllSidesSame = Border.some(rest: side5);
+    expect(borderWithAllSidesSame.left, same(side5));
+    expect(borderWithAllSidesSame.top, same(side5));
+    expect(borderWithAllSidesSame.right, same(side5));
+    expect(borderWithAllSidesSame.bottom, same(side5));
+  });
+
   test('Border.merge', () {
     const BorderSide magenta3 = BorderSide(color: Color(0xFFFF00FF), width: 3.0);
     const BorderSide magenta6 = BorderSide(color: Color(0xFFFF00FF), width: 6.0);
@@ -265,7 +316,7 @@ void main() {
     );
   });
 
-  test('Border.dimension', () {
+  test('Border.dimensions', () {
     final Border insideBorder = Border.all(width: 10);
     expect(insideBorder.dimensions, const EdgeInsets.all(10));
 
