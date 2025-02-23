@@ -202,9 +202,9 @@ dependency_overrides:
   frontend_server_client:
     path: ./third_party/dart/third_party/pkg/webdev/frontend_server_client
   gcloud:
-    path: ./third_party/pkg/gcloud
+    path: ./third_party/pkg/labs/pkgs/gcloud
   glob:
-    path: ./third_party/dart/third_party/pkg/glob
+    path: ./third_party/dart/third_party/pkg/tools/pkgs/glob
   googleapis:
     path: ./third_party/pkg/googleapis/generated/googleapis
   googleapis_auth:
@@ -298,7 +298,7 @@ dependency_overrides:
   web_socket:
     path: ./third_party/dart/third_party/pkg/http/pkgs/web_socket
   web_socket_channel:
-    path: ./third_party/dart/third_party/pkg/web_socket_channel
+    path: ./third_party/dart/third_party/pkg/http/pkgs/web_socket_channel
   webkit_inspection_protocol:
     path: ./third_party/dart/third_party/pkg/webkit_inspection_protocol
   yaml:
