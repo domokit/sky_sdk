@@ -72,7 +72,7 @@ void main() {
 
   testWidgets('Material2 - Dialog size - input mode', (WidgetTester tester) async {
     const TimePickerEntryMode entryMode = TimePickerEntryMode.input;
-    const Size timePickerInputSize = Size(312, 216);
+    const Size timePickerInputSize = Size(312, 236);
     const Size dayPeriodPortraitSize = Size(52, 80);
     const EdgeInsets padding = EdgeInsets.fromLTRB(8, 18, 8, 8);
     final double height = timePickerInputSize.height + padding.vertical;
@@ -163,7 +163,7 @@ void main() {
     final ThemeData theme = ThemeData(useMaterial3: true);
     const TimePickerEntryMode entryMode = TimePickerEntryMode.input;
     const double textScaleFactor = 1.0;
-    const Size timePickerMinInputSize = Size(312, 216);
+    const Size timePickerMinInputSize = Size(312, 236);
     const Size dayPeriodPortraitSize = Size(52, 80);
     const EdgeInsets padding = EdgeInsets.all(24.0);
     final double height = timePickerMinInputSize.height * textScaleFactor + padding.vertical;
@@ -593,6 +593,24 @@ void main() {
         expect(find.text('Enter time'), findsOneWidget);
         expect(find.text('Cancel'), findsOneWidget);
       });
+
+      testWidgets(
+        'Material3 - large actions label should not overflow in input mode',
+        (WidgetTester tester) async {
+          await startPicker(
+            tester,
+            (TimeOfDay? time) {},
+            entryMode: TimePickerEntryMode.input,
+            materialType: MaterialType.material3,
+            cancelText: 'Very very very long cancel text',
+            confirmText: 'Very very very long confirm text',
+          );
+
+          // Verify that no overflow errors occur.
+          expect(tester.takeException(), isNull);
+        },
+        variant: TargetPlatformVariant.mobile(),
+      );
 
       testWidgets('respects MediaQueryData.alwaysUse24HourFormat == false', (
         WidgetTester tester,
@@ -2326,11 +2344,15 @@ class _TimePickerLauncher extends StatefulWidget {
     required this.onChanged,
     this.entryMode = TimePickerEntryMode.dial,
     this.restorationId,
+    this.cancelText,
+    this.confirmText,
   });
 
   final ValueChanged<TimeOfDay?> onChanged;
   final TimePickerEntryMode entryMode;
   final String? restorationId;
+  final String? cancelText;
+  final String? confirmText;
 
   @override
   _TimePickerLauncherState createState() => _TimePickerLauncherState();
@@ -2347,7 +2369,11 @@ class _TimePickerLauncherState extends State<_TimePickerLauncher> with Restorati
         onPresent: (NavigatorState navigator, Object? arguments) {
           return navigator.restorablePush(
             _timePickerRoute,
-            arguments: <String, String>{'entry_mode': widget.entryMode.name},
+            arguments: <String, String>{
+              'entry_mode': widget.entryMode.name,
+              if (widget.cancelText != null) 'cancel_text': widget.cancelText!,
+              if (widget.confirmText != null) 'confirm_text': widget.confirmText!,
+            },
           );
         },
       );
@@ -2364,6 +2390,8 @@ class _TimePickerLauncherState extends State<_TimePickerLauncher> with Restorati
     final TimePickerEntryMode entryMode = TimePickerEntryMode.values.firstWhere(
       (TimePickerEntryMode element) => element.name == args['entry_mode'],
     );
+    final String? cancelText = args['cancel_text'] as String?;
+    final String? confirmText = args['confirm_text'] as String?;
     return DialogRoute<TimeOfDay>(
       context: context,
       builder: (BuildContext context) {
@@ -2371,6 +2399,8 @@ class _TimePickerLauncherState extends State<_TimePickerLauncher> with Restorati
           restorationId: 'time_picker_dialog',
           initialTime: const TimeOfDay(hour: 7, minute: 0),
           initialEntryMode: entryMode,
+          cancelText: cancelText,
+          confirmText: confirmText,
         );
       },
     );
@@ -2427,6 +2457,8 @@ Future<Offset?> startPicker(
   String? restorationId,
   ThemeData? theme,
   MaterialType? materialType,
+  String? cancelText,
+  String? confirmText,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -2437,6 +2469,8 @@ Future<Offset?> startPicker(
         onChanged: onChanged,
         entryMode: entryMode,
         restorationId: restorationId,
+        cancelText: cancelText,
+        confirmText: confirmText,
       ),
     ),
   );
