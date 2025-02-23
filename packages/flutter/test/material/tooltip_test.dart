@@ -821,7 +821,11 @@ void main() {
     tooltipKey.currentState?.ensureTooltipVisible();
     await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
 
-    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style!;
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+    final TextStyle textStyle = tester.widget<DefaultTextStyle>(defaultTextStyle.first).style;
     expect(textStyle.color, Colors.white);
     expect(textStyle.fontFamily, 'Roboto');
     expect(textStyle.decoration, TextDecoration.none);
@@ -845,7 +849,11 @@ void main() {
     tooltipKey.currentState?.ensureTooltipVisible();
     await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
 
-    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style!;
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+    final TextStyle textStyle = tester.widget<DefaultTextStyle>(defaultTextStyle.first).style;
     expect(textStyle.color, Colors.white);
     expect(textStyle.fontFamily, 'Roboto');
     expect(textStyle.decoration, TextDecoration.none);
@@ -870,7 +878,11 @@ void main() {
     tooltipKey.currentState?.ensureTooltipVisible();
     await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
 
-    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style!;
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+    final TextStyle textStyle = tester.widget<DefaultTextStyle>(defaultTextStyle.first).style;
     expect(textStyle.color, Colors.black);
     expect(textStyle.fontFamily, 'Roboto');
     expect(textStyle.decoration, TextDecoration.none);
@@ -895,7 +907,11 @@ void main() {
     tooltipKey.currentState?.ensureTooltipVisible();
     await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
 
-    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style!;
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+    final TextStyle textStyle = tester.widget<DefaultTextStyle>(defaultTextStyle.first).style;
     expect(textStyle.color, Colors.black);
     expect(textStyle.fontFamily, 'Roboto');
     expect(textStyle.decoration, TextDecoration.none);
@@ -911,7 +927,11 @@ void main() {
       MaterialApp(
         home: Tooltip(
           key: tooltipKey,
-          textStyle: const TextStyle(color: Colors.orange, decoration: TextDecoration.underline),
+          textStyle: const TextStyle(
+            inherit: false,
+            color: Colors.orange,
+            decoration: TextDecoration.underline,
+          ),
           message: tooltipText,
           child: Container(width: 100.0, height: 100.0, color: Colors.green[500]),
         ),
@@ -920,7 +940,11 @@ void main() {
     tooltipKey.currentState?.ensureTooltipVisible();
     await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
 
-    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style!;
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+    final TextStyle textStyle = tester.widget<DefaultTextStyle>(defaultTextStyle.first).style;
     expect(textStyle.color, Colors.orange);
     expect(textStyle.fontFamily, null);
     expect(textStyle.decoration, TextDecoration.underline);
@@ -943,17 +967,22 @@ void main() {
       await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
     }
 
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+
     // Default value should be TextAlign.start
     await pumpTooltipWithTextAlign();
-    TextAlign textAlign = tester.widget<Text>(find.text(tooltipText)).textAlign!;
+    TextAlign textAlign = tester.widget<DefaultTextStyle>(defaultTextStyle.first).textAlign!;
     expect(textAlign, TextAlign.start);
 
     await pumpTooltipWithTextAlign(textAlign: TextAlign.center);
-    textAlign = tester.widget<Text>(find.text(tooltipText)).textAlign!;
+    textAlign = tester.widget<DefaultTextStyle>(defaultTextStyle.first).textAlign!;
     expect(textAlign, TextAlign.center);
 
     await pumpTooltipWithTextAlign(textAlign: TextAlign.end);
-    textAlign = tester.widget<Text>(find.text(tooltipText)).textAlign!;
+    textAlign = tester.widget<DefaultTextStyle>(defaultTextStyle.first).textAlign!;
     expect(textAlign, TextAlign.end);
   });
 
@@ -3389,6 +3418,46 @@ void main() {
     expect(ignorePointer.ignoring, isTrue);
 
     await gesture.removePointer();
+  });
+
+  testWidgets('Tooltip should pass its default text style down to widget spans', (
+    WidgetTester tester,
+  ) async {
+    final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.light().copyWith(
+          tooltipTheme: const TooltipThemeData(
+            textStyle: TextStyle(fontStyle: FontStyle.italic, debugLabel: 'italic'),
+            textAlign: TextAlign.end,
+          ),
+        ),
+        home: Tooltip(
+          key: tooltipKey,
+          richMessage: const WidgetSpan(child: Text(tooltipText)),
+          textStyle: const TextStyle(fontSize: 4.0, debugLabel: 'size'),
+          child: Container(width: 100.0, height: 100.0, color: Colors.green[500]),
+        ),
+      ),
+    );
+    tooltipKey.currentState?.ensureTooltipVisible();
+    await tester.pump(const Duration(seconds: 2));
+
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+    final DefaultTextStyle textStyle = tester.widget<DefaultTextStyle>(defaultTextStyle.first);
+    expect(textStyle.textAlign, TextAlign.end);
+    expect(textStyle.style.color, Colors.white);
+    expect(textStyle.style.fontSize, 4.0);
+    expect(textStyle.style.fontStyle, FontStyle.italic);
+    expect(textStyle.style.fontFamily, 'Roboto');
+    expect(textStyle.style.decoration, TextDecoration.none);
+    expect(
+      textStyle.style.debugLabel,
+      '((((englishLike bodyMedium 2021).merge((blackMountainView bodyMedium).apply)).copyWith).merge(italic)).merge(size)',
+    );
   });
 }
 

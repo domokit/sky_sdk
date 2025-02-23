@@ -650,7 +650,11 @@ void main() {
       MaterialApp(
         theme: ThemeData(
           tooltipTheme: const TooltipThemeData(
-            textStyle: TextStyle(color: Colors.orange, decoration: TextDecoration.underline),
+            textStyle: TextStyle(
+              inherit: false,
+              color: Colors.orange,
+              decoration: TextDecoration.underline,
+            ),
           ),
         ),
         home: Tooltip(
@@ -663,7 +667,11 @@ void main() {
     key.currentState!.ensureTooltipVisible();
     await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
 
-    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style!;
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+    final TextStyle textStyle = tester.widget<DefaultTextStyle>(defaultTextStyle.first).style;
     expect(textStyle.color, Colors.orange);
     expect(textStyle.fontFamily, null);
     expect(textStyle.decoration, TextDecoration.underline);
@@ -676,7 +684,11 @@ void main() {
         home: TooltipTheme(
           data: const TooltipThemeData(),
           child: Tooltip(
-            textStyle: const TextStyle(color: Colors.orange, decoration: TextDecoration.underline),
+            textStyle: const TextStyle(
+              inherit: false,
+              color: Colors.orange,
+              decoration: TextDecoration.underline,
+            ),
             key: key,
             message: tooltipText,
             child: Container(width: 100.0, height: 100.0, color: Colors.green[500]),
@@ -687,7 +699,11 @@ void main() {
     key.currentState!.ensureTooltipVisible();
     await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
 
-    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style!;
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+    final TextStyle textStyle = tester.widget<DefaultTextStyle>(defaultTextStyle.first).style;
     expect(textStyle.color, Colors.orange);
     expect(textStyle.fontFamily, null);
     expect(textStyle.decoration, TextDecoration.underline);
@@ -712,17 +728,22 @@ void main() {
       await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
     }
 
+    final Finder defaultTextStyle = find.ancestor(
+      of: find.text(tooltipText),
+      matching: find.byType(DefaultTextStyle),
+    );
+
     // Default value should be TextAlign.start
     await pumpTooltipWithTextAlign();
-    TextAlign textAlign = tester.widget<Text>(find.text(tooltipText)).textAlign!;
+    TextAlign textAlign = tester.widget<DefaultTextStyle>(defaultTextStyle.first).textAlign!;
     expect(textAlign, TextAlign.start);
 
     await pumpTooltipWithTextAlign(textAlign: TextAlign.center);
-    textAlign = tester.widget<Text>(find.text(tooltipText)).textAlign!;
+    textAlign = tester.widget<DefaultTextStyle>(defaultTextStyle.first).textAlign!;
     expect(textAlign, TextAlign.center);
 
     await pumpTooltipWithTextAlign(textAlign: TextAlign.end);
-    textAlign = tester.widget<Text>(find.text(tooltipText)).textAlign!;
+    textAlign = tester.widget<DefaultTextStyle>(defaultTextStyle.first).textAlign!;
     expect(textAlign, TextAlign.end);
   });
 
