@@ -6,6 +6,7 @@
 
 #include "flutter/display_list/effects/dl_image_filters.h"
 #include "fml/logging.h"
+#include "impeller/display_list/canvas.h"
 #include "impeller/display_list/color_filter.h"
 #include "impeller/display_list/skia_conversions.h"
 #include "impeller/entity/contents/filters/color_filter_contents.h"
@@ -15,7 +16,8 @@
 namespace impeller {
 
 std::shared_ptr<FilterContents> WrapInput(const flutter::DlImageFilter* filter,
-                                          const FilterInput::Ref& input) {
+                                          const FilterInput::Ref& input,
+                                          Canvas& canvas) {
   FML_DCHECK(filter);
 
   switch (filter->type()) {
@@ -70,7 +72,7 @@ std::shared_ptr<FilterContents> WrapInput(const flutter::DlImageFilter* filter,
       auto matrix = matrix_filter->matrix();
       return FilterContents::MakeLocalMatrixFilter(
           FilterInput::Make(
-              WrapInput(matrix_filter->image_filter().get(), input)),
+              WrapInput(matrix_filter->image_filter().get(), input, canvas)),
           matrix);
     }
     case flutter::DlImageFilterType::kColorFilter: {
@@ -93,16 +95,17 @@ std::shared_ptr<FilterContents> WrapInput(const flutter::DlImageFilter* filter,
       auto outer_dl_filter = compose->outer();
       auto inner_dl_filter = compose->inner();
       if (!outer_dl_filter) {
-        return WrapInput(inner_dl_filter.get(), input);
+        return WrapInput(inner_dl_filter.get(), input, canvas);
       }
       if (!inner_dl_filter) {
-        return WrapInput(outer_dl_filter.get(), input);
+        return WrapInput(outer_dl_filter.get(), input, canvas);
       }
       FML_DCHECK(outer_dl_filter && inner_dl_filter);
 
       return WrapInput(
           outer_dl_filter.get(),
-          FilterInput::Make(WrapInput(inner_dl_filter.get(), input)));
+          FilterInput::Make(WrapInput(inner_dl_filter.get(), input, canvas)),
+          canvas);
     }
     case flutter::DlImageFilterType::kRuntimeEffect: {
       const flutter::DlRuntimeEffectImageFilter* runtime_filter =
@@ -134,7 +137,7 @@ std::shared_ptr<FilterContents> WrapInput(const flutter::DlImageFilter* filter,
         texture_inputs.push_back({
             .sampler_descriptor =
                 skia_conversions::ToSamplerDescriptor(image->sampling()),
-            .texture = image->image()->impeller_texture(),
+            .texture = canvas.GetOrUploadTexture(image->image()),
         });
       }
       return FilterContents::MakeRuntimeEffect(input, std::move(runtime_stage),

@@ -6,10 +6,17 @@
 
 #include <utility>
 
+#include "display_list/image/dl_image.h"
 #include "flutter/fml/make_copyable.h"
 #include "flutter/lib/ui/painting/display_list_image_gpu.h"
 #include "flutter/lib/ui/painting/image.h"
+#include "fml/mapping.h"
+#include "include/core/SkImageInfo.h"
+#include "lib/ui/painting/image_encoding_impeller.h"
 #if IMPELLER_SUPPORTS_RENDERING
+#include "flutter/impeller/core/device_buffer.h"
+#include "flutter/impeller/renderer/command_buffer.h"
+#include "flutter/impeller/renderer/context.h"
 #include "flutter/lib/ui/painting/image_decoder_impeller.h"
 #endif  // IMPELLER_SUPPORTS_RENDERING
 #include "third_party/dart/runtime/include/dart_api.h"
@@ -144,10 +151,31 @@ MultiFrameCodec::State::GetNextFrameImage(
 
 #if IMPELLER_SUPPORTS_RENDERING
   if (is_impeller_enabled_) {
-    // This is safe regardless of whether the GPU is available or not because
-    // without mipmap creation there is no command buffer encoding done.
-    return ImageDecoderImpeller::UploadTextureToStorage(
-        impeller_context, std::make_shared<SkBitmap>(bitmap));
+    std::shared_ptr<impeller::DeviceBuffer> device_buffer =
+        impeller_context->GetResourceAllocator()->CreateBufferWithCopy(
+            fml::NonOwnedMapping(
+                reinterpret_cast<uint8_t*>(bitmap.getAddr(0, 0)),
+                bitmap.computeByteSize()));
+    if (device_buffer == nullptr) {
+      return std::make_pair(nullptr,
+                            "Failed to allocate device buffer for upload");
+    }
+
+    sk_sp<DlImage> image;
+    std::string error;
+    ImageDecoderImpeller::UploadTextureToPrivate(
+        [&image, &error](sk_sp<DlImage> image_result,
+                         std::string error_result) {
+          image = std::move(image_result);
+          error = std::move(error_result);
+        },
+        impeller_context,        //
+        device_buffer,           //
+        info,                    //
+        std::nullopt,            //
+        gpu_disable_sync_switch  //
+    );
+    return std::make_pair(image, error);
   }
 #endif  // IMPELLER_SUPPORTS_RENDERING
 

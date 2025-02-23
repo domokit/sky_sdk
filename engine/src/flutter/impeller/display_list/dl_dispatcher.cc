@@ -11,8 +11,13 @@
 #include <vector>
 
 #include "display_list/dl_sampling_options.h"
+#include "display_list/effects/color_sources/dl_image_color_source.h"
+#include "display_list/effects/color_sources/dl_runtime_effect_color_source.h"
+#include "display_list/effects/dl_color_source.h"
 #include "display_list/effects/dl_image_filter.h"
 #include "flutter/fml/logging.h"
+#include "fml/mapping.h"
+#include "impeller/base/validation.h"
 #include "impeller/core/formats.h"
 #include "impeller/display_list/aiks_context.h"
 #include "impeller/display_list/canvas.h"
@@ -747,7 +752,7 @@ void DlDispatcherBase::drawImage(const sk_sp<flutter::DlImage> image,
     return;
   }
 
-  auto texture = image->impeller_texture();
+  auto texture = GetCanvas().GetOrUploadTexture(image);
   if (!texture) {
     return;
   }
@@ -776,7 +781,7 @@ void DlDispatcherBase::drawImageRect(const sk_sp<flutter::DlImage> image,
   AUTO_DEPTH_WATCHER(1u);
 
   GetCanvas().DrawImageRect(
-      image->impeller_texture(),                       // image
+      GetCanvas().GetOrUploadTexture(image),           // image
       src,                                             // source rect
       dst,                                             // destination rect
       render_with_attributes ? paint_ : Paint(),       // paint
@@ -793,7 +798,7 @@ void DlDispatcherBase::drawImageNine(const sk_sp<flutter::DlImage> image,
   AUTO_DEPTH_WATCHER(9u);
 
   NinePatchConverter converter = {};
-  converter.DrawNinePatch(image->impeller_texture(),
+  converter.DrawNinePatch(GetCanvas().GetOrUploadTexture(image),
                           Rect::MakeLTRB(center.GetLeft(), center.GetTop(),
                                          center.GetRight(), center.GetBottom()),
                           dst, ToSamplerDescriptor(filter), &GetCanvas(),
@@ -813,7 +818,7 @@ void DlDispatcherBase::drawAtlas(const sk_sp<flutter::DlImage> atlas,
   AUTO_DEPTH_WATCHER(1u);
 
   auto geometry =
-      DlAtlasGeometry(atlas->impeller_texture(),                        //
+      DlAtlasGeometry(GetCanvas().GetOrUploadTexture(atlas),            //
                       xform,                                            //
                       tex,                                              //
                       colors,                                           //
