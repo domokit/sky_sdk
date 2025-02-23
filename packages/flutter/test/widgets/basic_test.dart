@@ -380,6 +380,25 @@ void main() {
       expect(attributedHint.attributes[0].range, const TextRange(start: 1, end: 2));
     });
 
+    testWidgets('Semantics can set controls visibility of nodes', (WidgetTester tester) async {
+      final UniqueKey key = UniqueKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Semantics(
+              key: key,
+              controlsVisibilityOfNodes: const <String>{'abc'},
+              child: const Placeholder(),
+            ),
+          ),
+        ),
+      );
+      final SemanticsNode node = tester.getSemantics(find.byKey(key));
+      final SemanticsData data = node.getSemanticsData();
+      expect(data.controlsVisibilityOfNodes!.length, 1);
+      expect(data.controlsVisibilityOfNodes!.first, 'abc');
+    });
+
     testWidgets('Semantics can merge attributed strings', (WidgetTester tester) async {
       final UniqueKey key = UniqueKey();
       await tester.pumpWidget(

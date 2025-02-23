@@ -1126,6 +1126,7 @@ abstract class SemanticsUpdateBuilder {
     int headingLevel = 0,
     String linkUrl = '',
     SemanticsRole role = SemanticsRole.none,
+    required List<String>? controlsVisibilityOfNodes,
   });
 
   /// Update the custom semantics action associated with the given `id`.
@@ -1202,6 +1203,7 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1
     int headingLevel = 0,
     String linkUrl = '',
     SemanticsRole role = SemanticsRole.none,
+    required List<String>? controlsVisibilityOfNodes,
   }) {
     assert(_matrix4IsValid(transform));
     assert(
@@ -1248,6 +1250,7 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1
       headingLevel,
       linkUrl,
       role.index,
+      controlsVisibilityOfNodes,
     );
   }
 
@@ -1293,6 +1296,7 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1
       Int32,
       Handle,
       Int32,
+      Handle,
     )
   >(symbol: 'SemanticsUpdateBuilder::updateNode')
   external void _updateNode(
@@ -1335,6 +1339,7 @@ base class _NativeSemanticsUpdateBuilder extends NativeFieldWrapperClass1
     int headingLevel,
     String linkUrl,
     int role,
+    List<String>? controlsVisibilityOfNodes,
   );
 
   @override
