@@ -38,7 +38,6 @@ class ActionIconThemeExampleApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        useMaterial3: true,
         actionIconTheme: ActionIconThemeData(
           backButtonIconBuilder: (BuildContext context) {
             return const Icon(Icons.arrow_back_ios_new_rounded);

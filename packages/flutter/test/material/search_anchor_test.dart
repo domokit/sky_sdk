@@ -51,7 +51,7 @@ void main() {
   }
 
   testWidgets('SearchBar defaults', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final ColorScheme colorScheme = theme.colorScheme;
 
     await tester.pumpWidget(
@@ -1013,9 +1013,8 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        home: const Center(
+      const MaterialApp(
+        home: Center(
           child: Material(child: SearchBar(constraints: BoxConstraints.tightFor(height: 35.0))),
         ),
       ),
@@ -1030,7 +1029,7 @@ void main() {
   });
 
   testWidgets('The search view defaults', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final ColorScheme colorScheme = theme.colorScheme;
     await tester.pumpWidget(
       MaterialApp(
@@ -2796,10 +2795,7 @@ void main() {
       disabledBorder: UnderlineInputBorder(),
       constraints: BoxConstraints(maxWidth: 300),
     );
-    final ThemeData theme = ThemeData(
-      useMaterial3: true,
-      inputDecorationTheme: inputDecorationTheme,
-    );
+    final ThemeData theme = ThemeData(inputDecorationTheme: inputDecorationTheme);
 
     void checkDecorationInSearchBar(WidgetTester tester) {
       final Finder textField = findTextField();

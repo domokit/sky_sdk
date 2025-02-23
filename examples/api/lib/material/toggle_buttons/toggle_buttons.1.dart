@@ -14,10 +14,7 @@ class ToggleButtonsApp extends StatelessWidget {
   const ToggleButtonsApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const Scaffold(body: ToggleButtonsExample()),
-    );
+    return const MaterialApp(home: Scaffold(body: ToggleButtonsExample()));
   }
 }
 

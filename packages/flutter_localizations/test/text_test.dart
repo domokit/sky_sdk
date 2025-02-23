@@ -82,7 +82,6 @@ void main() {
     final Key targetKey = UniqueKey();
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         routes: <String, WidgetBuilder>{
           '/next': (BuildContext context) {
             return const Text('Next');
@@ -212,7 +211,6 @@ void main() {
     final Key targetKey = UniqueKey();
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         routes: <String, WidgetBuilder>{
           '/next': (BuildContext context) {
             return const Text('Next');

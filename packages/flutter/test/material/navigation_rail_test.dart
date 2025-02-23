@@ -1820,7 +1820,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             stateSetter = setState;
@@ -1966,7 +1965,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             stateSetter = setState;
@@ -2110,7 +2108,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             stateSetter = setState;
@@ -2168,7 +2165,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             stateSetter = setState;
@@ -2211,7 +2207,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             stateSetter = setState;
@@ -3724,7 +3719,7 @@ void main() {
   testWidgets('Navigation destination updates indicator color and shape', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     const Color color = Color(0xff0000ff);
     const ShapeBorder shape = RoundedRectangleBorder();
 

@@ -214,7 +214,6 @@ void main() {
               TextStyle(fontSize: 25, color: Color(0xff0000ff)),
             ),
           ),
-          useMaterial3: true,
         ),
         home: Scaffold(
           bottomNavigationBar: Center(

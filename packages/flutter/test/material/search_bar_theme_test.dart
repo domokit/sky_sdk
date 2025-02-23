@@ -211,7 +211,6 @@ void main() {
       return MaterialApp(
         theme: ThemeData.from(
           colorScheme: const ColorScheme.light(),
-          useMaterial3: true,
         ).copyWith(searchBarTheme: overallTheme),
         home: Scaffold(
           body: Center(

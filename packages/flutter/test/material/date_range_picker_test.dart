@@ -171,7 +171,7 @@ void main() {
   });
 
   testWidgets('Default Dialog properties (calendar mode)', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await preparePicker(tester, (Future<DateTimeRange?> range) async {
       final Material dialogMaterial = tester.widget<Material>(
         find.descendant(of: find.byType(Dialog), matching: find.byType(Material)).first,
@@ -190,7 +190,7 @@ void main() {
   });
 
   testWidgets('Default Dialog properties (input mode)', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await preparePicker(tester, (Future<DateTimeRange?> range) async {
       final Material dialogMaterial = tester.widget<Material>(
         find.descendant(of: find.byType(Dialog), matching: find.byType(Material)).first,
@@ -209,7 +209,7 @@ void main() {
   });
 
   testWidgets('Scaffold and AppBar defaults', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await preparePicker(tester, (Future<DateTimeRange?> range) async {
       final Scaffold scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
       expect(scaffold.backgroundColor, null);
@@ -946,7 +946,7 @@ void main() {
     });
 
     testWidgets('Default Dialog properties (input mode)', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData(useMaterial3: true);
+      final ThemeData theme = ThemeData();
       await preparePicker(tester, (Future<DateTimeRange?> range) async {
         final Material dialogMaterial = tester.widget<Material>(
           find.descendant(of: find.byType(Dialog), matching: find.byType(Material)).first,

@@ -211,7 +211,6 @@ void main() {
     const String title = 'Medium AppBar';
     Widget buildAppBar({double textScaleFactor = 1.0}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: MediaQuery.withClampedTextScaling(
           minScaleFactor: textScaleFactor,
           maxScaleFactor: textScaleFactor,
@@ -248,7 +247,6 @@ void main() {
     const String title = 'Large AppBar';
     Widget buildAppBar({double textScaleFactor = 1.0}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: MediaQuery.withClampedTextScaling(
           minScaleFactor: textScaleFactor,
           maxScaleFactor: textScaleFactor,
@@ -282,7 +280,6 @@ void main() {
     const String title = 'Medium AppBar';
     Widget buildAppBar({double textScaleFactor = 1.0}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: MediaQuery.withClampedTextScaling(
           minScaleFactor: textScaleFactor,
           maxScaleFactor: textScaleFactor,
@@ -319,7 +316,6 @@ void main() {
     const String title = 'Large AppBar';
     Widget buildAppBar({double textScaleFactor = 1.0}) {
       return MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: MediaQuery.withClampedTextScaling(
           minScaleFactor: textScaleFactor,
           maxScaleFactor: textScaleFactor,
@@ -1217,7 +1213,7 @@ void main() {
   });
 
   testWidgets('Material3 - SliverAppBar.medium defaults', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     const double collapsedAppBarHeight = 64;
     const double expandedAppBarHeight = 112;
 
@@ -1300,7 +1296,7 @@ void main() {
   });
 
   testWidgets('Material3 - SliverAppBar.large defaults', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     const double collapsedAppBarHeight = 64;
     const double expandedAppBarHeight = 152;
 

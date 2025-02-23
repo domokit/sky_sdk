@@ -111,7 +111,7 @@ void main() {
   testWidgets('Material3 - Empty textSelectionTheme will use defaults', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final Color defaultCursorColor = theme.colorScheme.primary;
     final Color defaultSelectionColor = theme.colorScheme.primary.withOpacity(0.40);
     final Color defaultSelectionHandleColor = theme.colorScheme.primary;

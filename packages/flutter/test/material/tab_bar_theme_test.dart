@@ -195,7 +195,7 @@ void main() {
     // Test default label color and label styles.
     await tester.pumpWidget(buildTabBar(useMaterial3: true));
 
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final RenderParagraph selectedLabel = _getText(tester, _tab1Text);
     expect(selectedLabel.text.style!.fontFamily, equals(theme.textTheme.titleSmall!.fontFamily));
     expect(selectedLabel.text.style!.fontSize, equals(14.0));
@@ -250,7 +250,7 @@ void main() {
     // Test default label color and label styles.
     await tester.pumpWidget(buildTabBar(secondaryTabBar: true, useMaterial3: true));
 
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final RenderParagraph selectedLabel = _getText(tester, _tab1Text);
     expect(selectedLabel.text.style!.fontFamily, equals(theme.textTheme.titleSmall!.fontFamily));
     expect(selectedLabel.text.style!.fontSize, equals(14.0));
@@ -508,7 +508,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(tabBarTheme: tabBarTheme, useMaterial3: true),
+        theme: ThemeData(tabBarTheme: tabBarTheme),
         home: Scaffold(
           body: RepaintBoundary(
             key: _painterKey,
@@ -703,7 +703,6 @@ void main() {
   ) async {
     final ThemeData theme = ThemeData(
       tabBarTheme: const TabBarThemeData(indicatorSize: TabBarIndicatorSize.tab),
-      useMaterial3: true,
     );
     final List<Widget> tabs = List<Widget>.generate(4, (int index) {
       return Tab(text: 'Tab $index');
@@ -752,7 +751,6 @@ void main() {
   ) async {
     final ThemeData theme = ThemeData(
       tabBarTheme: const TabBarThemeData(indicatorSize: TabBarIndicatorSize.label),
-      useMaterial3: true,
     );
     final List<Widget> tabs = List<Widget>.generate(4, (int index) {
       return Tab(text: 'Tab $index');
@@ -810,7 +808,6 @@ void main() {
             dividerColor: dividerColor,
             dividerHeight: dividerHeight,
           ),
-          useMaterial3: true,
         ),
         home: Scaffold(
           appBar: AppBar(
@@ -840,7 +837,6 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
           tabBarTheme: const TabBarThemeData(dividerColor: Colors.pink, dividerHeight: 5.0),
         ),
         home: Scaffold(
@@ -868,10 +864,7 @@ void main() {
     // Test non-scrollable tab bar.
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(
-          tabBarTheme: const TabBarThemeData(tabAlignment: TabAlignment.center),
-          useMaterial3: true,
-        ),
+        theme: ThemeData(tabBarTheme: const TabBarThemeData(tabAlignment: TabAlignment.center)),
         home: Scaffold(
           appBar: AppBar(
             bottom: TabBar(
@@ -898,10 +891,7 @@ void main() {
     // Test scrollable tab bar.
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(
-          tabBarTheme: const TabBarThemeData(tabAlignment: TabAlignment.start),
-          useMaterial3: true,
-        ),
+        theme: ThemeData(tabBarTheme: const TabBarThemeData(tabAlignment: TabAlignment.start)),
         home: Scaffold(
           appBar: AppBar(
             bottom: TabBar(
@@ -934,10 +924,7 @@ void main() {
     /// Test non-scrollable tab bar.
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(
-          tabBarTheme: const TabBarThemeData(tabAlignment: TabAlignment.fill),
-          useMaterial3: true,
-        ),
+        theme: ThemeData(tabBarTheme: const TabBarThemeData(tabAlignment: TabAlignment.fill)),
         home: Scaffold(
           appBar: AppBar(
             bottom: TabBar(
@@ -965,10 +952,7 @@ void main() {
     /// Test scrollable tab bar.
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(
-          tabBarTheme: const TabBarThemeData(tabAlignment: TabAlignment.center),
-          useMaterial3: true,
-        ),
+        theme: ThemeData(tabBarTheme: const TabBarThemeData(tabAlignment: TabAlignment.center)),
         home: Scaffold(
           appBar: AppBar(
             bottom: TabBar(
@@ -1444,15 +1428,14 @@ void main() {
       );
     }
 
-    await tester.pumpWidget(buildTabBar(theme: ThemeData(useMaterial3: true)));
+    await tester.pumpWidget(buildTabBar(theme: ThemeData()));
 
     RenderBox tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
-    expect(tabBarBox, paints..rrect(color: ThemeData(useMaterial3: true).colorScheme.primary));
+    expect(tabBarBox, paints..rrect(color: ThemeData().colorScheme.primary));
 
     await tester.pumpWidget(
       buildTabBar(
         theme: ThemeData(
-          useMaterial3: true,
           tabBarTheme: const TabBarThemeData(indicatorColor: tabBarThemeIndicatorColor),
         ),
       ),

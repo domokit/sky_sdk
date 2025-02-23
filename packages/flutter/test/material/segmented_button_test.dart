@@ -62,7 +62,7 @@ void main() {
   testWidgets('SegmentedButton releases state controllers for deleted segments', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     final Key key = UniqueKey();
 
     Widget buildApp(Widget button) {
@@ -104,7 +104,7 @@ void main() {
   testWidgets('SegmentedButton is built with Material of type MaterialType.transparency', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
@@ -558,7 +558,7 @@ void main() {
   testWidgets('SegmentedButton default overlayColor and foregroundColor resolve pressed state', (
     WidgetTester tester,
   ) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -607,7 +607,7 @@ void main() {
   });
 
   testWidgets('SegmentedButton has no tooltips by default', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
@@ -631,7 +631,7 @@ void main() {
   });
 
   testWidgets('SegmentedButton has correct tooltips', (WidgetTester tester) async {
-    final ThemeData theme = ThemeData(useMaterial3: true);
+    final ThemeData theme = ThemeData();
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,

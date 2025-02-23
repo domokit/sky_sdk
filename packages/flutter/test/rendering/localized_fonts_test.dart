@@ -64,7 +64,6 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         supportedLocales: const <Locale>[Locale('en', 'US'), Locale('ja'), Locale('zh')],
         home: Builder(
           builder: (BuildContext context) {
@@ -157,7 +156,6 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         supportedLocales: const <Locale>[Locale('en', 'US'), Locale('ja'), Locale('zh')],
         home: Builder(
           builder: (BuildContext context) {
@@ -243,7 +241,6 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         supportedLocales: const <Locale>[Locale('en', 'US'), Locale('ja'), Locale('zh')],
         home: Builder(
           builder: (BuildContext context) {

@@ -15,7 +15,7 @@ void main() {
       return tester.widget<FloatingActionButton>(finder);
     }
 
-    final ColorScheme colorScheme = ThemeData(useMaterial3: true).colorScheme;
+    final ColorScheme colorScheme = ThemeData().colorScheme;
 
     // Test the FAB with surface color mapping.
     FloatingActionButton fab = getFAB(find.byType(FloatingActionButton).at(0));

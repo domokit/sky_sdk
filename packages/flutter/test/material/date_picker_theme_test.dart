@@ -150,7 +150,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Builder(
           builder: (BuildContext context) {
             m3 = DatePickerTheme.defaults(context);
@@ -526,7 +525,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(datePickerTheme: datePickerTheme, useMaterial3: true),
+        theme: ThemeData(datePickerTheme: datePickerTheme),
         home: Directionality(
           textDirection: TextDirection.ltr,
           child: Material(
@@ -661,7 +660,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(datePickerTheme: datePickerTheme, useMaterial3: true),
+        theme: ThemeData(datePickerTheme: datePickerTheme),
         home: Directionality(
           textDirection: TextDirection.ltr,
           child: Material(
@@ -712,7 +711,7 @@ void main() {
   testWidgets('DateRangePickerDialog uses ThemeData datePicker theme', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(datePickerTheme: datePickerTheme, useMaterial3: true),
+        theme: ThemeData(datePickerTheme: datePickerTheme),
         home: Directionality(
           textDirection: TextDirection.ltr,
           child: Material(
@@ -852,7 +851,7 @@ void main() {
       addTearDown(tester.view.reset);
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(datePickerTheme: datePickerTheme, useMaterial3: true),
+          theme: ThemeData(datePickerTheme: datePickerTheme),
           home: Directionality(
             textDirection: TextDirection.ltr,
             child: Material(
@@ -892,7 +891,6 @@ void main() {
     }) {
       return MaterialApp(
         theme: ThemeData(
-          useMaterial3: true,
           inputDecorationTheme: inputDecorationTheme,
           datePickerTheme: datePickerTheme,
         ),
@@ -1064,10 +1062,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(
-          datePickerTheme: DatePickerThemeData(yearOverlayColor: yearOverlayColor),
-          useMaterial3: true,
-        ),
+        theme: ThemeData(datePickerTheme: DatePickerThemeData(yearOverlayColor: yearOverlayColor)),
         home: Directionality(
           textDirection: TextDirection.ltr,
           child: Material(
@@ -1146,7 +1141,6 @@ void main() {
           datePickerTheme: DatePickerThemeData(
             rangeSelectionOverlayColor: rangeSelectionOverlayColor,
           ),
-          useMaterial3: true,
         ),
         home: Directionality(
           textDirection: TextDirection.ltr,

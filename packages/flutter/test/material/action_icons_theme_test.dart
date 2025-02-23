@@ -115,7 +115,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.light(useMaterial3: true).copyWith(actionIconTheme: actionIconTheme),
+        theme: ThemeData.light().copyWith(actionIconTheme: actionIconTheme),
         home: const Material(
           child: Column(
             children: <Widget>[BackButton(), CloseButton(), DrawerButton(), EndDrawerButton()],

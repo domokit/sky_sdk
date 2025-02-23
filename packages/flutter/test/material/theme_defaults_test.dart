@@ -47,7 +47,7 @@ void main() {
     });
 
     testWidgets('Material3 - theme: ThemeData.light(), enabled: true', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData.light(useMaterial3: true);
+      final ThemeData theme = ThemeData.light();
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
@@ -113,7 +113,7 @@ void main() {
     testWidgets('Material3 - theme: ThemeData.light(), enabled: false', (
       WidgetTester tester,
     ) async {
-      final ThemeData theme = ThemeData.light(useMaterial3: true);
+      final ThemeData theme = ThemeData.light();
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,

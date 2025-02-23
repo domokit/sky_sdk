@@ -85,7 +85,6 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           body: BottomSheet(
             onClosing: () {},
