@@ -55,6 +55,8 @@ void main() {
       foregroundColor: MaterialStatePropertyAll<Color>(Color(0xffffff7f)),
     ),
     locale: Locale('en'),
+    subheaderTextStyle: TextStyle(fontSize: 13),
+    headerNavigationButtonColor: Color(0xffffff9f),
   );
 
   Material findDialogMaterial(WidgetTester tester) {
@@ -111,6 +113,8 @@ void main() {
     expect(theme.headerForegroundColor, null);
     expect(theme.headerHeadlineStyle, null);
     expect(theme.headerHelpStyle, null);
+    expect(theme.subheaderTextStyle, null);
+    expect(theme.headerNavigationButtonColor, null);
     expect(theme.weekdayStyle, null);
     expect(theme.dayStyle, null);
     expect(theme.dayForegroundColor, null);
@@ -172,6 +176,11 @@ void main() {
     expect(m3.headerForegroundColor, colorScheme.onSurfaceVariant);
     expect(m3.headerHeadlineStyle, textTheme.headlineLarge);
     expect(m3.headerHelpStyle, textTheme.labelLarge);
+    expect(
+        m3.subheaderTextStyle,
+        textTheme.titleSmall?.apply(color: colorScheme.onSurface.withOpacity(0.60))
+    );
+    expect(m3.headerNavigationButtonColor, colorScheme.onSurface.withOpacity(0.60));
     expect(m3.weekdayStyle, textTheme.bodyLarge?.apply(color: colorScheme.onSurface));
     expect(m3.dayStyle, textTheme.bodyLarge);
     expect(m3.dayForegroundColor?.resolve(<MaterialState>{}), colorScheme.onSurface);
@@ -328,6 +337,11 @@ void main() {
     expect(m2.headerForegroundColor, colorScheme.onPrimary);
     expect(m2.headerHeadlineStyle, textTheme.headlineSmall);
     expect(m2.headerHelpStyle, textTheme.labelSmall);
+    expect(
+      m2.subheaderTextStyle,
+        textTheme.titleSmall?.apply(color: colorScheme.onSurface.withOpacity(0.60))
+    );
+    expect(m2.headerNavigationButtonColor, colorScheme.onSurface.withOpacity(0.60));
     expect(
       m2.weekdayStyle,
       textTheme.bodySmall?.apply(color: colorScheme.onSurface.withOpacity(0.60)),
@@ -517,6 +531,8 @@ void main() {
         'cancelButtonStyle: ButtonStyle#00000(foregroundColor: WidgetStatePropertyAll(${const Color(0xffffff6f)}))',
         'confirmButtonStyle: ButtonStyle#00000(foregroundColor: WidgetStatePropertyAll(${const Color(0xffffff7f)}))',
         'locale: en',
+        'subheaderTextStyle: TextStyle(inherit: true, size: 13.0)',
+        'headerNavigationButtonColor: ${const Color(0xffffff9f)}',
       ]),
     );
   });

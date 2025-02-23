@@ -55,6 +55,8 @@ class DatePickerThemeData with Diagnosticable {
     this.headerForegroundColor,
     this.headerHeadlineStyle,
     this.headerHelpStyle,
+    this.subheaderTextStyle,
+    this.headerNavigationButtonColor,
     this.weekdayStyle,
     this.dayStyle,
     this.dayForegroundColor,
@@ -147,6 +149,12 @@ class DatePickerThemeData with Diagnosticable {
   /// See also:
   ///   [DatePickerDialog.helpText], which specifies the help text.
   final TextStyle? headerHelpStyle;
+
+  /// Overrides the default text style for the header in the DatePicker dialog.
+  final TextStyle? subheaderTextStyle;
+
+  /// Overrides the default navigation button color in the header of the DatePicker dialog.
+  final Color? headerNavigationButtonColor;
 
   /// Overrides the default text style used for the row of weekday
   /// labels at the top of the date picker grid.
@@ -842,6 +850,12 @@ class DatePickerThemeData with Diagnosticable {
       ),
     );
     properties.add(DiagnosticsProperty<Locale>('locale', locale, defaultValue: null));
+    properties.add(DiagnosticsProperty<TextStyle>(
+      'subheaderTextStyle',
+      subheaderTextStyle,
+      defaultValue: null,
+    ));
+    properties.add(ColorProperty('headerNavigationButtonColor', headerNavigationButtonColor, defaultValue: null));
   }
 }
 
@@ -975,6 +989,12 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
 
   @override
   TextStyle? get headerHelpStyle => _textTheme.labelSmall;
+
+  @override
+  TextStyle? get subheaderTextStyle => _textTheme.titleSmall?.copyWith(color: _colors.onSurface.withOpacity(0.60));
+
+  @override
+  Color? get headerNavigationButtonColor => _colors.onSurface.withOpacity(0.60);
 
   @override
   TextStyle? get weekdayStyle =>
@@ -1157,6 +1177,12 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
 
   @override
   TextStyle? get headerHelpStyle => _textTheme.labelLarge;
+
+  @override
+  TextStyle? get subheaderTextStyle => _textTheme.titleSmall?.copyWith(color: _colors.onSurface.withOpacity(0.60));
+
+  @override
+  Color? get headerNavigationButtonColor => _colors.onSurface.withOpacity(0.60);
 
   @override
   TextStyle? get weekdayStyle => _textTheme.bodyLarge?.apply(
