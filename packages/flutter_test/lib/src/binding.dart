@@ -1049,7 +1049,9 @@ abstract class TestWidgetsFlutterBinding extends BindingBase
     // So that we can assert that it remains the same after the test finishes.
     _beforeTestCheckIntrinsicSizes = debugCheckIntrinsicSizes;
 
-    runApp(Container(key: UniqueKey(), child: _preTestMessage)); // Reset the tree to a known state.
+    runApp(
+      KeyedSubtree(key: UniqueKey(), child: _preTestMessage),
+    ); // Reset the tree to a known state.
     await pump();
     // Pretend that the first frame produced in the test body is the first frame
     // sent to the engine.
@@ -1069,7 +1071,7 @@ abstract class TestWidgetsFlutterBinding extends BindingBase
       // fail. If we got an exception already, then we instead leave everything
       // alone so that we don't cause more spurious errors.
       runApp(
-        Container(key: UniqueKey(), child: _postTestMessage),
+        KeyedSubtree(key: UniqueKey(), child: _postTestMessage),
       ); // Unmount any remaining widgets.
       await pump();
       if (registerTestTextInput) {
