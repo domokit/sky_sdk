@@ -67,6 +67,54 @@ abstract class BoxBorder extends ShapeBorder {
   /// const constructors so that they can be used in const expressions.
   const BoxBorder();
 
+  /// Creates a [Border].
+  ///
+  /// All the sides of the border default to [BorderSide.none].
+  factory BoxBorder.fromLTRB({
+    BorderSide top = BorderSide.none,
+    BorderSide right = BorderSide.none,
+    BorderSide bottom = BorderSide.none,
+    BorderSide left = BorderSide.none,
+  }) => Border(top: top, right: right, bottom: bottom, left: left);
+
+  /// A uniform [Border] with all sides the same color and width.
+  ///
+  /// The sides default to black solid borders, one logical pixel wide.
+  factory BoxBorder.all({
+    Color color = const Color(0xFF000000),
+    double width = 1.0,
+    BorderStyle style = BorderStyle.solid,
+    double strokeAlign = BorderSide.strokeAlignInside,
+  }) => Border.all(color: color, width: width, style: style, strokeAlign: strokeAlign);
+
+  /// Creates a [Border] whose sides are all the same.
+  factory BoxBorder.fromBorderSide(BorderSide side) => Border.fromBorderSide(side);
+
+  /// Creates a [Border] with symmetrical vertical and horizontal sides.
+  ///
+  /// The `vertical` argument applies to the [left] and [right] sides, and the
+  /// `horizontal` argument applies to the [top] and [bottom] sides.
+  ///
+  /// All arguments default to [BorderSide.none].
+  factory BoxBorder.symmetric({
+    BorderSide vertical = BorderSide.none,
+    BorderSide horizontal = BorderSide.none,
+  }) => Border.symmetric(vertical: vertical, horizontal: horizontal);
+
+  /// Creates a [BorderDirectional].
+  ///
+  /// The [start] and [end] sides represent the horizontal sides; the start side
+  /// is on the leading edge given the reading direction, and the end side is on
+  /// the trailing edge. They are resolved during [paint].
+  ///
+  /// All the sides of the border default to [BorderSide.none].
+  factory BoxBorder.fromSTEB({
+    BorderSide top = BorderSide.none,
+    BorderSide start = BorderSide.none,
+    BorderSide end = BorderSide.none,
+    BorderSide bottom = BorderSide.none,
+  }) => BorderDirectional(top: top, start: start, end: end, bottom: bottom);
+
   /// The top side of this border.
   ///
   /// This getter is available on both [Border] and [BorderDirectional]. If
