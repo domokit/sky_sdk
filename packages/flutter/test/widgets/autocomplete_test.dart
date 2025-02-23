@@ -3208,4 +3208,58 @@ void main() {
     expect(lastOptions, altEleOptions);
     expect(find.byKey(optionsKey), findsOneWidget);
   });
+
+  testWidgets('Options view is constrained by soft keyboard', (WidgetTester tester) async {
+    const double bottomInset = 100.0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: <Widget>[
+              RawAutocomplete<String>(
+                optionsBuilder: (TextEditingValue textEditingValue) => <String>['aaa'],
+                fieldViewBuilder: (
+                  BuildContext context,
+                  TextEditingController textEditingController,
+                  FocusNode focusNode,
+                  VoidCallback onFieldSubmitted,
+                ) {
+                  return TextField(
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    onSubmitted: (String value) {
+                      onFieldSubmitted();
+                    },
+                  );
+                },
+                optionsViewBuilder:
+                    (
+                      BuildContext context,
+                      AutocompleteOnSelected<String> onSelected,
+                      Iterable<String> options,
+                    ) => const Placeholder(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(TextField));
+    await tester.enterText(find.byType(TextField), 'a');
+    await tester.pump();
+
+    final double initialSize = tester.getSize(find.byType(Placeholder)).height;
+
+    tester.view.viewInsets = const FakeViewPadding(bottom: bottomInset);
+    addTearDown(tester.view.reset);
+    await tester.pump();
+
+    await tester.tap(find.byType(TextField));
+    await tester.enterText(find.byType(TextField), 'aa');
+    await tester.pump();
+
+    // The options view has shrunk to the available height between the text field and the keyboard.
+    expect(tester.getSize(find.byType(Placeholder)).height, initialSize - (bottomInset / 3));
+  });
 }

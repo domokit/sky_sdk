@@ -21,6 +21,7 @@ import 'focus_manager.dart';
 import 'framework.dart';
 import 'inherited_notifier.dart';
 import 'layout_builder.dart';
+import 'media_query.dart';
 import 'overlay.dart';
 import 'shortcuts.dart';
 import 'tap_region.dart';
@@ -636,6 +637,8 @@ class _RawAutocompleteOptions extends StatefulWidget {
 
 class _RawAutocompleteOptionsState extends State<_RawAutocompleteOptions> {
   VoidCallback? removeCompositionCallback;
+  late BuildContext rootOverlayContext;
+  double bottomInset = 0.0;
   Offset fieldOffset = Offset.zero;
 
   // Get the field offset if the field's position changes when its layer tree
@@ -659,6 +662,7 @@ class _RawAutocompleteOptionsState extends State<_RawAutocompleteOptions> {
           fieldOffset = nextFieldOffset;
         });
       }
+      bottomInset = MediaQuery.viewInsetsOf(rootOverlayContext).bottom;
     });
   }
 
@@ -668,6 +672,7 @@ class _RawAutocompleteOptionsState extends State<_RawAutocompleteOptions> {
     removeCompositionCallback = widget.optionsLayerLink.leader?.addCompositionCallback(
       _onLeaderComposition,
     );
+    rootOverlayContext = Overlay.of(context).context;
   }
 
   @override
@@ -704,6 +709,7 @@ class _RawAutocompleteOptionsState extends State<_RawAutocompleteOptions> {
           optionsViewOpenDirection: widget.optionsViewOpenDirection,
           textDirection: Directionality.of(context),
           fieldConstraints: widget.fieldConstraints,
+          bottomInset: bottomInset,
         ),
         child: TextFieldTapRegion(
           child: AutocompleteHighlightedOption(
@@ -726,6 +732,7 @@ class _RawAutocompleteOptionsLayoutDelegate extends SingleChildLayoutDelegate {
     required this.optionsViewOpenDirection,
     required this.textDirection,
     required this.fieldConstraints,
+    required this.bottomInset,
   }) : assert(layerLink.leaderSize != null);
 
   /// Links the options in [RawAutocomplete.optionsViewBuilder] to the field in
@@ -743,6 +750,9 @@ class _RawAutocompleteOptionsLayoutDelegate extends SingleChildLayoutDelegate {
 
   /// The [BoxConstraints] for the field in [RawAutocomplete.fieldViewBuilder].
   final BoxConstraints fieldConstraints;
+
+  /// The height of the soft keyboard which constrains the options view.
+  final double bottomInset;
 
   // A big enough height for about one item in the default
   // Autocomplete.optionsViewBuilder. The assumption is that the user likely
@@ -763,7 +773,8 @@ class _RawAutocompleteOptionsLayoutDelegate extends SingleChildLayoutDelegate {
       // field of its own. In that case, don't change the constraints width.
       maxWidth: fieldSize.width == 0.0 ? constraints.maxWidth : fieldSize.width,
       maxHeight: max(_kMinUsableHeight, switch (optionsViewOpenDirection) {
-        OptionsViewOpenDirection.down => constraints.maxHeight - fieldOffset.dy - fieldSize.height,
+        OptionsViewOpenDirection.down =>
+          constraints.maxHeight - fieldOffset.dy - fieldSize.height - bottomInset,
         OptionsViewOpenDirection.up => fieldOffset.dy,
       }),
     );
@@ -797,7 +808,8 @@ class _RawAutocompleteOptionsLayoutDelegate extends SingleChildLayoutDelegate {
         fieldOffset != oldDelegate.fieldOffset ||
         optionsViewOpenDirection != oldDelegate.optionsViewOpenDirection ||
         textDirection != oldDelegate.textDirection ||
-        fieldConstraints != oldDelegate.fieldConstraints;
+        fieldConstraints != oldDelegate.fieldConstraints ||
+        bottomInset != oldDelegate.bottomInset;
   }
 }
 
