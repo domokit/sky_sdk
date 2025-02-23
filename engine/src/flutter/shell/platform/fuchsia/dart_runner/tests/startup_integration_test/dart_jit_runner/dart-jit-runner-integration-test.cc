@@ -23,6 +23,8 @@ using component_testing::Protocol;
 using component_testing::RealmBuilder;
 using component_testing::RealmRoot;
 using component_testing::Route;
+using component_testing::Dictionary;
+
 
 constexpr auto kDartRunnerEnvironment = "dart_runner_env";
 
@@ -83,6 +85,11 @@ TEST_F(RealmBuilderTest, DartRunnerStartsUp) {
                              Protocol{"fuchsia.intl.PropertyProvider"},
                              Protocol{"fuchsia.inspect.InspectSink"},
                              Directory{"config-data"}},
+            .source = ParentRef(),
+            .targets = {kDartJitRunnerRef, kDartJitEchoServerRef}});
+
+  realm_builder.AddRoute(
+      Route{.capabilities = {Dictionary{"diagnostics"}},
             .source = ParentRef(),
             .targets = {kDartJitRunnerRef, kDartJitEchoServerRef}});
 
