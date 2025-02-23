@@ -4,6 +4,7 @@
 // found in the LICENSE file.
 
 import com.android.build.OutputFile
+import com.flutter.gradle.AppLinkSettings
 import com.flutter.gradle.BaseApplicationNameHandler
 import com.flutter.gradle.Deeplink
 import com.flutter.gradle.DependencyVersionChecker
@@ -479,9 +480,7 @@ class FlutterPlugin implements Plugin<Project> {
                     dependsOn processResources.name
                 }
                 doLast {
-                    AppLinkSettings appLinkSettings = new AppLinkSettings()
-                    appLinkSettings.applicationId = variant.applicationId
-                    appLinkSettings.deeplinks = [] as Set<Deeplink>
+                    AppLinkSettings appLinkSettings = new AppLinkSettings(variant.applicationId)
                     variant.outputs.configureEach { output ->
                         Object processResources = output.hasProperty(propProcessResourcesProvider) ?
                                 output.processResourcesProvider.get() : output.processResources
@@ -1526,14 +1525,6 @@ class FlutterPlugin implements Plugin<Project> {
         // If we got this far then all the common indices are identical, so whichever version is longer must be more recent
         return firstVersion.size() <=> secondVersion.size()
     }
-
-}
-
-class AppLinkSettings {
-
-    String applicationId
-    Set<Deeplink> deeplinks
-    boolean deeplinkingFlagEnabled
 
 }
 

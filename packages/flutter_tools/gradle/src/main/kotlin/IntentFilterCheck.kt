@@ -4,10 +4,24 @@
 
 package com.flutter.gradle
 
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+
 class IntentFilterCheck {
     // TODO(gmackall): Identify which of these can be val instead of var.
     var hasAutoVerify = false
     var hasActionView = false
     var hasDefaultCategory = false
     var hasBrowsableCategory = false
+
+    fun toJson(): JsonObject {
+        return buildJsonObject {
+            put("hasAutoVerify", hasAutoVerify)
+            put("hasActionView", hasActionView)
+            put("hasDefaultCategory", hasDefaultCategory)
+            put("hasBrowsableCategory", hasBrowsableCategory)
+
+        }
+    }
 }

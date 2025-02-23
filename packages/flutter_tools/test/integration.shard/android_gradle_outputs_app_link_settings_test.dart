@@ -277,6 +277,7 @@ void main() {
       expect(fileDump.existsSync(), true);
       final Map<String, dynamic> json =
           jsonDecode(fileDump.readAsStringSync()) as Map<String, dynamic>;
+      print('CAMILLE json: $json');
       expect(json['applicationId'], 'com.example.testapp');
       expect(json['deeplinkingFlagEnabled'], true);
       final List<dynamic> deeplinks = json['deeplinks']! as List<dynamic>;
