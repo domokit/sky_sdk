@@ -7,6 +7,7 @@
 #include "flutter/shell/platform/linux/fl_engine_private.h"
 #include "flutter/shell/platform/linux/testing/fl_test.h"
 #include "flutter/shell/platform/linux/testing/fl_test_gtk_logs.h"
+#include "flutter/shell/platform/linux/testing/mock_window.h"
 
 #include "gtest/gtest.h"
 
@@ -136,8 +137,8 @@ TEST(FlViewTest, ViewDestroy) {
   int64_t implicit_view_id = fl_view_get_id(implicit_view);
   int64_t secondary_view_id = fl_view_get_id(secondary_view);
 
-  gtk_widget_destroy(GTK_WIDGET(secondary_view));
-  gtk_widget_destroy(GTK_WIDGET(implicit_view));
+  fl_gtk_widget_destroy(GTK_WIDGET(secondary_view));
+  fl_gtk_widget_destroy(GTK_WIDGET(implicit_view));
 
   EXPECT_EQ(removed_views->len, 2u);
   EXPECT_EQ(GPOINTER_TO_INT(g_ptr_array_index(removed_views, 0)),
@@ -165,6 +166,6 @@ TEST(FlViewTest, ViewDestroyError) {
 
   FlView* secondary_view = fl_view_new_for_engine(engine);
 
-  gtk_widget_destroy(GTK_WIDGET(secondary_view));
-  gtk_widget_destroy(GTK_WIDGET(implicit_view));
+  fl_gtk_widget_destroy(GTK_WIDGET(secondary_view));
+  fl_gtk_widget_destroy(GTK_WIDGET(implicit_view));
 }

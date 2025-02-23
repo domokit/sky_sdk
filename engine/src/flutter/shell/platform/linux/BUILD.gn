@@ -158,6 +158,8 @@ source_set("flutter_linux_sources") {
     "fl_view.cc",
     "fl_view_accessible.cc",
     "fl_window_state_monitor.cc",
+    "fl_windowing_channel.cc",
+    "fl_windowing_handler.cc",
     "key_mapping.g.cc",
   ]
 
@@ -248,6 +250,7 @@ executable("flutter_linux_unittests") {
     "fl_view_accessible_test.cc",
     "fl_view_test.cc",
     "fl_window_state_monitor_test.cc",
+    "fl_windowing_handler_test.cc",
     "key_mapping_test.cc",
     "testing/fl_mock_binary_messenger.cc",
     "testing/fl_test.cc",
