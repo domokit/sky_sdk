@@ -1145,7 +1145,7 @@ class RenderParagraph extends RenderBox
     bool needsAssembleSemanticsNode = false;
     bool needsChildConfigurationsDelegate = false;
     for (final InlineSpanSemanticsInformation info in _semanticsInfo!) {
-      if (info.recognizer != null) {
+      if (info.recognizer != null || info.semanticsIdentifier != null) {
         needsAssembleSemanticsNode = true;
         break;
       }
@@ -1332,6 +1332,7 @@ class RenderParagraph extends RenderBox
             SemanticsConfiguration()
               ..sortKey = OrdinalSortKey(ordinal++)
               ..textDirection = initialDirection
+              ..identifier = info.semanticsIdentifier ?? ''
               ..attributedLabel = AttributedString(
                 info.semanticsLabel ?? info.text,
                 attributes: info.stringAttributes,

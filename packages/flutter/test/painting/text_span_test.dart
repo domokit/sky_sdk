@@ -289,9 +289,14 @@ void main() {
 
   test('TextSpan computeSemanticsInformation', () {
     final List<InlineSpanSemanticsInformation> collector = <InlineSpanSemanticsInformation>[];
-    const TextSpan(text: 'aaa', semanticsLabel: 'bbb').computeSemanticsInformation(collector);
+    const TextSpan(
+      text: 'aaa',
+      semanticsLabel: 'bbb',
+      semanticsIdentifier: 'ccc',
+    ).computeSemanticsInformation(collector);
     expect(collector[0].text, 'aaa');
     expect(collector[0].semanticsLabel, 'bbb');
+    expect(collector[0].semanticsIdentifier, 'ccc');
   });
 
   test('TextSpan visitDirectChildren', () {
