@@ -45,7 +45,7 @@ public class MainActivity extends FlutterActivity {
 
     @Override
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
-        FlutterView flutterView = findViewById(FLUTTER_VIEW_ID);
+        FlutterView flutterView = findViewById(MainActivity.this.flutterViewId);
         AccessibilityNodeProvider provider = flutterView.getAccessibilityNodeProvider();
         DisplayMetrics displayMetrics = new DisplayMetrics();
         WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);

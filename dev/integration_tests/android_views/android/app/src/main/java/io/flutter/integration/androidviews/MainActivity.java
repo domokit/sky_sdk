@@ -30,7 +30,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private MethodChannel.Result permissionResult;
 
     private View getFlutterView() {
-      return findViewById(FLUTTER_VIEW_ID);
+      return findViewById(((FlutterActivity) this).flutterViewId);
     }
 
     @Override

@@ -92,8 +92,8 @@ public class FlutterActivityTest {
     FlutterActivity activity = activityController.get();
 
     activity.onCreate(null);
-    assertNotNull(activity.findViewById(FlutterActivity.FLUTTER_VIEW_ID));
-    assertTrue(activity.findViewById(FlutterActivity.FLUTTER_VIEW_ID) instanceof FlutterView);
+    assertNotNull(activity.findViewById(activity.flutterViewId));
+    assertTrue(activity.findViewById(activity.flutterViewId) instanceof FlutterView);
   }
 
   @Test

@@ -99,12 +99,12 @@ public class FlutterFragment extends Fragment
         ComponentCallbacks2,
         FlutterActivityAndFragmentDelegate.DelegateFactory {
   /**
-   * The ID of the {@code FlutterView} created by this activity.
+   * The ID of the {@code FlutterView} created by this Fragment's attached activity.
    *
    * <p>This ID can be used to lookup {@code FlutterView} in the Android view hierarchy. For more,
    * see {@link android.view.View#findViewById}.
    */
-  public static final int FLUTTER_VIEW_ID = View.generateViewId();
+  public Integer flutterViewId;
 
   private static final String TAG = "FlutterFragment";
 
@@ -1022,6 +1022,8 @@ public class FlutterFragment extends Fragment
     // Ensure that we at least have an empty Bundle of arguments so that we don't
     // need to continually check for null arguments before grabbing one.
     setArguments(new Bundle());
+
+    flutterViewId = View.generateViewId();
   }
 
   /**
@@ -1089,7 +1091,7 @@ public class FlutterFragment extends Fragment
         inflater,
         container,
         savedInstanceState,
-        /*flutterViewId=*/ FLUTTER_VIEW_ID,
+        /*flutterViewId=*/ flutterViewId,
         shouldDelayFirstAndroidViewDraw());
   }
 
