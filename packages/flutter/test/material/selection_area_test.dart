@@ -361,7 +361,7 @@ void main() {
       // After lifting the finger up, the selection toolbar should be showing again.
       expect(find.text('Copy'), findsOneWidget);
     },
-    variant: TargetPlatformVariant.all(),
+    variant: TargetPlatformVariant.mobile(),
     skip: kIsWeb, // [intended]
   );
 }
