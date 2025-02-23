@@ -3250,7 +3250,6 @@ targets:
       task_name: routing_test
 
   - name: Linux_pixel_7pro service_extensions_test
-    bringup: true # Flaky https://github.com/flutter/flutter/issues/157852
     recipe: devicelab/devicelab_drone
     presubmit: false
     timeout: 60
