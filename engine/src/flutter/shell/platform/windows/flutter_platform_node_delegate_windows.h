@@ -34,6 +34,9 @@ class FlutterPlatformNodeDelegateWindows : public FlutterPlatformNodeDelegate {
       int screen_physical_pixel_x,
       int screen_physical_pixel_y) const override;
 
+  // |ui::AXPlatformNodeDelegate|
+  std::u16string GetAuthorUniqueId() const override;
+
   // |FlutterPlatformNodeDelegate|
   gfx::Rect GetBoundsRect(
       const ui::AXCoordinateSystem coordinate_system,

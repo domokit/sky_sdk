@@ -153,6 +153,7 @@ void EmbedderSemanticsUpdate2::AddNode(const SemanticsNode& node) {
       node.scrollExtentMin,
       node.elevation,
       node.thickness,
+      node.identifier.c_str(),
       node.label.c_str(),
       node.hint.c_str(),
       node.value.c_str(),

@@ -1458,6 +1458,8 @@ typedef struct {
   double elevation;
   /// Describes how much space the semantics node takes up along the z-axis.
   double thickness;
+  /// A technical identifier for the node.
+  const char* identifier;
   /// A textual description of the node.
   const char* label;
   /// A brief description of the result of performing an action on the node.

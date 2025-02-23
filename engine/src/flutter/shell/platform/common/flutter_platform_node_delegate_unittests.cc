@@ -46,6 +46,7 @@ TEST(FlutterPlatformNodeDelegateTest, canPerfomActions) {
   root.actions = static_cast<FlutterSemanticsAction>(0);
   root.text_selection_base = -1;
   root.text_selection_extent = -1;
+  root.identifier = "";
   root.label = "root";
   root.hint = "";
   root.value = "";
@@ -91,6 +92,7 @@ TEST(FlutterPlatformNodeDelegateTest, canGetAXNode) {
   root.actions = static_cast<FlutterSemanticsAction>(0);
   root.text_selection_base = -1;
   root.text_selection_extent = -1;
+  root.identifier = "";
   root.label = "root";
   root.hint = "";
   root.value = "";
@@ -112,6 +114,7 @@ TEST(FlutterPlatformNodeDelegateTest, canCalculateBoundsCorrectly) {
       std::make_shared<TestAccessibilityBridge>();
   FlutterSemanticsNode2 root;
   root.id = 0;
+  root.identifier = "";
   root.label = "root";
   root.hint = "";
   root.value = "";
@@ -128,6 +131,7 @@ TEST(FlutterPlatformNodeDelegateTest, canCalculateBoundsCorrectly) {
 
   FlutterSemanticsNode2 child1;
   child1.id = 1;
+  child1.identifier = "";
   child1.label = "child 1";
   child1.hint = "";
   child1.value = "";
@@ -158,6 +162,7 @@ TEST(FlutterPlatformNodeDelegateTest, canCalculateOffScreenBoundsCorrectly) {
       std::make_shared<TestAccessibilityBridge>();
   FlutterSemanticsNode2 root;
   root.id = 0;
+  root.identifier = "";
   root.label = "root";
   root.hint = "";
   root.value = "";
@@ -174,6 +179,7 @@ TEST(FlutterPlatformNodeDelegateTest, canCalculateOffScreenBoundsCorrectly) {
 
   FlutterSemanticsNode2 child1;
   child1.id = 1;
+  child1.identifier = "";
   child1.label = "child 1";
   child1.hint = "";
   child1.value = "";
@@ -204,6 +210,7 @@ TEST(FlutterPlatformNodeDelegateTest, canUseOwnerBridge) {
       std::make_shared<TestAccessibilityBridge>();
   FlutterSemanticsNode2 root;
   root.id = 0;
+  root.identifier = "";
   root.label = "root";
   root.hint = "";
   root.value = "";
@@ -220,6 +227,7 @@ TEST(FlutterPlatformNodeDelegateTest, canUseOwnerBridge) {
 
   FlutterSemanticsNode2 child1;
   child1.id = 1;
+  child1.identifier = "";
   child1.label = "child 1";
   child1.hint = "";
   child1.value = "";
@@ -236,7 +244,7 @@ TEST(FlutterPlatformNodeDelegateTest, canUseOwnerBridge) {
   auto child1_node = bridge->GetFlutterPlatformNodeDelegateFromID(1).lock();
   auto owner_bridge = child1_node->GetOwnerBridge().lock();
 
-  bool result;
+  bool result = false;
   gfx::RectF bounds = owner_bridge->RelativeToGlobalBounds(
       child1_node->GetAXNode(), result, true);
   EXPECT_EQ(bounds.x(), 0);
@@ -251,6 +259,7 @@ TEST(FlutterPlatformNodeDelegateTest, selfIsLowestPlatformAncestor) {
       std::make_shared<TestAccessibilityBridge>();
   FlutterSemanticsNode2 root;
   root.id = 0;
+  root.identifier = "";
   root.label = "root";
   root.hint = "";
   root.value = "";
@@ -273,6 +282,7 @@ TEST(FlutterPlatformNodeDelegateTest, canGetFromNodeID) {
       std::make_shared<TestAccessibilityBridge>();
   FlutterSemanticsNode2 root;
   root.id = 0;
+  root.identifier = "";
   root.label = "root";
   root.hint = "";
   root.value = "";
@@ -287,6 +297,7 @@ TEST(FlutterPlatformNodeDelegateTest, canGetFromNodeID) {
 
   FlutterSemanticsNode2 child1;
   child1.id = 1;
+  child1.identifier = "";
   child1.label = "child 1";
   child1.hint = "";
   child1.value = "";
