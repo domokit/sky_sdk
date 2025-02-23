@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show File;
+import 'dart:io' show File, Platform;
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
@@ -33,6 +33,8 @@ Future<void> main() async {
 
       return firstInstallFailure ?? TaskResult.success(null);
     });
+
+    await _testFlavorsWhenBuildStartsWithGradle(projectPath);
 
     return installTestsResult;
   });
@@ -105,4 +107,41 @@ Future<TaskResult> _testInstallBogusFlavor() async {
   }
 
   return TaskResult.success(null);
+}
+
+Future<TaskResult> _testFlavorsWhenBuildStartsWithGradle(String projectDir) async {
+  final String gradlew = Platform.isWindows ? 'gradlew.bat' : 'gradlew';
+  final String gradlewExecutable = Platform.isWindows ? '.\\$gradlew' : './$gradlew';
+
+  final String androidDirPath = '$projectDir/android';
+  final StringBuffer stdout = StringBuffer();
+
+  // Prebuild the project to generate the Android gradle wrapper files.
+  await inDirectory(projectDir, () async {
+    await flutter('build', options: <String>['apk', '--config-only']);
+  });
+
+  await inDirectory(androidDirPath, () async {
+    await exec(gradlewExecutable, <String>['clean']);
+    await exec(gradlewExecutable, <String>[':app:assemblePaidDebug', '--info'], output: stdout);
+  });
+
+  final String stdoutString = stdout.toString();
+
+  if (!stdoutString.contains('-dFlavor=paid')) {
+    return TaskResult.failure('Expected to see -dFlavor=paid in the gradle verbose output');
+  }
+
+  final String appPath = path.join(
+    projectDir,
+    'build',
+    'app',
+    'outputs',
+    'flutter-apk',
+    'app-paid-debug.apk',
+  );
+
+  return createFlavorsTest(
+    extraOptions: <String>['--flavor', 'paid', '--use-application-binary=$appPath'],
+  ).call();
 }
