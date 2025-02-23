@@ -12,6 +12,7 @@ import 'package:flutter_devicelab/framework/framework.dart';
 import 'package:flutter_devicelab/framework/task_result.dart';
 import 'package:flutter_devicelab/framework/utils.dart';
 import 'package:path/path.dart' as path;
+import 'package:pub_semver/pub_semver.dart';
 
 final String gradlew = Platform.isWindows ? 'gradlew.bat' : 'gradlew';
 final String gradlewExecutable = Platform.isWindows ? '.\\$gradlew' : './$gradlew';
@@ -33,10 +34,14 @@ TaskFunction combine(List<TaskFunction> tasks) {
 /// Tests that the Flutter module project template works and supports
 /// adding Flutter to an existing Android app.
 class ModuleTest {
-  ModuleTest({this.gradleVersion = '7.6.3'});
+  ModuleTest({this.gradleVersion = '7.6.3', Version? agpVersion})
+    : agpVersion = agpVersion ?? Version(8, 3, 0);
 
   static const String buildTarget = 'module-gradle';
+  // gradleVersion is a String because gradle does not follow dart semver
+  // rules for rc candidates.
   final String gradleVersion;
+  final Version agpVersion;
   final StringBuffer stdout = StringBuffer();
   final StringBuffer stderr = StringBuffer();
 
@@ -63,6 +68,7 @@ class ModuleTest {
           stderr: stderr,
         );
       });
+      print('Created template in $tempDir.');
 
       section('Create package with native assets');
 
@@ -237,7 +243,7 @@ class ModuleTest {
         Directory(path.join(hostApp.path, 'gradle', 'wrapper')),
       );
 
-      // Modify gradle version to passed in version.
+      // Modify gradle version to the passed in version.
       // This is somehow the wrong file.
       final File gradleWrapperProperties = File(
         path.join(hostApp.path, 'gradle', 'wrapper', 'gradle-wrapper.properties'),
@@ -246,6 +252,16 @@ class ModuleTest {
       propertyContent = propertyContent.replaceFirst('REPLACEME', gradleVersion);
       section(propertyContent);
       await gradleWrapperProperties.writeAsString(propertyContent, flush: true);
+
+      // Modify AGP version to the passed in version.
+      // /Users/reidbaker/flutter-work/dev/integration_tests/pure_android_host_apps/android_host_app_v2_embedding/build.gradle
+      final File topBuildDotGradle = File(path.join(hostApp.path, 'build.gradle'));
+      String topBuildContent = await topBuildDotGradle.readAsString();
+      topBuildContent = topBuildContent.replaceFirst('REPLACEME', agpVersion.toString());
+      section(topBuildContent);
+      await topBuildDotGradle.writeAsString(topBuildContent, flush: true);
+
+      final bool greaterThanGradle83 = agpVersion.compareTo(Version(8, 3, 0)) >= 0;
 
       section('Build debug host APK');
 
@@ -300,7 +316,7 @@ class ModuleTest {
         );
       }
 
-      section('Check file access modes for read-only asset from Flutter module');
+      section('Check file access modes for Debug read-only asset from Flutter module');
 
       final String readonlyDebugAssetFilePath = path.joinAll(<String>[
         hostApp.path,
@@ -309,13 +325,15 @@ class ModuleTest {
         'intermediates',
         'assets',
         'debug',
+        ...greaterThanGradle83 ? <String>['mergeDebugAssets'] : <String>[],
         'flutter_assets',
         'assets',
         'read-only.txt',
       ]);
+      // ./app/build/intermediates/assets/debug/mergeDebugAssets/flutter_assets/assets/read-only.txt
       final File readonlyDebugAssetFile = File(readonlyDebugAssetFilePath);
       if (!exists(readonlyDebugAssetFile)) {
-        return TaskResult.failure('Failed to copy read-only asset file');
+        return TaskResult.failure('Failed to copy read-only debug asset file');
       }
 
       String modes = readonlyDebugAssetFile.statSync().modeString();
@@ -393,7 +411,7 @@ class ModuleTest {
         );
       }
 
-      section('Check file access modes for read-only asset from Flutter module');
+      section('Check file access modes for release read-only asset from Flutter module');
 
       final String readonlyReleaseAssetFilePath = path.joinAll(<String>[
         hostApp.path,
@@ -402,13 +420,14 @@ class ModuleTest {
         'intermediates',
         'assets',
         'release',
+        ...greaterThanGradle83 ? <String>['mergeReleaseAssets'] : <String>[],
         'flutter_assets',
         'assets',
         'read-only.txt',
       ]);
       final File readonlyReleaseAssetFile = File(readonlyReleaseAssetFilePath);
       if (!exists(readonlyReleaseAssetFile)) {
-        return TaskResult.failure('Failed to copy read-only asset file');
+        return TaskResult.failure('Failed to copy read-only release asset file');
       }
 
       modes = readonlyReleaseAssetFile.statSync().modeString();
@@ -437,8 +456,11 @@ class ModuleTest {
 Future<void> main() async {
   await task(
     combine(<TaskFunction>[
-      ModuleTest(gradleVersion: '8.4').call,
-      ModuleTest(gradleVersion: '8.4-rc-3').call,
+      // 3 tests comes close to timeout.
+      // Pre AGP 8.3
+      ModuleTest(gradleVersion: '8.4', agpVersion: Version.parse('8.1.0')).call,
+      // Post AGP 8.3 + rc candidates can work
+      ModuleTest(gradleVersion: '8.13-rc-1', agpVersion: Version.parse('8.8.1')).call,
     ]),
   );
 }
