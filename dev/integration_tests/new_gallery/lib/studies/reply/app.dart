@@ -77,7 +77,7 @@ class _ReplyAppState extends State<ReplyApp> with RestorationMixin {
     final ThemeMode galleryThemeMode = GalleryOptions.of(context).themeMode;
     final bool isDark =
         galleryThemeMode == ThemeMode.system
-            ? Theme.of(context).brightness == Brightness.dark
+            ? Theme.brightnessOf(context) == Brightness.dark
             : galleryThemeMode == ThemeMode.dark;
 
     final ThemeData replyTheme =

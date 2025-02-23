@@ -187,7 +187,7 @@ class FullScreenCodeDialogState extends State<FullScreenCodeDialog> {
   @override
   Widget build(BuildContext context) {
     final SyntaxHighlighterStyle style =
-        Theme.of(context).brightness == Brightness.dark
+        Theme.brightnessOf(context) == Brightness.dark
             ? SyntaxHighlighterStyle.darkThemeStyle
             : SyntaxHighlighterStyle.lightThemeStyle;
 

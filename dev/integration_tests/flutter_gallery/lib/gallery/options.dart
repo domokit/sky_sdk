@@ -131,7 +131,7 @@ class _BooleanItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = Theme.brightnessOf(context) == Brightness.dark;
     return _OptionsItem(
       child: Row(
         children: <Widget>[

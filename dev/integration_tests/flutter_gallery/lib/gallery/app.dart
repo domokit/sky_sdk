@@ -169,7 +169,7 @@ class _GalleryAppState extends State<GalleryApp> {
               Builder(
                 builder: (BuildContext context) {
                   return CupertinoTheme(
-                    data: CupertinoThemeData(brightness: Theme.of(context).brightness),
+                    data: CupertinoThemeData(brightness: Theme.brightnessOf(context)),
                     child: child!,
                   );
                 },

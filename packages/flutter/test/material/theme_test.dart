@@ -47,6 +47,92 @@ void main() {
     expect(Theme.of(tester.element(find.text('menuItem'))).brightness, equals(Brightness.dark));
   });
 
+  group('Theme.brightnessOf', () {
+    testWidgets('return correct brightness when just media query is given', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        const MediaQuery(
+          data: MediaQueryData(platformBrightness: Brightness.dark),
+          child: SizedBox(),
+        ),
+      );
+
+      expect(Theme.brightnessOf(tester.element(find.byType(SizedBox))), equals(Brightness.dark));
+    });
+
+    testWidgets('return correct brightness with overriding theme brightness over media query', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(platformBrightness: Brightness.dark),
+          child: Theme(data: ThemeData(brightness: Brightness.light), child: const SizedBox()),
+        ),
+      );
+
+      expect(Theme.brightnessOf(tester.element(find.byType(SizedBox))), equals(Brightness.light));
+    });
+
+    testWidgets('returns Brightness.light when no theme or media query is present', (
+      WidgetTester tester,
+    ) async {
+      // Prevent the implicitly added View from adding a MediaQuery
+      await tester.pumpWidget(
+        RawView(view: FakeFlutterView(tester.view, viewId: 77), child: const SizedBox()),
+        wrapWithView: false,
+      );
+
+      expect(Theme.brightnessOf(tester.element(find.byType(SizedBox))), equals(Brightness.light));
+    });
+  });
+
+  group('Theme.maybeBrightnessOf', () {
+    testWidgets('return correct brightness when just media query is given', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        const MediaQuery(
+          data: MediaQueryData(platformBrightness: Brightness.dark),
+          child: SizedBox(),
+        ),
+      );
+
+      expect(
+        Theme.maybeBrightnessOf(tester.element(find.byType(SizedBox))),
+        equals(Brightness.dark),
+      );
+    });
+
+    testWidgets('return correct brightness with overriding theme brightness over media query', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(platformBrightness: Brightness.dark),
+          child: Theme(data: ThemeData(brightness: Brightness.light), child: const SizedBox()),
+        ),
+      );
+
+      expect(
+        Theme.maybeBrightnessOf(tester.element(find.byType(SizedBox))),
+        equals(Brightness.light),
+      );
+    });
+
+    testWidgets('returns null when no theme or media query is present', (
+      WidgetTester tester,
+    ) async {
+      // Prevent the implicitly added View from adding a MediaQuery
+      await tester.pumpWidget(
+        RawView(view: FakeFlutterView(tester.view, viewId: 77), child: const SizedBox()),
+        wrapWithView: false,
+      );
+
+      expect(Theme.maybeBrightnessOf(tester.element(find.byType(SizedBox))), isNull);
+    });
+  });
+
   testWidgets('Theme overrides selection style', (WidgetTester tester) async {
     final Key key = UniqueKey();
     const Color defaultSelectionColor = Color(0x11111111);
@@ -1251,4 +1337,12 @@ class _TextStyleProxy implements TextStyle {
   TextStyle merge(TextStyle? other) {
     throw UnimplementedError();
   }
+}
+
+class FakeFlutterView extends TestFlutterView {
+  FakeFlutterView(TestFlutterView view, {required this.viewId})
+    : super(view: view, display: view.display, platformDispatcher: view.platformDispatcher);
+
+  @override
+  final int viewId;
 }

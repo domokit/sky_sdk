@@ -388,7 +388,7 @@ class _CupertinoRadioState<T> extends State<CupertinoRadio<T>>
               ..checkmarkStyle = widget.useCheckmarkStyle
               ..isActive = widget.onChanged != null
               ..borderColor = effectiveBorderColor
-              ..brightness = CupertinoTheme.of(context).brightness,
+              ..brightness = CupertinoTheme.brightnessOf(context),
       ),
     );
   }
