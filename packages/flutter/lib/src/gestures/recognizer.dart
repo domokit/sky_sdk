@@ -142,8 +142,7 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
     this.supportedDevices,
     this.allowedButtonsFilter = _defaultButtonAcceptBehavior,
   }) {
-    // TODO(polina-c): stop duplicating code across disposables
-    // https://github.com/flutter/flutter/issues/137435
+    debugMaybeDispatchObjectCreated('', '', this);
     if (kFlutterMemoryAllocationsEnabled) {
       FlutterMemoryAllocations.instance.dispatchObjectCreated(
         library: 'package:flutter/gestures.dart',

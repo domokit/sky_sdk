@@ -8,6 +8,7 @@ library;
 
 import 'dart:ui' show VoidCallback;
 
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import 'assertions.dart';
@@ -227,19 +228,10 @@ mixin class ChangeNotifier implements Listenable {
   /// To make debugging easier, invoke [ChangeNotifier.maybeDispatchObjectCreation]
   /// in constructor of the class. It will help
   /// to identify the owner.
-  ///
-  /// Make sure to invoke it with condition `if (kFlutterMemoryAllocationsEnabled) ...`
-  /// so that the method is tree-shaken away when the flag is false.
   @protected
   static void maybeDispatchObjectCreation(ChangeNotifier object) {
-    // Tree shaker does not include this method and the class MemoryAllocations
-    // if kFlutterMemoryAllocationsEnabled is false.
-    if (kFlutterMemoryAllocationsEnabled && !object._creationDispatched) {
-      FlutterMemoryAllocations.instance.dispatchObjectCreated(
-        library: _flutterFoundationLibrary,
-        className: '$ChangeNotifier',
-        object: object,
-      );
+    if (!object._creationDispatched) {
+      debugMaybeDispatchObjectCreated(_flutterFoundationLibrary, 'ChangeNotifier', object);
       object._creationDispatched = true;
     }
   }

@@ -255,9 +255,7 @@ class AnimationController extends Animation<double>
     required TickerProvider vsync,
   }) : assert(upperBound >= lowerBound),
        _direction = _AnimationDirection.forward {
-    if (kFlutterMemoryAllocationsEnabled) {
-      _maybeDispatchObjectCreation();
-    }
+    _maybeDispatchObjectCreation();
     _ticker = vsync.createTicker(_tick);
     _internalSetValue(value ?? lowerBound);
   }
@@ -289,22 +287,14 @@ class AnimationController extends Animation<double>
   }) : lowerBound = double.negativeInfinity,
        upperBound = double.infinity,
        _direction = _AnimationDirection.forward {
-    if (kFlutterMemoryAllocationsEnabled) {
-      _maybeDispatchObjectCreation();
-    }
+    _maybeDispatchObjectCreation();
     _ticker = vsync.createTicker(_tick);
     _internalSetValue(value);
   }
 
   /// Dispatches event of object creation to [FlutterMemoryAllocations.instance].
   void _maybeDispatchObjectCreation() {
-    if (kFlutterMemoryAllocationsEnabled) {
-      FlutterMemoryAllocations.instance.dispatchObjectCreated(
-        library: _flutterAnimationLibrary,
-        className: '$AnimationController',
-        object: this,
-      );
-    }
+    assert(debugMaybeDispatchObjectCreated(_flutterAnimationLibrary, 'AnimationController', this));
   }
 
   /// The value at which this animation is deemed to be dismissed.
