@@ -223,7 +223,7 @@ class _RenderSliverResizingHeader extends RenderSliver
       paintExtent: math.min(childExtent, remainingPaintExtent),
       layoutExtent: clampDouble(layoutExtent, 0, remainingPaintExtent),
       maxPaintExtent: childExtent,
-      maxScrollObstructionExtent: childExtent,
+      maxScrollObstructionExtent: minExtent,
       cacheExtent: calculateCacheOffset(constraints, from: 0.0, to: childExtent),
       hasVisualOverflow: true, // Conservatively say we do have overflow to avoid complexity.
     );

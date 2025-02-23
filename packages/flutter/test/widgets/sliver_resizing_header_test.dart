@@ -357,4 +357,57 @@ void main() {
     await tester.pumpAndSettle();
     expect(getHeaderHeight(), 200);
   });
+
+  testWidgets('SliverResizingHeader maxScrollObstructionExtent', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: NestedScrollView(
+            headerSliverBuilder:
+                (BuildContext context, _) => <Widget>[
+                  SliverOverlapAbsorber(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                    sliver: const SliverResizingHeader(
+                      minExtentPrototype: SizedBox(height: 100),
+                      maxExtentPrototype: SizedBox(height: 300),
+                      child: SizedBox.expand(child: Text('header')),
+                    ),
+                  ),
+                ],
+            body: Builder(
+              builder:
+                  (BuildContext context) => CustomScrollView(
+                    slivers: <Widget>[
+                      SliverOverlapInjector(
+                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                      ),
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) =>
+                              SizedBox(height: 50, child: Text('$index')),
+                          childCount: 100,
+                        ),
+                      ),
+                    ],
+                  ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    double getHeaderHeight() => tester.getSize(find.text('header')).height;
+
+    expect(getHeaderHeight(), 300);
+
+    // After scrolling down 150px, the header height becomes 150px
+    await tester.drag(find.byType(NestedScrollView), const Offset(0, -150));
+    await tester.pumpAndSettle();
+    expect(getHeaderHeight(), 150);
+
+    // After scrolling down an additional 150px, the header height becomes 100px
+    await tester.drag(find.byType(NestedScrollView), const Offset(0, -150));
+    await tester.pumpAndSettle();
+    expect(getHeaderHeight(), 100);
+  });
 }
