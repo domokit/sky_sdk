@@ -24,7 +24,8 @@ class FlutterMain {
   const flutter::Settings& GetSettings() const;
 
   static AndroidRenderingAPI SelectedRenderingAPI(
-      const flutter::Settings& settings);
+      const flutter::Settings& settings,
+      int api_level);
 
   static bool IsDeviceEmulator(std::string_view product_model);
 
@@ -43,7 +44,8 @@ class FlutterMain {
                    jstring kernelPath,
                    jstring appStoragePath,
                    jstring engineCachesPath,
-                   jlong initTimeMillis);
+                   jlong initTimeMillis,
+                   jint api_level);
 
   void SetupDartVMServiceUriCallback(JNIEnv* env);
 

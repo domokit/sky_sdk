@@ -390,7 +390,8 @@ public class FlutterLoader {
           kernelPath,
           result.appStoragePath,
           result.engineCachesPath,
-          initTimeMillis);
+          initTimeMillis,
+          Integer.valueOf(android.os.Build.VERSION.SDK));
 
       initialized = true;
     } catch (Exception e) {
