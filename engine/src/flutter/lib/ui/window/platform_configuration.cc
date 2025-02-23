@@ -46,6 +46,8 @@ void PlatformConfiguration::DidCreateIsolate() {
                 Dart_GetField(library, tonic::ToDart("_addView")));
   remove_view_.Set(tonic::DartState::Current(),
                    Dart_GetField(library, tonic::ToDart("_removeView")));
+  set_engine_id_.Set(tonic::DartState::Current(),
+                     Dart_GetField(library, tonic::ToDart("_setEngineId")));
   update_window_metrics_.Set(
       tonic::DartState::Current(),
       Dart_GetField(library, tonic::ToDart("_updateWindowMetrics")));
@@ -146,6 +148,20 @@ bool PlatformConfiguration::RemoveView(int64_t view_id) {
       tonic::DartInvoke(remove_view_.Get(), {
                                                 tonic::ToDart(view_id),
                                             }));
+  return true;
+}
+
+bool PlatformConfiguration::SetEngineId(int64_t engine_id) {
+  std::shared_ptr<tonic::DartState> dart_state =
+      set_engine_id_.dart_state().lock();
+  if (!dart_state) {
+    return false;
+  }
+  tonic::DartState::Scope scope(dart_state);
+  tonic::CheckAndHandleError(
+      tonic::DartInvoke(set_engine_id_.Get(), {
+                                                  tonic::ToDart(engine_id),
+                                              }));
   return true;
 }
 

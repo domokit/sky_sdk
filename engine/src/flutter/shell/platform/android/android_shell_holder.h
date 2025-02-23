@@ -82,12 +82,14 @@ class AndroidShellHolder {
       const std::string& entrypoint,
       const std::string& libraryUrl,
       const std::string& initial_route,
-      const std::vector<std::string>& entrypoint_args) const;
+      const std::vector<std::string>& entrypoint_args,
+      int64_t engine_id) const;
 
   void Launch(std::unique_ptr<APKAssetProvider> apk_asset_provider,
               const std::string& entrypoint,
               const std::string& libraryUrl,
-              const std::vector<std::string>& entrypoint_args);
+              const std::vector<std::string>& entrypoint_args,
+              int64_t engine_id);
 
   const flutter::Settings& GetSettings() const;
 

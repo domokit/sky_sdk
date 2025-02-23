@@ -79,6 +79,7 @@ public class FlutterEngineTest {
         .when(flutterJNI)
         .attachToNative();
     GeneratedPluginRegistrant.clearRegisteredEngines();
+    FlutterEngine.resetNextEngineId();
   }
 
   @After
@@ -128,6 +129,23 @@ public class FlutterEngineTest {
 
     verify(mockFlutterJNI, times(1))
         .dispatchPlatformMessage(eq("flutter/localization"), any(), anyInt(), anyInt());
+  }
+
+  @Test
+  public void itCanBeRetrievedByHandle() {
+    FlutterJNI mockFlutterJNI = mock(FlutterJNI.class);
+    when(mockFlutterJNI.isAttached()).thenReturn(true);
+    FlutterLoader mockFlutterLoader = mock(FlutterLoader.class);
+    when(mockFlutterLoader.automaticallyRegisterPlugins()).thenReturn(true);
+    FlutterEngine flutterEngine1 = new FlutterEngine(ctx, mockFlutterLoader, mockFlutterJNI);
+    FlutterEngine flutterEngine2 = new FlutterEngine(ctx, mockFlutterLoader, mockFlutterJNI);
+    assertEquals(flutterEngine1, FlutterEngine.engineForId(1));
+    assertEquals(flutterEngine2, FlutterEngine.engineForId(2));
+    flutterEngine1.destroy();
+    assertEquals(null, FlutterEngine.engineForId(1));
+    assertEquals(flutterEngine2, FlutterEngine.engineForId(2));
+    flutterEngine2.destroy();
+    assertEquals(null, FlutterEngine.engineForId(2));
   }
 
   // Helps show the root cause of MissingPluginException type errors like

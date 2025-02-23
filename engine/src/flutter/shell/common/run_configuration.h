@@ -194,12 +194,22 @@ class RunConfiguration {
   ///
   std::unique_ptr<IsolateConfiguration> TakeIsolateConfiguration();
 
+  //----------------------------------------------------------------------------
+  /// @brief      Sets the engine identifier to be passed to the platform
+  ///             dispatcher.
+  void SetEngineId(int64_t engine_id);
+
+  ///----------------------------------------------------------------------------
+  /// @return     Engine identifier to be passed to the platform dispatcher.
+  std::optional<int64_t> GetEngineId() const;
+
  private:
   std::unique_ptr<IsolateConfiguration> isolate_configuration_;
   std::shared_ptr<AssetManager> asset_manager_;
   std::string entrypoint_ = "main";
   std::string entrypoint_library_ = "";
   std::vector<std::string> entrypoint_args_;
+  std::optional<int64_t> engine_id_;
 
   FML_DISALLOW_COPY_AND_ASSIGN(RunConfiguration);
 };

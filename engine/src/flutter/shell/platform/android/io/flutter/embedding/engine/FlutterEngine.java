@@ -44,8 +44,10 @@ import io.flutter.plugin.platform.PlatformViewsController;
 import io.flutter.plugin.platform.PlatformViewsController2;
 import io.flutter.plugin.text.ProcessTextPlugin;
 import io.flutter.util.ViewUtils;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -114,6 +116,20 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
 
   // Engine Lifecycle.
   @NonNull private final Set<EngineLifecycleListener> engineLifecycleListeners = new HashSet<>();
+
+  // Unique handle for this engine.
+  @NonNull private final long engineId;
+
+  @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+  public static void resetNextEngineId() {
+    nextEngineId = 1;
+  }
+
+  // Handle to assign to the next engine created.
+  private static long nextEngineId = 1;
+
+  // Map of engine identifiers to engines.
+  private static final Map<Long, FlutterEngine> idToEngine = new HashMap<>();
 
   @NonNull
   private final EngineLifecycleListener engineLifecycleListener =
@@ -312,6 +328,10 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
       boolean automaticallyRegisterPlugins,
       boolean waitForRestorationData,
       @Nullable FlutterEngineGroup group) {
+
+    this.engineId = nextEngineId++;
+    idToEngine.put(engineId, this);
+
     AssetManager assetManager;
     try {
       assetManager = context.createPackageContext(context.getPackageName(), 0).getAssets();
@@ -326,7 +346,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
     }
     this.flutterJNI = flutterJNI;
 
-    this.dartExecutor = new DartExecutor(flutterJNI, assetManager);
+    this.dartExecutor = new DartExecutor(flutterJNI, assetManager, engineId);
     this.dartExecutor.onAttachedToJNI();
 
     DeferredComponentManager deferredComponentManager =
@@ -451,7 +471,8 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
             dartEntrypoint.dartEntrypointFunctionName,
             dartEntrypoint.dartEntrypointLibrary,
             initialRoute,
-            dartEntrypointArgs);
+            dartEntrypointArgs,
+            nextEngineId);
     return new FlutterEngine(
         context, // Context.
         null, // FlutterLoader. A null value passed here causes the constructor to get it from the
@@ -486,6 +507,7 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
       FlutterInjector.instance().deferredComponentManager().destroy();
       deferredComponentChannel.setDeferredComponentManager(null);
     }
+    idToEngine.remove(engineId);
   }
 
   /**
@@ -677,6 +699,25 @@ public class FlutterEngine implements ViewUtils.DisplayUpdater {
   @NonNull
   public ContentProviderControlSurface getContentProviderControlSurface() {
     return pluginRegistry;
+  }
+
+  /** Returns unique identifier for this engine. */
+  public long getEngineId() {
+    return engineId;
+  }
+
+  /**
+   * Returns engine for the given identifier or null if identifier is not valid. The handle can be
+   * obtained through
+   *
+   * <pre>PlatformDispatcher.instance.engineId</pre>
+   *
+   * <p>Must be called on the UI thread.
+   */
+  @Nullable
+  @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+  public static FlutterEngine engineForId(long handle) {
+    return idToEngine.get(handle);
   }
 
   /** Lifecycle callbacks for Flutter engine lifecycle events. */

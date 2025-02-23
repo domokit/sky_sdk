@@ -37,6 +37,8 @@ abstract class PlatformDispatcher {
 
   FlutterView? get implicitView;
 
+  int? get engineId;
+
   VoidCallback? get onMetricsChanged;
   set onMetricsChanged(VoidCallback? callback);
 

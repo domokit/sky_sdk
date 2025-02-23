@@ -4952,6 +4952,37 @@ TEST_F(ShellTest, WillLogWarningWhenImpellerIsOptedOut) {
   DestroyShell(std::move(shell), task_runners);
 }
 
+TEST_F(ShellTest, ProvidesEngineId) {
+  Settings settings = CreateSettingsForFixture();
+  TaskRunners task_runners = GetTaskRunnersForFixture();
+  fml::AutoResetWaitableEvent latch;
+
+  int reported_handle = 0;
+
+  AddNativeCallback(
+      "ReportEngineId", CREATE_NATIVE_ENTRY([&](Dart_NativeArguments args) {
+        Dart_Handle exception = nullptr;
+        reported_handle =
+            tonic::DartConverter<int64_t>::FromArguments(args, 0, exception);
+        ASSERT_EQ(exception, nullptr);
+
+        latch.Signal();
+      }));
+  fml::AutoResetWaitableEvent check_latch;
+
+  std::unique_ptr<Shell> shell = CreateShell(settings, task_runners);
+  ASSERT_TRUE(shell->IsSetup());
+
+  auto configuration = RunConfiguration::InferFromSettings(settings);
+  configuration.SetEngineId(99);
+  configuration.SetEntrypoint("providesEngineId");
+  RunEngine(shell.get(), std::move(configuration));
+
+  latch.Wait();
+  ASSERT_EQ(reported_handle, 99);
+  DestroyShell(std::move(shell), task_runners);
+}
+
 }  // namespace testing
 }  // namespace flutter
 

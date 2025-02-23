@@ -197,6 +197,12 @@ bool FlutterDesktopEngineDestroy(FlutterDesktopEngineRef engine_ref) {
   return result;
 }
 
+FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineForId(
+    int64_t engine_id) {
+  return HandleForEngine(
+      flutter::FlutterWindowsEngine::GetEngineForId(engine_id));
+}
+
 bool FlutterDesktopEngineRun(FlutterDesktopEngineRef engine,
                              const char* entry_point) {
   std::string_view entry_point_view{""};

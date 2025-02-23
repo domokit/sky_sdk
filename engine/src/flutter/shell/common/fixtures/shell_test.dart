@@ -632,3 +632,11 @@ void testDispatchEvents() {
     notifyNative();
   };
 }
+
+@pragma('vm:external-name', 'ReportEngineId')
+external void _reportEngineId(int? identifier);
+
+@pragma('vm:entry-point')
+void providesEngineId() {
+  _reportEngineId(PlatformDispatcher.instance.engineId);
+}

@@ -222,6 +222,17 @@ typedef NS_ENUM(NSInteger, FlutterAppExitResponse) {
  * Returns an array of screen objects representing all of the screens available on the system.
  */
 - (NSArray<NSScreen*>*)screens;
+
+/**
+ * Returns engine for the identifier. The identifier must be valid for an engine
+ * that is currently running, otherwise the behavior is undefined.
+ *
+ * The identifier can be obtained in Dart code through
+ * `PlatformDispatcher.instance.engineId`.
+ *
+ * This function must be called on the main thread.
+ */
++ (nullable FlutterEngine*)engineForIdentifier:(int64_t)identifier;
 @end
 
 @interface FlutterEngine (Tests)

@@ -8,6 +8,7 @@ import android.content.res.AssetManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
+import androidx.annotation.VisibleForTesting;
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.FlutterJNI;
@@ -40,6 +41,7 @@ public class DartExecutor implements BinaryMessenger {
 
   @NonNull private final FlutterJNI flutterJNI;
   @NonNull private final AssetManager assetManager;
+  private final long engineId;
   @NonNull private final DartMessenger dartMessenger;
   @NonNull private final BinaryMessenger binaryMessenger;
   private boolean isApplicationRunning = false;
@@ -57,9 +59,16 @@ public class DartExecutor implements BinaryMessenger {
         }
       };
 
+  @VisibleForTesting
   public DartExecutor(@NonNull FlutterJNI flutterJNI, @NonNull AssetManager assetManager) {
+    this(flutterJNI, assetManager, 0);
+  }
+
+  public DartExecutor(
+      @NonNull FlutterJNI flutterJNI, @NonNull AssetManager assetManager, long engineId) {
     this.flutterJNI = flutterJNI;
     this.assetManager = assetManager;
+    this.engineId = engineId;
     this.dartMessenger = new DartMessenger(flutterJNI);
     dartMessenger.setMessageHandler("flutter/isolate", isolateChannelMessageHandler);
     this.binaryMessenger = new DefaultBinaryMessenger(dartMessenger);
@@ -148,7 +157,8 @@ public class DartExecutor implements BinaryMessenger {
           dartEntrypoint.dartEntrypointFunctionName,
           dartEntrypoint.dartEntrypointLibrary,
           assetManager,
-          dartEntrypointArgs);
+          dartEntrypointArgs,
+          engineId);
 
       isApplicationRunning = true;
     }
@@ -174,7 +184,8 @@ public class DartExecutor implements BinaryMessenger {
           dartCallback.callbackHandle.callbackName,
           dartCallback.callbackHandle.callbackLibraryPath,
           dartCallback.androidAssetManager,
-          null);
+          null,
+          engineId);
 
       isApplicationRunning = true;
     }
