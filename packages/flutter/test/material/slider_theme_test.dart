@@ -3050,6 +3050,45 @@ void main() {
     },
   );
 
+  // Regression test for https://github.com/flutter/flutter/issues/161210
+  testWidgets(
+    'RangeSlider with transparent track colors and custom track height can reach extreme ends',
+    (WidgetTester tester) async {
+      const double sliderPadding = 24.0;
+      final ThemeData theme = ThemeData(
+        sliderTheme: const SliderThemeData(
+          trackHeight: 100,
+          activeTrackColor: Colors.transparent,
+          inactiveTrackColor: Colors.transparent,
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Material(
+            child: SizedBox(
+              width: 300,
+              child: RangeSlider(
+                values: const RangeValues(0, 1),
+                onChanged: (RangeValues values) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final MaterialInkController material = Material.of(tester.element(find.byType(RangeSlider)));
+
+      expect(
+        material,
+        paints
+          ..circle(x: sliderPadding, y: 300.0, color: theme.colorScheme.primary)
+          ..circle(x: 800.0 - sliderPadding, y: 300.0, color: theme.colorScheme.primary),
+      );
+    },
+  );
+
   group('Material 2', () {
     // These tests are only relevant for Material 2. Once Material 2
     // support is deprecated and the APIs are removed, these tests
