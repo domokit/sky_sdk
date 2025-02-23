@@ -14,6 +14,7 @@
 #include "flutter/shell/platform/common/app_lifecycle_state.h"
 
 #import "flutter/shell/platform/darwin/macos/framework/Source/AccessibilityBridgeMac.h"
+#import "flutter/shell/platform/darwin/macos/framework/Source/FlutterKeyboardManager.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterPlatformViewController.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterRenderer.h"
 
@@ -166,13 +167,6 @@ typedef NS_ENUM(NSInteger, FlutterAppExitResponse) {
 - (void)sendPointerEvent:(const FlutterPointerEvent&)event;
 
 /**
- * Dispatches the given pointer event data to engine.
- */
-- (void)sendKeyEvent:(const FlutterKeyEvent&)event
-            callback:(nullable FlutterKeyEventCallback)callback
-            userData:(nullable void*)userData;
-
-/**
  * Registers an external texture with the given id. Returns YES on success.
  */
 - (BOOL)registerTextureWithID:(int64_t)textureId;
@@ -217,6 +211,11 @@ typedef NS_ENUM(NSInteger, FlutterAppExitResponse) {
  */
 - (void)announceAccessibilityMessage:(NSString*)message
                         withPriority:(NSAccessibilityPriorityLevel)priority;
+
+/**
+ * Returns keyboard manager for the engine.
+ */
+@property(nonatomic, readonly) FlutterKeyboardManager* keyboardManager;
 
 /**
  * Returns an array of screen objects representing all of the screens available on the system.

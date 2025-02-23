@@ -343,6 +343,10 @@ TEST_F(FlutterViewControllerTest, testViewControllerIsReleased) {
   OCMStub(  // NOLINT(google-objc-avoid-throwing-exception)
       [engineMock binaryMessenger])
       .andReturn(binaryMessengerMock);
+  FlutterKeyboardManager* keyboardManager =
+      [[FlutterKeyboardManager alloc] initWithDelegate:engineMock];
+  OCMStub([engineMock keyboardManager]).andReturn(keyboardManager);
+
   OCMStub([[engineMock ignoringNonObjectArgs] sendKeyEvent:kDefaultFlutterKeyEvent
                                                   callback:nil
                                                   userData:nil])
@@ -388,6 +392,10 @@ TEST_F(FlutterViewControllerTest, testViewControllerIsReleased) {
         called = true;
         last_event = *event;
       }));
+  FlutterKeyboardManager* keyboardManager =
+      [[FlutterKeyboardManager alloc] initWithDelegate:engineMock];
+  OCMStub([engineMock keyboardManager]).andReturn(keyboardManager);
+
   FlutterViewController* viewController = [[FlutterViewController alloc] initWithEngine:engineMock
                                                                                 nibName:@""
                                                                                  bundle:nil];
@@ -475,6 +483,9 @@ TEST_F(FlutterViewControllerTest, testViewControllerIsReleased) {
   OCMStub(  // NOLINT(google-objc-avoid-throwing-exception)
       [engineMock binaryMessenger])
       .andReturn(binaryMessengerMock);
+  FlutterKeyboardManager* keyboardManager =
+      [[FlutterKeyboardManager alloc] initWithDelegate:engineMock];
+  OCMStub([engineMock keyboardManager]).andReturn(keyboardManager);
   OCMStub([[engineMock ignoringNonObjectArgs] sendKeyEvent:kDefaultFlutterKeyEvent
                                                   callback:nil
                                                   userData:nil])
@@ -549,6 +560,9 @@ TEST_F(FlutterViewControllerTest, testViewControllerIsReleased) {
   OCMStub(  // NOLINT(google-objc-avoid-throwing-exception)
       [engineMock binaryMessenger])
       .andReturn(binaryMessengerMock);
+  FlutterKeyboardManager* keyboardManager =
+      [[FlutterKeyboardManager alloc] initWithDelegate:engineMock];
+  OCMStub([engineMock keyboardManager]).andReturn(keyboardManager);
   OCMStub([[engineMock ignoringNonObjectArgs] sendKeyEvent:kDefaultFlutterKeyEvent
                                                   callback:nil
                                                   userData:nil])
@@ -602,6 +616,9 @@ TEST_F(FlutterViewControllerTest, testViewControllerIsReleased) {
   OCMStub(  // NOLINT(google-objc-avoid-throwing-exception)
       [engineMock binaryMessenger])
       .andReturn(binaryMessengerMock);
+  FlutterKeyboardManager* keyboardManager =
+      [[FlutterKeyboardManager alloc] initWithDelegate:engineMock];
+  OCMStub([engineMock keyboardManager]).andReturn(keyboardManager);
   OCMStub([[engineMock ignoringNonObjectArgs] sendKeyEvent:kDefaultFlutterKeyEvent
                                                   callback:nil
                                                   userData:nil])
@@ -659,6 +676,13 @@ TEST_F(FlutterViewControllerTest, testViewControllerIsReleased) {
       .andReturn(binaryMessengerMock);
   __block bool called = false;
   __block FlutterKeyEvent last_event;
+  __block FlutterKeyboardManager* keyboardManager =
+      [[FlutterKeyboardManager alloc] initWithDelegate:engineMock];
+
+  OCMStub([engineMock keyboardManager]).andDo(^(NSInvocation* invocation) {
+    [invocation setReturnValue:&keyboardManager];
+  });
+
   OCMStub([[engineMock ignoringNonObjectArgs] sendKeyEvent:kDefaultFlutterKeyEvent
                                                   callback:nil
                                                   userData:nil])
@@ -695,7 +719,7 @@ TEST_F(FlutterViewControllerTest, testViewControllerIsReleased) {
   EXPECT_EQ(last_event.type, kFlutterKeyEventTypeDown);
   EXPECT_EQ(last_event.physical, kPhysicalKeyA);
 
-  [viewController onPreEngineRestart];
+  keyboardManager = [[FlutterKeyboardManager alloc] initWithDelegate:engineMock];
 
   called = false;
   [viewController keyDown:keyADown];
@@ -1138,6 +1162,10 @@ static void SwizzledNoop(id self, SEL _cmd) {}
   // Need to return a real renderer to allow view controller to load.
   FlutterRenderer* renderer_ = [[FlutterRenderer alloc] initWithFlutterEngine:engineMock];
   OCMStub([engineMock renderer]).andReturn(renderer_);
+
+  FlutterKeyboardManager* keyboardManager =
+      [[FlutterKeyboardManager alloc] initWithDelegate:engineMock];
+  OCMStub([engineMock keyboardManager]).andReturn(keyboardManager);
 
   // Capture calls to sendKeyEvent
   __block NSMutableArray<KeyEventWrapper*>* events = [NSMutableArray array];

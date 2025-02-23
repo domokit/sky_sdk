@@ -10,11 +10,10 @@
 #include <memory>
 
 #import "flutter/shell/platform/darwin/macos/framework/Source/AccessibilityBridgeMac.h"
-#import "flutter/shell/platform/darwin/macos/framework/Source/FlutterKeyboardViewDelegate.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterTextInputPlugin.h"
 #import "flutter/shell/platform/darwin/macos/framework/Source/FlutterView.h"
 
-@interface FlutterViewController () <FlutterKeyboardViewDelegate>
+@interface FlutterViewController ()
 
 // The FlutterView for this view controller.
 @property(nonatomic, readonly, nullable) FlutterView* flutterView;

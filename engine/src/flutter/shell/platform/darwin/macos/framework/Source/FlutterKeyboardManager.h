@@ -7,7 +7,53 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "flutter/shell/platform/darwin/macos/framework/Source/FlutterKeyboardViewDelegate.h"
+#import "flutter/shell/platform/darwin/common/framework/Headers/FlutterBinaryMessenger.h"
+#import "flutter/shell/platform/embedder/embedder.h"
+
+@protocol FlutterKeyboardManagerDelegate
+
+@required
+
+/**
+ * Dispatch events to the framework to be processed by |HardwareKeyboard|.
+ *
+ * This method typically forwards events to
+ * |FlutterEngine.sendKeyEvent:callback:userData:|.
+ */
+- (void)sendKeyEvent:(const FlutterKeyEvent&)event
+            callback:(nullable FlutterKeyEventCallback)callback
+            userData:(nullable void*)userData;
+
+/**
+ * Get a binary messenger to send channel messages with.
+ *
+ * This method is used to create the key data channel and typically
+ * forwards to |FlutterEngine.binaryMessenger|.
+ */
+- (nonnull id<FlutterBinaryMessenger>)binaryMessenger;
+
+@end
+
+@protocol FlutterKeyboardManagerViewDelegate
+
+@required
+/**
+ * Get the next responder to dispatch events that the keyboard system
+ * (including text input) do not handle.
+ *
+ * If the |nextResponder| is null, then those events will be discarded.
+ */
+@property(nonatomic, readonly, nullable) NSResponder* nextResponder;
+
+/**
+ * Dispatch events that are not handled by the keyboard event handlers
+ * to the text input handler.
+ *
+ * This method typically forwards events to |TextInputPlugin.handleKeyEvent|.
+ */
+- (BOOL)onTextInputKeyEvent:(nonnull NSEvent*)event;
+
+@end
 
 /**
  * Processes keyboard events and cooperate with |TextInputPlugin|.
@@ -32,7 +78,7 @@
  * The |viewDelegate| is a weak reference, typically implemented by
  * |FlutterViewController|.
  */
-- (nonnull instancetype)initWithViewDelegate:(nonnull id<FlutterKeyboardViewDelegate>)viewDelegate;
+- (nonnull instancetype)initWithDelegate:(nonnull id<FlutterKeyboardManagerDelegate>)delegate;
 
 /**
  * Processes a key event.
@@ -40,7 +86,8 @@
  * Unhandled events will be dispatched to the text input system, and possibly
  * the next responder afterwards.
  */
-- (void)handleEvent:(nonnull NSEvent*)event;
+- (void)handleEvent:(nonnull NSEvent*)event
+    withViewDelegate:(nonnull id<FlutterKeyboardManagerViewDelegate>)viewDelegate;
 
 /**
  * Returns yes if is event currently being redispatched.
@@ -68,6 +115,13 @@
  */
 - (nonnull NSDictionary*)getPressedState;
 
+@end
+
+@class FlutterKeyboardLayout;
+
+@interface FlutterKeyboardManager (Testing)
+- (nonnull instancetype)initWithDelegate:(nonnull id<FlutterKeyboardManagerDelegate>)viewDelegate
+                          keyboardLayout:(nonnull FlutterKeyboardLayout*)keyboardLayout;
 @end
 
 #endif  // FLUTTER_SHELL_PLATFORM_DARWIN_MACOS_FRAMEWORK_SOURCE_FLUTTERKEYBOARDMANAGER_H_
