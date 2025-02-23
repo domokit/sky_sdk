@@ -1722,18 +1722,16 @@ void main() {
         );
 
         // Input mode toggle button
-        expect(
-          tester.getSemantics(switchToInputIcon),
-          matchesSemantics(
-            tooltip: 'Switch to input',
-            isButton: true,
-            hasTapAction: true,
-            hasFocusAction: true,
-            isEnabled: true,
-            hasEnabledState: true,
-            isFocusable: true,
-          ),
-        );
+        expect(tester.getSemantics(switchToInputIcon), matchesSemantics(
+          label: (defaultTargetPlatform == TargetPlatform.iOS) ? null : 'Switch to input',
+          tooltip: 'Switch to input',
+          isButton: true,
+          hasTapAction: true,
+          hasFocusAction: true,
+          isEnabled: true,
+          hasEnabledState: true,
+          isFocusable: true,
+        ));
 
         // The semantics of the CalendarDatePicker are tested in its tests.
 
@@ -1793,39 +1791,34 @@ void main() {
         );
 
         // Input mode toggle button
-        expect(
-          tester.getSemantics(switchToCalendarIcon),
-          matchesSemantics(
-            tooltip: 'Switch to calendar',
-            isButton: true,
-            hasTapAction: true,
-            hasFocusAction: true,
-            isEnabled: true,
-            hasEnabledState: true,
-            isFocusable: true,
-          ),
-        );
+        expect(tester.getSemantics(switchToCalendarIcon), matchesSemantics(
+          label: (defaultTargetPlatform == TargetPlatform.iOS) ? null : 'Switch to calendar',
+          tooltip: 'Switch to calendar',
+          isButton: true,
+          hasTapAction: true,
+          hasFocusAction: true,
+          isEnabled: true,
+          hasEnabledState: true,
+          isFocusable: true,
+        ));
 
-        expect(
-          tester.getSemantics(find.byType(EditableText)),
-          matchesSemantics(
-            label: 'Enter Date',
-            isEnabled: true,
-            hasEnabledState: true,
-            isTextField: true,
-            isFocused: true,
-            value: '01/15/2016',
-            hasTapAction: true,
-            hasFocusAction: true,
-            hasSetTextAction: true,
-            hasSetSelectionAction: true,
-            hasCopyAction: true,
-            hasCutAction: true,
-            hasPasteAction: true,
-            hasMoveCursorBackwardByCharacterAction: true,
-            hasMoveCursorBackwardByWordAction: true,
-          ),
-        );
+        expect(tester.getSemantics(find.byType(EditableText)), matchesSemantics(
+          label: 'Enter Date',
+          isEnabled: true,
+          hasEnabledState: true,
+          isTextField: true,
+          isFocused: true,
+          value: '01/15/2016',
+          hasTapAction: true,
+          hasFocusAction: true,
+          hasSetTextAction: true,
+          hasSetSelectionAction: true,
+          hasCopyAction: true,
+          hasCutAction: true,
+          hasPasteAction: true,
+          hasMoveCursorBackwardByCharacterAction: true,
+          hasMoveCursorBackwardByWordAction: true,
+        ));
 
         // Ok/Cancel buttons
         expect(

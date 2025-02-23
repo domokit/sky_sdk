@@ -8,6 +8,7 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -799,13 +800,19 @@ class _MonthPickerState extends State<_MonthPicker> {
                 children: <Widget>[
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.chevron_left),
+                    icon: Icon(
+                      Icons.chevron_left,
+                      semanticLabel: (defaultTargetPlatform == TargetPlatform.iOS)? null : _localizations.previousMonthTooltip,
+                    ),
                     color: controlColor,
                     tooltip: _isDisplayingFirstMonth ? null : _localizations.previousMonthTooltip,
                     onPressed: _isDisplayingFirstMonth ? null : _handlePreviousMonth,
                   ),
                   IconButton(
-                    icon: const Icon(Icons.chevron_right),
+                    icon: Icon(
+                      Icons.chevron_right,
+                      semanticLabel: (defaultTargetPlatform == TargetPlatform.iOS) ? null : _localizations.nextMonthTooltip,
+                    ),
                     color: controlColor,
                     tooltip: _isDisplayingLastMonth ? null : _localizations.nextMonthTooltip,
                     onPressed: _isDisplayingLastMonth ? null : _handleNextMonth,
