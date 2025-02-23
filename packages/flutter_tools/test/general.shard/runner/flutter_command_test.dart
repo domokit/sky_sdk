@@ -18,10 +18,12 @@ import 'package:flutter_tools/src/base/time.dart';
 import 'package:flutter_tools/src/base/user_messages.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/cache.dart';
+import 'package:flutter_tools/src/commands/run.dart' show RunCommand;
 import 'package:flutter_tools/src/device.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/pre_run_validator.dart';
 import 'package:flutter_tools/src/runner/flutter_command.dart';
+import 'package:flutter_tools/src/version.dart';
 import 'package:meta/meta.dart';
 import 'package:test/fake.dart';
 import 'package:unified_analytics/testing.dart';
@@ -1267,6 +1269,196 @@ flutter:
         },
       );
     });
+
+    group('Flutter version', () {
+      for (final String dartDefine in FlutterCommand.flutterVersionDartDefines) {
+        testUsingContext(
+          "tool exits when $dartDefine is already set in user's environment",
+          () async {
+            final CommandRunner<void> runner = createTestCommandRunner(
+              _TestRunCommandThatOnlyValidates(),
+            );
+
+            await expectLater(
+              runner.run(<String>['run', '--no-pub', '--no-hot']),
+              throwsToolExit(
+                message:
+                    '$dartDefine is used by the framework and cannot be set in the environment. '
+                    'Use FlutterVersion to access it in Flutter code',
+              ),
+            );
+          },
+          overrides: <Type, Generator>{
+            DeviceManager:
+                () => FakeDeviceManager()..attachedDevices = <Device>[FakeDevice('name', 'id')],
+            Platform:
+                () => FakePlatform(environment: <String, String>{dartDefine: 'I was already set'}),
+            Cache: () => Cache.test(processManager: FakeProcessManager.any()),
+            FileSystem: () {
+              return MemoryFileSystem.test()
+                ..file('lib/main.dart').createSync(recursive: true)
+                ..file('pubspec.yaml').createSync()
+                ..file('.packages').createSync();
+            },
+            ProcessManager: () => FakeProcessManager.any(),
+            FlutterVersion: () => FakeFlutterVersion(),
+          },
+        );
+
+        testUsingContext(
+          'tool exits when $dartDefine is set in --dart-define or --dart-define-from-file',
+          () async {
+            final CommandRunner<void> runner = createTestCommandRunner(
+              _TestRunCommandThatOnlyValidates(),
+            );
+
+            expect(
+              runner.run(<String>[
+                'run',
+                '--dart-define=$dartDefine=AlreadySet',
+                '--no-pub',
+                '--no-hot',
+              ]),
+              throwsToolExit(
+                message:
+                    '$dartDefine is used by the framework and cannot be set using --dart-define or --dart-define-from-file. '
+                    'Use FlutterVersion to access it in Flutter code',
+              ),
+            );
+
+            expect(
+              runner.run(<String>[
+                'run',
+                '--dart-define-from-file=config.json',
+                '--no-pub',
+                '--no-hot',
+              ]),
+              throwsToolExit(
+                message:
+                    '$dartDefine is used by the framework and cannot be set using --dart-define or --dart-define-from-file. '
+                    'Use FlutterVersion to access it in Flutter code',
+              ),
+            );
+          },
+          overrides: <Type, Generator>{
+            DeviceManager:
+                () => FakeDeviceManager()..attachedDevices = <Device>[FakeDevice('name', 'id')],
+            Platform: () => FakePlatform(),
+            Cache: () => Cache.test(processManager: FakeProcessManager.any()),
+            FileSystem: () {
+              final MemoryFileSystem fileSystem = MemoryFileSystem.test();
+              fileSystem.file('lib/main.dart').createSync(recursive: true);
+              fileSystem.file('pubspec.yaml').createSync();
+              fileSystem.file('.packages').createSync();
+              fileSystem.file('config.json')
+                ..createSync()
+                ..writeAsStringSync('{"$dartDefine": "AlreadySet"}');
+              return fileSystem;
+            },
+            ProcessManager: () => FakeProcessManager.any(),
+            FlutterVersion: () => FakeFlutterVersion(),
+          },
+        );
+      }
+
+      testUsingContext(
+        'FLUTTER_VERSION is set in dartDefines',
+        () async {
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand(packagesPath: 'foo');
+          final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+          expect(buildInfo.dartDefines, contains('FLUTTER_VERSION=0.0.0'));
+        },
+        overrides: <Type, Generator>{
+          ProcessManager: () => FakeProcessManager.any(),
+          FlutterVersion: () => FakeFlutterVersion(),
+        },
+      );
+
+      testUsingContext(
+        'FLUTTER_CHANNEL is set in dartDefines',
+        () async {
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand(packagesPath: 'foo');
+          final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+
+          expect(buildInfo.dartDefines, contains('FLUTTER_CHANNEL=master'));
+        },
+        overrides: <Type, Generator>{
+          ProcessManager: () => FakeProcessManager.any(),
+          FlutterVersion: () => FakeFlutterVersion(),
+        },
+      );
+
+      testUsingContext(
+        'FLUTTER_GIT_URL is set in dartDefines',
+        () async {
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand(packagesPath: 'foo');
+          final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+
+          expect(
+            buildInfo.dartDefines,
+            contains('FLUTTER_GIT_URL=https://github.com/flutter/flutter.git'),
+          );
+        },
+        overrides: <Type, Generator>{
+          ProcessManager: () => FakeProcessManager.any(),
+          FlutterVersion: () => FakeFlutterVersion(),
+        },
+      );
+
+      testUsingContext(
+        'FLUTTER_FRAMEWORK_REVISION is set in dartDefines',
+        () async {
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand(packagesPath: 'foo');
+          final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+
+          expect(buildInfo.dartDefines, contains('FLUTTER_FRAMEWORK_REVISION=11111'));
+        },
+        overrides: <Type, Generator>{
+          ProcessManager: () => FakeProcessManager.any(),
+          FlutterVersion: () => FakeFlutterVersion(),
+        },
+      );
+
+      testUsingContext(
+        'FLUTTER_ENGINE_REVISION is set in dartDefines',
+        () async {
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand(packagesPath: 'foo');
+          final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+
+          expect(buildInfo.dartDefines, contains('FLUTTER_ENGINE_REVISION=abcde'));
+        },
+        overrides: <Type, Generator>{
+          ProcessManager: () => FakeProcessManager.any(),
+          FlutterVersion: () => FakeFlutterVersion(),
+        },
+      );
+
+      testUsingContext(
+        'FLUTTER_DART_VERSION is set in dartDefines',
+        () async {
+          final DummyFlutterCommand flutterCommand = DummyFlutterCommand(packagesPath: 'foo');
+          final BuildInfo buildInfo = await flutterCommand.getBuildInfo(
+            forcedBuildMode: BuildMode.debug,
+          );
+
+          expect(buildInfo.dartDefines, contains('FLUTTER_DART_VERSION=12'));
+        },
+        overrides: <Type, Generator>{
+          ProcessManager: () => FakeProcessManager.any(),
+          FlutterVersion: () => FakeFlutterVersion(),
+        },
+      );
+    });
   });
 }
 
@@ -1377,4 +1569,14 @@ class FakeClock extends Fake implements SystemClock {
   DateTime now() {
     return DateTime.fromMillisecondsSinceEpoch(times.removeAt(0));
   }
+}
+
+class _TestRunCommandThatOnlyValidates extends RunCommand {
+  @override
+  Future<FlutterCommandResult> runCommand() async {
+    return FlutterCommandResult.success();
+  }
+
+  @override
+  bool get shouldRunPub => false;
 }
