@@ -407,3 +407,39 @@ class EditableTextTapOutsideIntent extends Intent {
   /// The [PointerDownEvent] that initiated this [Intent].
   final PointerDownEvent pointerDownEvent;
 }
+
+/// An [Intent] that represents a tap outside the field.
+///
+/// Invoked when the user taps up outside the focused [EditableText] if
+/// [EditableText.onTapUpOutside] is null.
+///
+/// Override this [Intent] to modify the default behavior, which is to unfocus
+/// on a touch event on web and do nothing on other platforms.
+///
+/// {@tool dartpad}
+/// A common requirement is to unfocus text fields when the user taps outside of
+/// it. For UX reasons, it's often desirable to only unfocus when the user taps
+/// outside of the text field, but not when they scroll.
+///
+/// To achieve this, you can override the default behavior of
+/// [EditableTextTapOutsideIntent] and [EditableTextTapUpOutsideIntent] to check
+/// the difference in distance between the pointer down and pointer up events
+/// before potentially unfocusing.
+///
+/// ** See code in examples/api/lib/widgets/text_editing_intents/editable_text_tap_up_outside_intent.0.dart **
+/// {@end-tool}
+///
+/// See also:
+///
+///  * [Action.overridable] for an example on how to make an [Action]
+///    overridable.
+class EditableTextTapUpOutsideIntent extends Intent {
+  /// Creates an [EditableTextTapUpOutsideIntent].
+  const EditableTextTapUpOutsideIntent({required this.focusNode, required this.pointerUpEvent});
+
+  /// The [FocusNode] that this [Intent]'s action should be performed on.
+  final FocusNode focusNode;
+
+  /// The [PointerUpEvent] that initiated this [Intent].
+  final PointerUpEvent pointerUpEvent;
+}
